@@ -1,0 +1,2832 @@
+<!DOCTYPE html>
+<html lang='en' >
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="copyright" content="2015-2026. Sparq Data Solutions Inc. - All Rights Reserved.">
+    <title>Cypress-Fairbanks ISD Public View - BoardBook Premier</title>
+<link href="/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.0.4/popper.js" type="text/javascript"></script>
+<style>
+    #DisplayHeader h1 {
+        padding-top: 10px;
+        padding-bottom: 10px;
+        margin-bottom: 0;
+        font-size: 18px;
+    }
+
+    #DisplayHeader {
+        color: white;
+        text-shadow: 2px 2px rgba(51,51, 51, 0.5);
+        text-align: center;
+        font-weight: bold;
+    }
+
+    #DisplayHeader {
+        background-color: rgb(13,107,181);
+        background-image: linear-gradient(to top, rgb(27,81,143) 29%, rgb(13,107,181) 79%, rgb(25,120,208) 95%);
+        background-image: -o-linear-gradient(bottom, rgb(27,81,143) 29%, rgb(13,107,181) 79%, rgb(25,120,208) 95%);
+        background-image: -moz-linear-gradient(bottom, rgb(27,81,143) 29%, rgb(13,107,181) 79%, rgb(25,120,208) 95%);
+        background-image: -webkit-linear-gradient(bottom, rgb(27,81,143) 29%, rgb(13,107,181) 79%, rgb(25,120,208) 95%);
+        background-image: -ms-linear-gradient(bottom, rgb(27,81,143) 29%, rgb(13,107,181) 79%, rgb(25,120,208) 95%);
+    }
+</style>
+<script>
+    if (typeof window.useBackupCssUrl !== "function") {
+        window.useBackupCssUrl = function (backupUrl, anotherBackupUrl) {
+            var found = document.querySelectorAll('link[href="' + backupUrl + '"]');
+            if (found && found.length > 0) {
+                console.error('won\'t add duplicate backup css link for ' + backupUrl);
+                return;
+            }
+
+            try {
+                var linkElement = document.createElement('link');
+                linkElement.setAttribute('rel', 'stylesheet');
+                linkElement.setAttribute('type', 'text/css');
+                linkElement.setAttribute('href', backupUrl);
+
+                if (anotherBackupUrl)
+                    linkElement.setAttribute('onerror', "window.useBackupCssUrl('" + anotherBackupUrl + "')");
+
+                document.head.appendChild(linkElement)
+                console.error('added backup css link element to ' + backupUrl);
+            } catch (e) {
+                if (anotherBackupUrl)
+                    anotherBackupUrl = " onerror='window.useBackupCssUrl('" + anotherBackupUrl + "')'";
+                else
+                    anotherBackupUrl = "";
+
+                document.querySelector('head').innerHTML += '<link rel="stylesheet" href="' + backupUrl + '"' + anotherBackupUrl + ' type="text/css"/>';
+                console.error('added backup css link HTML to ' + backupUrl);
+            }
+        };
+    }
+</script>
+
+<script>
+    /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
+    /* This file is meant as a standalone workflow for
+    - testing support for link[rel=preload]
+    - enabling async CSS loading in browsers that do not support rel=preload
+    - applying rel preload css once loaded, whether supported or not.
+    */
+    (function (w) {
+        "use strict";
+        // rel=preload support test
+        if (!w.loadCSS) {
+            w.loadCSS = function () { };
+        }
+        // define on the loadCSS obj
+        var rp = loadCSS.relpreload = {};
+        // rel=preload feature support test
+        // runs once and returns a function for compat purposes
+        rp.support = (function () {
+            var ret;
+            try {
+                ret = w.document.createElement("link").relList.supports("preload");
+            } catch (e) {
+                ret = false;
+            }
+            return function () {
+                return ret;
+            };
+        })();
+
+        // if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+        // then change that media back to its intended value on load
+        rp.bindMediaToggle = function (link) {
+            // remember existing media attr for ultimate state, or default to 'all'
+            var finalMedia = link.media || "all";
+
+            function enableStylesheet() {
+                link.media = finalMedia;
+            }
+
+            // bind load handlers to enable media
+            if (link.addEventListener) {
+                link.addEventListener("load", enableStylesheet);
+            } else if (link.attachEvent) {
+                link.attachEvent("onload", enableStylesheet);
+            }
+
+            // Set rel and non-applicable media type to start an async request
+            // note: timeout allows this to happen async to let rendering continue in IE
+            setTimeout(function () {
+                link.rel = "stylesheet";
+                link.media = "only x";
+            });
+            // also enable media after 3 seconds,
+            // which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+            setTimeout(enableStylesheet, 3000);
+        };
+
+        // loop through link elements in DOM
+        rp.poly = function () {
+            // double check this to prevent external calls from running
+            if (rp.support()) {
+                return;
+            }
+            var links = w.document.getElementsByTagName("link");
+            for (var i = 0; i < links.length; i++) {
+                var link = links[i];
+                // qualify links to those with rel=preload and as=style attrs
+                if (link.rel === "preload" && link.getAttribute("as") === "style" && !link.getAttribute("data-loadcss")) {
+                    // prevent rerunning on link
+                    link.setAttribute("data-loadcss", true);
+                    // bind listeners to toggle media back
+                    rp.bindMediaToggle(link);
+                }
+            }
+        };
+
+        // if unsupported, run the polyfill
+        if (!rp.support()) {
+            // run once at least
+            rp.poly();
+
+            // rerun poly on an interval until onload
+            var run = w.setInterval(rp.poly, 500);
+            if (w.addEventListener) {
+                w.addEventListener("load", function () {
+                    rp.poly();
+                    w.clearInterval(run);
+                });
+            } else if (w.attachEvent) {
+                w.attachEvent("onload", function () {
+                    rp.poly();
+                    w.clearInterval(run);
+                });
+            }
+        }
+
+
+        // commonjs
+        if (typeof exports !== "undefined") {
+            exports.loadCSS = loadCSS;
+        }
+        else {
+            w.loadCSS = loadCSS;
+        }
+    }(typeof global !== "undefined" ? global : this));
+</script>
+
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+      onerror="window.useBackupCssUrl('https://cdn1.sparqdata.com/SharedContent/styles/font-awesome.4.7.0.min.css','https://backuplogon.sparqdata.com/SharedContent/styles/font-awesome.4.7.0.min.css')"
+      rel="stylesheet" type="text/css" />
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
+      onerror="window.useBackupCssUrl('https://cdn1.sparqdata.com/SharedContent/styles/bootstrap.4.6.0.min.css','https://backuplogon.sparqdata.com/SharedContent/styles/bootstrap.4.6.0.min.css')"
+      rel="stylesheet" type="text/css" />
+
+<link href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/themes/smoothness/jquery-ui.css"
+      onerror="window.useBackupCssUrl('https://cdn1.sparqdata.com/SharedContent/styles/jquery-ui.1.13.2.css','https://backuplogon.sparqdata.com/SharedContent/styles/jquery-ui.1.13.2.css')"
+      as="style" onload="this.onload=null;this.rel='stylesheet'"
+      rel="preload" type="text/css" />
+
+<link href="https://cdn1.sparqdata.com/SharedContent/styles/KendoUI.2021.3.914/kendo.default-main.min.css"
+      onerror="window.useBackupCssUrl('https://backuplogon.sparqdata.com/SharedContent/styles/KendoUI.2021.3.914/kendo.default-main.min.css"
+      as="style" onload="this.onload=null;this.rel='stylesheet'"
+      rel="preload" type="text/css" />
+
+<link href="https://cdn1.sparqdata.com/SharedContent/styles/jquery.timepicker.css"
+      onerror="window.useBackupCssUrl('https://backuplogon.sparqdata.com/SharedContent/styles/jquery.timepicker.css')"
+      as="style" onload="this.onload=null;this.rel='stylesheet'"
+      rel="preload" type="text/css" />
+
+<link href="https://cdn1.sparqdata.com/SharedContent/styles/bootstrap-social.css"
+      onerror="window.useBackupCssUrl('https://backuplogon.sparqdata.com/SharedContent/styles/bootstrap-social.css')"
+      as="style" onload="this.onload=null;this.rel='stylesheet'"
+      media="all" rel="preload" type="text/css" />
+
+<link href="https://cdn1.sparqdata.com/SharedContent/styles/Sidebar.2.css"
+      onerror="window.useBackupCssUrl('https://backuplogon.sparqdata.com/SharedContent/styles/Sidebar.2.css')"
+      as="style" onload="this.onload=null;this.rel='stylesheet'"
+      rel="preload" type="text/css" />
+
+<link href="https://cdn1.sparqdata.com/SharedContent/styles/All.27.css"
+      onerror="window.useBackupCssUrl('https://backuplogon.sparqdata.com/SharedContent/styles/All.27.css')"
+      as="style" onload="this.onload=null;this.rel='stylesheet'"
+      media="all" rel="preload" type="text/css" />
+<link href="https://cdn1.sparqdata.com/SharedContent/styles/Screen.1.1.css"
+      onerror="window.useBackupCssUrl('https://backuplogon.sparqdata.com/SharedContent/styles/Screen.1.1.css')"
+      as="style" onload="this.onload=null;this.rel='stylesheet'"
+      media="screen" rel="preload" type="text/css" />
+<link href="https://cdn1.sparqdata.com/SharedContent/styles/Print.1.1.css"
+      onerror="window.useBackupCssUrl('https://backuplogon.sparqdata.com/SharedContent/styles/Print.1.1.css')"
+      media="print" rel="stylesheet" type="text/css" />
+
+<style>
+.fa {
+  display: inline-block;
+  font: normal normal normal 14px/1 FontAwesome;
+  font-size: inherit;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+.fa-2x {
+    font-size: 2em;
+}
+.fa-3x {
+    font-size: 3em;
+}
+.fa-5x {
+    font-size: 5em;
+}
+
+body {
+  margin: 0;
+}
+
+a {
+  background-color: transparent;
+}
+
+img {
+  border: 0;
+}
+
+* {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+:after,
+:before {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+    font-family: sans-serif;
+    line-height: 1.15;
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    margin: 0;
+    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans","Liberation Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #212529;
+    text-align: left;
+    background-color: #fff;
+}
+
+.btn {
+    color: #fff;
+}
+a, .btn-link {
+  color: #0d6efd;
+  text-decoration: none;
+}
+a:focus, .btn-link:focus {
+  text-decoration: underline;
+}
+.btn-primary,.bg-primary {
+    background-color: #0d6efd;
+}
+.btn-success,.bg-success {
+    background-color: #198754;
+}
+.btn-secondary,.bg-secondary {
+    background-color: #6c757d;
+}
+.btn-danger,.bg-danger {
+    background-color: #dc3545;
+}
+.btn-warning, .bg-warning {
+    background-color: #ffc107;
+    color: #000;
+}
+.btn-info, .bg-info {
+    background-color: #0dcaf0;
+    color: #000;
+}
+.btn-light, .bg-light {
+    color: #000;
+    background-color: #f8f9fa;
+}
+.btn-dark, .bg-dark {
+    color: #fff;
+    background-color: #212529;
+}
+
+img {
+  vertical-align: middle;
+}
+
+.h1, .h2, .h3, .h4, .h5, .h6, h1, h2, h3, h4, h5, h6 {
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    line-height: 1.2;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+}
+
+.h1, h1 {
+    font-size: 2.5rem;
+}
+.h2, h2 {
+    font-size: 2rem;
+}
+.h3, h3 {
+    font-size: 1.75rem;
+}
+.h4, h4 {
+    font-size: 1.5rem;
+}
+.h5, h5 {
+    font-size: 1.25rem;
+}
+.h6, h6 {
+    font-size: 1rem;
+}
+
+p {
+  margin: 0 0 10px;
+}
+
+ul {
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+ul ul,
+.sparqMenu {
+  margin-bottom: 0;
+}
+
+.list-unstyled {
+  padding-left: 0;
+  list-style: none;
+}
+
+.container {
+  width: 100%;
+  padding-right: 15px;
+  padding-left: 15px;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+@media (min-width:576px) {
+  .container {
+    max-width: 540px;
+  }
+}
+
+@media (min-width:768px) {
+  .container {
+    max-width: 720px;
+  }
+}
+
+@media (min-width:992px) {
+  .container {
+    max-width: 960px;
+  }
+}
+
+@media (min-width:1200px) {
+  .container {
+    max-width: 1140px;
+  }
+}
+
+.float-right {
+  float: right!important;
+}
+
+@-ms-viewport {
+  width: device-width;
+}
+
+.ui-state-highlight {
+  border: 1px solid #fcefa1;
+  background: #fbf9ee;
+  color: #363636;
+}
+
+.ui-state-error {
+  border: 1px solid #cd0a0a;
+  background: #fef1ec;
+  color: #cd0a0a;
+}
+
+.displaymessages .messagelist {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 800px;
+  min-width: 400px;
+  -webkit-box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.15), 0 0 1em rgba(0, 0, 0, 0.3);
+  -moz-box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.15), 0 0 1em rgba(0, 0, 0, 0.3);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.15), 0 0 1em rgba(0, 0, 0, 0.3);
+}
+
+#sparqUserMenuBar .sparqMenu {
+    min-height: 50px;
+}
+
+#sparqUserMenuBar {
+  font-size: 13px;
+  text-align: right;
+}
+    #sparqUserMenuBar form:not(.displayNone) {
+        display: flex;
+        max-width: calc(100vw - var(--scrollbar-width, 0px));
+        flex-wrap: wrap;
+    }
+    
+    @media (max-width:800px) {
+        #sparqUserMenuBar {
+            display: flex;
+        }
+
+        #sparqUserMenuBar .sparqMenu {
+            min-height: initial;
+        }
+    }
+
+#sparqUserMenuBar .usersImage {
+  height: 50px;
+  margin-top: 0;
+}
+
+#sparqUserMenuBar .sparqMenu li {
+  font-size: 20px;
+}
+
+#sparqUserMenuBar .sparqMenu li .usersName
+{
+    margin-right: 4px;
+}
+
+#sparqUserMenuBar .sparqMenu li.sparq-menu-item:not(.disable) {
+  min-width: 50px;
+}
+
+#sparqUserMenuBar .sparqMenu {
+  text-align: center;
+}
+
+#sparqUserMenuBar .sparqMenu {
+  background-color: transparent;
+}
+
+.sparq-menu-item.sparq-menu-item-nopadding {
+  padding: 0 !important;
+}
+
+.sparqMenuBar,
+.sparqMenuBar .sparqMenu {
+  background-color: rgb(51, 51, 51);
+  color: white;
+}
+
+.sparqMenuBar .mainLogoLink {
+  float: left;
+}
+
+.sparqMenuBar .mainLogo,
+.sparq-menu-item-nopadding .mainLogo {
+  height: 42px;
+  padding: 5px;
+  padding-right: 10px;
+  margin: 0 !important;
+}
+
+.sparqMenu .sparq-menu-link {
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+.sparqMenu .k-item.k-menu-item.k-state-hover:not(.k-state-disabled),
+.sparqMenu .k-item.k-menu-item.k-state-focused:not(.k-state-disabled) {
+    background-color: #DDD;
+}
+
+.sparqMenu > li.sparq-menu-item > ul, 
+.k-menu > .k-item.k-menu-item > ul {
+    display: none;
+}
+
+.table-striped tbody tr:nth-of-type(odd),
+ul.list-striped > li:nth-child(odd),
+ol.list-striped > li:nth-child(odd) {
+    background-color: #fff;
+    box-shadow: inset 0 0 0 9999px rgba(0, 0, 0, 0.05);
+}
+
+ul.list-striped > li {
+  border-top: 1px solid #ddd;
+  padding: 8px;
+}
+
+body {
+  padding-bottom: 20px;
+}
+
+.body-content {
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+.messagelist {
+  margin-top: 1em;
+}
+
+#sparqUserMenuBar .sparqMenu select#sparqMenuOrganizationSelect
+{
+    padding-left: 4px;
+    margin-left: -4px;
+}
+#sparqUserMenuBar .sparqMenu select#sparqMenuOrganizationSelect
+,#sparqUserMenuBar .sparqMenu select.sparqMenuOrganizationSelect_partner
+{
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+    #sparqUserMenuBar .sparqMenu .usersName, #sparqUserMenuBar .sparqMenu li ul, #sparqUserMenuBar .sparqMenu li ul li, #sparqUserMenuBar .sparqMenu li .singleSchoolName, #sparqUserMenuBar .sparqMenu #sparqMenuOrganizationSelect, #sparqUserMenuBar .sparqMenu .sparqMenuOrganizationSelect_partner, #sparqUserMenuBar .sparqMenu #sparqMenuOrganizationSelect_width_tmp {
+        font-size: 16px;
+    }
+
+#sparqUserMenuBar .organizationSelectForm select, #sparqUserMenuBar .organizationSelectForm select:hover {
+    color: #DDD;
+}
+
+#sparqUserMenuBar .organizationSelectForm select {
+    border-radius: 3px;
+    background-color: transparent;
+    border-color: transparent;
+}
+
+#sparqUserMenuBar #sparqUser-Menu > li.no-padding > .k-link {
+    padding: 0;
+}
+
+.sparq-menu-item.sparq-menu-item-nopadding, .sparq-menu-item.sparq-menu-item-nopadding .k-link {
+    padding: 0 !important;
+}
+
+li.k-item, 
+.k-menu:not(.k-context-menu)>.k-item,
+li.k-item.k-state-hover, 
+li.k-item:hover, 
+.k-menu:not(.k-context-menu)>.k-item.k-state-hover, 
+.k-menu:not(.k-context-menu)>.k-item:hover,
+.k-menu.sparq-menu:not(.k-context-menu) > .k-item,
+.k-menu.sparq-menu:not(.k-context-menu) > .k-item.k-state-hover,
+.k-menu.sparq-menu:not(.k-context-menu) > .k-item:hover
+{
+    color: rgb(51, 51, 51);
+}
+li.k-item .fa, li.k-item.sparq-menu-item, li.k-item.sparq-menu-item .fa, li.k-item.sparq-menu-item .usersName {
+    color: #DDD;
+}
+
+.sidebar
+{
+    position: fixed;
+    overflow: auto;
+}
+.sidebar.sidebar-right {
+    right: -100%;
+}
+
+.k-menu-item {
+    border-width: 0;
+    outline: 0;
+    display: flex;
+    flex: 0 0 auto;
+    position: relative;
+}
+.k-menu-horizontal {
+    flex-direction: row;
+}
+.k-menu {
+    border-width: 0;
+    border-style: solid;
+    box-sizing: border-box;
+    outline: 0;
+    font-size: 14px;
+    line-height: 1.4285714286;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    position: relative;
+    cursor: default;
+}
+
+.displayNone {
+  display: none;
+}
+
+.k-menu-horizontal>.k-menu-item+.k-menu-item.margin-left-auto,
+.margin-left-auto {
+    margin-left: auto;
+}
+.margin-right-auto {
+    margin-right: auto;
+}
+</style>
+
+
+
+<style>
+    @media (prefers-reduced-motion: reduce) {
+        #skiptocontent a {
+            transition-duration: 0.001ms !important;
+        }
+    }
+
+    #skiptocontent a {
+        padding: 6px;
+        position: absolute;
+        top: -40px;
+        left: 0px;
+        color: white;
+        border-right: 1px solid white;
+        border-bottom: 1px solid white;
+        border-bottom-right-radius: 8px;
+        background: #BF1722;
+        -webkit-transition: top 1s ease-out;
+        transition: top 1s ease-out;
+        z-index: 100;
+    }
+
+        #skiptocontent a:focus {
+            position: absolute;
+            left: 0px;
+            top: 0px;
+            outline-color: transparent;
+            -webkit-transition: top .1s ease-in;
+            transition: top .1s ease-in;
+        }
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js" type="text/javascript"></script>
+<script>window.jQuery || document.write('<script src="https://cdn1.sparqdata.com/SharedContent/scripts/jquery.3.6.0.min.js">\x3C/script>')</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js" type="text/javascript"></script>
+<script>window.jQuery.fn.popover || document.write('<script src="https://cdn1.sparqdata.com/SharedContent/scripts/bootstrap.4.6.0.min.js">\x3C/script>')</script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.13.2/jquery-ui.min.js" type="text/javascript" defer="defer"></script>
+
+<script src="https://cdn1.sparqdata.com/SharedContent/scripts/kendo.all.min.2021.3.914.js" type="text/javascript"></script>
+
+<script src="https://cdn1.sparqdata.com/SharedContent/scripts/jquery.timepicker.min.js" type="text/javascript" defer="defer"></script>
+
+<script src="https://cdn1.sparqdata.com/SharedContent/scripts/jquery.sidebar.min.js" type="text/javascript" defer="defer"></script>
+
+<script src="https://cdn1.sparqdata.com/SharedContent/scripts/jquery.sidebarFullscreen.1.js" type="text/javascript" defer="defer"></script>
+
+<script src="https://cdn1.sparqdata.com/SharedContent/scripts/shared.header.5.js" type="text/javascript" defer="defer"></script>
+
+<script src="https://cdn1.sparqdata.com/SharedContent/scripts/autosize.min.js" type="text/javascript" defer="defer"></script>
+
+
+<script src="https://cdn1.sparqdata.com/SharedContent/scripts/kendoResponsiveMenu.2.js" type="text/javascript"></script>
+<script>window.jQuery.fn.kendoResponsiveMenu || document.write('<script src="https://backuplogon.sparqdata.com/SharedContent/scripts/kendoResponsiveMenu.2.js">\x3C/script>')</script>
+<link href="https://cdn2.sparqdata.com/Site.60.css" rel="stylesheet" type="text/css" />
+    <link href="https://kontentsites-prod.azurewebsites.net/static/assets/boardbook/css/premier.css" rel="stylesheet" type="text/css" />
+<script src="https://cdn1.sparqdata.com/SharedContent/scripts/signalr@8.0.7.js" type='text/javascript'></script>
+
+    
+    <script src="https://cdn1.sparqdata.com/SharedContent/scripts/js.cookie.2.1.4.min.js" type="text/javascript" defer="defer"></script>
+
+<script src="https://cdn1.sparqdata.com/SharedContent/scripts/shared.footer.25.js" type="text/javascript" defer="defer"></script>
+
+    <script src="https://cdn2.sparqdata.com/Scripts/Site.3.js" type="text/javascript" defer="defer"></script>
+    
+</head>
+<body>
+    <div id="fullscreenContainer">
+        <header>
+            <div id="skiptocontent"><a href="#DisplayHeader" class="">skip to main content</a></div>
+            
+                
+            
+                
+
+<nav id="sparqUserMenuBar" class="sparqMenuBar">
+    <ul class="displayNone sparqMenu showAsFlexNotBlock" id="sparqUser-Menu" aria-label="Site features">
+
+            <li class="sparq-menu-item  margin-left-auto" id="sparq-menu-help-item" tabindex="-1">
+                <i class="fa fa-question-circle open-menu-onclick sparq-menu-link" aria-label="help" role="button"></i>
+
+
+                <ul aria-label="Help">
+                        <li>
+                            <a href="/Help/SectionPublicPage"  class="showHelpInDialog">
+                                <i class="fa fa-question-circle"></i>
+                                Public Page Help
+                            </a>
+                        </li>
+
+
+
+
+
+                    <li>
+                        <a href="/SparqMenu/HelpForMenuBar" class="showHelpInDialog">
+                            <i class="fa fa-question-circle"></i>
+                            BoardBook Menu Bar Help
+                        </a>
+                    </li>
+
+
+                    <li>
+                        <a href="/SparqMenu/SiteCompatibility">
+                            <i class="fa fa-question"></i>
+                            Check Your Device's Compatibility
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="/SparqMenu/HelpForNightlyMaintenanceWindow" class="showHelpInDialog">
+                            <i class="fa fa-wrench"></i>
+                            Nightly Maintenance Window: Midnight to 5 AM Central Time
+                        </a>
+                    </li>
+
+
+                </ul>
+
+                <div class="displayNone" id="SparqMenu_HelpDialog" title="Help!">
+    <div id="SparqMenu_HelpDialog_Loading">
+        <i class="fa fa-spinner fa-pulse"></i>
+        Loading Help...
+    </div>
+    <div id="SparqMenu_HelpDialog_Section">
+    </div>
+</div>
+
+            </li>
+
+        <li class="sparq-menu-item sparq-menu-item-nopadding" tabindex="-1">
+                <a href="https://www.boardbook.org/home.aspx" target="_blank" class="mainLogoLink" tabindex="-1">
+                    <img src="https://cdn1.sparqdata.com/SharedContent/themes/boardbook/boardbooklogo.png" class="mainLogo" alt="BoardBook Logo" />
+                </a>
+        </li>
+    </ul>
+
+
+<input name="__RequestVerificationToken" type="hidden" value="CfDJ8Fdzrs7xxJRCuos7D8CY88xu3-nItEWJNI90SmB_23JoYEcXL5Zlh2pKyvHXyrVRQWggRqEpsuOxnSIlxdpYzMj11GFmqJrzewPw7poRG9UT52SESPEdv3uu0eXBIMbcgl841VtNamp7AonvHTb5pyM" /></nav>
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-173108447-3"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'UA-173108447-3');
+</script>
+
+
+
+<script>
+    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+    document.documentElement.style.setProperty('--scrollbar-width', `${scrollbarWidth}px`);
+    
+    var kmSparq = $("#sparqUser-Menu");
+    if (kmSparq && kmSparq.length > 0) {
+        kmSparq.kendoMenu({
+            openOnClick: true
+        });
+
+        kmSparq.bind("open", function () {
+            var found = kmSparq.find(".sparq-menu-item[id][aria-expanded=true]");
+            if (found)
+                kmSparq.close("#" + found.attr("id"));
+        });
+
+        var menu = kmSparq.data("kendoMenu");
+        menu.enable(".disable", false);
+
+        //kicks the spacer out of the keyboard navigation
+        kmSparq.find(".not-navigable").removeClass("k-item");
+
+        kmSparq.show().removeClass("displayNone");
+
+        var toActivate = kmSparq.find(".open-menu-onclick");
+        toActivate.keydown(function (event) {
+            if (event.key === " " || event.key === "Enter" || event.key === "Spacebar") {
+                // Prevent the default action to stop scrolling when space is pressed
+                event.preventDefault();
+
+                var menuItem = $(this).parents(".sparq-menu-item[id]");
+                if (menuItem.attr("aria-expanded") !== "true")
+                    menu.open("#" + menuItem.attr("id"));
+                else
+                    menu.close("#" + menuItem.attr("id"));
+            }
+            else if (event.keyCode === 27 || event.key === "Escape") {
+                var menuItem = $(this).parents(".sparq-menu-item[id]");
+                if (menuItem.attr("aria-expanded") === "true")
+                    menu.close("#" + menuItem.attr("id"));
+            }
+        });
+    }
+</script>
+
+
+
+
+
+                        <nav class="navbar-collapse" id="kendoMenu-Main">
+            <ul class="nav navbar-nav displayNone" id="kendoMenu-Inner" aria-label="Cypress-Fairbanks ISD information">
+                <li>
+                    <a href="/Public/Organization/668" id="home-menu-link">
+                        <span class="fa fa-home"></span>
+                        Home
+                    </a>
+                </li>
+
+            </ul>
+            <script>
+                var km = $("#kendoMenu-Inner");
+                km.kendoResponsiveMenu({
+                    openOnClick: {
+                        rootMenuItems: true,
+                        subMenuItems: false
+                    }
+                });
+                km.show();
+            </script>
+        </nav>
+
+        </header>       
+
+
+        <div class="container body-content">
+            
+                    <div class="displaymessages ui-widget">
+        <div class="messagelist ui-state-error displayNone" id="messages-errors">
+        </div>
+        <div class="messagelist ui-state-highlight displayNone" id="messages-warns">
+        </div>
+        <div class="messagelist ui-state-highlight displayNone" id="messages-infos">
+        </div>
+    </div>
+
+
+        </div>
+
+        
+            <div id="DisplayHeader">
+                <div class="container body-content">
+                        <h1>Cypress-Fairbanks ISD Public View</h1>
+                </div>
+            </div>
+
+        
+        <div class=" body-content">
+            <main id="MainPage">
+                
+    <div>
+        <br />
+<span style="font-family:Arial,Helvetica,sans-serif"><span style="font-size:18px"><strong>Board Meeting Agendas (2024-2026)</strong></span><br />
+<span style="font-size:14px">All CFISD Board Meetings will be held in the Boardroom of the Mark Henry, Ed.D. Administration Building, located at 11440 Matzke Road, Cypress, TX 77429.</span></span><br />
+&nbsp;
+    </div>
+
+<div class="row margin-top-10">
+        <div class="col-lg-7 col-md-12">
+                <h2>Cypress-Fairbanks ISD Meetings</h2>
+                    <table class="table table-striped" id="PublicMeetingsTable">
+                        <thead>
+                            <tr class="header">
+                                <th>
+                                    Meeting
+                                </th>
+                                <th>
+                                    Meeting Location
+                                </th>
+                                <th>
+                                    Details
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                                <tr class=" row-for-board">
+                                    <td>
+                                        <div>
+                                            October 19, 2026 at 6:00 PM - Regular Board Meeting
+                                        </div>
+                                        <div class="margin-top-10">
+                                            <b class="important-page-text">Meeting Type:</b>
+Regular                                        </div>
+                                            <div class="margin-top-10 checkForUrls">
+                                                <span style="font-size:10px">On October 5, 2026, at 7:30 a.m., this notice was mailed or electronically transmitted to the news media, who previously requested such notice, and a copy was posted in the main/front office window of the Cypress-Fairbanks Independent School District Mark Henry, Ed.D. Administration Building.</span>
+                                            </div>
+                                    </td>
+                                    <td>
+                                        <div><span id='location24192-770676-description'>Boardroom of the Mark Henry, Ed.D. Administration Building</span><br /><span id='location24192-770676-line1'>11440 Matzke Road</span><br /><span id='location24192-770676-csz'>Cypress, Texas 77429</span>&nbsp;<span class='nowrap'>[<a href='https://maps.google.com/?q=11440+Matzke+Road%2c+Cypress%2c+Texas+77429' target='_blank' class='nowrap' aria-describedby='location24192-770676-description location24192-770676-line1 location24192-770676-csz'><i class='fa fa-globe'></i> map it</a>]</span></div>
+                                    </td>
+                                    <td class="nowrap">
+                                        <ul class="list-unstyled">
+                                                <li>
+                                                    <a href="/Public/Agenda/668?meeting=770676">Agenda</a>
+                                                </li>
+                                        </ul>
+
+                                    
+                                    </td>
+                                </tr>
+                                <tr class=" row-for-board">
+                                    <td>
+                                        <div>
+                                            October 8, 2026 at 6:00 PM - Board Work Session
+                                        </div>
+                                        <div class="margin-top-10">
+                                            <b class="important-page-text">Meeting Type:</b>
+Working                                        </div>
+                                            <div class="margin-top-10 checkForUrls">
+                                                <span style="font-size:10px">On October 5, 2026, 7:30 a.m., this notice was mailed or electronically transmitted to the news media, who previously requested such notice, and a copy was posted in the main/front office window of the Cypress-Fairbanks Independent School District Mark Henry, Ed.D. Administration Building.</span>
+                                            </div>
+                                    </td>
+                                    <td>
+                                        <div><span id='location24192-767938-description'>Boardroom of the Mark Henry, Ed.D. Administration Building</span><br /><span id='location24192-767938-line1'>11440 Matzke Road</span><br /><span id='location24192-767938-csz'>Cypress, Texas 77429</span>&nbsp;<span class='nowrap'>[<a href='https://maps.google.com/?q=11440+Matzke+Road%2c+Cypress%2c+Texas+77429' target='_blank' class='nowrap' aria-describedby='location24192-767938-description location24192-767938-line1 location24192-767938-csz'><i class='fa fa-globe'></i> map it</a>]</span></div>
+                                            <div class="margin-top-10">
+                                                <a href="https://www.youtube.com/watch?v=X83BCLwLY-8">
+                                                    Recorded Meeting URL
+                                                </a>
+                                            </div>
+                                    </td>
+                                    <td class="nowrap">
+                                        <ul class="list-unstyled">
+                                                <li>
+                                                    <a href="/Public/Agenda/668?meeting=767938">Agenda</a>
+                                                </li>
+                                                <li>
+                                                    <a href="/Public/Minutes/668?meeting=767938">Minutes</a>
+                                                </li>
+                                        </ul>
+
+                                    
+                                    </td>
+                                </tr>
+                                <tr class=" row-for-board">
+                                    <td>
+                                        <div>
+                                            September 14, 2026 at 6:00 PM - Regular Board Meeting
+                                        </div>
+                                        <div class="margin-top-10">
+                                            <b class="important-page-text">Meeting Type:</b>
+Regular                                        </div>
+                                            <div class="margin-top-10 checkForUrls">
+                                                <span style="font-size:10px">On September 4, 2026, at 7:30 a.m., this notice was mailed or electronically transmitted to the news media, who previously requested such notice, and a copy was posted in the main/front office window of the Cypress-Fairbanks Independent School District Mark Henry, Ed.D. Administration Building.</span>
+                                            </div>
+                                    </td>
+                                    <td>
+                                        <div><span id='location24192-765499-description'>Boardroom of the Mark Henry, Ed.D. Administration Building</span><br /><span id='location24192-765499-line1'>11440 Matzke Road</span><br /><span id='location24192-765499-csz'>Cypress, Texas 77429</span>&nbsp;<span class='nowrap'>[<a href='https://maps.google.com/?q=11440+Matzke+Road%2c+Cypress%2c+Texas+77429' target='_blank' class='nowrap' aria-describedby='location24192-765499-description location24192-765499-line1 location24192-765499-csz'><i class='fa fa-globe'></i> map it</a>]</span></div>
+                                            <div class="margin-top-10">
+                                                <a href="https://www.youtube.com/watch?v=bKoxeLCQ9KU">
+                                                    Recorded Meeting URL
+                                                </a>
+                                            </div>
+                                    </td>
+                                    <td class="nowrap">
+                                        <ul class="list-unstyled">
+                                                <li>
+                                                    <a href="/Public/Agenda/668?meeting=765499">Agenda</a>
+                                                </li>
+                                        </ul>
+
+                                    
+                                    </td>
+                                </tr>
+                                <tr class=" row-for-board">
+                                    <td>
+                                        <div>
+                                            September 10, 2026 at 6:00 PM - Board Work Session
+                                        </div>
+                                        <div class="margin-top-10">
+                                            <b class="important-page-text">Meeting Type:</b>
+Working                                        </div>
+                                            <div class="margin-top-10 checkForUrls">
+                                                <span style="font-size:10px">On September 4, 2026, 7:30 a.m., this notice was mailed or electronically transmitted to the news media, who previously requested such notice, and a copy was posted in the main/front office window of the Cypress-Fairbanks Independent School District Mark Henry, Ed.D. Administration Building.</span>
+                                            </div>
+                                    </td>
+                                    <td>
+                                        <div><span id='location24192-760677-description'>Boardroom of the Mark Henry, Ed.D. Administration Building</span><br /><span id='location24192-760677-line1'>11440 Matzke Road</span><br /><span id='location24192-760677-csz'>Cypress, Texas 77429</span>&nbsp;<span class='nowrap'>[<a href='https://maps.google.com/?q=11440+Matzke+Road%2c+Cypress%2c+Texas+77429' target='_blank' class='nowrap' aria-describedby='location24192-760677-description location24192-760677-line1 location24192-760677-csz'><i class='fa fa-globe'></i> map it</a>]</span></div>
+                                            <div class="margin-top-10">
+                                                <a href="https://www.youtube.com/watch?v=YGxVRbVyLiI">
+                                                    Recorded Meeting URL
+                                                </a>
+                                            </div>
+                                    </td>
+                                    <td class="nowrap">
+                                        <ul class="list-unstyled">
+                                                <li>
+                                                    <a href="/Public/Agenda/668?meeting=760677">Agenda</a>
+                                                </li>
+                                                <li>
+                                                    <a href="/Public/Minutes/668?meeting=760677">Minutes</a>
+                                                </li>
+                                        </ul>
+
+                                    
+                                    </td>
+                                </tr>
+                                <tr class=" row-for-board">
+                                    <td>
+                                        <div>
+                                            August 26, 2026 at 5:00 PM - Special-Called Board Meeting
+                                        </div>
+                                        <div class="margin-top-10">
+                                            <b class="important-page-text">Meeting Type:</b>
+Special                                        </div>
+                                            <div class="margin-top-10 checkForUrls">
+                                                <span style="font-size:10px">On August 21, 2026, at 7:30 a.m., this notice was mailed or electronically transmitted to the news media, who previously requested such notice, and a copy was posted in the main/front office window of the Cypress-Fairbanks Independent School District Mark Henry, Ed.D. Administration Building.</span>
+                                            </div>
+                                    </td>
+                                    <td>
+                                        <div><span id='location24192-756261-description'>Boardroom of the Mark Henry, Ed.D. Administration Building</span><br /><span id='location24192-756261-line1'>11440 Matzke Road</span><br /><span id='location24192-756261-csz'>Cypress, Texas 77429</span>&nbsp;<span class='nowrap'>[<a href='https://maps.google.com/?q=11440+Matzke+Road%2c+Cypress%2c+Texas+77429' target='_blank' class='nowrap' aria-describedby='location24192-756261-description location24192-756261-line1 location24192-756261-csz'><i class='fa fa-globe'></i> map it</a>]</span></div>
+                                            <div class="margin-top-10">
+                                                <a href="https://www.youtube.com/watch?v=B42YuUrq3gA">
+                                                    Recorded Meeting URL
+                                                </a>
+                                            </div>
+                                    </td>
+                                    <td class="nowrap">
+                                        <ul class="list-unstyled">
+                                                <li>
+                                                    <a href="/Public/Agenda/668?meeting=756261">Agenda</a>
+                                                </li>
+                                                <li>
+                                                    <a href="/Public/Minutes/668?meeting=756261">Minutes</a>
+                                                </li>
+                                        </ul>
+
+                                    
+                                    </td>
+                                </tr>
+                                <tr class=" row-for-board">
+                                    <td>
+                                        <div>
+                                            August 10, 2026 at 6:00 PM - Regular Board Meeting
+                                        </div>
+                                        <div class="margin-top-10">
+                                            <b class="important-page-text">Meeting Type:</b>
+Regular                                        </div>
+                                            <div class="margin-top-10 checkForUrls">
+                                                <span style="font-size:10px">On August 3, 2026, at 7:30 a.m., this notice was mailed or electronically transmitted to the news media, who previously requested such notice, and a copy was posted in the main/front office window of the Cypress-Fairbanks Independent School District Mark Henry, Ed.D. Administration Building.</span>
+                                            </div>
+                                    </td>
+                                    <td>
+                                        <div><span id='location24192-759097-description'>Boardroom of the Mark Henry, Ed.D. Administration Building</span><br /><span id='location24192-759097-line1'>11440 Matzke Road</span><br /><span id='location24192-759097-csz'>Cypress, Texas 77429</span>&nbsp;<span class='nowrap'>[<a href='https://maps.google.com/?q=11440+Matzke+Road%2c+Cypress%2c+Texas+77429' target='_blank' class='nowrap' aria-describedby='location24192-759097-description location24192-759097-line1 location24192-759097-csz'><i class='fa fa-globe'></i> map it</a>]</span></div>
+                                            <div class="margin-top-10">
+                                                <a href="https://www.youtube.com/watch?v=9YHE9-8n3hQ">
+                                                    Recorded Meeting URL
+                                                </a>
+                                            </div>
+                                    </td>
+                                    <td class="nowrap">
+                                        <ul class="list-unstyled">
+                                                <li>
+                                                    <a href="/Public/Agenda/668?meeting=759097">Agenda</a>
+                                                </li>
+                                                <li>
+                                                    <a href="/Public/Minutes/668?meeting=759097">Minutes</a>
+                                                </li>
+                                        </ul>
+
+                                    
+                                    </td>
+                                </tr>
+                                <tr class=" row-for-board">
+                                    <td>
+                                        <div>
+                                            August 10, 2026 at 6:00 PM - ADDENDUM
+                                        </div>
+                                        <div class="margin-top-10">
+                                            <b class="important-page-text">Meeting Type:</b>
+Regular                                        </div>
+                                            <div class="margin-top-10 checkForUrls">
+                                                <span style="font-size:10px">On August 3, 2026, at 12:00 p.m., this notice was mailed or electronically transmitted to the news media, who previously requested such notice, and a copy was posted in the main/front office window of the Cypress-Fairbanks Independent School District Mark Henry, Ed.D. Administration Building.</span>
+                                            </div>
+                                    </td>
+                                    <td>
+                                        <div><span id='location24192-759250-description'>Boardroom of the Mark Henry, Ed.D. Administration Building</span><br /><span id='location24192-759250-line1'>11440 Matzke Road</span><br /><span id='location24192-759250-csz'>Cypress, Texas 77429</span>&nbsp;<span class='nowrap'>[<a href='https://maps.google.com/?q=11440+Matzke+Road%2c+Cypress%2c+Texas+77429' target='_blank' class='nowrap' aria-describedby='location24192-759250-description location24192-759250-line1 location24192-759250-csz'><i class='fa fa-globe'></i> map it</a>]</span></div>
+                                    </td>
+                                    <td class="nowrap">
+                                        <ul class="list-unstyled">
+                                                <li>
+                                                    <a href="/Public/Agenda/668?meeting=759250">Agenda</a>
+                                                </li>
+                                        </ul>
+
+                                    
+                                    </td>
+                                </tr>
+                                <tr class=" row-for-board">
+                                    <td>
+                                        <div>
+                                            August 6, 2026 at 6:00 PM - Board Work Session
+                                        </div>
+                                        <div class="margin-top-10">
+                                            <b class="important-page-text">Meeting Type:</b>
+Working                                        </div>
+                                            <div class="margin-top-10 checkForUrls">
+                                                <span style="font-size:10px">On August 3, 2026, 7:30 a.m., this notice was mailed or electronically transmitted to the news media, who previously requested such notice, and a copy was posted in the main/front office window of the Cypress-Fairbanks Independent School District Mark Henry, Ed.D. Administration Building.</span>
+                                            </div>
+                                    </td>
+                                    <td>
+                                        <div><span id='location24192-752628-description'>Boardroom of the Mark Henry, Ed.D. Administration Building</span><br /><span id='location24192-752628-line1'>11440 Matzke Road</span><br /><span id='location24192-752628-csz'>Cypress, Texas 77429</span>&nbsp;<span class='nowrap'>[<a href='https://maps.google.com/?q=11440+Matzke+Road%2c+Cypress%2c+Texas+77429' target='_blank' class='nowrap' aria-describedby='location24192-752628-description location24192-752628-line1 location24192-752628-csz'><i class='fa fa-globe'></i> map it</a>]</span></div>
+                                            <div class="margin-top-10">
+                                                <a href="https://www.youtube.com/watch?v=E4nktjr9DSc">
+                                                    Recorded Meeting URL
+                                                </a>
+                                            </div>
+                                    </td>
+                                    <td class="nowrap">
+                                        <ul class="list-unstyled">
+                                                <li>
+                                                    <a href="/Public/Agenda/668?meeting=752628">Agenda</a>
+                                                </li>
+                                                <li>
+                                                    <a href="/Public/Minutes/668?meeting=752628">Minutes</a>
+                                                </li>
+                                        </ul>
+
+                                    
+                                    </td>
+                                </tr>
+                                <tr class=" row-for-board">
+                                    <td>
+                                        <div>
+                                            June 22, 2026 at 6:00 PM - Regular Board Meeting
+                                        </div>
+                                        <div class="margin-top-10">
+                                            <b class="important-page-text">Meeting Type:</b>
+Regular                                        </div>
+                                            <div class="margin-top-10 checkForUrls">
+                                                <span style="font-size:10px">On June 15, 2026, at 7:30 a.m., this notice was mailed or electronically transmitted to the news media, who previously requested such notice, and a copy was posted in the main/front office window of the Cypress-Fairbanks Independent School District Mark Henry, Ed.D. Administration Building.</span>
+                                            </div>
+                                    </td>
+                                    <td>
+                                        <div><span id='location24192-751173-description'>Boardroom of the Mark Henry, Ed.D. Administration Building</span><br /><span id='location24192-751173-line1'>11440 Matzke Road</span><br /><span id='location24192-751173-csz'>Cypress, Texas 77429</span>&nbsp;<span class='nowrap'>[<a href='https://maps.google.com/?q=11440+Matzke+Road%2c+Cypress%2c+Texas+77429' target='_blank' class='nowrap' aria-describedby='location24192-751173-description location24192-751173-line1 location24192-751173-csz'><i class='fa fa-globe'></i> map it</a>]</span></div>
+                                            <div class="margin-top-10">
+                                                <a href="https://www.youtube.com/watch?v=gPEp5DG0KSs">
+                                                    Recorded Meeting URL
+                                                </a>
+                                            </div>
+                                    </td>
+                                    <td class="nowrap">
+                                        <ul class="list-unstyled">
+                                                <li>
+                                                    <a href="/Public/Agenda/668?meeting=751173">Agenda</a>
+                                                </li>
+                                                <li>
+                                                    <a href="/Public/Minutes/668?meeting=751173">Minutes</a>
+                                                </li>
+                                        </ul>
+
+                                    
+                                    </td>
+                                </tr>
+                                <tr class=" row-for-board">
+                                    <td>
+                                        <div>
+                                            June 18, 2026 at 6:00 PM - Board Work Session
+                                        </div>
+                                        <div class="margin-top-10">
+                                            <b class="important-page-text">Meeting Type:</b>
+Working                                        </div>
+                                            <div class="margin-top-10 checkForUrls">
+                                                <span style="font-size:10px">On June 15, 2026, 7:30 a.m., this notice was mailed or electronically transmitted to the news media, who previously requested such notice, and a copy was posted in the main/front office window of the Cypress-Fairbanks Independent School District Mark Henry, Ed.D. Administration Building.</span>
+                                            </div>
+                                    </td>
+                                    <td>
+                                        <div><span id='location24192-745667-description'>Boardroom of the Mark Henry, Ed.D. Administration Building</span><br /><span id='location24192-745667-line1'>11440 Matzke Road</span><br /><span id='location24192-745667-csz'>Cypress, Texas 77429</span>&nbsp;<span class='nowrap'>[<a href='https://maps.google.com/?q=11440+Matzke+Road%2c+Cypress%2c+Texas+77429' target='_blank' class='nowrap' aria-describedby='location24192-745667-description location24192-745667-line1 location24192-745667-csz'><i class='fa fa-globe'></i> map it</a>]</span></div>
+                                            <div class="margin-top-10">
+                                                <a href="https://www.youtube.com/watch?v=cL8eht7C8Cg">
+                                                    Recorded Meeting URL
+                                                </a>
+                                            </div>
+                                    </td>
+                                    <td class="nowrap">
+                                        <ul class="list-unstyled">
+                                                <li>
+                                                    <a href="/Public/Agenda/668?meeting=745667">Agenda</a>
+                                                </li>
+                                                <li>
+                                                    <a href="/Public/Minutes/668?meeting=745667">Minutes</a>
+                                                </li>
+                                        </ul>
+
+                                    
+                                    </td>
+                                </tr>
+                                <tr class=" row-for-board">
+                                    <td>
+                                        <div>
+                                            May 21, 2026 at 5:00 PM - Special-Called Board Meeting
+                                        </div>
+                                        <div class="margin-top-10">
+                                            <b class="important-page-text">Meeting Type:</b>
+Special                                        </div>
+                                            <div class="margin-top-10 checkForUrls">
+                                                <span style="font-size:10px">On May 18, 2026, at 7:30 a.m., this notice was mailed or electronically transmitted to the news media, who previously requested such notice, and a copy was posted in the main/front office window of the Cypress-Fairbanks Independent School District Mark Henry, Ed.D. Administration Building.</span>
+                                            </div>
+                                    </td>
+                                    <td>
+                                        <div><span id='location24192-746497-description'>Boardroom of the Mark Henry, Ed.D. Administration Building</span><br /><span id='location24192-746497-line1'>11440 Matzke Road</span><br /><span id='location24192-746497-csz'>Cypress, Texas 77429</span>&nbsp;<span class='nowrap'>[<a href='https://maps.google.com/?q=11440+Matzke+Road%2c+Cypress%2c+Texas+77429' target='_blank' class='nowrap' aria-describedby='location24192-746497-description location24192-746497-line1 location24192-746497-csz'><i class='fa fa-globe'></i> map it</a>]</span></div>
+                                            <div class="margin-top-10">
+                                                <a href="https://www.youtube.com/watch?v=if8c4Ysg5ro">
+                                                    Recorded Meeting URL
+                                                </a>
+                                            </div>
+                                    </td>
+                                    <td class="nowrap">
+                                        <ul class="list-unstyled">
+                                                <li>
+                                                    <a href="/Public/Agenda/668?meeting=746497">Agenda</a>
+                                                </li>
+                                                <li>
+                                                    <a href="/Public/Minutes/668?meeting=746497">Minutes</a>
+                                                </li>
+                                        </ul>
+
+                                    
+                                    </td>
+                                </tr>
+                                <tr class=" row-for-board">
+                                    <td>
+                                        <div>
+                                            May 11, 2026 at 6:00 PM - Regular Board Meeting
+                                        </div>
+                                        <div class="margin-top-10">
+                                            <b class="important-page-text">Meeting Type:</b>
+Regular                                        </div>
+                                            <div class="margin-top-10 checkForUrls">
+                                                <span style="font-size:10px">On May 4, 2026, at 7:30 a.m., this notice was mailed or electronically transmitted to the news media, who previously requested such notice, and a copy was posted in the main/front office window of the Cypress-Fairbanks Independent School District Mark Henry, Ed.D. Administration Building.</span>
+                                            </div>
+                                    </td>
+                                    <td>
+                                        <div><span id='location24192-744061-description'>Boardroom of the Mark Henry, Ed.D. Administration Building</span><br /><span id='location24192-744061-line1'>11440 Matzke Road</span><br /><span id='location24192-744061-csz'>Cypress, Texas 77429</span>&nbsp;<span class='nowrap'>[<a href='https://maps.google.com/?q=11440+Matzke+Road%2c+Cypress%2c+Texas+77429' target='_blank' class='nowrap' aria-describedby='location24192-744061-description location24192-744061-line1 location24192-744061-csz'><i class='fa fa-globe'></i> map it</a>]</span></div>
+                                            <div class="margin-top-10">
+                                                <a href="https://www.youtube.com/watch?v=wRC-R85n_mc">
+                                                    Recorded Meeting URL
+                                                </a>
+                                            </div>
+                                    </td>
+                                    <td class="nowrap">
+                                        <ul class="list-unstyled">
+                                                <li>
+                                                    <a href="/Public/Agenda/668?meeting=744061">Agenda</a>
+                                                </li>
+                                                <li>
+                                                    <a href="/Public/Minutes/668?meeting=744061">Minutes</a>
+                                                </li>
+                                        </ul>
+
+                                    
+                                    </td>
+                                </tr>
+                                <tr class=" row-for-board">
+                                    <td>
+                                        <div>
+                                            May 7, 2026 at 6:00 PM - Board Work Session
+                                        </div>
+                                        <div class="margin-top-10">
+                                            <b class="important-page-text">Meeting Type:</b>
+Working                                        </div>
+                                            <div class="margin-top-10 checkForUrls">
+                                                <span style="font-size:10px">On May 4, 2026, 7:30 a.m., this notice was mailed or electronically transmitted to the news media, who previously requested such notice, and a copy was posted in the main/front office window of the Cypress-Fairbanks Independent School District Mark Henry, Ed.D. Administration Building.</span>
+                                            </div>
+                                    </td>
+                                    <td>
+                                        <div><span id='location24192-741402-description'>Boardroom of the Mark Henry, Ed.D. Administration Building</span><br /><span id='location24192-741402-line1'>11440 Matzke Road</span><br /><span id='location24192-741402-csz'>Cypress, Texas 77429</span>&nbsp;<span class='nowrap'>[<a href='https://maps.google.com/?q=11440+Matzke+Road%2c+Cypress%2c+Texas+77429' target='_blank' class='nowrap' aria-describedby='location24192-741402-description location24192-741402-line1 location24192-741402-csz'><i class='fa fa-globe'></i> map it</a>]</span></div>
+                                            <div class="margin-top-10">
+                                                <a href="https://www.youtube.com/watch?v=z4pQBNz-pXM">
+                                                    Recorded Meeting URL
+                                                </a>
+                                            </div>
+                                    </td>
+                                    <td class="nowrap">
+                                        <ul class="list-unstyled">
+                                                <li>
+                                                    <a href="/Public/Agenda/668?meeting=741402">Agenda</a>
+                                                </li>
+                                                <li>
+                                                    <a href="/Public/Minutes/668?meeting=741402">Minutes</a>
+                                                </li>
+                                        </ul>
+
+                                    
+                                    </td>
+                                </tr>
+                                <tr class=" row-for-board">
+                                    <td>
+                                        <div>
+                                            April 13, 2026 at 6:00 PM - Regular Board Meeting
+                                        </div>
+                                        <div class="margin-top-10">
+                                            <b class="important-page-text">Meeting Type:</b>
+Regular                                        </div>
+                                            <div class="margin-top-10 checkForUrls">
+                                                <span style="font-size:10px">On April 6, 2026, at 7:30 a.m., this notice was mailed or electronically transmitted to the news media, who previously requested such notice, and a copy was posted in the main/front office window of the Cypress-Fairbanks Independent School District Mark Henry, Ed.D. Administration Building.</span>
+                                            </div>
+                                    </td>
+                                    <td>
+                                        <div><span id='location24192-739356-description'>Boardroom of the Mark Henry, Ed.D. Administration Building</span><br /><span id='location24192-739356-line1'>11440 Matzke Road</span><br /><span id='location24192-739356-csz'>Cypress, Texas 77429</span>&nbsp;<span class='nowrap'>[<a href='https://maps.google.com/?q=11440+Matzke+Road%2c+Cypress%2c+Texas+77429' target='_blank' class='nowrap' aria-describedby='location24192-739356-description location24192-739356-line1 location24192-739356-csz'><i class='fa fa-globe'></i> map it</a>]</span></div>
+                                            <div class="margin-top-10">
+                                                <a href="https://www.youtube.com/watch?v=NMT9HgaBC78">
+                                                    Recorded Meeting URL
+                                                </a>
+                                            </div>
+                                    </td>
+                                    <td class="nowrap">
+                                        <ul class="list-unstyled">
+                                                <li>
+                                                    <a href="/Public/Agenda/668?meeting=739356">Agenda</a>
+                                                </li>
+                                                <li>
+                                                    <a href="/Public/Minutes/668?meeting=739356">Minutes</a>
+                                                </li>
+                                        </ul>
+
+                                    
+                                    </td>
+                                </tr>
+                                <tr class=" row-for-board">
+                                    <td>
+                                        <div>
+                                            April 9, 2026 at 6:00 PM - Board Work Session
+                                        </div>
+                                        <div class="margin-top-10">
+                                            <b class="important-page-text">Meeting Type:</b>
+Working                                        </div>
+                                            <div class="margin-top-10 checkForUrls">
+                                                <span style="font-size:10px">On April 6, 7:30 a.m., this notice was mailed or electronically transmitted to the news media, who previously requested such notice, and a copy was posted in the main/front office window of the Cypress-Fairbanks Independent School District Mark Henry, Ed.D. Administration Building.</span>
+                                            </div>
+                                    </td>
+                                    <td>
+                                        <div><span id='location24192-735154-description'>Boardroom of the Mark Henry, Ed.D. Administration Building</span><br /><span id='location24192-735154-line1'>11440 Matzke Road</span><br /><span id='location24192-735154-csz'>Cypress, Texas 77429</span>&nbsp;<span class='nowrap'>[<a href='https://maps.google.com/?q=11440+Matzke+Road%2c+Cypress%2c+Texas+77429' target='_blank' class='nowrap' aria-describedby='location24192-735154-description location24192-735154-line1 location24192-735154-csz'><i class='fa fa-globe'></i> map it</a>]</span></div>
+                                            <div class="margin-top-10">
+                                                <a href="https://www.youtube.com/watch?v=no1_IUA3LCg">
+                                                    Recorded Meeting URL
+                                                </a>
+                                            </div>
+                                    </td>
+                                    <td class="nowrap">
+                                        <ul class="list-unstyled">
+                                                <li>
+                                                    <a href="/Public/Agenda/668?meeting=735154">Agenda</a>
+                                                </li>
+                                                <li>
+                                                    <a href="/Public/Minutes/668?meeting=735154">Minutes</a>
+                                                </li>
+                                        </ul>
+
+                                    
+                                    </td>
+                                </tr>
+                                <tr class=" row-for-board">
+                                    <td>
+                                        <div>
+                                            March 25, 2026 at 5:00 PM - Special-Called Board Meeting
+                                        </div>
+                                        <div class="margin-top-10">
+                                            <b class="important-page-text">Meeting Type:</b>
+Special                                        </div>
+                                            <div class="margin-top-10 checkForUrls">
+                                                <span style="font-size:10px">On March 20, 2026, at 7:30 a.m., this notice was mailed or electronically transmitted to the news media, who previously requested such notice, and a copy was posted in the main/front office window of the Cypress-Fairbanks Independent School District Mark Henry, Ed.D. Administration Building.</span>
+                                            </div>
+                                    </td>
+                                    <td>
+                                        <div><span id='location24192-736737-description'>Boardroom of the Mark Henry, Ed.D. Administration Building</span><br /><span id='location24192-736737-line1'>11440 Matzke Road</span><br /><span id='location24192-736737-csz'>Cypress, Texas 77429</span>&nbsp;<span class='nowrap'>[<a href='https://maps.google.com/?q=11440+Matzke+Road%2c+Cypress%2c+Texas+77429' target='_blank' class='nowrap' aria-describedby='location24192-736737-description location24192-736737-line1 location24192-736737-csz'><i class='fa fa-globe'></i> map it</a>]</span></div>
+                                            <div class="margin-top-10">
+                                                <a href="https://www.youtube.com/watch?v=C5LyOPQnFcc">
+                                                    Recorded Meeting URL
+                                                </a>
+                                            </div>
+                                    </td>
+                                    <td class="nowrap">
+                                        <ul class="list-unstyled">
+                                                <li>
+                                                    <a href="/Public/Agenda/668?meeting=736737">Agenda</a>
+                                                </li>
+                                                <li>
+                                                    <a href="/Public/Minutes/668?meeting=736737">Minutes</a>
+                                                </li>
+                                        </ul>
+
+                                    
+                                    </td>
+                                </tr>
+                                <tr class=" row-for-board">
+                                    <td>
+                                        <div>
+                                            March 2, 2026 at 6:00 PM - Regular Board Meeting
+                                        </div>
+                                        <div class="margin-top-10">
+                                            <b class="important-page-text">Meeting Type:</b>
+Regular                                        </div>
+                                            <div class="margin-top-10 checkForUrls">
+                                                <span style="font-size:10px">On February 25, 2026, at 7:30 a.m., this notice was mailed or electronically transmitted to the news media, who previously requested such notice, and a copy was posted in the main/front office window of the Cypress-Fairbanks Independent School District Mark Henry, Ed.D. Administration Building.</span>
+                                            </div>
+                                    </td>
+                                    <td>
+                                        <div><span id='location24192-731926-description'>Boardroom of the Mark Henry, Ed.D. Administration Building</span><br /><span id='location24192-731926-line1'>11440 Matzke Road</span><br /><span id='location24192-731926-csz'>Cypress, Texas 77429</span>&nbsp;<span class='nowrap'>[<a href='https://maps.google.com/?q=11440+Matzke+Road%2c+Cypress%2c+Texas+77429' target='_blank' class='nowrap' aria-describedby='location24192-731926-description location24192-731926-line1 location24192-731926-csz'><i class='fa fa-globe'></i> map it</a>]</span></div>
+                                            <div class="margin-top-10">
+                                                <a href="https://www.youtube.com/watch?v=6bP1tgDK6GQ">
+                                                    Recorded Meeting URL
+                                                </a>
+                                            </div>
+                                    </td>
+                                    <td class="nowrap">
+                                        <ul class="list-unstyled">
+                                                <li>
+                                                    <a href="/Public/Agenda/668?meeting=731926">Agenda</a>
+                                                </li>
+                                                <li>
+                                                    <a href="/Public/Minutes/668?meeting=731926">Minutes</a>
+                                                </li>
+                                        </ul>
+
+                                    
+                                    </td>
+                                </tr>
+                                <tr class=" row-for-board">
+                                    <td>
+                                        <div>
+                                            February 17, 2026 at 5:00 PM - Special-Called Board Meeting
+                                        </div>
+                                        <div class="margin-top-10">
+                                            <b class="important-page-text">Meeting Type:</b>
+Special                                        </div>
+                                            <div class="margin-top-10 checkForUrls">
+                                                <span style="font-size:10px">On February 12, 2026, at 7:30 a.m., this notice was mailed or electronically transmitted to the news media, who previously requested such notice, and a copy was posted in the main/front office window of the Cypress-Fairbanks Independent School District Mark Henry, Ed.D. Administration Building.</span>
+                                            </div>
+                                    </td>
+                                    <td>
+                                        <div><span id='location24192-731941-description'>Boardroom of the Mark Henry, Ed.D. Administration Building</span><br /><span id='location24192-731941-line1'>11440 Matzke Road</span><br /><span id='location24192-731941-csz'>Cypress, Texas 77429</span>&nbsp;<span class='nowrap'>[<a href='https://maps.google.com/?q=11440+Matzke+Road%2c+Cypress%2c+Texas+77429' target='_blank' class='nowrap' aria-describedby='location24192-731941-description location24192-731941-line1 location24192-731941-csz'><i class='fa fa-globe'></i> map it</a>]</span></div>
+                                    </td>
+                                    <td class="nowrap">
+                                        <ul class="list-unstyled">
+                                                <li>
+                                                    <a href="/Public/Agenda/668?meeting=731941">Agenda</a>
+                                                </li>
+                                                <li>
+                                                    <a href="/Public/Minutes/668?meeting=731941">Minutes</a>
+                                                </li>
+                                        </ul>
+
+                                    
+                                    </td>
+                                </tr>
+                                <tr class=" row-for-board">
+                                    <td>
+                                        <div>
+                                            February 9, 2026 at 6:00 PM - Regular Board Meeting
+                                        </div>
+                                        <div class="margin-top-10">
+                                            <b class="important-page-text">Meeting Type:</b>
+Regular                                        </div>
+                                            <div class="margin-top-10 checkForUrls">
+                                                <span style="font-size:10px">On February 2, 2026, at 7:30 a.m., this notice was mailed or electronically transmitted to the news media, who previously requested such notice, and a copy was posted in the main/front office window of the Cypress-Fairbanks Independent School District Mark Henry, Ed.D. Administration Building.</span>
+                                            </div>
+                                    </td>
+                                    <td>
+                                        <div><span id='location24192-729875-description'>Boardroom of the Mark Henry, Ed.D. Administration Building</span><br /><span id='location24192-729875-line1'>11440 Matzke Road</span><br /><span id='location24192-729875-csz'>Cypress, Texas 77429</span>&nbsp;<span class='nowrap'>[<a href='https://maps.google.com/?q=11440+Matzke+Road%2c+Cypress%2c+Texas+77429' target='_blank' class='nowrap' aria-describedby='location24192-729875-description location24192-729875-line1 location24192-729875-csz'><i class='fa fa-globe'></i> map it</a>]</span></div>
+                                            <div class="margin-top-10">
+                                                <a href="https://www.youtube.com/watch?v=sn6au2V0GCo">
+                                                    Recorded Meeting URL
+                                                </a>
+                                            </div>
+                                    </td>
+                                    <td class="nowrap">
+                                        <ul class="list-unstyled">
+                                                <li>
+                                                    <a href="/Public/Agenda/668?meeting=729875">Agenda</a>
+                                                </li>
+                                                <li>
+                                                    <a href="/Public/Minutes/668?meeting=729875">Minutes</a>
+                                                </li>
+                                        </ul>
+
+                                    
+                                    </td>
+                                </tr>
+                                <tr class=" row-for-board">
+                                    <td>
+                                        <div>
+                                            February 9, 2026 at 6:00 PM - ADDENDUM
+                                        </div>
+                                        <div class="margin-top-10">
+                                            <b class="important-page-text">Meeting Type:</b>
+Regular                                        </div>
+                                            <div class="margin-top-10 checkForUrls">
+                                                <span style="font-size:10px">On February 4, 2026,, at 7:30 a.m., this notice was mailed or electronically transmitted to the news media, who previously requested such notice, and a copy was posted in the main/front office window of the Cypress-Fairbanks Independent School District Mark Henry, Ed.D. Administration Building.</span>
+                                            </div>
+                                    </td>
+                                    <td>
+                                        <div><span id='location24192-730515-description'>Boardroom of the Mark Henry, Ed.D. Administration Building</span><br /><span id='location24192-730515-line1'>11440 Matzke Road</span><br /><span id='location24192-730515-csz'>Cypress, Texas 77429</span>&nbsp;<span class='nowrap'>[<a href='https://maps.google.com/?q=11440+Matzke+Road%2c+Cypress%2c+Texas+77429' target='_blank' class='nowrap' aria-describedby='location24192-730515-description location24192-730515-line1 location24192-730515-csz'><i class='fa fa-globe'></i> map it</a>]</span></div>
+                                    </td>
+                                    <td class="nowrap">
+                                        <ul class="list-unstyled">
+                                                <li>
+                                                    <a href="/Public/Agenda/668?meeting=730515">Agenda</a>
+                                                </li>
+                                        </ul>
+
+                                    
+                                    </td>
+                                </tr>
+                                <tr class=" row-for-board">
+                                    <td>
+                                        <div>
+                                            February 5, 2026 at 6:00 PM - Board Work Session
+                                        </div>
+                                        <div class="margin-top-10">
+                                            <b class="important-page-text">Meeting Type:</b>
+Working                                        </div>
+                                            <div class="margin-top-10 checkForUrls">
+                                                <span style="font-size:10px">On February 2, 2026, 7:30 a.m., this notice was mailed or electronically transmitted to the news media, who previously requested such notice, and a copy was posted in the main/front office window of the Cypress-Fairbanks Independent School District Mark Henry, Ed.D. Administration Building.</span>
+                                            </div>
+                                    </td>
+                                    <td>
+                                        <div><span id='location24192-728051-description'>Boardroom of the Mark Henry, Ed.D. Administration Building</span><br /><span id='location24192-728051-line1'>11440 Matzke Road</span><br /><span id='location24192-728051-csz'>Cypress, Texas 77429</span>&nbsp;<span class='nowrap'>[<a href='https://maps.google.com/?q=11440+Matzke+Road%2c+Cypress%2c+Texas+77429' target='_blank' class='nowrap' aria-describedby='location24192-728051-description location24192-728051-line1 location24192-728051-csz'><i class='fa fa-globe'></i> map it</a>]</span></div>
+                                            <div class="margin-top-10">
+                                                <a href="https://www.youtube.com/watch?v=6xbK4kz5ets">
+                                                    Recorded Meeting URL
+                                                </a>
+                                            </div>
+                                    </td>
+                                    <td class="nowrap">
+                                        <ul class="list-unstyled">
+                                                <li>
+                                                    <a href="/Public/Agenda/668?meeting=728051">Agenda</a>
+                                                </li>
+                                                <li>
+                                                    <a href="/Public/Minutes/668?meeting=728051">Minutes</a>
+                                                </li>
+                                        </ul>
+
+                                    
+                                    </td>
+                                </tr>
+                                <tr class=" row-for-board">
+                                    <td>
+                                        <div>
+                                            January 15, 2026 at 6:00 PM - Regular Board Meeting
+                                        </div>
+                                        <div class="margin-top-10">
+                                            <b class="important-page-text">Meeting Type:</b>
+Regular                                        </div>
+                                            <div class="margin-top-10 checkForUrls">
+                                                <span style="font-size:10px">On January 7, 2026, at 7:30 a.m., this notice was mailed or electronically transmitted to the news media, who previously requested such notice, and a copy was posted in the main/front office window of the Cypress-Fairbanks Independent School District Mark Henry, Ed.D. Administration Building.</span>
+                                            </div>
+                                    </td>
+                                    <td>
+                                        <div><span id='location24192-725664-description'>Boardroom of the Mark Henry, Ed.D. Administration Building</span><br /><span id='location24192-725664-line1'>11440 Matzke Road</span><br /><span id='location24192-725664-csz'>Cypress, Texas 77429</span>&nbsp;<span class='nowrap'>[<a href='https://maps.google.com/?q=11440+Matzke+Road%2c+Cypress%2c+Texas+77429' target='_blank' class='nowrap' aria-describedby='location24192-725664-description location24192-725664-line1 location24192-725664-csz'><i class='fa fa-globe'></i> map it</a>]</span></div>
+                                            <div class="margin-top-10">
+                                                <a href="https://www.youtube.com/watch?v=4077WR5aok4">
+                                                    Recorded Meeting URL
+                                                </a>
+                                            </div>
+                                    </td>
+                                    <td class="nowrap">
+                                        <ul class="list-unstyled">
+                                                <li>
+                                                    <a href="/Public/Agenda/668?meeting=725664">Agenda</a>
+                                                </li>
+                                                <li>
+                                                    <a href="/Public/Minutes/668?meeting=725664">Minutes</a>
+                                                </li>
+                                        </ul>
+
+                                    
+                                    </td>
+                                </tr>
+                                <tr class=" row-for-board">
+                                    <td>
+                                        <div>
+                                            January 12, 2026 at 6:00 PM - Board Work Session
+                                        </div>
+                                        <div class="margin-top-10">
+                                            <b class="important-page-text">Meeting Type:</b>
+Working                                        </div>
+                                            <div class="margin-top-10 checkForUrls">
+                                                <span style="font-size:10px">On January 7, 2026, 7:30 a.m., this notice was mailed or electronically transmitted to the news media, who previously requested such notice, and a copy was posted in the main/front office window of the Cypress-Fairbanks Independent School District Mark Henry, Ed.D. Administration Building.</span>
+                                            </div>
+                                    </td>
+                                    <td>
+                                        <div><span id='location24192-723384-description'>Boardroom of the Mark Henry, Ed.D. Administration Building</span><br /><span id='location24192-723384-line1'>11440 Matzke Road</span><br /><span id='location24192-723384-csz'>Cypress, Texas 77429</span>&nbsp;<span class='nowrap'>[<a href='https://maps.google.com/?q=11440+Matzke+Road%2c+Cypress%2c+Texas+77429' target='_blank' class='nowrap' aria-describedby='location24192-723384-description location24192-723384-line1 location24192-723384-csz'><i class='fa fa-globe'></i> map it</a>]</span></div>
+                                            <div class="margin-top-10">
+                                                <a href="https://www.youtube.com/watch?v=xtmf1HkLIMs">
+                                                    Recorded Meeting URL
+                                                </a>
+                                            </div>
+                                    </td>
+                                    <td class="nowrap">
+                                        <ul class="list-unstyled">
+                                                <li>
+                                                    <a href="/Public/Agenda/668?meeting=723384">Agenda</a>
+                                                </li>
+                                                <li>
+                                                    <a href="/Public/Minutes/668?meeting=723384">Minutes</a>
+                                                </li>
+                                        </ul>
+
+                                    
+                                    </td>
+                                </tr>
+                                <tr class=" row-for-board">
+                                    <td>
+                                        <div>
+                                            January 6, 2026 at 5:00 PM - Special-Called Board Meeting
+                                        </div>
+                                        <div class="margin-top-10">
+                                            <b class="important-page-text">Meeting Type:</b>
+Special                                        </div>
+                                            <div class="margin-top-10 checkForUrls">
+                                                <span style="font-size:10px">On December 29, 2025, at 7:30 a.m., this notice was mailed or electronically transmitted to the news media, who previously requested such notice, and a copy was posted in the main/front office window of the Cypress-Fairbanks Independent School District Mark Henry, Ed.D. Administration Building.</span>
+                                            </div>
+                                    </td>
+                                    <td>
+                                        <div><span id='location24192-724117-description'>Boardroom of the Mark Henry, Ed.D. Administration Building</span><br /><span id='location24192-724117-line1'>11440 Matzke Road</span><br /><span id='location24192-724117-csz'>Cypress, Texas 77429</span>&nbsp;<span class='nowrap'>[<a href='https://maps.google.com/?q=11440+Matzke+Road%2c+Cypress%2c+Texas+77429' target='_blank' class='nowrap' aria-describedby='location24192-724117-description location24192-724117-line1 location24192-724117-csz'><i class='fa fa-globe'></i> map it</a>]</span></div>
+                                    </td>
+                                    <td class="nowrap">
+                                        <ul class="list-unstyled">
+                                                <li>
+                                                    <a href="/Public/Agenda/668?meeting=724117">Agenda</a>
+                                                </li>
+                                                <li>
+                                                    <a href="/Public/Minutes/668?meeting=724117">Minutes</a>
+                                                </li>
+                                        </ul>
+
+                                    
+                                    </td>
+                                </tr>
+                                <tr class=" row-for-board">
+                                    <td>
+                                        <div>
+                                            December 15, 2025 at 6:00 PM - Regular Board Meeting
+                                        </div>
+                                        <div class="margin-top-10">
+                                            <b class="important-page-text">Meeting Type:</b>
+Regular                                        </div>
+                                            <div class="margin-top-10 checkForUrls">
+                                                <span style="font-size:10px">On December 8, 2025, at 7:30 a.m., this notice was mailed or electronically transmitted to the news media, who previously requested such notice, and a copy was posted in the main/front office window of the Cypress-Fairbanks Independent School District Mark Henry, Ed.D. Administration Building.</span>
+                                            </div>
+                                    </td>
+                                    <td>
+                                        <div><span id='location24192-722190-description'>Boardroom of the Mark Henry, Ed.D. Administration Building</span><br /><span id='location24192-722190-line1'>11440 Matzke Road</span><br /><span id='location24192-722190-csz'>Cypress, Texas 77429</span>&nbsp;<span class='nowrap'>[<a href='https://maps.google.com/?q=11440+Matzke+Road%2c+Cypress%2c+Texas+77429' target='_blank' class='nowrap' aria-describedby='location24192-722190-description location24192-722190-line1 location24192-722190-csz'><i class='fa fa-globe'></i> map it</a>]</span></div>
+                                            <div class="margin-top-10">
+                                                <a href="https://www.youtube.com/watch?v=-CupK05BI3I">
+                                                    Recorded Meeting URL
+                                                </a>
+                                            </div>
+                                    </td>
+                                    <td class="nowrap">
+                                        <ul class="list-unstyled">
+                                                <li>
+                                                    <a href="/Public/Agenda/668?meeting=722190">Agenda</a>
+                                                </li>
+                                                <li>
+                                                    <a href="/Public/Minutes/668?meeting=722190">Minutes</a>
+                                                </li>
+                                        </ul>
+
+                                    
+                                    </td>
+                                </tr>
+                                <tr class=" row-for-board">
+                                    <td>
+                                        <div>
+                                            December 11, 2025 at 6:00 PM - Board Work Session
+                                        </div>
+                                        <div class="margin-top-10">
+                                            <b class="important-page-text">Meeting Type:</b>
+Working                                        </div>
+                                            <div class="margin-top-10 checkForUrls">
+                                                <span style="font-size:10px">On October 23, 2025, 7:30 a.m., this notice was mailed or electronically transmitted to the news media, who previously requested such notice, and a copy was posted in the main/front office window of the Cypress-Fairbanks Independent School District Mark Henry, Ed.D. Administration Building.</span>
+                                            </div>
+                                    </td>
+                                    <td>
+                                        <div><span id='location24192-718439-description'>Boardroom of the Mark Henry, Ed.D. Administration Building</span><br /><span id='location24192-718439-line1'>11440 Matzke Road</span><br /><span id='location24192-718439-csz'>Cypress, Texas 77429</span>&nbsp;<span class='nowrap'>[<a href='https://maps.google.com/?q=11440+Matzke+Road%2c+Cypress%2c+Texas+77429' target='_blank' class='nowrap' aria-describedby='location24192-718439-description location24192-718439-line1 location24192-718439-csz'><i class='fa fa-globe'></i> map it</a>]</span></div>
+                                            <div class="margin-top-10">
+                                                <a href="https://www.youtube.com/watch?v=pg1qbeI0OHg">
+                                                    Recorded Meeting URL
+                                                </a>
+                                            </div>
+                                    </td>
+                                    <td class="nowrap">
+                                        <ul class="list-unstyled">
+                                                <li>
+                                                    <a href="/Public/Agenda/668?meeting=718439">Agenda</a>
+                                                </li>
+                                                <li>
+                                                    <a href="/Public/Minutes/668?meeting=718439">Minutes</a>
+                                                </li>
+                                        </ul>
+
+                                    
+                                    </td>
+                                </tr>
+                                <tr class=" row-for-board">
+                                    <td>
+                                        <div>
+                                            November 17, 2025 at 5:00 PM - Special-Called Board Meeting
+                                        </div>
+                                        <div class="margin-top-10">
+                                            <b class="important-page-text">Meeting Type:</b>
+Special                                        </div>
+                                            <div class="margin-top-10 checkForUrls">
+                                                <span style="font-size:10px">On November 12, 2025, at 7:30 a.m., this notice was mailed or electronically transmitted to the news media, who previously requested such notice, and a copy was posted in the main/front office window of the Cypress-Fairbanks Independent School District Mark Henry, Ed.D. Administration Building.</span>
+                                            </div>
+                                    </td>
+                                    <td>
+                                        <div><span id='location24192-718479-description'>Boardroom of the Mark Henry, Ed.D. Administration Building</span><br /><span id='location24192-718479-line1'>11440 Matzke Road</span><br /><span id='location24192-718479-csz'>Cypress, Texas 77429</span>&nbsp;<span class='nowrap'>[<a href='https://maps.google.com/?q=11440+Matzke+Road%2c+Cypress%2c+Texas+77429' target='_blank' class='nowrap' aria-describedby='location24192-718479-description location24192-718479-line1 location24192-718479-csz'><i class='fa fa-globe'></i> map it</a>]</span></div>
+                                            <div class="margin-top-10">
+                                                <a href="https://www.youtube.com/watch?v=euKhYOKE-fU">
+                                                    Recorded Meeting URL
+                                                </a>
+                                            </div>
+                                    </td>
+                                    <td class="nowrap">
+                                        <ul class="list-unstyled">
+                                                <li>
+                                                    <a href="/Public/Agenda/668?meeting=718479">Agenda</a>
+                                                </li>
+                                                <li>
+                                                    <a href="/Public/Minutes/668?meeting=718479">Minutes</a>
+                                                </li>
+                                        </ul>
+
+                                    
+                                    </td>
+                                </tr>
+                                <tr class=" row-for-board">
+                                    <td>
+                                        <div>
+                                            November 10, 2025 at 6:00 PM - Regular Board Meeting
+                                        </div>
+                                        <div class="margin-top-10">
+                                            <b class="important-page-text">Meeting Type:</b>
+Regular                                        </div>
+                                            <div class="margin-top-10 checkForUrls">
+                                                <span style="font-size:10px">On November 3, 2025, at 7:30 a.m., this notice was mailed or electronically transmitted to the news media, who previously requested such notice, and a copy was posted in the main/front office window of the Cypress-Fairbanks Independent School District Mark Henry, Ed.D. Administration Building.</span>
+                                            </div>
+                                    </td>
+                                    <td>
+                                        <div><span id='location24192-716835-description'>Boardroom of the Mark Henry, Ed.D. Administration Building</span><br /><span id='location24192-716835-line1'>11440 Matzke Road</span><br /><span id='location24192-716835-csz'>Cypress, Texas 77429</span>&nbsp;<span class='nowrap'>[<a href='https://maps.google.com/?q=11440+Matzke+Road%2c+Cypress%2c+Texas+77429' target='_blank' class='nowrap' aria-describedby='location24192-716835-description location24192-716835-line1 location24192-716835-csz'><i class='fa fa-globe'></i> map it</a>]</span></div>
+                                            <div class="margin-top-10">
+                                                <a href="https://www.youtube.com/watch?v=9X_4nx6RKH0">
+                                                    Recorded Meeting URL
+                                                </a>
+                                            </div>
+                                    </td>
+                                    <td class="nowrap">
+                                        <ul class="list-unstyled">
+                                                <li>
+                                                    <a href="/Public/Agenda/668?meeting=716835">Agenda</a>
+                                                </li>
+                                                <li>
+                                                    <a href="/Public/Minutes/668?meeting=716835">Minutes</a>
+                                                </li>
+                                        </ul>
+
+                                    
+                                    </td>
+                                </tr>
+                                <tr class=" row-for-board">
+                                    <td>
+                                        <div>
+                                            November 6, 2025 at 6:00 PM - Board Work Session
+                                        </div>
+                                        <div class="margin-top-10">
+                                            <b class="important-page-text">Meeting Type:</b>
+Working                                        </div>
+                                            <div class="margin-top-10 checkForUrls">
+                                                <span style="font-size:10px">On November 3, 2025, at 7:30 a.m., this notice was mailed or electronically transmitted to the news media, who previously requested such notice, and a copy was posted in the main/front office window of the Cypress-Fairbanks Independent School District Mark Henry, Ed.D. Administration Building.</span>
+                                            </div>
+                                    </td>
+                                    <td>
+                                        <div><span id='location24192-713766-description'>Boardroom of the Mark Henry, Ed.D. Administration Building</span><br /><span id='location24192-713766-line1'>11440 Matzke Road</span><br /><span id='location24192-713766-csz'>Cypress, Texas 77429</span>&nbsp;<span class='nowrap'>[<a href='https://maps.google.com/?q=11440+Matzke+Road%2c+Cypress%2c+Texas+77429' target='_blank' class='nowrap' aria-describedby='location24192-713766-description location24192-713766-line1 location24192-713766-csz'><i class='fa fa-globe'></i> map it</a>]</span></div>
+                                            <div class="margin-top-10">
+                                                <a href="https://www.youtube.com/watch?v=XqfCIabtA5Y">
+                                                    Recorded Meeting URL
+                                                </a>
+                                            </div>
+                                    </td>
+                                    <td class="nowrap">
+                                        <ul class="list-unstyled">
+                                                <li>
+                                                    <a href="/Public/Agenda/668?meeting=713766">Agenda</a>
+                                                </li>
+                                                <li>
+                                                    <a href="/Public/Minutes/668?meeting=713766">Minutes</a>
+                                                </li>
+                                        </ul>
+
+                                    
+                                    </td>
+                                </tr>
+                                <tr class=" row-for-board">
+                                    <td>
+                                        <div>
+                                            October 28, 2025 at 5:00 PM - Special-Called Board Meeting
+                                        </div>
+                                        <div class="margin-top-10">
+                                            <b class="important-page-text">Meeting Type:</b>
+Special                                        </div>
+                                            <div class="margin-top-10 checkForUrls">
+                                                <span style="font-size:10px">On October 23, 2025, at 7:30 a.m., this notice was mailed or electronically transmitted to the news media, who previously requested such notice, and a copy was posted in the main/front office window of the Cypress-Fairbanks Independent School District Mark Henry, Ed.D. Administration Building.</span>
+                                            </div>
+                                    </td>
+                                    <td>
+                                        <div><span id='location24192-714659-description'>Boardroom of the Mark Henry, Ed.D. Administration Building</span><br /><span id='location24192-714659-line1'>11440 Matzke Road</span><br /><span id='location24192-714659-csz'>Cypress, Texas 77429</span>&nbsp;<span class='nowrap'>[<a href='https://maps.google.com/?q=11440+Matzke+Road%2c+Cypress%2c+Texas+77429' target='_blank' class='nowrap' aria-describedby='location24192-714659-description location24192-714659-line1 location24192-714659-csz'><i class='fa fa-globe'></i> map it</a>]</span></div>
+                                            <div class="margin-top-10">
+                                                <a href="https://www.youtube.com/watch?v=2gg3dDXJafc">
+                                                    Recorded Meeting URL
+                                                </a>
+                                            </div>
+                                    </td>
+                                    <td class="nowrap">
+                                        <ul class="list-unstyled">
+                                                <li>
+                                                    <a href="/Public/Agenda/668?meeting=714659">Agenda</a>
+                                                </li>
+                                                <li>
+                                                    <a href="/Public/Minutes/668?meeting=714659">Minutes</a>
+                                                </li>
+                                        </ul>
+
+                                    
+                                    </td>
+                                </tr>
+                                <tr class=" row-for-board">
+                                    <td>
+                                        <div>
+                                            October 6, 2025 at 6:00 PM - Regular Board Meeting
+                                        </div>
+                                        <div class="margin-top-10">
+                                            <b class="important-page-text">Meeting Type:</b>
+Regular                                        </div>
+                                            <div class="margin-top-10 checkForUrls">
+                                                <span style="font-size:10px">On September 29, 2025, at 7:30 a.m., this notice was mailed or electronically transmitted to the news media, who previously requested such notice, and a copy was posted in the main/front office window of the Cypress-Fairbanks Independent School District Mark Henry, Ed.D. Administration Building.</span>
+                                            </div>
+                                    </td>
+                                    <td>
+                                        <div><span id='location24192-711571-description'>Boardroom of the Mark Henry, Ed.D. Administration Building</span><br /><span id='location24192-711571-line1'>11440 Matzke Road</span><br /><span id='location24192-711571-csz'>Cypress, Texas 77429</span>&nbsp;<span class='nowrap'>[<a href='https://maps.google.com/?q=11440+Matzke+Road%2c+Cypress%2c+Texas+77429' target='_blank' class='nowrap' aria-describedby='location24192-711571-description location24192-711571-line1 location24192-711571-csz'><i class='fa fa-globe'></i> map it</a>]</span></div>
+                                            <div class="margin-top-10">
+                                                <a href="https://www.youtube.com/watch?v=jvliy_yjfGg&amp;t=1s">
+                                                    Recorded Meeting URL
+                                                </a>
+                                            </div>
+                                    </td>
+                                    <td class="nowrap">
+                                        <ul class="list-unstyled">
+                                                <li>
+                                                    <a href="/Public/Agenda/668?meeting=711571">Agenda</a>
+                                                </li>
+                                                <li>
+                                                    <a href="/Public/Minutes/668?meeting=711571">Minutes</a>
+                                                </li>
+                                        </ul>
+
+                                    
+                                    </td>
+                                </tr>
+                                <tr class=" row-for-board">
+                                    <td>
+                                        <div>
+                                            October 6, 2025 at 6:00 PM - ADDENDUM
+                                        </div>
+                                        <div class="margin-top-10">
+                                            <b class="important-page-text">Meeting Type:</b>
+Regular                                        </div>
+                                            <div class="margin-top-10 checkForUrls">
+                                                <span style="font-size:10px">On October 1, 2025, at 9:00 a.m., this notice was mailed or electronically transmitted to the news media, who previously requested such notice, and a copy was posted in the main/front office window of the Cypress-Fairbanks Independent School District Mark Henry, Ed.D. Administration Building.</span>
+                                            </div>
+                                    </td>
+                                    <td>
+                                        <div><span id='location24192-712027-description'>Boardroom of the Mark Henry, Ed.D. Administration Building</span><br /><span id='location24192-712027-line1'>11440 Matzke Road</span><br /><span id='location24192-712027-csz'>Cypress, Texas 77429</span>&nbsp;<span class='nowrap'>[<a href='https://maps.google.com/?q=11440+Matzke+Road%2c+Cypress%2c+Texas+77429' target='_blank' class='nowrap' aria-describedby='location24192-712027-description location24192-712027-line1 location24192-712027-csz'><i class='fa fa-globe'></i> map it</a>]</span></div>
+                                    </td>
+                                    <td class="nowrap">
+                                        <ul class="list-unstyled">
+                                                <li>
+                                                    <a href="/Public/Agenda/668?meeting=712027">Agenda</a>
+                                                </li>
+                                        </ul>
+
+                                    
+                                    </td>
+                                </tr>
+                                <tr class=" row-for-board">
+                                    <td>
+                                        <div>
+                                            October 2, 2025 at 6:00 PM - Board Work Session
+                                        </div>
+                                        <div class="margin-top-10">
+                                            <b class="important-page-text">Meeting Type:</b>
+Working                                        </div>
+                                            <div class="margin-top-10 checkForUrls">
+                                                <span style="font-size:10px">On September 29, 2025, at 7:30 a.m., this notice was mailed or electronically transmitted to the news media, who previously requested such notice, and a copy was posted in the main/front office window of the Cypress-Fairbanks Independent School District Mark Henry, Ed.D. Administration Building.</span>
+                                            </div>
+                                    </td>
+                                    <td>
+                                        <div><span id='location24192-709405-description'>Boardroom of the Mark Henry, Ed.D. Administration Building</span><br /><span id='location24192-709405-line1'>11440 Matzke Road</span><br /><span id='location24192-709405-csz'>Cypress, Texas 77429</span>&nbsp;<span class='nowrap'>[<a href='https://maps.google.com/?q=11440+Matzke+Road%2c+Cypress%2c+Texas+77429' target='_blank' class='nowrap' aria-describedby='location24192-709405-description location24192-709405-line1 location24192-709405-csz'><i class='fa fa-globe'></i> map it</a>]</span></div>
+                                            <div class="margin-top-10">
+                                                <a href="https://www.youtube.com/watch?v=T7O15wowZto">
+                                                    Recorded Meeting URL
+                                                </a>
+                                            </div>
+                                    </td>
+                                    <td class="nowrap">
+                                        <ul class="list-unstyled">
+                                                <li>
+                                                    <a href="/Public/Agenda/668?meeting=709405">Agenda</a>
+                                                </li>
+                                                <li>
+                                                    <a href="/Public/Minutes/668?meeting=709405">Minutes</a>
+                                                </li>
+                                        </ul>
+
+                                    
+                                    </td>
+                                </tr>
+                                <tr class=" row-for-board">
+                                    <td>
+                                        <div>
+                                            September 10, 2025 at 5:00 PM - Special-Called Board Meeting
+                                        </div>
+                                        <div class="margin-top-10">
+                                            <b class="important-page-text">Meeting Type:</b>
+Special                                        </div>
+                                            <div class="margin-top-10 checkForUrls">
+                                                <span style="font-size:10px">On September 5, 2025, at 2:00 p.m., this notice was mailed or electronically transmitted to the news media, who previously requested such notice, and a copy was posted in the main/front office window of the Cypress-Fairbanks Independent School District Mark Henry, Ed.D. Administration Building.</span>
+                                            </div>
+                                    </td>
+                                    <td>
+                                        <div><span id='location24192-708191-description'>Boardroom of the Mark Henry, Ed.D. Administration Building</span><br /><span id='location24192-708191-line1'>11440 Matzke Road</span><br /><span id='location24192-708191-csz'>Cypress, Texas 77429</span>&nbsp;<span class='nowrap'>[<a href='https://maps.google.com/?q=11440+Matzke+Road%2c+Cypress%2c+Texas+77429' target='_blank' class='nowrap' aria-describedby='location24192-708191-description location24192-708191-line1 location24192-708191-csz'><i class='fa fa-globe'></i> map it</a>]</span></div>
+                                    </td>
+                                    <td class="nowrap">
+                                        <ul class="list-unstyled">
+                                                <li>
+                                                    <a href="/Public/Agenda/668?meeting=708191">Agenda</a>
+                                                </li>
+                                                <li>
+                                                    <a href="/Public/Minutes/668?meeting=708191">Minutes</a>
+                                                </li>
+                                        </ul>
+
+                                    
+                                    </td>
+                                </tr>
+                                <tr class=" row-for-board">
+                                    <td>
+                                        <div>
+                                            September 8, 2025 at 6:00 PM - Regular Board Meeting
+                                        </div>
+                                        <div class="margin-top-10">
+                                            <b class="important-page-text">Meeting Type:</b>
+Regular                                        </div>
+                                            <div class="margin-top-10 checkForUrls">
+                                                <span style="font-size:10px">On August 29, 2025, at 7:45 a.m., this amended notice was mailed or electronically transmitted to the news media, who previously requested such notice, and an amended copy was posted in the main/front office window of the Cypress-Fairbanks Independent School District Mark Henry, Ed.D. Administration Building.</span>
+                                            </div>
+                                    </td>
+                                    <td>
+                                        <div><span id='location24192-706711-description'>Boardroom of the Mark Henry, Ed.D. Administration Building</span><br /><span id='location24192-706711-line1'>11440 Matzke Road</span><br /><span id='location24192-706711-csz'>Cypress, Texas 77429</span>&nbsp;<span class='nowrap'>[<a href='https://maps.google.com/?q=11440+Matzke+Road%2c+Cypress%2c+Texas+77429' target='_blank' class='nowrap' aria-describedby='location24192-706711-description location24192-706711-line1 location24192-706711-csz'><i class='fa fa-globe'></i> map it</a>]</span></div>
+                                            <div class="margin-top-10">
+                                                <a href="https://www.youtube.com/watch?v=I9LeyZHtf60">
+                                                    Recorded Meeting URL
+                                                </a>
+                                            </div>
+                                    </td>
+                                    <td class="nowrap">
+                                        <ul class="list-unstyled">
+                                                <li>
+                                                    <a href="/Public/Agenda/668?meeting=706711">Agenda</a>
+                                                </li>
+                                                <li>
+                                                    <a href="/Public/Minutes/668?meeting=706711">Minutes</a>
+                                                </li>
+                                        </ul>
+
+                                    
+                                    </td>
+                                </tr>
+                                <tr class=" row-for-board">
+                                    <td>
+                                        <div>
+                                            September 4, 2025 at 6:00 PM - Board Work Session
+                                        </div>
+                                        <div class="margin-top-10">
+                                            <b class="important-page-text">Meeting Type:</b>
+Working                                        </div>
+                                            <div class="margin-top-10 checkForUrls">
+                                                <span style="font-size:10px">On August 29, 2025, at 10:45 a.m., this amended notice was mailed or electronically transmitted to the news media, who previously requested such notice, and an amended copy was posted in the main/front office window of the Cypress-Fairbanks Independent School District Mark Henry, Ed.D. Administration Building.</span>
+                                            </div>
+                                    </td>
+                                    <td>
+                                        <div><span id='location24192-703786-description'>Boardroom of the Mark Henry, Ed.D. Administration Building</span><br /><span id='location24192-703786-line1'>11440 Matzke Road</span><br /><span id='location24192-703786-csz'>Cypress, Texas 77429</span>&nbsp;<span class='nowrap'>[<a href='https://maps.google.com/?q=11440+Matzke+Road%2c+Cypress%2c+Texas+77429' target='_blank' class='nowrap' aria-describedby='location24192-703786-description location24192-703786-line1 location24192-703786-csz'><i class='fa fa-globe'></i> map it</a>]</span></div>
+                                            <div class="margin-top-10">
+                                                <a href="https://www.youtube.com/watch?v=zlP_GMdG59U">
+                                                    Recorded Meeting URL
+                                                </a>
+                                            </div>
+                                    </td>
+                                    <td class="nowrap">
+                                        <ul class="list-unstyled">
+                                                <li>
+                                                    <a href="/Public/Agenda/668?meeting=703786">Agenda</a>
+                                                </li>
+                                                <li>
+                                                    <a href="/Public/Minutes/668?meeting=703786">Minutes</a>
+                                                </li>
+                                        </ul>
+
+                                    
+                                    </td>
+                                </tr>
+                                <tr class=" row-for-board">
+                                    <td>
+                                        <div>
+                                            August 11, 2025 at 6:00 PM - Regular Board Meeting
+                                        </div>
+                                        <div class="margin-top-10">
+                                            <b class="important-page-text">Meeting Type:</b>
+Regular                                        </div>
+                                            <div class="margin-top-10 checkForUrls">
+                                                <span style="font-size:10px">On August 4, 2025, at 7:30 a.m., this notice was mailed or electronically transmitted to the news media, who previously requested such notice, and a copy was posted in the main/front office window of the Cypress-Fairbanks Independent School District Mark Henry, Ed.D. Administration Building.</span>
+                                            </div>
+                                    </td>
+                                    <td>
+                                        <div><span id='location24192-702246-description'>Boardroom of the Mark Henry, Ed.D. Administration Building</span><br /><span id='location24192-702246-line1'>11440 Matzke Road</span><br /><span id='location24192-702246-csz'>Cypress, Texas 77429</span>&nbsp;<span class='nowrap'>[<a href='https://maps.google.com/?q=11440+Matzke+Road%2c+Cypress%2c+Texas+77429' target='_blank' class='nowrap' aria-describedby='location24192-702246-description location24192-702246-line1 location24192-702246-csz'><i class='fa fa-globe'></i> map it</a>]</span></div>
+                                            <div class="margin-top-10">
+                                                <a href="https://www.youtube.com/watch?v=kZVvFtpilko">
+                                                    Recorded Meeting URL
+                                                </a>
+                                            </div>
+                                    </td>
+                                    <td class="nowrap">
+                                        <ul class="list-unstyled">
+                                                <li>
+                                                    <a href="/Public/Agenda/668?meeting=702246">Agenda</a>
+                                                </li>
+                                                <li>
+                                                    <a href="/Public/Minutes/668?meeting=702246">Minutes</a>
+                                                </li>
+                                        </ul>
+
+                                    
+                                    </td>
+                                </tr>
+                                <tr class=" row-for-board">
+                                    <td>
+                                        <div>
+                                            August 7, 2025 at 6:00 PM - Board Work Session
+                                        </div>
+                                        <div class="margin-top-10">
+                                            <b class="important-page-text">Meeting Type:</b>
+Working                                        </div>
+                                            <div class="margin-top-10 checkForUrls">
+                                                <span style="font-size:10px">On August 4, 2025, at 7:30 a.m., this notice was mailed or electronically transmitted to the news media, who previously requested such notice, and a copy was posted in the main/front office window of the Cypress-Fairbanks Independent School District Mark Henry, Ed.D. Administration Building.</span>
+                                            </div>
+                                    </td>
+                                    <td>
+                                        <div><span id='location24192-698245-description'>Boardroom of the Mark Henry, Ed.D. Administration Building</span><br /><span id='location24192-698245-line1'>11440 Matzke Road</span><br /><span id='location24192-698245-csz'>Cypress, Texas 77429</span>&nbsp;<span class='nowrap'>[<a href='https://maps.google.com/?q=11440+Matzke+Road%2c+Cypress%2c+Texas+77429' target='_blank' class='nowrap' aria-describedby='location24192-698245-description location24192-698245-line1 location24192-698245-csz'><i class='fa fa-globe'></i> map it</a>]</span></div>
+                                            <div class="margin-top-10">
+                                                <a href="https://www.youtube.com/watch?v=thOVIGKaXEM">
+                                                    Recorded Meeting URL
+                                                </a>
+                                            </div>
+                                    </td>
+                                    <td class="nowrap">
+                                        <ul class="list-unstyled">
+                                                <li>
+                                                    <a href="/Public/Agenda/668?meeting=698245">Agenda</a>
+                                                </li>
+                                                <li>
+                                                    <a href="/Public/Minutes/668?meeting=698245">Minutes</a>
+                                                </li>
+                                        </ul>
+
+                                    
+                                    </td>
+                                </tr>
+                                <tr class=" row-for-board">
+                                    <td>
+                                        <div>
+                                            June 23, 2025 at 6:00 PM - Regular Board Meeting
+                                        </div>
+                                        <div class="margin-top-10">
+                                            <b class="important-page-text">Meeting Type:</b>
+Regular                                        </div>
+                                            <div class="margin-top-10 checkForUrls">
+                                                <span style="font-size:10px">On June 13, 2025, at 4:00 p.m., this notice was mailed or electronically transmitted to the news media, who previously requested such notice, and a copy was posted in the main/front office window of the Cypress-Fairbanks Independent School District Mark Henry, Ed.D. Administration Building.</span>
+                                            </div>
+                                    </td>
+                                    <td>
+                                        <div><span id='location24192-695172-description'>Boardroom of the Mark Henry, Ed.D. Administration Building</span><br /><span id='location24192-695172-line1'>11440 Matzke Road</span><br /><span id='location24192-695172-csz'>Cypress, Texas 77429</span>&nbsp;<span class='nowrap'>[<a href='https://maps.google.com/?q=11440+Matzke+Road%2c+Cypress%2c+Texas+77429' target='_blank' class='nowrap' aria-describedby='location24192-695172-description location24192-695172-line1 location24192-695172-csz'><i class='fa fa-globe'></i> map it</a>]</span></div>
+                                            <div class="margin-top-10">
+                                                <a href="https://www.youtube.com/watch?v=udUdeMeRM3w">
+                                                    Recorded Meeting URL
+                                                </a>
+                                            </div>
+                                    </td>
+                                    <td class="nowrap">
+                                        <ul class="list-unstyled">
+                                                <li>
+                                                    <a href="/Public/Agenda/668?meeting=695172">Agenda</a>
+                                                </li>
+                                                <li>
+                                                    <a href="/Public/Minutes/668?meeting=695172">Minutes</a>
+                                                </li>
+                                        </ul>
+
+                                    
+                                    </td>
+                                </tr>
+                                <tr class=" row-for-board">
+                                    <td>
+                                        <div>
+                                            June 18, 2025 at 6:00 PM - Board Work Session
+                                        </div>
+                                        <div class="margin-top-10">
+                                            <b class="important-page-text">Meeting Type:</b>
+Working                                        </div>
+                                            <div class="margin-top-10 checkForUrls">
+                                                <span style="font-size:10px">On June 13, 2025, at 4:00 p.m., this notice was mailed or electronically transmitted to the news media, who previously requested such notice, and a copy was posted in the main/front office window of the Cypress-Fairbanks Independent School District Mark Henry, Ed.D. Administration Building.</span>
+                                            </div>
+                                    </td>
+                                    <td>
+                                        <div><span id='location24192-689608-description'>Boardroom of the Mark Henry, Ed.D. Administration Building</span><br /><span id='location24192-689608-line1'>11440 Matzke Road</span><br /><span id='location24192-689608-csz'>Cypress, Texas 77429</span>&nbsp;<span class='nowrap'>[<a href='https://maps.google.com/?q=11440+Matzke+Road%2c+Cypress%2c+Texas+77429' target='_blank' class='nowrap' aria-describedby='location24192-689608-description location24192-689608-line1 location24192-689608-csz'><i class='fa fa-globe'></i> map it</a>]</span></div>
+                                            <div class="margin-top-10">
+                                                <a href="https://www.youtube.com/watch?v=4CkXHH466uI">
+                                                    Recorded Meeting URL
+                                                </a>
+                                            </div>
+                                    </td>
+                                    <td class="nowrap">
+                                        <ul class="list-unstyled">
+                                                <li>
+                                                    <a href="/Public/Agenda/668?meeting=689608">Agenda</a>
+                                                </li>
+                                                <li>
+                                                    <a href="/Public/Minutes/668?meeting=689608">Minutes</a>
+                                                </li>
+                                        </ul>
+
+                                    
+                                    </td>
+                                </tr>
+                                <tr class=" row-for-board">
+                                    <td>
+                                        <div>
+                                            May 22, 2025 at 6:00 PM - Special-Called Board Meeting
+                                        </div>
+                                        <div class="margin-top-10">
+                                            <b class="important-page-text">Meeting Type:</b>
+Special                                        </div>
+                                            <div class="margin-top-10 checkForUrls">
+                                                <span style="font-size:10px">On May 19, 2025, at 4:00 p.m., this notice was mailed or electronically transmitted to the news media, who previously requested such notice, and a copy was posted in the main/front office window of the Cypress-Fairbanks Independent School District Mark Henry, Ed.D. Administration Building.</span>
+                                            </div>
+                                    </td>
+                                    <td>
+                                        <div><span id='location24192-689607-description'>Boardroom of the Mark Henry, Ed.D. Administration Building</span><br /><span id='location24192-689607-line1'>11440 Matzke Road</span><br /><span id='location24192-689607-csz'>Cypress, Texas 77429</span>&nbsp;<span class='nowrap'>[<a href='https://maps.google.com/?q=11440+Matzke+Road%2c+Cypress%2c+Texas+77429' target='_blank' class='nowrap' aria-describedby='location24192-689607-description location24192-689607-line1 location24192-689607-csz'><i class='fa fa-globe'></i> map it</a>]</span></div>
+                                            <div class="margin-top-10">
+                                                <a href="https://www.youtube.com/watch?v=bUQYssF3JMg">
+                                                    Recorded Meeting URL
+                                                </a>
+                                            </div>
+                                    </td>
+                                    <td class="nowrap">
+                                        <ul class="list-unstyled">
+                                                <li>
+                                                    <a href="/Public/Agenda/668?meeting=689607">Agenda</a>
+                                                </li>
+                                                <li>
+                                                    <a href="/Public/Minutes/668?meeting=689607">Minutes</a>
+                                                </li>
+                                        </ul>
+
+                                    
+                                    </td>
+                                </tr>
+                                <tr class=" row-for-board">
+                                    <td>
+                                        <div>
+                                            May 5, 2025 at 6:00 PM - Regular Board Meeting
+                                        </div>
+                                        <div class="margin-top-10">
+                                            <b class="important-page-text">Meeting Type:</b>
+Regular                                        </div>
+                                            <div class="margin-top-10 checkForUrls">
+                                                <span style="font-size:10px">On April 28, 2025, at 4:00 p.m., this notice was mailed or electronically transmitted to the news media, who previously requested such notice, and a copy was posted in the main/front office window of the Cypress-Fairbanks Independent School District Mark Henry, Ed.D. Administration Building.</span>
+                                            </div>
+                                    </td>
+                                    <td>
+                                        <div><span id='location24192-687512-description'>Boardroom of the Mark Henry, Ed.D. Administration Building</span><br /><span id='location24192-687512-line1'>11440 Matzke Road</span><br /><span id='location24192-687512-csz'>Cypress, Texas 77429</span>&nbsp;<span class='nowrap'>[<a href='https://maps.google.com/?q=11440+Matzke+Road%2c+Cypress%2c+Texas+77429' target='_blank' class='nowrap' aria-describedby='location24192-687512-description location24192-687512-line1 location24192-687512-csz'><i class='fa fa-globe'></i> map it</a>]</span></div>
+                                            <div class="margin-top-10">
+                                                <a href="https://www.youtube.com/watch?v=wAvJARwAPzQ">
+                                                    Recorded Meeting URL
+                                                </a>
+                                            </div>
+                                    </td>
+                                    <td class="nowrap">
+                                        <ul class="list-unstyled">
+                                                <li>
+                                                    <a href="/Public/Agenda/668?meeting=687512">Agenda</a>
+                                                </li>
+                                                <li>
+                                                    <a href="/Public/Minutes/668?meeting=687512">Minutes</a>
+                                                </li>
+                                        </ul>
+
+                                    
+                                    </td>
+                                </tr>
+                                <tr class=" row-for-board">
+                                    <td>
+                                        <div>
+                                            May 1, 2025 at 6:00 PM - Board Work Session
+                                        </div>
+                                        <div class="margin-top-10">
+                                            <b class="important-page-text">Meeting Type:</b>
+Working                                        </div>
+                                            <div class="margin-top-10 checkForUrls">
+                                                <span style="font-size:10px">On April 28, 2025, at 4:00 p.m., this notice was mailed or electronically transmitted to the news media, who previously requested such notice, and a copy was posted in the main/front office window of the Cypress-Fairbanks Independent School District Mark Henry, Ed.D. Administration Building.</span>
+                                            </div>
+                                    </td>
+                                    <td>
+                                        <div><span id='location24192-685885-description'>Boardroom of the Mark Henry, Ed.D. Administration Building</span><br /><span id='location24192-685885-line1'>11440 Matzke Road</span><br /><span id='location24192-685885-csz'>Cypress, Texas 77429</span>&nbsp;<span class='nowrap'>[<a href='https://maps.google.com/?q=11440+Matzke+Road%2c+Cypress%2c+Texas+77429' target='_blank' class='nowrap' aria-describedby='location24192-685885-description location24192-685885-line1 location24192-685885-csz'><i class='fa fa-globe'></i> map it</a>]</span></div>
+                                            <div class="margin-top-10">
+                                                <a href="https://www.youtube.com/watch?v=XAOP-Q7Eweo">
+                                                    Recorded Meeting URL
+                                                </a>
+                                            </div>
+                                    </td>
+                                    <td class="nowrap">
+                                        <ul class="list-unstyled">
+                                                <li>
+                                                    <a href="/Public/Agenda/668?meeting=685885">Agenda</a>
+                                                </li>
+                                                <li>
+                                                    <a href="/Public/Minutes/668?meeting=685885">Minutes</a>
+                                                </li>
+                                        </ul>
+
+                                    
+                                    </td>
+                                </tr>
+                                <tr class=" row-for-board">
+                                    <td>
+                                        <div>
+                                            April 14, 2025 at 6:00 PM - Regular Board Meeting
+                                        </div>
+                                        <div class="margin-top-10">
+                                            <b class="important-page-text">Meeting Type:</b>
+Regular                                        </div>
+                                            <div class="margin-top-10 checkForUrls">
+                                                <span style="font-size:10px">On April 7, 2025 at 4:00 p.m., this notice was mailed or electronically transmitted to the news media, who previously requested such notice, and a copy was posted in the main/front office window of the Cypress-Fairbanks Independent School District Mark Henry, Ed.D. Administration Building.</span>
+                                            </div>
+                                    </td>
+                                    <td>
+                                        <div><span id='location24192-684304-description'>Boardroom of the Mark Henry, Ed.D. Administration Building</span><br /><span id='location24192-684304-line1'>11440 Matzke Road</span><br /><span id='location24192-684304-csz'>Cypress, Texas 77429</span>&nbsp;<span class='nowrap'>[<a href='https://maps.google.com/?q=11440+Matzke+Road%2c+Cypress%2c+Texas+77429' target='_blank' class='nowrap' aria-describedby='location24192-684304-description location24192-684304-line1 location24192-684304-csz'><i class='fa fa-globe'></i> map it</a>]</span></div>
+                                            <div class="margin-top-10">
+                                                <a href="https://www.youtube.com/watch?v=mA2BqOdf-CY">
+                                                    Recorded Meeting URL
+                                                </a>
+                                            </div>
+                                    </td>
+                                    <td class="nowrap">
+                                        <ul class="list-unstyled">
+                                                <li>
+                                                    <a href="/Public/Agenda/668?meeting=684304">Agenda</a>
+                                                </li>
+                                                <li>
+                                                    <a href="/Public/Minutes/668?meeting=684304">Minutes</a>
+                                                </li>
+                                        </ul>
+
+                                    
+                                    </td>
+                                </tr>
+                                <tr class=" row-for-board">
+                                    <td>
+                                        <div>
+                                            April 10, 2025 at 6:00 PM - Board Work Session
+                                        </div>
+                                        <div class="margin-top-10">
+                                            <b class="important-page-text">Meeting Type:</b>
+Working                                        </div>
+                                            <div class="margin-top-10 checkForUrls">
+                                                <span style="font-size:10px">On April 7, 2025, at 4:00 p.m., this notice was mailed or electronically transmitted to the news media, who previously requested such notice, and a copy was posted in the main/front office window of the Cypress-Fairbanks Independent School District Mark Henry, Ed.D. Administration Building.</span>
+                                            </div>
+                                    </td>
+                                    <td>
+                                        <div><span id='location24192-679382-description'>Boardroom of the Mark Henry, Ed.D. Administration Building</span><br /><span id='location24192-679382-line1'>11440 Matzke Road</span><br /><span id='location24192-679382-csz'>Cypress, Texas 77429</span>&nbsp;<span class='nowrap'>[<a href='https://maps.google.com/?q=11440+Matzke+Road%2c+Cypress%2c+Texas+77429' target='_blank' class='nowrap' aria-describedby='location24192-679382-description location24192-679382-line1 location24192-679382-csz'><i class='fa fa-globe'></i> map it</a>]</span></div>
+                                            <div class="margin-top-10">
+                                                <a href="https://www.youtube.com/watch?v=TbJZKHNgVa0">
+                                                    Recorded Meeting URL
+                                                </a>
+                                            </div>
+                                    </td>
+                                    <td class="nowrap">
+                                        <ul class="list-unstyled">
+                                                <li>
+                                                    <a href="/Public/Agenda/668?meeting=679382">Agenda</a>
+                                                </li>
+                                                <li>
+                                                    <a href="/Public/Minutes/668?meeting=679382">Minutes</a>
+                                                </li>
+                                        </ul>
+
+                                    
+                                    </td>
+                                </tr>
+                                <tr class=" row-for-board">
+                                    <td>
+                                        <div>
+                                            March 3, 2025 at 6:00 PM - Regular Board Meeting
+                                        </div>
+                                        <div class="margin-top-10">
+                                            <b class="important-page-text">Meeting Type:</b>
+Regular                                        </div>
+                                            <div class="margin-top-10 checkForUrls">
+                                                <span style="font-size:10px">On February 28, 2025, at 4:00 p.m., this notice was mailed or electronically transmitted to the news media, who previously requested such notice, and a copy was posted in the main/front office window of the Cypress-Fairbanks Independent School District Mark Henry, Ed.D. Administration Building.</span>
+                                            </div>
+                                    </td>
+                                    <td>
+                                        <div><span id='location24192-676371-description'>Boardroom of the Mark Henry, Ed.D. Administration Building</span><br /><span id='location24192-676371-line1'>11440 Matzke Road</span><br /><span id='location24192-676371-csz'>Cypress, Texas 77429</span>&nbsp;<span class='nowrap'>[<a href='https://maps.google.com/?q=11440+Matzke+Road%2c+Cypress%2c+Texas+77429' target='_blank' class='nowrap' aria-describedby='location24192-676371-description location24192-676371-line1 location24192-676371-csz'><i class='fa fa-globe'></i> map it</a>]</span></div>
+                                            <div class="margin-top-10">
+                                                <a href="https://www.youtube.com/watch?v=9y17e8lIgcA">
+                                                    Recorded Meeting URL
+                                                </a>
+                                            </div>
+                                    </td>
+                                    <td class="nowrap">
+                                        <ul class="list-unstyled">
+                                                <li>
+                                                    <a href="/Public/Agenda/668?meeting=676371">Agenda</a>
+                                                </li>
+                                                <li>
+                                                    <a href="/Public/Minutes/668?meeting=676371">Minutes</a>
+                                                </li>
+                                        </ul>
+
+                                    
+                                    </td>
+                                </tr>
+                                <tr class=" row-for-board">
+                                    <td>
+                                        <div>
+                                            February 10, 2025 at 6:00 PM - Regular Board Meeting
+                                        </div>
+                                        <div class="margin-top-10">
+                                            <b class="important-page-text">Meeting Type:</b>
+Regular                                        </div>
+                                            <div class="margin-top-10 checkForUrls">
+                                                <span style="font-size:10px">On February 3, 2025, at 4:00 p.m., this notice was mailed or electronically transmitted to the news media, who previously requested such notice, and a copy was posted in the main/front office window of the Cypress-Fairbanks Independent School District Mark Henry, Ed.D. Administration Building.</span>
+                                            </div>
+                                    </td>
+                                    <td>
+                                        <div><span id='location24192-674704-description'>Boardroom of the Mark Henry, Ed.D. Administration Building</span><br /><span id='location24192-674704-line1'>11440 Matzke Road</span><br /><span id='location24192-674704-csz'>Cypress, Texas 77429</span>&nbsp;<span class='nowrap'>[<a href='https://maps.google.com/?q=11440+Matzke+Road%2c+Cypress%2c+Texas+77429' target='_blank' class='nowrap' aria-describedby='location24192-674704-description location24192-674704-line1 location24192-674704-csz'><i class='fa fa-globe'></i> map it</a>]</span></div>
+                                            <div class="margin-top-10">
+                                                <a href="https://www.youtube.com/watch?v=c2z0U3-1NwI">
+                                                    Recorded Meeting URL
+                                                </a>
+                                            </div>
+                                    </td>
+                                    <td class="nowrap">
+                                        <ul class="list-unstyled">
+                                                <li>
+                                                    <a href="/Public/Agenda/668?meeting=674704">Agenda</a>
+                                                </li>
+                                                <li>
+                                                    <a href="/Public/Minutes/668?meeting=674704">Minutes</a>
+                                                </li>
+                                        </ul>
+
+                                    
+                                    </td>
+                                </tr>
+                                <tr class=" row-for-board">
+                                    <td>
+                                        <div>
+                                            February 6, 2025 at 6:00 PM - Board Work Session
+                                        </div>
+                                        <div class="margin-top-10">
+                                            <b class="important-page-text">Meeting Type:</b>
+Working                                        </div>
+                                            <div class="margin-top-10 checkForUrls">
+                                                <span style="font-size:10px">On February 3, 2025, at 4:00 p.m., this notice was mailed or electronically transmitted to the news media, who previously requested such notice, and a copy was posted in the main/front office window of the Cypress-Fairbanks Independent School District Mark Henry, Ed.D. Administration Building.</span>
+                                            </div>
+                                    </td>
+                                    <td>
+                                        <div><span id='location24192-672793-description'>Boardroom of the Mark Henry, Ed.D. Administration Building</span><br /><span id='location24192-672793-line1'>11440 Matzke Road</span><br /><span id='location24192-672793-csz'>Cypress, Texas 77429</span>&nbsp;<span class='nowrap'>[<a href='https://maps.google.com/?q=11440+Matzke+Road%2c+Cypress%2c+Texas+77429' target='_blank' class='nowrap' aria-describedby='location24192-672793-description location24192-672793-line1 location24192-672793-csz'><i class='fa fa-globe'></i> map it</a>]</span></div>
+                                            <div class="margin-top-10">
+                                                <a href="https://www.youtube.com/watch?v=48OtZWQ-3Pg">
+                                                    Recorded Meeting URL
+                                                </a>
+                                            </div>
+                                    </td>
+                                    <td class="nowrap">
+                                        <ul class="list-unstyled">
+                                                <li>
+                                                    <a href="/Public/Agenda/668?meeting=672793">Agenda</a>
+                                                </li>
+                                                <li>
+                                                    <a href="/Public/Minutes/668?meeting=672793">Minutes</a>
+                                                </li>
+                                        </ul>
+
+                                    
+                                    </td>
+                                </tr>
+                                <tr class=" row-for-board">
+                                    <td>
+                                        <div>
+                                            January 16, 2025 at 6:00 PM - Regular Board Meeting
+                                        </div>
+                                        <div class="margin-top-10">
+                                            <b class="important-page-text">Meeting Type:</b>
+Regular                                        </div>
+                                            <div class="margin-top-10 checkForUrls">
+                                                <span style="font-size:10px">On January 10, 2025, at 4:00 p.m., this notice was mailed or electronically transmitted to the news media, who previously requested such notice, and a copy was posted in the main/front office window of the Cypress-Fairbanks Independent School District Mark Henry, Ed.D. Administration Building.</span>
+                                            </div>
+                                    </td>
+                                    <td>
+                                        <div><span id='location24192-671006-description'>Boardroom of the Mark Henry, Ed.D. Administration Building</span><br /><span id='location24192-671006-line1'>11440 Matzke Road</span><br /><span id='location24192-671006-csz'>Cypress, Texas 77429</span>&nbsp;<span class='nowrap'>[<a href='https://maps.google.com/?q=11440+Matzke+Road%2c+Cypress%2c+Texas+77429' target='_blank' class='nowrap' aria-describedby='location24192-671006-description location24192-671006-line1 location24192-671006-csz'><i class='fa fa-globe'></i> map it</a>]</span></div>
+                                            <div class="margin-top-10">
+                                                <a href="https://www.youtube.com/watch?v=HcM3ZWG9wFs">
+                                                    Recorded Meeting URL
+                                                </a>
+                                            </div>
+                                    </td>
+                                    <td class="nowrap">
+                                        <ul class="list-unstyled">
+                                                <li>
+                                                    <a href="/Public/Agenda/668?meeting=671006">Agenda</a>
+                                                </li>
+                                                <li>
+                                                    <a href="/Public/Minutes/668?meeting=671006">Minutes</a>
+                                                </li>
+                                        </ul>
+
+                                    
+                                    </td>
+                                </tr>
+                                <tr class=" row-for-board">
+                                    <td>
+                                        <div>
+                                            January 16, 2025 at 6:00 PM - ADDENDUM
+                                        </div>
+                                        <div class="margin-top-10">
+                                            <b class="important-page-text">Meeting Type:</b>
+Regular                                        </div>
+                                            <div class="margin-top-10 checkForUrls">
+                                                <span style="font-size:10px">On January 13, 2025, at 8:00 a.m., this notice was mailed or electronically transmitted to the news media, who previously requested such notice, and a copy was posted in the main/front office window of the Cypress-Fairbanks Independent School District Mark Henry, Ed.D. Administration Building.</span>
+                                            </div>
+                                    </td>
+                                    <td>
+                                        <div><span id='location24192-671053-description'>Boardroom of the Mark Henry, Ed.D. Administration Building</span><br /><span id='location24192-671053-line1'>11440 Matzke Road</span><br /><span id='location24192-671053-csz'>Cypress, Texas 77429</span>&nbsp;<span class='nowrap'>[<a href='https://maps.google.com/?q=11440+Matzke+Road%2c+Cypress%2c+Texas+77429' target='_blank' class='nowrap' aria-describedby='location24192-671053-description location24192-671053-line1 location24192-671053-csz'><i class='fa fa-globe'></i> map it</a>]</span></div>
+                                    </td>
+                                    <td class="nowrap">
+                                        <ul class="list-unstyled">
+                                                <li>
+                                                    <a href="/Public/Agenda/668?meeting=671053">Agenda</a>
+                                                </li>
+                                        </ul>
+
+                                    
+                                    </td>
+                                </tr>
+                                <tr class=" row-for-board">
+                                    <td>
+                                        <div>
+                                            January 13, 2025 at 6:00 PM - Board Work Session
+                                        </div>
+                                        <div class="margin-top-10">
+                                            <b class="important-page-text">Meeting Type:</b>
+Working                                        </div>
+                                            <div class="margin-top-10 checkForUrls">
+                                                <span style="font-size:10px">On January 10, 2025, at 4:00 p.m., this notice was mailed or electronically transmitted to the news media, who previously requested such notice, and a copy was posted in the main/front office window of the Cypress-Fairbanks Independent School District Mark Henry, Ed.D. Administration Building.</span>
+                                            </div>
+                                    </td>
+                                    <td>
+                                        <div><span id='location24192-667344-description'>Boardroom of the Mark Henry, Ed.D. Administration Building</span><br /><span id='location24192-667344-line1'>11440 Matzke Road</span><br /><span id='location24192-667344-csz'>Cypress, Texas 77429</span>&nbsp;<span class='nowrap'>[<a href='https://maps.google.com/?q=11440+Matzke+Road%2c+Cypress%2c+Texas+77429' target='_blank' class='nowrap' aria-describedby='location24192-667344-description location24192-667344-line1 location24192-667344-csz'><i class='fa fa-globe'></i> map it</a>]</span></div>
+                                            <div class="margin-top-10">
+                                                <a href="https://www.youtube.com/watch?v=NVImL1p7F8k">
+                                                    Recorded Meeting URL
+                                                </a>
+                                            </div>
+                                    </td>
+                                    <td class="nowrap">
+                                        <ul class="list-unstyled">
+                                                <li>
+                                                    <a href="/Public/Agenda/668?meeting=667344">Agenda</a>
+                                                </li>
+                                                <li>
+                                                    <a href="/Public/Minutes/668?meeting=667344">Minutes</a>
+                                                </li>
+                                        </ul>
+
+                                    
+                                    </td>
+                                </tr>
+                                <tr class=" row-for-board">
+                                    <td>
+                                        <div>
+                                            December 9, 2024 at 4:00 PM - Special-Called Board Meeting
+                                        </div>
+                                        <div class="margin-top-10">
+                                            <b class="important-page-text">Meeting Type:</b>
+Special                                        </div>
+                                            <div class="margin-top-10 checkForUrls">
+                                                <span style="font-size:10px">On December 5, 2024, at 4:00 p.m., this notice was mailed or electronically transmitted to the news media, who previously requested such notice, and a copy was posted in the main/front office window of the Cypress-Fairbanks Independent School District Mark Henry, Ed.D. Administration Building.</span>
+                                            </div>
+                                    </td>
+                                    <td>
+                                        <div><span id='location24192-667331-description'>Boardroom of the Mark Henry, Ed.D. Administration Building</span><br /><span id='location24192-667331-line1'>11440 Matzke Road</span><br /><span id='location24192-667331-csz'>Cypress, Texas 77429</span>&nbsp;<span class='nowrap'>[<a href='https://maps.google.com/?q=11440+Matzke+Road%2c+Cypress%2c+Texas+77429' target='_blank' class='nowrap' aria-describedby='location24192-667331-description location24192-667331-line1 location24192-667331-csz'><i class='fa fa-globe'></i> map it</a>]</span></div>
+                                    </td>
+                                    <td class="nowrap">
+                                        <ul class="list-unstyled">
+                                                <li>
+                                                    <a href="/Public/Agenda/668?meeting=667331">Agenda</a>
+                                                </li>
+                                                <li>
+                                                    <a href="/Public/Minutes/668?meeting=667331">Minutes</a>
+                                                </li>
+                                        </ul>
+
+                                    
+                                    </td>
+                                </tr>
+                                <tr class=" row-for-board">
+                                    <td>
+                                        <div>
+                                            December 5, 2024 at 6:00 PM - Regular Board Meeting
+                                        </div>
+                                        <div class="margin-top-10">
+                                            <b class="important-page-text">Meeting Type:</b>
+Regular                                        </div>
+                                            <div class="margin-top-10 checkForUrls">
+                                                <span style="font-size:10px">On December 2, 2024, at 4:00 p.m., this notice was mailed or electronically transmitted to the news media, who previously requested such notice, and a copy was posted in the main/front office window of the Cypress-Fairbanks Independent School District Mark Henry, Ed.D. Administration Building.</span>
+                                            </div>
+                                    </td>
+                                    <td>
+                                        <div><span id='location24192-664407-description'>Boardroom of the Mark Henry, Ed.D. Administration Building</span><br /><span id='location24192-664407-line1'>11440 Matzke Road</span><br /><span id='location24192-664407-csz'>Cypress, Texas 77429</span>&nbsp;<span class='nowrap'>[<a href='https://maps.google.com/?q=11440+Matzke+Road%2c+Cypress%2c+Texas+77429' target='_blank' class='nowrap' aria-describedby='location24192-664407-description location24192-664407-line1 location24192-664407-csz'><i class='fa fa-globe'></i> map it</a>]</span></div>
+                                            <div class="margin-top-10">
+                                                <a href="https://www.youtube.com/watch?v=i2zn-uta6tE">
+                                                    Recorded Meeting URL
+                                                </a>
+                                            </div>
+                                    </td>
+                                    <td class="nowrap">
+                                        <ul class="list-unstyled">
+                                                <li>
+                                                    <a href="/Public/Agenda/668?meeting=664407">Agenda</a>
+                                                </li>
+                                                <li>
+                                                    <a href="/Public/Minutes/668?meeting=664407">Minutes</a>
+                                                </li>
+                                        </ul>
+
+                                    
+                                    </td>
+                                </tr>
+                                <tr class=" row-for-board">
+                                    <td>
+                                        <div>
+                                            November 11, 2024 at 6:00 PM - Regular Board Meeting
+                                        </div>
+                                        <div class="margin-top-10">
+                                            <b class="important-page-text">Meeting Type:</b>
+Regular                                        </div>
+                                            <div class="margin-top-10 checkForUrls">
+                                                <span style="font-size:10px">On November 4, 2024, at 4:00 p.m., this notice was mailed or electronically transmitted to the news media, who previously requested such notice, and a copy was posted in the main/front office window of the Cypress-Fairbanks Independent School District Mark Henry, Ed.D. Administration Building.</span>
+                                            </div>
+                                    </td>
+                                    <td>
+                                        <div><span id='location24192-662214-description'>Boardroom of the Mark Henry, Ed.D. Administration Building</span><br /><span id='location24192-662214-line1'>11440 Matzke Road</span><br /><span id='location24192-662214-csz'>Cypress, Texas 77429</span>&nbsp;<span class='nowrap'>[<a href='https://maps.google.com/?q=11440+Matzke+Road%2c+Cypress%2c+Texas+77429' target='_blank' class='nowrap' aria-describedby='location24192-662214-description location24192-662214-line1 location24192-662214-csz'><i class='fa fa-globe'></i> map it</a>]</span></div>
+                                            <div class="margin-top-10">
+                                                <a href="https://www.youtube.com/watch?v=9wNHWaU1cEU">
+                                                    Recorded Meeting URL
+                                                </a>
+                                            </div>
+                                    </td>
+                                    <td class="nowrap">
+                                        <ul class="list-unstyled">
+                                                <li>
+                                                    <a href="/Public/Agenda/668?meeting=662214">Agenda</a>
+                                                </li>
+                                                <li>
+                                                    <a href="/Public/Minutes/668?meeting=662214">Minutes</a>
+                                                </li>
+                                        </ul>
+
+                                    
+                                    </td>
+                                </tr>
+                                <tr class=" row-for-board">
+                                    <td>
+                                        <div>
+                                            November 11, 2024 at 6:00 PM - ADDENDUM
+                                        </div>
+                                        <div class="margin-top-10">
+                                            <b class="important-page-text">Meeting Type:</b>
+Regular                                        </div>
+                                            <div class="margin-top-10 checkForUrls">
+                                                <span style="font-size:10px">On November 8, 2024, at 2:00 p.m., this notice was mailed or electronically transmitted to the news media, who previously requested such notice, and a copy was posted in the main/front office window of the Cypress-Fairbanks Independent School District Mark Henry, Ed.D. Administration Building.</span>
+                                            </div>
+                                    </td>
+                                    <td>
+                                        <div><span id='location24192-663059-description'>Boardroom of the Mark Henry, Ed.D. Administration Building</span><br /><span id='location24192-663059-line1'>11440 Matzke Road</span><br /><span id='location24192-663059-csz'>Cypress, Texas 77429</span>&nbsp;<span class='nowrap'>[<a href='https://maps.google.com/?q=11440+Matzke+Road%2c+Cypress%2c+Texas+77429' target='_blank' class='nowrap' aria-describedby='location24192-663059-description location24192-663059-line1 location24192-663059-csz'><i class='fa fa-globe'></i> map it</a>]</span></div>
+                                    </td>
+                                    <td class="nowrap">
+                                        <ul class="list-unstyled">
+                                                <li>
+                                                    <a href="/Public/Agenda/668?meeting=663059">Agenda</a>
+                                                </li>
+                                        </ul>
+
+                                    
+                                    </td>
+                                </tr>
+                                <tr class=" row-for-board">
+                                    <td>
+                                        <div>
+                                            November 7, 2024 at 6:00 PM - Board Work Session
+                                        </div>
+                                        <div class="margin-top-10">
+                                            <b class="important-page-text">Meeting Type:</b>
+Working                                        </div>
+                                            <div class="margin-top-10 checkForUrls">
+                                                <span style="font-size:10px">On November 4, 2024, at 4:00 p.m., this notice was mailed or electronically transmitted to the news media, who previously requested such notice, and a copy was posted in the main/front office window of the Cypress-Fairbanks Independent School District Mark Henry, Ed.D. Administration Building.</span>
+                                            </div>
+                                    </td>
+                                    <td>
+                                        <div><span id='location24192-658936-description'>Boardroom of the Mark Henry, Ed.D. Administration Building</span><br /><span id='location24192-658936-line1'>11440 Matzke Road</span><br /><span id='location24192-658936-csz'>Cypress, Texas 77429</span>&nbsp;<span class='nowrap'>[<a href='https://maps.google.com/?q=11440+Matzke+Road%2c+Cypress%2c+Texas+77429' target='_blank' class='nowrap' aria-describedby='location24192-658936-description location24192-658936-line1 location24192-658936-csz'><i class='fa fa-globe'></i> map it</a>]</span></div>
+                                            <div class="margin-top-10">
+                                                <a href="https://www.youtube.com/watch?v=y4_Gy79Z8yw">
+                                                    Recorded Meeting URL
+                                                </a>
+                                            </div>
+                                    </td>
+                                    <td class="nowrap">
+                                        <ul class="list-unstyled">
+                                                <li>
+                                                    <a href="/Public/Agenda/668?meeting=658936">Agenda</a>
+                                                </li>
+                                                <li>
+                                                    <a href="/Public/Minutes/668?meeting=658936">Minutes</a>
+                                                </li>
+                                        </ul>
+
+                                    
+                                    </td>
+                                </tr>
+                                <tr class=" row-for-board">
+                                    <td>
+                                        <div>
+                                            August 8, 2024 at 6:00 PM - ADDENDUM
+                                        </div>
+                                        <div class="margin-top-10">
+                                            <b class="important-page-text">Meeting Type:</b>
+Working                                        </div>
+                                            <div class="margin-top-10 checkForUrls">
+                                                <span style="font-size:10px">On August 7, 2024, at 10:00 a.m., this notice was mailed or electronically transmitted to the news media, who previously requested such notice, and a copy was posted in the main/front office window of the Cypress-Fairbanks Independent School District Mark Henry, Ed.D. Administration Building.</span>
+                                            </div>
+                                    </td>
+                                    <td>
+                                        <div><span id='location24192-648896-description'>Boardroom of the Mark Henry, Ed.D. Administration Building</span><br /><span id='location24192-648896-line1'>11440 Matzke Road</span><br /><span id='location24192-648896-csz'>Cypress, Texas 77429</span>&nbsp;<span class='nowrap'>[<a href='https://maps.google.com/?q=11440+Matzke+Road%2c+Cypress%2c+Texas+77429' target='_blank' class='nowrap' aria-describedby='location24192-648896-description location24192-648896-line1 location24192-648896-csz'><i class='fa fa-globe'></i> map it</a>]</span></div>
+                                    </td>
+                                    <td class="nowrap">
+                                        <ul class="list-unstyled">
+                                                <li>
+                                                    <a href="/Public/Agenda/668?meeting=648896">Agenda</a>
+                                                </li>
+                                        </ul>
+
+                                    
+                                    </td>
+                                </tr>
+                                <tr class=" row-for-board">
+                                    <td>
+                                        <div>
+                                            June 17, 2024 at 6:00 PM - ADDENDUM
+                                        </div>
+                                        <div class="margin-top-10">
+                                            <b class="important-page-text">Meeting Type:</b>
+Regular                                        </div>
+                                            <div class="margin-top-10 checkForUrls">
+                                                <span style="font-size:10px">On June 14, 2024 at 12:00 p.m., this notice was mailed or electronically transmitted to the news media, who previously requested such notice, and a copy was posted in the main/front office window of the Cypress-Fairbanks Independent School District Mark Henry, Ed.D. Administration Building.</span>
+                                            </div>
+                                    </td>
+                                    <td>
+                                        <div><span id='location24192-641617-description'>Boardroom of the Mark Henry, Ed.D. Administration Building</span><br /><span id='location24192-641617-line1'>11440 Matzke Road</span><br /><span id='location24192-641617-csz'>Cypress, Texas 77429</span>&nbsp;<span class='nowrap'>[<a href='https://maps.google.com/?q=11440+Matzke+Road%2c+Cypress%2c+Texas+77429' target='_blank' class='nowrap' aria-describedby='location24192-641617-description location24192-641617-line1 location24192-641617-csz'><i class='fa fa-globe'></i> map it</a>]</span></div>
+                                    </td>
+                                    <td class="nowrap">
+                                        <ul class="list-unstyled">
+                                                <li>
+                                                    <a href="/Public/Agenda/668?meeting=641617">Agenda</a>
+                                                </li>
+                                        </ul>
+
+                                    
+                                    </td>
+                                </tr>
+                        </tbody>
+                    </table>
+
+                <div class="margin-top-10">
+                    <h3>
+                        Subscribe
+                    </h3>
+
+
+                    <p>
+                        Keep up-to-date with meetings, agendas, and minutes!
+                    </p>
+
+                    <button class="btn btn-primary subscribeButton_Show" type="button">
+                        <i class="fa fa-envelope"></i>
+                        Subscribe to Cypress-Fairbanks ISD?
+                    </button>
+
+                </div>
+                <input type="hidden" id="organizationName" value="Cypress-Fairbanks ISD" />
+                <div class="pre-indent">
+                    <div class="displayNone indent" id="subscribeSection">
+                        <input name="__RequestVerificationToken" type="hidden" value="CfDJ8Fdzrs7xxJRCuos7D8CY88xu3-nItEWJNI90SmB_23JoYEcXL5Zlh2pKyvHXyrVRQWggRqEpsuOxnSIlxdpYzMj11GFmqJrzewPw7poRG9UT52SESPEdv3uu0eXBIMbcgl841VtNamp7AonvHTb5pyM" />
+
+                        <div class='form-group '>  <label class='control-label' for='SubscribeEmail'>Please enter your Email Address here:</label>  <div class='input-group'>    <div class='input-group-text input-group-prepend'>@</div>    <input type='email' class='form-control ' id='SubscribeEmail' name='SubscribeEmail' placeholder='Please enter your Email Address here' value=''  />  </div></div>
+                        <div class='form-group '>  <label class='control-label' for='ConfirmSubscribeEmail'>Confirm your Email Address:</label>  <div class='input-group'>    <div class='input-group-text input-group-prepend'>@</div>    <input type='email' class='form-control ' id='ConfirmSubscribeEmail' name='ConfirmSubscribeEmail' placeholder='Confirm your Email Address' value=''  />  </div></div>
+
+                        <button class="btn btn-success" id="subscribeButton_Action" type="button" data-subscribeurl="/Public/Subscribe/668">
+                            <i class="fa fa-envelope"></i>
+                            Subscribe to Cypress-Fairbanks ISD!
+                        </button>
+                    </div>
+                </div>
+        </div>
+
+        <div class="col-lg-5 col-md-12">
+            <div id="loadDocumentsIntoSection" data-loadurl="/Public/OrganizationDocuments/668?showDocumentsOnPublic=True&amp;showPoliciesOnPublic=True">
+                <i class='fa fa-spinner fa-pulse'></i> Checking for More Information...
+            </div>
+        </div>
+</div>
+
+
+<script src="https://cdn2.sparqdata.com/Scripts/PublicOrganization.6.js" type="text/javascript"></script>
+
+
+
+            </main>
+            <hr />
+            
+            <footer id="footer">
+                    <div>
+                        <div class="text-center">
+<div class="margin-bottom-7"><a href="mailto:support@boardbook.org">support@boardbook.org</a></div>
+
+<div class="margin-bottom-7">888.587.2665</div>
+</div>
+
+                    </div>
+                <div class="display-none">
+                    Copyright &copy; 2015-2026. Sparq Data Solutions Inc. - All Rights Reserved.
+                </div>
+                    <div class="row legal-links">
+                            <div class="col-sm-12 col-md-6">
+                                <a href="/Home/Privacy">
+                                    Privacy Policy
+                                </a>
+                            </div>
+                            <div class="col-sm-12 col-md-6">
+                                <a href="/Home/Terms">
+                                    Terms and Conditions of Use
+                                </a>
+                            </div>
+                    </div>
+                <div id="footer-logo-section">
+                    <a href="https://www.boardbook.org/home.aspx" target="_blank">
+                        <img alt="BoardBook footer logo" src="https://cdn1.sparqdata.com/SharedContent/themes/boardbook/boardbooklogo.png" id="footer-logo" />
+                    </a>
+                </div>
+            </footer>
+        </div>
+    </div>
+    
+    
+</body>
+</html>

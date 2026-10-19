@@ -1,0 +1,6 @@
+# Hand-made (D36): a group naming our bot disallows everything.
+User-agent: NeighborhoodHacks-AgendaBot
+Disallow: /
+
+User-agent: *
+Allow: /

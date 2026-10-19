@@ -1,0 +1,61 @@
+{
+  "meeting": {
+    "external_id": "767938",
+    "date": "2026-10-08T18:00:00-05:00",
+    "type": "regular",
+    "status": "scheduled",
+    "agenda_url": "https://meetings.boardbook.org/Public/DownloadAgenda/668?meeting=767938",
+    "minutes_url": "https://meetings.boardbook.org/Public/Minutes/668?meeting=767938",
+    "video_url": "https://www.youtube.com/watch?v=X83BCLwLY-8",
+    "has_comment_rules": true
+  },
+  "item_count": 19,
+  "spot_checks": [
+    {
+      "external_id": "18840385",
+      "title": "Invocation and Pledge of Allegiance",
+      "agenda_number": "2",
+      "section": null,
+      "status": "awaiting_result",
+      "attachments": 0
+    },
+    {
+      "external_id": "18840394",
+      "title": "The Board will consider approving the minutes of the September 14, 2026, Regular Board Meeting.",
+      "agenda_number": "8.A",
+      "section": "CONSENT AGENDA",
+      "status": "awaiting_result",
+      "attachments": 0
+    },
+    {
+      "external_id": "18883911",
+      "title": "EHAC (Local) - Basic Instructional Program: Required Instruction Secondary (Revise)",
+      "agenda_number": "9.B.1",
+      "section": "NON-CONSENT AGENDA",
+      "status": "awaiting_result",
+      "attachments": 2
+    },
+    {
+      "external_id": "18840401",
+      "title": "BOARD COMMENTS",
+      "agenda_number": "11",
+      "section": null,
+      "status": "awaiting_result",
+      "attachments": 0
+    },
+    {
+      "external_id": "18840403",
+      "title": "There will be a Closed Session in accordance with Government Code Section 551.001 et. seq.",
+      "agenda_number": "12.A",
+      "section": "CLOSED SESSION",
+      "status": "awaiting_result",
+      "attachments": 0
+    }
+  ],
+  "redacted_titles": [
+    {
+      "external_id": "18840400",
+      "title": "The Board will consider making a determination that good cause did not exist as required by law to several employees to resign their respective employment contracts. [This item may be discussed in closed session.]"
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "candidates": [
+    "18f9660477d61fa707cd086bed173a2897fd75e8",
+    "1fead13fa8d046c95f855183ad1503fe0f82064b",
+    "2cf54c1bb0d080ebff8a711533eb4770afbea0c5",
+    "2f692150b5a5839b03d827becde1dfbb4eba1ce7",
+    "45b01b69070cd6308ebdb69b5f811efce0959097",
+    "63cd559baf5b6ac6b9415049f402517b8db6753d",
+    "6c18fc10effd6a27ecb77ef37816071d51c6e32e",
+    "6dde3739ff00911dcb9838843f2087a7248512bc",
+    "7483563b609a6a3dfed641940f83e49e1133baec",
+    "872dfbd47fbdff5926b8ce18dee0411629c92a7d",
+    "b29fc824923f1e46e7d702704dd75f00689bb338",
+    "c63b59743aa58d8f999bd6a157a8f9e23b7f9ba7"
+  ],
+  "called": true,
+  "links": [],
+  "proposed": 1,
+  "rejected": 1,
+  "warnings": [
+    "article handmade-lonestar-tax-hearing: link to 872dfbd47fbdff5926b8ce18dee0411629c92a7d rejected: proof_quote not in article text: \"trustees voted unanimously to raise the tax rate\""
+  ]
+}

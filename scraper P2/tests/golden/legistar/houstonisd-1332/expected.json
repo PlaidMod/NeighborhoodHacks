@@ -1,0 +1,76 @@
+{
+  "meeting": {
+    "external_id": "1332",
+    "date": "2026-10-22T17:00:00-05:00",
+    "type": "regular",
+    "status": "scheduled",
+    "agenda_url": "https://houstonisd.legistar1.com/houstonisd/meetings/2026/10/1332_A_School_Board_26-10-22_Agenda.pdf",
+    "has_comment_rules": true
+  },
+  "item_count": 10,
+  "spot_checks": [
+    {
+      "external_id": "46773",
+      "title": "An employee, Consideration of Independent Hearing Examiner’s Recommendation, TEA Docket No. 187-LH-06-2026",
+      "agenda_number": "1",
+      "section": "HEARING ITEMS",
+      "status": "upcoming",
+      "vote_result": null
+    },
+    {
+      "external_id": "46803",
+      "title": "An employee, Consideration of Independent Hearing Examiner’s Recommendation, TEA Docket No. 200-LH-06-2026",
+      "agenda_number": "3",
+      "section": "HEARING ITEMS",
+      "status": "upcoming",
+      "vote_result": null
+    },
+    {
+      "external_id": "46779",
+      "title": "Deliberate the duties of the superintendent of schools, chief officers, deputy chief officers, executive directors, principals, employees, and board members; evaluations of the superintendent; consideration of compensation, and contractual provisions of same.",
+      "agenda_number": "a)",
+      "section": "CLOSED SESSION / Personnel",
+      "status": "upcoming",
+      "vote_result": null
+    },
+    {
+      "external_id": "46781",
+      "title": "Hear complaints against and deliberate the appointment, evaluation, and duties of public officers or employees and resolution of same.",
+      "agenda_number": "c)",
+      "section": "CLOSED SESSION / Personnel",
+      "status": "upcoming",
+      "vote_result": null
+    },
+    {
+      "external_id": "46784",
+      "title": "Pending or contemplated litigation matters and status report.",
+      "agenda_number": "b)",
+      "section": "CLOSED SESSION / Legal",
+      "status": "upcoming",
+      "vote_result": null
+    }
+  ],
+  "attribution_hits": [],
+  "redacted_titles": [
+    {
+      "external_id": "46773",
+      "title": "An employee, Consideration of Independent Hearing Examiner’s Recommendation, TEA Docket No. 187-LH-06-2026"
+    },
+    {
+      "external_id": "46802",
+      "title": "An employee, Consideration of Independent Hearing Examiner’s Recommendation, TEA Docket No. 164-LH-06-2026"
+    },
+    {
+      "external_id": "46803",
+      "title": "An employee, Consideration of Independent Hearing Examiner’s Recommendation, TEA Docket No. 200-LH-06-2026"
+    },
+    {
+      "external_id": "46804",
+      "title": "An employee, Consideration of Independent Hearing Examiner’s Recommendation, TEA Docket No. 199-LH-06-2026"
+    },
+    {
+      "external_id": "46805",
+      "title": "An employee, Dispute Resolution Hearing"
+    }
+  ]
+}

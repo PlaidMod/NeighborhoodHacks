@@ -1,0 +1,29 @@
+{
+  "meeting": {
+    "date": "2026-10-19",
+    "time": "11:00 a.m.",
+    "type": "regular"
+  },
+  "items": [
+    {
+      "agenda_number": "1",
+      "title": "Public comments",
+      "source_quote": "1. Public comments;"
+    },
+    {
+      "agenda_number": "8",
+      "title": "Conduct a public hearing regarding the adoption of the District's 2026 tax rate",
+      "source_quote": "Conduct a public hearing regarding the adoption of the District's 2026 tax rate"
+    },
+    {
+      "agenda_number": "13",
+      "title": "Status of Garbage and Recycling Collection services",
+      "source_quote": "13. Status of Garbage and Recycling Collection services;"
+    },
+    {
+      "agenda_number": "9",
+      "title": "Levy of the District's 2027 debt service and maintenance tax rates",
+      "source_quote": "Levy of the District's 2027 debt service and maintenance tax rates"
+    }
+  ]
+}

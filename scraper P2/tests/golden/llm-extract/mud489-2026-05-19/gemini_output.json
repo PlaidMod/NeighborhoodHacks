@@ -1,0 +1,8 @@
+{
+  "meeting": { "date": "2026-05-18", "time": "11:00 a.m.", "type": "regular" },
+  "items": [
+    { "agenda_number": "2", "title": "Review and approval of the minutes of the special meeting of the Board of Directors held April 9, 2026", "source_quote": "Review and approval of the minutes of the special meeting of the Board of Directors held April 9, 2026" },
+    { "agenda_number": "3", "title": "Election of officers of Board of Directors", "source_quote": "Election of officers of Board of Directors;" },
+    { "agenda_number": "4", "title": "Approval of District Registration Form relative to election of Directors", "source_quote": "Approval of District Registration Form relative to election of Directors;" }
+  ]
+}

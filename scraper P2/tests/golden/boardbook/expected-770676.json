@@ -1,0 +1,61 @@
+{
+  "meeting": {
+    "external_id": "770676",
+    "date": "2026-10-19T18:00:00-05:00",
+    "type": "regular",
+    "status": "scheduled",
+    "agenda_url": "https://meetings.boardbook.org/Public/DownloadAgenda/668?meeting=770676",
+    "minutes_url": null,
+    "video_url": null,
+    "has_comment_rules": true
+  },
+  "item_count": 19,
+  "spot_checks": [
+    {
+      "external_id": "18914498",
+      "title": "Call to Order",
+      "agenda_number": "1",
+      "section": null,
+      "status": "upcoming",
+      "attachments": 0
+    },
+    {
+      "external_id": "18914502",
+      "title": "The Superintendent will make remarks and announcements regarding the honors and achievements earned by staff and students in recent weeks and provide information regarding district and community events or items of interest.",
+      "agenda_number": "4.A",
+      "section": "Recognitions and Awards Announcements",
+      "status": "upcoming",
+      "attachments": 0
+    },
+    {
+      "external_id": "18914514",
+      "title": "EIC (Local): Academic Achievement Class Ranking (Revise)",
+      "agenda_number": "8.B.1",
+      "section": "CONSENT AGENDA",
+      "status": "upcoming",
+      "attachments": 2
+    },
+    {
+      "external_id": "18914524",
+      "title": "BOARD COMMENTS",
+      "agenda_number": "11",
+      "section": null,
+      "status": "upcoming",
+      "attachments": 0
+    },
+    {
+      "external_id": "18914526",
+      "title": "There will be a Closed Session in accordance with Government Code Section 551.001 et. seq.",
+      "agenda_number": "12.A",
+      "section": "CLOSED SESSION",
+      "status": "upcoming",
+      "attachments": 0
+    }
+  ],
+  "redacted_titles": [
+    {
+      "external_id": "18914521",
+      "title": "The Board will consider making a determination that good cause did not exist as required by law to several employees to resign their respective employment contracts. [This item may be discussed in closed session.]"
+    }
+  ]
+}

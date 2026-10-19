@@ -1,0 +1,359 @@
+{
+  "note": "Generated from the hand-written gemini_output.json with a frozen clock; reviewed by hand.",
+  "now": "2026-10-18T12:00:00-05:00",
+  "meeting": {
+    "external_id": "9c953361b076851c5b107442a02c9f87e58b7a96",
+    "body_id": "hcmud_489",
+    "date": "2026-10-19T11:00:00-05:00",
+    "type": "regular",
+    "status": "scheduled",
+    "agenda_url": "https://hcmud489.com/static/dfaef0088dbe419a94dafac34a137a29/Agenda_October_19_2026_HCMUD_489_5b93c39b1d.pdf"
+  },
+  "item_count": 38,
+  "dropped": 0,
+  "warnings": [],
+  "items": [
+    {
+      "external_id": "eb68b9c3394f8737cbc18cd36dd83fd124735c8a",
+      "agenda_number": "1",
+      "title": "Public comments",
+      "section": null,
+      "status": "upcoming",
+      "amounts": [],
+      "contains_private_person": false
+    },
+    {
+      "external_id": "849661784e0779a69b3be756ddeb32b71b29aac6",
+      "agenda_number": "2",
+      "title": "Review and approval of the minutes of the meeting of the Board of Directors held September 21, 2026",
+      "section": null,
+      "status": "upcoming",
+      "amounts": [],
+      "contains_private_person": false
+    },
+    {
+      "external_id": "2c52be6d6ef1b2e7428f7ad611ab641faef88f89",
+      "agenda_number": "3",
+      "title": "Bookkeeper's report, including (i) financial and investment reports and the payment of invoices presented, and (ii) status of compliance by the District with Texas Government Code, Chapter 2265, relative to energy reporting",
+      "section": null,
+      "status": "upcoming",
+      "amounts": [],
+      "contains_private_person": false
+    },
+    {
+      "external_id": "bbf7e5c9a7fc4a0d23b7bcf953bee174fc3793d0",
+      "agenda_number": "4",
+      "title": "Annual review of Order Establishing Policy for Investment of District Funds and appointing Investment Officer, and adoption of Resolution in connection therewith",
+      "section": null,
+      "status": "upcoming",
+      "amounts": [],
+      "contains_private_person": false
+    },
+    {
+      "external_id": "26fef81976586efd469d5af7f2e03083a2c038d3",
+      "agenda_number": "5",
+      "title": "Adoption of Resolution Adopting List of Qualified Brokers Authorized to Engage in Investment Transactions with the District",
+      "section": null,
+      "status": "upcoming",
+      "amounts": [],
+      "contains_private_person": false
+    },
+    {
+      "external_id": "910919a8498ca4cfbe0a7b062e60e1466579f56c",
+      "agenda_number": "6",
+      "title": "Receive Tax Assessor-Collector report and approve payment of invoices presented and moving of accounts to uncollectible roll",
+      "section": null,
+      "status": "upcoming",
+      "amounts": [],
+      "contains_private_person": false
+    },
+    {
+      "external_id": "0ba3277e12535357837683f677a9ea59d70b16e0",
+      "agenda_number": "7",
+      "title": "Report on legal action taken by the District's delinquent tax collections attorney, authorize foreclosure proceedings, installment agreements, and the filing of proofs of claim",
+      "section": null,
+      "status": "upcoming",
+      "amounts": [],
+      "contains_private_person": false
+    },
+    {
+      "external_id": "a22a54ea2b427cde0e5407502ea39c9944b9b516",
+      "agenda_number": "8",
+      "title": "Conduct a public hearing regarding the adoption of the District's 2026 tax rate",
+      "section": null,
+      "status": "upcoming",
+      "amounts": [],
+      "contains_private_person": false
+    },
+    {
+      "external_id": "b54857e2d72aca324d9499fe20653d6b38a31a1d",
+      "agenda_number": "9",
+      "title": "Levy of the District's 2026 debt service and maintenance tax rates, and the adoption of an Order in connection therewith",
+      "section": null,
+      "status": "upcoming",
+      "amounts": [],
+      "contains_private_person": false
+    },
+    {
+      "external_id": "47788f7989728d8a696b3433ea25d24a88b1a257",
+      "agenda_number": "10",
+      "title": "Approval and execution of an Amendment to the Third Amended and Restated District Information Form",
+      "section": null,
+      "status": "upcoming",
+      "amounts": [],
+      "contains_private_person": false
+    },
+    {
+      "external_id": "e42e77572679bf8ee82c4b9c5d1b5f400e50f30c",
+      "agenda_number": "11",
+      "title": "Preparation and filing of continuing disclosure report for fiscal year ended May 31, 2026 (due November 30, 2026)",
+      "section": null,
+      "status": "upcoming",
+      "amounts": [],
+      "contains_private_person": false
+    },
+    {
+      "external_id": "4d8bdf2705a85f9c8b23e3d9ffd3e6ddfc1236c0",
+      "agenda_number": "12",
+      "title": "Operator's Report",
+      "section": null,
+      "status": "upcoming",
+      "amounts": [],
+      "contains_private_person": false
+    },
+    {
+      "external_id": "3f5bfe97a0d51e8f2b08eb90f4994f3b5d44036d",
+      "agenda_number": "12.a",
+      "title": "Monthly report",
+      "section": "Operator's Report",
+      "status": "upcoming",
+      "amounts": [],
+      "contains_private_person": false
+    },
+    {
+      "external_id": "783958edfbbfc44724e427b977d42c9e68cbc761",
+      "agenda_number": "12.b",
+      "title": "Disposition of delinquent utility accounts and referral of accounts for collection",
+      "section": "Operator's Report",
+      "status": "upcoming",
+      "amounts": [],
+      "contains_private_person": false
+    },
+    {
+      "external_id": "2e6546f63cb34bd19f709ce6c07eb0fd61e4eb25",
+      "agenda_number": "12.c",
+      "title": "Appeals of District charges and consideration of customer comments",
+      "section": "Operator's Report",
+      "status": "upcoming",
+      "amounts": [],
+      "contains_private_person": false
+    },
+    {
+      "external_id": "b58a003b5c4ee96a0b940fa55f0f1f1dfc06b205",
+      "agenda_number": "12.d",
+      "title": "Repair and maintenance of District facilities, including water system flushing program, sanitary sewer manhole inspection and rehabilitation, and lift station pretreatment program",
+      "section": "Operator's Report",
+      "status": "upcoming",
+      "amounts": [],
+      "contains_private_person": false
+    },
+    {
+      "external_id": "d93f149e09f90514cfa435c006242b549eba3d0d",
+      "agenda_number": "12.e",
+      "title": "Status of compliance with permits",
+      "section": "Operator's Report",
+      "status": "upcoming",
+      "amounts": [],
+      "contains_private_person": false
+    },
+    {
+      "external_id": "7ad6088ee1fa95edf47c40a7a83a2e04f3e08d2a",
+      "agenda_number": "12.f",
+      "title": "Pending insurance and reimbursement claims",
+      "section": "Operator's Report",
+      "status": "upcoming",
+      "amounts": [],
+      "contains_private_person": false
+    },
+    {
+      "external_id": "e9c0c4b011b9279c94649df3ea7b76187a9aa25a",
+      "agenda_number": "13",
+      "title": "Status of Garbage and Recycling Collection services",
+      "section": null,
+      "status": "upcoming",
+      "amounts": [],
+      "contains_private_person": false
+    },
+    {
+      "external_id": "2ecd8783a2f62dbcfde1d6627f6602f19eff8df7",
+      "agenda_number": "14",
+      "title": "Amendment of District's Rate Order relative to annual CPI increase imposed by Republic Services, Inc.",
+      "section": null,
+      "status": "upcoming",
+      "amounts": [],
+      "contains_private_person": false
+    },
+    {
+      "external_id": "4f53f893be704ce1f7ff3a3544c48f75e52703bb",
+      "agenda_number": "15",
+      "title": "Engineer's Report",
+      "section": null,
+      "status": "upcoming",
+      "amounts": [],
+      "contains_private_person": false
+    },
+    {
+      "external_id": "f7b9cf758f06439c0480cb5d89bea6702083b0ff",
+      "agenda_number": "15.a",
+      "title": "Authorize the design and/or advertisement for bids for the construction of facilities within the District, and approval of related Storm Water Pollution Prevention Plans",
+      "section": "Engineer's Report",
+      "status": "upcoming",
+      "amounts": [],
+      "contains_private_person": false
+    },
+    {
+      "external_id": "7d4b2fec7de5ed955e316028193302d761857da9",
+      "agenda_number": "15.b",
+      "title": "Authorize the award of construction contracts or concurrence of award of contracts for the construction of facilities within the District",
+      "section": "Engineer's Report",
+      "status": "upcoming",
+      "amounts": [],
+      "contains_private_person": false
+    },
+    {
+      "external_id": "6bc4ab26e34fc4148c69c8382e44ceff569ee71a",
+      "agenda_number": "15.c",
+      "title": "Status of construction of water, sewer and drainage facilities and paving to serve land within the District, including the approval of any pay estimates and/or change orders, and acceptance by Harris County of streets for maintenance",
+      "section": "Engineer's Report",
+      "status": "upcoming",
+      "amounts": [],
+      "contains_private_person": false
+    },
+    {
+      "external_id": "d7c8879b1a1274540d9ef7d5c1cfde2e96bf838a",
+      "agenda_number": "15.d",
+      "title": "Authorizing the design, advertisement, or award of construction contracts or concurrence in the award of contracts for the construction of recreational facilities within the District",
+      "section": "Engineer's Report",
+      "status": "upcoming",
+      "amounts": [],
+      "contains_private_person": false
+    },
+    {
+      "external_id": "cf0614fa567784458d2832aa8de0ac11e4162719",
+      "agenda_number": "15.e",
+      "title": "Status of construction of recreational facilities to serve land within the District, and the approval of any pay estimates and/or change orders",
+      "section": "Engineer's Report",
+      "status": "upcoming",
+      "amounts": [],
+      "contains_private_person": false
+    },
+    {
+      "external_id": "48df16f5d6af2e3de78a60af892c74e2862bd57e",
+      "agenda_number": "15.f",
+      "title": "Acceptance of site and/or easement conveyances for facilities constructed or to be constructed for the District, and acceptance of facilities for operation and maintenance purposes",
+      "section": "Engineer's Report",
+      "status": "upcoming",
+      "amounts": [],
+      "contains_private_person": false
+    },
+    {
+      "external_id": "2b89ca67085f67de41d9f7a2ec62d4ea1ea8d33a",
+      "agenda_number": "15.g",
+      "title": "Status of storm sewer and street acceptances by Harris County",
+      "section": "Engineer's Report",
+      "status": "upcoming",
+      "amounts": [],
+      "contains_private_person": false
+    },
+    {
+      "external_id": "6d5ff9976bf0a3a3d554a886cf6e54ca6b1744ca",
+      "agenda_number": "15.h",
+      "title": "General engineering matters",
+      "section": "Engineer's Report",
+      "status": "upcoming",
+      "amounts": [],
+      "contains_private_person": false
+    },
+    {
+      "external_id": "f85c0ccd60edd2ebc1e5db1ed19dd041c05a46a5",
+      "agenda_number": "16",
+      "title": "Review and discuss Capital Improvement Plan and authorize action in connection therewith",
+      "section": null,
+      "status": "upcoming",
+      "amounts": [],
+      "contains_private_person": false
+    },
+    {
+      "external_id": "dba6362bad741d25169ffb6897141741c1a7e89a",
+      "agenda_number": "17",
+      "title": "Discuss updates and revisions to the District website",
+      "section": null,
+      "status": "upcoming",
+      "amounts": [],
+      "contains_private_person": false
+    },
+    {
+      "external_id": "cbed0d9cd87ba76b53498a184d4e56eeefd4eef5",
+      "agenda_number": "18",
+      "title": "Matters related to the Bridgeland Water Agency (the \"Agency\") and directives to the District's Trustee and Alternate(s)",
+      "section": null,
+      "status": "upcoming",
+      "amounts": [],
+      "contains_private_person": false
+    },
+    {
+      "external_id": "827e8bd4b0d82c64256fdbf1dbce9368fc7194d8",
+      "agenda_number": "19",
+      "title": "Matters related to 5-acre administrative facility site jointly owned with Harris County Municipal Utility District No. 419",
+      "section": null,
+      "status": "upcoming",
+      "amounts": [],
+      "contains_private_person": false
+    },
+    {
+      "external_id": "308df5614e3d9c29062f61d5abf93510450b1488",
+      "agenda_number": "20",
+      "title": "Developer's Report",
+      "section": null,
+      "status": "upcoming",
+      "amounts": [],
+      "contains_private_person": false
+    },
+    {
+      "external_id": "356144a93d3c2d47ab9ecbe5b2bb44247e540856",
+      "agenda_number": "21",
+      "title": "Matters relative to Bridgeland Council, Inc. and/or Parkland Village Homeowners' Association",
+      "section": null,
+      "status": "upcoming",
+      "amounts": [],
+      "contains_private_person": false
+    },
+    {
+      "external_id": "f4bf12e134c185cb58afd234e4e0ee8934a73d45",
+      "agenda_number": "22",
+      "title": "Discussion regarding participation in January 1, 2027, Trace Air flyover and participation in the costs for same",
+      "section": null,
+      "status": "upcoming",
+      "amounts": [],
+      "contains_private_person": false
+    },
+    {
+      "external_id": "56e6302a42163a56f524e4e9ef87318e0cdd9aa6",
+      "agenda_number": "23",
+      "title": "Attorney's Report",
+      "section": null,
+      "status": "upcoming",
+      "amounts": [],
+      "contains_private_person": false
+    },
+    {
+      "external_id": "5f421adfb19a22edfbf072e63ecfd00b238c5255",
+      "agenda_number": "24",
+      "title": "Matters for possible placement on future agendas",
+      "section": null,
+      "status": "upcoming",
+      "amounts": [],
+      "contains_private_person": false
+    }
+  ]
+}

@@ -285,7 +285,42 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 - **Files:** `lib/tokens.ts`, `tests/platform/tokens.test.ts`
 - **Contract changes (shared, §3):**
   - **Format:** `<payload>.<signature>`. The payload is base64url JSON `{"v":1,"b":[sorted unique ids]}`, and the signature is base64url HMAC-SHA256 with `BODIES_TOKEN_SECRET`.
-  - **Body IDs:** 1 to 64 IDs, each matching `^[a-z0-9][a-z0-9_-]{0,63}$`.
+  - **Body IDs:** 1 to 64 IDs, each matching `^[a-z0-9][a-z0-9_-]{0,63}# Agent handoff log
+
+A shared log of changes made in this repo, so the next teammate or agent can catch up without reading every diff. Entries follow `INSTRUCTIONS.md`: record the teammate, never the agent or model.
+
+## Rules for agents
+
+1. **At the start of a session,** read the newest 3–5 entries below, plus any entry that touches the files you're about to change.
+2. **After you add, edit or delete anything in the repo,** add one entry before you finish the task or commit. One entry per task, not per file.
+3. **Put new entries at the top,** directly under "Entries." Never edit or delete someone else's entry. If an older entry is now wrong, say so in your new entry.
+4. **Keep it short.** Aim for under 15 lines, and write for a teammate who hasn't seen the code.
+5. **Flag shared-contract changes** in the "Contract changes" line. Other parts are built against these, so a silent change breaks them:
+   - DB schema (Technical_Implementation_Plan.md §16)
+   - `Meeting` and `Item` types (§6)
+   - `bodies_token` format (§3)
+   - the `classify()` signature (§8)
+   - types in `web/src/lib/data/types.ts`
+6. **On a merge conflict in this file,** keep both entries, newest first.
+
+## Entry template
+
+```markdown
+### YYYY-MM-DD: <short title>
+- **Who:** <teammate> · <part, e.g. P3 News and Alerts>
+- **Branch:** <branch>
+- **What changed:** <1–3 sentences on what and why>
+- **Files:** <main files or folders touched>
+- **Contract changes:** None | <what changed and who it affects>
+- **Checked:** <e.g. npm run lint, npx tsc --noEmit, manual check at 390px; or "not run" and why>
+- **Open issues / next:** <anything unfinished, broken, or for the next person>
+```
+
+---
+
+## Entries
+
+.
   - The same set always gives the same token, so P3 can cache the weekly page by token.
   - **P1** signs the token in `/api/lookup`. **P3** verifies it on `/weekly?t=`. When `verifyBodiesToken` returns null, show "enter your address again" instead of an error.
 - **Checked:** `npm test -- tokens` (13/13), typecheck and lint pass.
@@ -420,6 +455,42 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
   - `npm test` blocks `fetch`, so put live tests in a `vitest.live.config.ts`.
 - **Checked:** `npm run typecheck`, `npm run lint`, `npm test` (1/1) and `npm run build` all pass. `next dev` served `/` with status 200.
 - **Open issues / next:** Task 2 (Supabase project and schema) is next.
+
+### 2026-10-19: P2 scraper Phase 1 complete (steps 2–13)
+- **Who:** Iarush · P2 Agenda Data
+- **Branch:** scrapper
+- **What changed:** Standalone scraper library (no DB, no Next.js): Legistar (Commissioners Court, HISD), BoardBook (CFISD), PrimeGov (City Council), LLM extraction (Lone Star, HC MUD 489) and manual YAML adapters; results from minutes; news headline collector, article fetcher and article→item matching; pure `health()`. Per-step details, smoke tables and a "Handoff to P5/P3" section are in `.plans/scraper-progress.md`. Also moved the step 0/1 entries, which had been inserted above this file's title, down here unchanged.
+- **Files:** `lib/adapters/`, `lib/ingest/`, `lib/news/`, `scripts/`, `data/`, `tests/`, `.plans/scraper-progress.md`
+- **Contract changes:** `Meeting`/`Item` per scraper spec §12.1 (`Item.status` upcoming|awaiting_result|decided, `Meeting` end_date/status/minutes_url/comment_rules_text, `vote_result` passed|failed|no_action, `AdapterResult.result_updates`). Additions: optional `is_demo` on Meeting/Item; `RunMode` results takes optional `known`; no `content_hash` on Item/Meeting types (computed at write time); `health()` returns `details`; redaction also covers embedded names and 3+ name lists ("several employees"). DB columns per spec P2-A (P5). Affects P3 and P5.
+- **Checked:** npm run typecheck, npm run lint, npm test (364 passed); live smoke of every source (table in progress log).
+- **Open issues / next:** No GEMINI_API_KEY: all LLM fixtures hand-written, model ids unverified, live LLM smokes owed. Live BoardBook smoke and BoardBook results mode owed (session was in the 00:00–05:00 window). 5 outlets `fetch_articles: false` (terms of use); Houston Landing disabled. Phase 2 waits for P5's platform.
+
+### 2026-10-19: P2 scraper step 1: shared types, ingest utilities, scrape CLI shell
+- **Who:** Iarush · P2 Agenda Data
+- **Branch:** scrapper
+- **What changed:** Added the scraper's shared types (zod schemas for Meeting, Item, AdapterResult, news types), an HTTP helper, text/date normalization (America/Chicago), hashing, amount parsing, personnel redaction, section attribution, validation, a classify stub, the source registry with the news-domain guard, and the `npm run scrape` CLI shell (no adapters yet).
+- **Files:** `lib/adapters/`, `lib/ingest/`, `scripts/scrape.ts`, `data/sources.yaml`, `tests/unit/`, `.plans/scraper-progress.md`
+- **Contract changes:** `Meeting`/`Item` extended per scraper spec §5.1/§12 (end_date, status, minutes_url, comment_rules_text, body_id, section, description, amounts with optional `kind: 'rate'`, attachments, contains_private_person, quote_verified). Affects P3 and P5.
+- **Checked:** npm run typecheck, npm run lint, npm test (66 passed)
+- **Open issues / next:** Step 2 (LegistarAdapter). `lib/rules/classify.ts` untouched (P3 owns it).
+
+### 2026-10-19: P2 scraper step 0: root TypeScript project setup
+- **Who:** Iarush · P2 Agenda Data
+- **Branch:** scrapper
+- **What changed:** Added a root Node/TypeScript project for the standalone scraper library (separate from `web/`): package.json scripts, strict tsconfig, vitest, eslint, `.env.example`, `.gitignore`, and the progress log `.plans/scraper-progress.md`.
+- **Files:** `package.json`, `package-lock.json`, `tsconfig.json`, `vitest.config.ts`, `vitest.live.config.ts`, `eslint.config.js`, `.env.example`, `.gitignore`, `.plans/scraper-progress.md`, `tests/unit/setup.test.ts`
+- **Contract changes:** None
+- **Checked:** npm run typecheck, npm run lint, npm test (1 passed)
+- **Open issues / next:** P5 must merge root deps into the Next.js package.json later. Root configs exclude `web/`.
+
+### 2026-10-19: Plan revision 5: news coverage perspectives
+- **Who:** Iarush · part not set yet
+- **Branch:** main
+- **What changed:** Added a core feature, a "What news coverage says" block on weekly stories. It shows the viewpoints Houston outlets report on an agenda decision, grouped by stakeholder, each with a summary, an exact quote and a source link, plus a one-sided note. P2 now fetches article text from outlets with no paywall (stored admin-only, deleted after 90 days) and uses Gemini to match articles to items. P3 extracts viewpoints, runs code checks and a separate Gemini judge pass, and renders the block. News still never feeds items, classify, alerts, the review queue or story text; its only other effect is a weekly sort tie-breaker by outlet count.
+- **Files:** `.plans/news-coverage-perspectives-spec.md` (new), `.plans/agent-scraper-spec.md` (v1.3: D27–D35, Steps 11b and 11c, P2-A, §10, §12), `Project_Plan.md`, `Technical_Implementation_Plan.md` (§1, §2, §6, new §9a, §10, §16, §19–§22)
+- **Contract changes:** DB schema §16 gains `news_articles`, `news_article_items` (P2) and `item_perspectives` (P3), plus the existing D26 news tables. No news columns on `items`. The new env var `GEMINI_JUDGE_MODEL` affects P5. `Meeting`, `Item`, `bodies_token` and `classify()` are unchanged. The weekly sort order (§10) gains a last tie-break key, which affects P3.
+- **Checked:** Docs only; no code changed.
+- **Open issues / next:** TV station RSS feeds verified working on Oct 19 (KHOU, KPRC, ABC13, FOX 26). HPM, Community Impact and ABC13 block `Google-Extended` (Gemini) in robots.txt, and Click2Houston and FOX 26 block other AI crawlers. The owner chose the literal reading (scraper D36): obey only the `*` group or our own bot's group, so every outlet is fetched. P5 should prepare a pitch answer (scraper spec §12, item 22). Outlet terms of use are still unchecked, and Houston Landing still fails TLS. P5 needs to confirm the Gemini budget. P4's watchlist must find a real demo item with 2+ outlets covering it. Article storage is a copyright exposure the team accepted; recheck the outlets' terms.
 
 ### 2026-10-18: Plan revision 5: news "might come up" box (settled Iarush's way)
 - **Who:** PlaidMod · P5 Platform, Evidence and Pitch

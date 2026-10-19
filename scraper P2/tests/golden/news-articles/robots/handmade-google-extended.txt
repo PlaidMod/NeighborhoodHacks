@@ -1,0 +1,9 @@
+# Hand-made (D36): a named AI-crawler group blocks everything; * allows. Our bot follows *.
+User-agent: Google-Extended
+Disallow: /
+
+User-agent: GPTBot
+Disallow: /
+
+User-agent: *
+Disallow: /wp-admin/

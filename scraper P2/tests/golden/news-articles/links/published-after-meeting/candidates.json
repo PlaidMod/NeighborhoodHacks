@@ -1,0 +1,199 @@
+{
+  "article": {
+    "external_id": "handmade-lonestar-tax-hearing",
+    "outlet": "Handmade fixture",
+    "url": "https://example.org/handmade-lonestar-tax-hearing",
+    "headline": "Lone Star College sets public hearing on 2026 tax rate",
+    "published_at": "2026-10-02T09:00:00-05:00",
+    "body_ids": [
+      "lone_star_board"
+    ]
+  },
+  "meetings": [
+    {
+      "external_id": "247983aa04fe3859515a73b465397d840766b398",
+      "body_id": "lone_star_board",
+      "date": "2026-10-01T10:30:00-05:00",
+      "type": "regular",
+      "status": "scheduled",
+      "agenda_url": "https://www.lonestar.edu/departments/chancellor/October%201,%202026%20Agenda_Final%20(Website).pdf"
+    },
+    {
+      "external_id": "9c953361b076851c5b107442a02c9f87e58b7a96",
+      "body_id": "hcmud_489",
+      "date": "2026-10-19T11:00:00-05:00",
+      "type": "regular",
+      "status": "scheduled",
+      "agenda_url": "https://hcmud489.com/static/dfaef0088dbe419a94dafac34a137a29/Agenda_October_19_2026_HCMUD_489_5b93c39b1d.pdf"
+    }
+  ],
+  "items": [
+    {
+      "external_id": "6c18fc10effd6a27ecb77ef37816071d51c6e32e",
+      "meeting_external_id": "247983aa04fe3859515a73b465397d840766b398",
+      "body_id": "lone_star_board",
+      "agenda_number": "V",
+      "title": "Convene Tax Rate Public Hearing for Tax Year 2026",
+      "section": "Tax Rate Public Hearing",
+      "status": "awaiting_result",
+      "amounts": [],
+      "attachments": [],
+      "contains_private_person": false,
+      "source_url": "https://www.lonestar.edu/departments/chancellor/October%201,%202026%20Agenda_Final%20(Website).pdf"
+    },
+    {
+      "external_id": "63cd559baf5b6ac6b9415049f402517b8db6753d",
+      "meeting_external_id": "247983aa04fe3859515a73b465397d840766b398",
+      "body_id": "lone_star_board",
+      "agenda_number": "VII",
+      "title": "Presentation of the Fiscal Year 2026–2027 Proposed Tax Rate",
+      "section": "Tax Rate Public Hearing",
+      "status": "awaiting_result",
+      "amounts": [],
+      "attachments": [],
+      "contains_private_person": false,
+      "source_url": "https://www.lonestar.edu/departments/chancellor/October%201,%202026%20Agenda_Final%20(Website).pdf"
+    },
+    {
+      "external_id": "2cf54c1bb0d080ebff8a711533eb4770afbea0c5",
+      "meeting_external_id": "247983aa04fe3859515a73b465397d840766b398",
+      "body_id": "lone_star_board",
+      "agenda_number": "XII",
+      "title": "Approval of the Minutes of the September 3, 2026 Regular Meeting",
+      "section": "Regular Meeting",
+      "status": "awaiting_result",
+      "amounts": [],
+      "attachments": [],
+      "contains_private_person": false,
+      "source_url": "https://www.lonestar.edu/departments/chancellor/October%201,%202026%20Agenda_Final%20(Website).pdf"
+    },
+    {
+      "external_id": "872dfbd47fbdff5926b8ce18dee0411629c92a7d",
+      "meeting_external_id": "247983aa04fe3859515a73b465397d840766b398",
+      "body_id": "lone_star_board",
+      "agenda_number": "1",
+      "title": "Consideration and Approval of a Motion to Levy the Maintenance and Operations (\"M&O\") Component of the Ad Valorem Tax Rate for Tax Year 2026",
+      "section": "Financial Reports and Considerations",
+      "status": "awaiting_result",
+      "amounts": [],
+      "attachments": [],
+      "contains_private_person": false,
+      "source_url": "https://www.lonestar.edu/departments/chancellor/October%201,%202026%20Agenda_Final%20(Website).pdf"
+    },
+    {
+      "external_id": "6dde3739ff00911dcb9838843f2087a7248512bc",
+      "meeting_external_id": "247983aa04fe3859515a73b465397d840766b398",
+      "body_id": "lone_star_board",
+      "agenda_number": "2",
+      "title": "Consideration and Approval of a Motion to Levy the Interest and Sinking (\"I&S\") Component of the Ad Valorem Tax Rate for Tax Year 2026",
+      "section": "Financial Reports and Considerations",
+      "status": "awaiting_result",
+      "amounts": [],
+      "attachments": [],
+      "contains_private_person": false,
+      "source_url": "https://www.lonestar.edu/departments/chancellor/October%201,%202026%20Agenda_Final%20(Website).pdf"
+    },
+    {
+      "external_id": "c63b59743aa58d8f999bd6a157a8f9e23b7f9ba7",
+      "meeting_external_id": "247983aa04fe3859515a73b465397d840766b398",
+      "body_id": "lone_star_board",
+      "agenda_number": "3",
+      "title": "Consideration and Approval of a Motion and Adoption of a Resolution Levying the Total Ad Valorem Tax Rate for Tax Year 2026",
+      "section": "Financial Reports and Considerations",
+      "status": "awaiting_result",
+      "amounts": [],
+      "attachments": [],
+      "contains_private_person": false,
+      "source_url": "https://www.lonestar.edu/departments/chancellor/October%201,%202026%20Agenda_Final%20(Website).pdf"
+    },
+    {
+      "external_id": "45b01b69070cd6308ebdb69b5f811efce0959097",
+      "meeting_external_id": "247983aa04fe3859515a73b465397d840766b398",
+      "body_id": "lone_star_board",
+      "agenda_number": "4",
+      "title": "Consideration and Approval of the Annual Appointment of County Tax Assessor-Collectors to Collect Property Taxes Levied on Behalf of Lone Star College System",
+      "section": "Financial Reports and Considerations",
+      "status": "awaiting_result",
+      "amounts": [],
+      "attachments": [],
+      "contains_private_person": false,
+      "source_url": "https://www.lonestar.edu/departments/chancellor/October%201,%202026%20Agenda_Final%20(Website).pdf"
+    },
+    {
+      "external_id": "2f692150b5a5839b03d827becde1dfbb4eba1ce7",
+      "meeting_external_id": "247983aa04fe3859515a73b465397d840766b398",
+      "body_id": "lone_star_board",
+      "agenda_number": "11",
+      "title": "Consideration and Approval to Authorize the Chancellor or Designee to Negotiate and Execute Contracts and Amendments on Behalf of Lone Star College System for the Purchase of Cisco Smartnet Hardware Licensing, Replacement, and Support Services",
+      "section": "Financial Reports and Considerations",
+      "status": "awaiting_result",
+      "amounts": [],
+      "attachments": [],
+      "contains_private_person": false,
+      "source_url": "https://www.lonestar.edu/departments/chancellor/October%201,%202026%20Agenda_Final%20(Website).pdf"
+    },
+    {
+      "external_id": "1fead13fa8d046c95f855183ad1503fe0f82064b",
+      "meeting_external_id": "247983aa04fe3859515a73b465397d840766b398",
+      "body_id": "lone_star_board",
+      "agenda_number": "14",
+      "title": "Consideration and Approval to Authorize the Chancellor or Designee to Negotiate and Execute Contracts and Amendments on Behalf of Lone Star College System for Roof Replacement Construction Services for the Lone Star College-CyFair Center for the Arts Building",
+      "section": "Financial Reports and Considerations",
+      "status": "awaiting_result",
+      "amounts": [],
+      "attachments": [],
+      "contains_private_person": false,
+      "source_url": "https://www.lonestar.edu/departments/chancellor/October%201,%202026%20Agenda_Final%20(Website).pdf"
+    },
+    {
+      "external_id": "7483563b609a6a3dfed641940f83e49e1133baec",
+      "meeting_external_id": "247983aa04fe3859515a73b465397d840766b398",
+      "body_id": "lone_star_board",
+      "agenda_number": "18",
+      "title": "Consideration and Approval of the Proposed 2027 Internal Audit Plan",
+      "section": "Financial Reports and Considerations",
+      "status": "awaiting_result",
+      "amounts": [],
+      "attachments": [],
+      "contains_private_person": false,
+      "source_url": "https://www.lonestar.edu/departments/chancellor/October%201,%202026%20Agenda_Final%20(Website).pdf"
+    },
+    {
+      "external_id": "b29fc824923f1e46e7d702704dd75f00689bb338",
+      "meeting_external_id": "247983aa04fe3859515a73b465397d840766b398",
+      "body_id": "lone_star_board",
+      "agenda_number": "20",
+      "title": "Consideration and Authorization for the Chancellor or Designee to Execute Employment Contracts for the Attached Individuals",
+      "section": "Personnel Reports and Considerations",
+      "status": "awaiting_result",
+      "amounts": [],
+      "attachments": [],
+      "contains_private_person": false,
+      "source_url": "https://www.lonestar.edu/departments/chancellor/October%201,%202026%20Agenda_Final%20(Website).pdf"
+    },
+    {
+      "external_id": "18f9660477d61fa707cd086bed173a2897fd75e8",
+      "meeting_external_id": "247983aa04fe3859515a73b465397d840766b398",
+      "body_id": "lone_star_board",
+      "agenda_number": "XVI",
+      "title": "Closed Session",
+      "status": "awaiting_result",
+      "amounts": [],
+      "attachments": [],
+      "contains_private_person": false,
+      "source_url": "https://www.lonestar.edu/departments/chancellor/October%201,%202026%20Agenda_Final%20(Website).pdf"
+    },
+    {
+      "external_id": "eb68b9c3394f8737cbc18cd36dd83fd124735c8a",
+      "meeting_external_id": "9c953361b076851c5b107442a02c9f87e58b7a96",
+      "body_id": "hcmud_489",
+      "agenda_number": "1",
+      "title": "Public comments",
+      "status": "upcoming",
+      "amounts": [],
+      "attachments": [],
+      "contains_private_person": false,
+      "source_url": "https://hcmud489.com/static/dfaef0088dbe419a94dafac34a137a29/Agenda_October_19_2026_HCMUD_489_5b93c39b1d.pdf"
+    }
+  ]
+}

@@ -1,0 +1,100 @@
+{
+  "meeting": {
+    "external_id": "1244",
+    "date": "2026-10-15T09:00:00-05:00",
+    "type": "regular",
+    "status": "scheduled",
+    "agenda_url": "https://harriscountytx.legistar1.com/harriscountytx/meetings/2026/10/1244_A_Commissioners_Court_26-10-15_Agenda.pdf",
+    "has_comment_rules": true
+  },
+  "item_count": 493,
+  "spot_checks": [
+    {
+      "external_id": "200252",
+      "title": "October 8, 2026 - NOTICE OF A PUBLIC MEETING",
+      "agenda_number": null,
+      "section": "Public Notice",
+      "status": "awaiting_result",
+      "vote_result": null
+    },
+    {
+      "external_id": "199816",
+      "title": "Request for approval of the Final Investment Memo for the Telephone System Repair/Replace project for an incremental authorization of $865,000 for a total authorization of $865,000 for FY2027.",
+      "agenda_number": "123",
+      "section": "Universal Services",
+      "status": "awaiting_result",
+      "vote_result": null
+    },
+    {
+      "external_id": "199959",
+      "title": "Request for approval of a renewal option with A. Morfin Trucking LLC for concrete channel lining repairs (South) for the Flood Control District for the period of March 1, 2027 - February 29, 2028, at a cost of $3,500,000, and for the County Clerk to execute any applicable bonds to be received (240426), MWBE Contracted Goal: 19.24%, MWBE Current Participation: 97.68%.",
+      "agenda_number": "247",
+      "section": "Purchasing",
+      "status": "awaiting_result",
+      "vote_result": null
+    },
+    {
+      "external_id": "200103",
+      "title": "Transmittal by Human Resources and Talent of changes to classifications on certain positions.",
+      "agenda_number": "370",
+      "section": "Transmittals",
+      "status": "awaiting_result",
+      "vote_result": null
+    },
+    {
+      "external_id": "200218",
+      "title": "Request by Housing and Community Development, in coordination with the Office of the County Engineer, for approval to declare as surplus property and authorize the marketing and sale of an ARPA-funded improved residential property located at 6807 Madrid St., Houston, Texas, legally described as Lot Two (2), Block Twenty-four (24), of Grand Park, an addition in Harris County, Texas, according to the map or plat thereof recorded in Volume 572, Page 259, of the Deed Records of Harris County, pursuant to Texas Property Code §263.008.",
+      "agenda_number": "494",
+      "section": "Emergency/Supplemental ARPA",
+      "status": "awaiting_result",
+      "vote_result": null
+    }
+  ],
+  "attribution_hits": [
+    {
+      "external_id": "199791",
+      "body_id": "flood_control"
+    },
+    {
+      "external_id": "199790",
+      "body_id": "flood_control"
+    },
+    {
+      "external_id": "199782",
+      "body_id": "flood_control"
+    },
+    {
+      "external_id": "199787",
+      "body_id": "flood_control"
+    },
+    {
+      "external_id": "199781",
+      "body_id": "flood_control"
+    },
+    {
+      "external_id": "199783",
+      "body_id": "flood_control"
+    },
+    {
+      "external_id": "199785",
+      "body_id": "flood_control"
+    },
+    {
+      "external_id": "199784",
+      "body_id": "flood_control"
+    },
+    {
+      "external_id": "199786",
+      "body_id": "flood_control"
+    },
+    {
+      "external_id": "199789",
+      "body_id": "flood_control"
+    },
+    {
+      "external_id": "199788",
+      "body_id": "flood_control"
+    }
+  ],
+  "redacted_titles": []
+}

@@ -1,0 +1,12 @@
+{
+  "meeting": { "date": "2026-04-09", "time": "1:30 p.m.", "type": "special", "title": "Harris County Municipal Utility District No. 489 Notice of Special Public Meeting" },
+  "items": [
+    { "agenda_number": "1", "title": "Public comments", "source_quote": "Public comments;1." },
+    { "agenda_number": "2", "title": "Review and approval of the minutes of the meeting of the Board of Directors held January 19, 2026", "source_quote": "Review and approval of the minutes of the meeting of the Board of Directors held January" },
+    { "agenda_number": "3", "title": "Appointment of new Directors to fill the vacancies on the Board of Directors", "source_quote": "Appointment of new Directors to fill the vacancies on the Board of Directors" },
+    { "agenda_number": "3.b", "title": "Reorganization of the Board of Directors and election of officers", "section": "Appointment of new Directors", "source_quote": "Reorganization of the Board of Directors and election of officers;" },
+    { "title": "Bookkeeper's report, including financial and investment reports and the payment of invoices presented", "source_quote": "Bookkeeper's report, including financial and investment reports and the payment of" },
+    { "title": "Approval of Payment Services Agreement by and between the District and First Billing Services, LLC in connection with electronic payment program for tax payments", "source_quote": "Approval of Payment Services Agreement by and between the District and First Billing" },
+    { "title": "Discuss requirements for the EPA's final National Primary Drinking Water Regulation concerning PFAS and testing schedule for same", "source_quote": "Discuss requirements for the EPA's final National Primary Drinking Water Regulation" }
+  ]
+}

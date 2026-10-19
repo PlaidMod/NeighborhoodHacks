@@ -1,0 +1,26 @@
+{
+  "meeting": { "date": "2026-07-20", "time": "11:00 a.m.", "type": "regular" },
+  "items": [
+    { "agenda_number": "1", "title": "Public comments", "source_quote": "at 11:00 a.m. Public comments;" },
+    { "agenda_number": "2", "title": "Review and approval of the minutes of the meeting of the Board of Directors held June 15, 2026", "source_quote": "Review and approval of the minutes of the meeting of the Board of Directors held June 15, 2026" },
+    { "agenda_number": "3", "title": "Status of Garbage and Recycling Collection services, including approval of costs for placement of informational stickers on trash receptacles", "source_quote": "Garbage and Recycling Collection services, including approval of costs for placement" },
+    { "agenda_number": "4", "title": "Bookkeeper's report, including financial and investment reports and the payment of invoices presented", "source_quote": "Bookkeeper's report, including financial and investment reports" },
+    { "agenda_number": "5", "title": "Receive Tax Assessor-Collector report and approve payment of invoices presented and moving of accounts to uncollectible roll", "source_quote": "Receive Tax Assessor-Collector report and approve payment of invoices presented" },
+    { "agenda_number": "6", "title": "Report on legal action taken by the District's delinquent tax collections attorney, authorize foreclosure proceedings, installment agreements, and the filing of proofs of claim", "source_quote": "Report on legal action taken by the District's delinquent tax collections attorney" },
+    { "agenda_number": "7", "title": "Operator's Report", "source_quote": "Disposition of delinquent utility accounts and referral of accounts for collection" },
+    { "agenda_number": "8", "title": "Engineer's Report", "source_quote": "Engineer's Report, including:" },
+    { "agenda_number": "9", "title": "Review and approval of proposal for bioswale management", "source_quote": "Review and approval of proposal for bioswale management;" },
+    { "agenda_number": "10", "title": "Review and discuss Capital Improvement Plan and authorize action in connection therewith", "source_quote": "Review and discuss Capital Improvement Plan and authorize action in connection therewith" },
+    { "agenda_number": "11", "title": "Discuss updates and revisions to the District website", "source_quote": "Discuss updates and revisions to the District website;" },
+    { "agenda_number": "12", "title": "Matters related to the Bridgeland Water Agency (the \"Agency\") and directives to the District's Trustee and Alternate(s)", "source_quote": "Matters related to the Bridgeland Water Agency (the \"Agency\") and directives to the" },
+    { "agenda_number": "13", "title": "Matters related to 5-acre administrative facility site jointly owned with Harris County Municipal Utility District No. 419", "source_quote": "Matters related to 5-acre administrative facility site jointly owned with Harris County" },
+    { "agenda_number": "14", "title": "Developer's Report", "source_quote": "Developer's Report;" },
+    { "agenda_number": "15", "title": "Matters relative to Bridgeland Council, Inc. and/or Parkland Village Homeowners' Association", "source_quote": "Matters relative to Bridgeland Council, Inc. and/or Parkland Village Homeowners' Association" },
+    { "agenda_number": "16", "title": "Adoption of Resolution Designating Location in District for Posting Notices of Meetings", "source_quote": "Adoption of Resolution Designating Location in District for Posting Notices of Meetings" },
+    { "agenda_number": "17", "title": "Authorize filing of Local Government Bond, Tax, and Project Database report with Texas Comptroller of Public Accounts pursuant to Section 403.702, Gov't Code", "source_quote": "Local Government Bond, Tax, and Project Database report with Texas Comptroller" },
+    { "agenda_number": "18", "title": "Status of compliance with annual cybersecurity training as required by Chapters 2054 and 2063, Texas Government Code", "source_quote": "compliance with annual cybersecurity training as required by Chapters 2054 and" },
+    { "agenda_number": "19", "title": "Ratify approval of proposal for business travel accident insurance coverage for term expiring March 31, 2027", "source_quote": "Ratify approval of proposal for business travel accident insurance coverage" },
+    { "agenda_number": "20", "title": "Attorney's Report", "source_quote": "Attorney's Report; and" },
+    { "agenda_number": "21", "title": "Matters for possible placement on future agendas", "source_quote": "Matters for possible placement on future agendas." }
+  ]
+}

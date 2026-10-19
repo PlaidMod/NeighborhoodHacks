@@ -1,0 +1,239 @@
+import { load } from 'cheerio';
+import { DateTime } from 'luxon';
+import { z } from 'zod';
+import { getText, type HttpOptions } from './http';
+import { ZONE } from '@/lib/ingest/normalize';
+
+// Link discovery for llm_extract sources (agent-scraper-spec §8 Step 5, D15).
+// Code picks the PDFs from a static index page; the LLM only ever sees the chosen documents.
+
+export const DiscoveryConfigSchema = z
+  .object({
+    index_url: z.string().url(),
+    link_pattern: z.string(),
+    date_from: z.enum(['link_text', 'filename']).default('link_text'),
+    meeting_type_from_text: z.object({ special: z.string() }).partial().optional(),
+    follow_notice_page: z.boolean().optional(),
+  })
+  .loose();
+export type DiscoveryConfig = z.infer<typeof DiscoveryConfigSchema>;
+
+export type DiscoveredDoc = {
+  url: string;
+  /** Anchor text, whitespace-collapsed. */
+  text: string;
+  /** Decoded last path segment of the URL. */
+  filename: string;
+  /** Local America/Chicago date, yyyy-MM-dd. */
+  date: string;
+  /** False when the source only gave a month ("1710 October 2017"); the day is then 01. */
+  day_known: boolean;
+  type: 'regular' | 'special';
+  /** Revision suffix from the filename (`_1`), or 0. */
+  version: number;
+  /** Position on the index page (document order). */
+  index: number;
+};
+
+export type DiscoveryResult = {
+  /** One document per date: the chosen agenda. */
+  docs: DiscoveredDoc[];
+  /** Other PDFs for a date that already has a chosen document. Still stored as documents. */
+  superseded: DiscoveredDoc[];
+  warnings: string[];
+  /** Raw index page(s) for `documents`. */
+  pages: { url: string; html: string }[];
+};
+
+export type DiscoverDeps = { http?: HttpOptions };
+
+/** Config regexes are written Python-style ("(?i)…"); JS has no inline flags. */
+export function toRegExp(pattern: string): RegExp {
+  const m = pattern.match(/^\(\?([a-z]+)\)/);
+  if (!m) return new RegExp(pattern);
+  const flags = m[1]!.replace(/[^imsu]/g, '');
+  return new RegExp(pattern.slice(m[0].length), flags);
+}
+
+const MONTHS: Record<string, number> = {
+  jan: 1, feb: 2, mar: 3, apr: 4, may: 5, jun: 6, jul: 7, aug: 8, sep: 9, sept: 9, oct: 10, nov: 11, dec: 12,
+};
+const MONTH_RE =
+  '(jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|june?|july?|aug(?:ust)?|sept?(?:ember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)';
+const SEP = '[\\s_.,-]*';
+
+const monthNum = (s: string) => MONTHS[s.toLowerCase().slice(0, s.toLowerCase().startsWith('sept') ? 4 : 3)];
+
+function ymd(y: number, m: number, d: number): string | null {
+  const dt = DateTime.fromObject({ year: y, month: m, day: d }, { zone: ZONE });
+  return dt.isValid ? dt.toFormat('yyyy-MM-dd') : null;
+}
+
+const fullYear = (y: string) => (y.length === 2 ? 2000 + Number(y) : Number(y));
+
+/**
+ * Parse a meeting date from link text or a filename. Accepted forms:
+ * `October 1, 2026`, `Oct. 1, 2026`, `Agenda_October_19_2026_…`, `2026 September 16`, `10/1/2026`,
+ * `10-01-26`, `2026-10-01`, and month-only `1710 October 2017 Board Agenda` (day_known = false).
+ */
+export function parseDocDate(input: string): { date: string; day_known: boolean } | null {
+  const s = input.replace(/%20/g, ' ');
+  const tries: [RegExp, (m: RegExpMatchArray) => string | null][] = [
+    [/(?<!\d)(\d{4})-(\d{2})-(\d{2})(?!\d)/, (m) => ymd(+m[1]!, +m[2]!, +m[3]!)],
+    [new RegExp(`(?<![a-z])${MONTH_RE}\\.?${SEP}(\\d{1,2})(?:-\\d{1,2})?(?:st|nd|rd|th)?${SEP}(\\d{4})(?!\\d)`, 'i'), (m) => ymd(+m[3]!, monthNum(m[1]!)!, +m[2]!)],
+    [new RegExp(`(?<!\\d)(\\d{4})${SEP}${MONTH_RE}\\.?${SEP}(\\d{1,2})(?!\\d)`, 'i'), (m) => ymd(+m[1]!, monthNum(m[2]!)!, +m[3]!)],
+    [/(?<!\d)(\d{1,2})[/-](\d{1,2})[/-](\d{4}|\d{2})(?!\d)/, (m) => ymd(fullYear(m[3]!), +m[1]!, +m[2]!)],
+  ];
+  for (const [re, fn] of tries) {
+    const m = s.match(re);
+    if (m) {
+      const d = fn(m);
+      if (d) return { date: d, day_known: true };
+    }
+  }
+  const mo = s.match(new RegExp(`(?<![a-z])${MONTH_RE}\\.?${SEP}(\\d{4})(?!\\d)`, 'i'));
+  if (mo) {
+    const d = ymd(+mo[2]!, monthNum(mo[1]!)!, 1);
+    if (d) return { date: d, day_known: false };
+  }
+  return null;
+}
+
+/** `_1` revision suffix before an optional upload hash: `…_HCMUD_489_1_0563351dfa.pdf` -> 1. */
+export function versionSuffix(filename: string): number {
+  const m = filename.match(/_(\d{1,2})(?:_[0-9a-f]{6,})?\.pdf$/i);
+  return m ? Number(m[1]) : 0;
+}
+
+const lastSegment = (url: string) => {
+  const p = new URL(url).pathname;
+  const seg = p.slice(p.lastIndexOf('/') + 1);
+  try {
+    return decodeURIComponent(seg);
+  } catch {
+    return seg;
+  }
+};
+
+const decodedUrl = (url: string) => {
+  try {
+    return decodeURI(url);
+  } catch {
+    return url;
+  }
+};
+
+/** Parse an index page into dated documents (no window filter, no dedup). */
+export function parseIndex(html: string, baseUrl: string, cfg: DiscoveryConfig): { docs: DiscoveredDoc[]; undated: string[] } {
+  const $ = load(html);
+  const linkRe = toRegExp(cfg.link_pattern);
+  const specialRe = cfg.meeting_type_from_text?.special ? toRegExp(cfg.meeting_type_from_text.special) : null;
+  const docs: DiscoveredDoc[] = [];
+  // Links with no parseable date (forms, split anchors on old entries). Not warnings: they are
+  // constant page furniture and would only add noise to the health check.
+  const undated: string[] = [];
+  const seen = new Set<string>();
+  $('a[href]').each((i, a) => {
+    const href = $(a).attr('href')!.trim();
+    let url: string;
+    try {
+      url = new URL(href, baseUrl).toString();
+    } catch {
+      return;
+    }
+    if (!linkRe.test(decodedUrl(url)) && !linkRe.test(href)) return;
+    if (seen.has(url)) return;
+    seen.add(url);
+    const text = $(a).text().replace(/\s+/g, ' ').trim();
+    const filename = lastSegment(url);
+    const parsed = parseDocDate(cfg.date_from === 'filename' ? filename : text);
+    if (!parsed) {
+      undated.push(url);
+      return;
+    }
+    docs.push({
+      url,
+      text,
+      filename,
+      date: parsed.date,
+      day_known: parsed.day_known,
+      type: specialRe && (specialRe.test(text) || specialRe.test(filename)) ? 'special' : 'regular',
+      version: versionSuffix(filename),
+      index: i,
+    });
+  });
+  return { docs, undated };
+}
+
+/** Keep documents whose (local) date overlaps the window. */
+export function inWindow(doc: Pick<DiscoveredDoc, 'date'>, window: { from: Date; to: Date }): boolean {
+  const day = DateTime.fromISO(doc.date, { zone: ZONE });
+  return day.endOf('day').toMillis() >= window.from.getTime() && day.startOf('day').toMillis() <= window.to.getTime();
+}
+
+const SECONDARY = /workshop|retreat|work session/i;
+
+/**
+ * One document per date. Highest `_N` revision wins; with no suffixes, a regular/special meeting
+ * beats a workshop or retreat, then the last one on the page wins. Others are returned as superseded.
+ */
+export function pickPerDate(docs: DiscoveredDoc[]): { docs: DiscoveredDoc[]; superseded: DiscoveredDoc[]; warnings: string[] } {
+  const byDate = new Map<string, DiscoveredDoc[]>();
+  for (const d of docs) byDate.set(d.date, [...(byDate.get(d.date) ?? []), d]);
+  const chosen: DiscoveredDoc[] = [];
+  const superseded: DiscoveredDoc[] = [];
+  const warnings: string[] = [];
+  for (const [date, group] of byDate) {
+    const best = [...group].sort(
+      (a, b) =>
+        b.version - a.version ||
+        Number(SECONDARY.test(a.text + a.filename)) - Number(SECONDARY.test(b.text + b.filename)) ||
+        b.index - a.index,
+    )[0]!;
+    chosen.push(best);
+    if (group.length > 1) {
+      const others = group.filter((d) => d !== best);
+      superseded.push(...others);
+      warnings.push(`${group.length} agenda PDFs for ${date}; using ${best.filename}, also stored: ${others.map((o) => o.filename).join(', ')}`);
+    }
+  }
+  chosen.sort((a, b) => a.date.localeCompare(b.date));
+  return { docs: chosen, superseded, warnings };
+}
+
+/** First PDF link on a notice page (`follow_notice_page: true`). */
+export function firstPdfLink(html: string, baseUrl: string): string | undefined {
+  const href = load(html)('a[href]')
+    .toArray()
+    .map((a) => a.attribs.href!)
+    .find((h) => /\.pdf(?:$|[?#])/i.test(h));
+  return href ? new URL(href, baseUrl).toString() : undefined;
+}
+
+/** discover(config, window): fetch the index, pick dated PDFs inside the window, one per date. */
+export async function discover(
+  rawConfig: unknown,
+  window: { from: Date; to: Date },
+  deps: DiscoverDeps = {},
+): Promise<DiscoveryResult> {
+  const cfg = DiscoveryConfigSchema.parse(rawConfig);
+  const html = await getText(cfg.index_url, deps.http);
+  const pages = [{ url: cfg.index_url, html }];
+  const parsed = parseIndex(html, cfg.index_url, cfg);
+  const warnings: string[] = [];
+  let docs = parsed.docs.filter((d) => inWindow(d, window));
+  if (cfg.follow_notice_page) {
+    const followed: DiscoveredDoc[] = [];
+    for (const d of docs) {
+      const page = await getText(d.url, deps.http);
+      pages.push({ url: d.url, html: page });
+      const pdf = firstPdfLink(page, d.url);
+      if (pdf) followed.push({ ...d, url: pdf, filename: lastSegment(pdf), version: versionSuffix(lastSegment(pdf)) });
+      else warnings.push(`notice page has no PDF link: ${d.url}`);
+    }
+    docs = followed;
+  }
+  for (const d of docs) if (!d.day_known) warnings.push(`only a month in "${d.text || d.filename}"; day assumed 01`);
+  const picked = pickPerDate(docs);
+  return { docs: picked.docs, superseded: picked.superseded, warnings: [...warnings, ...picked.warnings], pages };
+}

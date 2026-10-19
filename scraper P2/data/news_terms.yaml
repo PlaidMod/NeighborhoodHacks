@@ -1,0 +1,21 @@
+# D26 news "might come up" matching (Step 11). Read only by lib/news/.
+# aliases: matched as whole words, case-insensitive, against headline + feed description + categories.
+#   An alias can be { term, requires }: it only counts when `requires` also appears in that text.
+# exclude_terms: any hit cancels this body's match.
+- body_id: commissioners_court
+  aliases: ["Harris County Commissioners Court", "Commissioners Court", "County Judge"]
+  exclude_terms: ["Fort Bend", "Montgomery County", "Galveston", "Brazoria", "Dallas", "Travis", "Bexar", "Collin", "Denton", "Williamson"]
+- body_id: flood_control
+  aliases: ["Harris County Flood Control", "Flood Control District", "HCFCD"]
+- body_id: port_houston
+  aliases: ["Port of Houston", "Port Houston", "Port Commission"]
+- body_id: hisd_board
+  aliases: ["HISD", "Houston ISD", "Houston Independent School District", "board of managers"]
+- body_id: cfisd_board
+  aliases: ["Cy-Fair ISD", "CFISD", "Cypress-Fairbanks"]
+- body_id: houston_city_council
+  aliases: ["Houston City Council", { term: "City Council", requires: "Houston" }]
+- body_id: lone_star_board
+  aliases: ["Lone Star College"]
+- body_id: hcmud_489
+  aliases: ["MUD 489", "Municipal Utility District No. 489", "HCMUD 489"]

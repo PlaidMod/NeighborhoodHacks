@@ -1,0 +1,60 @@
+{
+  "meeting": {
+    "external_id": "1306",
+    "date": "2026-10-08T17:00:00-05:00",
+    "type": "regular",
+    "status": "scheduled",
+    "agenda_url": "https://houstonisd.legistar1.com/houstonisd/meetings/2026/10/1306_A_School_Board_26-10-08_Agenda.pdf",
+    "has_comment_rules": true
+  },
+  "item_count": 39,
+  "spot_checks": [
+    {
+      "external_id": "46609",
+      "title": "Investment Report",
+      "agenda_number": "1",
+      "section": "DISCUSSION AND REPORT ITEMS",
+      "status": "awaiting_result",
+      "vote_result": null
+    },
+    {
+      "external_id": "46632",
+      "title": "Approval Of Proposed Deletion Of Board Policy EHAC(LOCAL), Basic Instructional Program: Required Instruction (Secondary)-First Reading",
+      "agenda_number": "10",
+      "section": "CONSENT AGENDA",
+      "status": "awaiting_result",
+      "vote_result": null
+    },
+    {
+      "external_id": "46672",
+      "title": "Approval Of Proposed Deletion Of Board Policy FNCF(LOCAL), Student Conduct: Alcohol And Drug Use-First Reading",
+      "agenda_number": "20",
+      "section": "CONSENT AGENDA",
+      "status": "awaiting_result",
+      "vote_result": null
+    },
+    {
+      "external_id": "46674",
+      "title": "Approval Of Proposed Deletion Of Board Policy CNC(LOCAL), Transportation Management: Transportation Safety-First Reading",
+      "agenda_number": "30",
+      "section": "CONSENT AGENDA",
+      "status": "awaiting_result",
+      "vote_result": null
+    },
+    {
+      "external_id": "46660",
+      "title": "District safety concerns, including districtwide intruder detection audit report findings and HB3 compliance.",
+      "agenda_number": "a)",
+      "section": "CLOSED SESSION / District Safety, Emergency Management, And Security Audits",
+      "status": "awaiting_result",
+      "vote_result": null
+    }
+  ],
+  "attribution_hits": [],
+  "redacted_titles": [
+    {
+      "external_id": "46644",
+      "title": "Consider and approve proposed appointments, reassignments, proposed terminations, including termination of an employee, terminations/suspensions, contract lengths, proposed nonrenewals, and resignations/retirements of personnel including teachers, assistant principals, principals, chiefs, deputy chiefs, senior executive directors, executive directors, directors, and other administrators, and, if necessary, approve settlement, resignation, and/or release agreements."
+    }
+  ]
+}

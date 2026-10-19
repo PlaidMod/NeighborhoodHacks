@@ -1,0 +1,14 @@
+# FORMAT EXAMPLE ONLY. This is not real or demo data, and the registry skips it
+# (directories starting with "_" are ignored). Copy this shape into
+# data/manual/{body_id}/{YYYY-MM-DD}-{slug}.yaml for a real hand-entered meeting.
+meeting:
+  body_id: example_body                       # must match the directory name for real files
+  date: "2026-10-28T10:00:00-05:00"           # ISO 8601 with time and America/Chicago offset
+  type: regular                               # regular | special (default regular)
+  agenda_url: https://example.org/agenda.pdf  # required: the official agenda
+items:
+  - agenda_number: "5"
+    title: "Example item title copied from the official agenda"
+    section: "Example section"
+    source_url: https://example.org/agenda.pdf  # required for every item
+is_demo: false                                # D18: true only for the team's fake demo data
