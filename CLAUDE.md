@@ -13,6 +13,9 @@ ShowUp HTX: a 5-person high school team's entry for Neighborhood Hacks 2026. A u
   - `.plans/agent-scraper-spec.md` (P2, v1.2) wins over the plan files for P2's work. Its §12 lists the changes other parts must know about: extended types, extra schema columns, `classify()` rules and more. That includes the news "might come up" box on body pages (D26), which the plan files now include too.
 - **Don't change the plan files** unless a teammate asks for that specific change. If something conflicts with the plan, follow the plan and raise the conflict.
 - **`web/` is a throwaway test prototype.** Don't build on it, study its architecture, or reconcile the plan with it. The only thing taken from it is its design system (see below). The plan's app is built at the repo root, using the §2 layout.
+- **Hosting and data:**
+  - **Vercel:** project `showup-htx` on the `majority-illusion` team. Production is https://showup-htx-six.vercel.app. Pushes to `main` deploy, but deploys of teammates' commits wait for the owner's approval, because the repo is private.
+  - **Supabase:** project `showup-htx` (ID `elsvhqqwdxwsuvkbchdq`). Environment values live in `.env.local` (see `.env.example`) and in Vercel. Never commit them.
 
 ## Binding rules
 

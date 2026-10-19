@@ -33,6 +33,22 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-19: P5 Task 6: deployed to Vercel
+- **Who:** PlaidMod · P5 Platform, Evidence and Pitch
+- **Branch:** main
+- **What changed:**
+  - **Live site: https://showup-htx-six.vercel.app.** Vercel project `showup-htx` on the `majority-illusion` team. A new "NeighborhoodHacks" team needed a payment method, so the owner chose the existing free team.
+  - It's connected to the GitHub repo, so pushes to `main` deploy. Because the repo is private, deploys of teammates' commits wait for the owner's approval in Vercel.
+  - Env vars are set for production and preview: `SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `SITE_URL`, `BODIES_TOKEN_SECRET`, `CRON_SECRET`, `IP_HASH_SECRET`, `ADMIN_EMAILS` and `DEMO_MODE=false`.
+  - Updated the README and `CLAUDE.md`.
+- **Files:** `README.md`, `CLAUDE.md`, `.gitignore`
+- **Contract changes:** None.
+- **Checked:** `/`, `/about`, `/privacy` and `/terms` return 200 on production, and `/privacy` comes back in Spanish for `es-US`.
+- **Open issues / next:**
+  - **P3:** for Twilio registration, privacy is https://showup-htx-six.vercel.app/privacy and terms is https://showup-htx-six.vercel.app/terms. The contact link on them 404s while the repo is private.
+  - **Still missing on Vercel:** `SUPABASE_SERVICE_ROLE_KEY` (the owner pastes it from the Supabase dashboard), the Gemini variables (once the paid key exists) and Twilio's (P3).
+  - `ADMIN_EMAILS` has four of the five teammates; the fifth teammate's email is still needed.
+
 ### 2026-10-19: P5 Task 5: about, privacy and terms pages (English and Spanish)
 - **Who:** PlaidMod · P5 Platform, Evidence and Pitch
 - **Branch:** main
