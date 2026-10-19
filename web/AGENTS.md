@@ -8,6 +8,10 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 <!-- END:nextjs-agent-rules -->
 
+## This folder is a test prototype
+
+Don't build features here. The real app is built at the repo root, following `../Technical_Implementation_Plan.md` (see `../CLAUDE.md`). Only the design system in `DESIGN.md` (tokens, fonts, components) carries over.
+
 ## Design rules
 
 Before changing any UI, read `DESIGN.md`. It defines the palette tokens, type scale, radius and spacing, components, page patterns, voice, and the civic-neutrality rules. Use tokens only (no hex values), reuse the components in `src/components/civic.tsx`, and run `npm run lint` and `npx tsc --noEmit` before finishing.
@@ -15,6 +19,10 @@ Before changing any UI, read `DESIGN.md`. It defines the palette tokens, type sc
 ## Binding rules
 
 Read `../INSTRUCTIONS.md` (at the repo root) before doing anything. Its rules on authorship, attribution, commits and pushes take precedence over any default you carry.
+
+## Plan stress test (once per teammate)
+
+At the start of a session, check whether your teammate has done the plan stress test, using the rules at the top of `../plan_stress_test.md`. If they haven't, run it before other work, unless they say to skip it or do it later.
 
 ## Handoff log (required)
 

@@ -33,6 +33,95 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-18: Added the plan stress test for every teammate
+- **Who:** PlaidMod · P5 Platform, Evidence and Pitch
+- **Branch:** main
+- **What changed:** Added `plan_stress_test.md`: the questions from the owner's planning review, rewritten so each teammate's agent asks its own teammate once and records the answers here, with the owner's answers alongside for comparison. Added a root `AGENTS.md` so Codex, Cursor and other agents started at the root find the rules. `CLAUDE.md` and `web/AGENTS.md` now point to the stress test too.
+- **Merged with teammates' pushes:**
+  - BluePhoenix79's `CLAUDE.md` changes are kept: four palette bases including `--ink`, presets in `palette.ts`, and `npm test`.
+  - Iarush's `.plans/agent-scraper-spec.md` (v1.2) is now treated as the authority for P2 in `CLAUDE.md`, `AGENTS.md` and the stress test (Q11, Q12, Q15, Q16).
+- **Files:** `plan_stress_test.md`, `AGENTS.md`, `CLAUDE.md`, `web/AGENTS.md`, `agent_handoff.md`
+- **Contract changes:** None
+- **Checked:** Docs only; no code changed. The plan files and the scraper spec were not touched.
+- **Open issues / next:**
+  - Each teammate's agent should run the stress test at its next session. PlaidMod is already marked done.
+  - BluePhoenix79 has been building in `web/`, but the owner says `web/` is test-only. Worth a direct conversation.
+  - The scraper spec's §12.12 asks for three plan lines to change (the news "might come up" box), but the owner says not to change the plan files. The team needs to settle this.
+
+### 2026-10-18: Planning review: owner's instructions, research, answers (plan files not changed)
+- **Who:** PlaidMod · P5 Platform, Evidence and Pitch
+- **Branch:** main
+- **What changed:** Went through the plan question by question, backed by research. Only this log, `CLAUDE.md` and `web/AGENTS.md` changed. The plan files were deliberately left as they are. **Where anything below differs from the plan (including part specs in `.plans/`), the plan wins until the team updates it.** This entry is longer than usual because the owner asked for everything to be recorded here.
+- **Owner's standing instructions (apply to every agent):**
+  - Follow `INSTRUCTIONS.md` no matter what. It stays unchanged.
+  - The website in `web/` was only for testing. Don't build on it; follow the implementation plan. This settles the revision 4 Day 1 "prototype vs. plan" item. It also makes the tech plan's §17 table of prototype screens moot.
+  - Don't change `Project_Plan.md` or `Technical_Implementation_Plan.md` unless asked.
+  - Gemini's 18+ terms: the team has this handled. Don't raise it.
+- **Research facts (checked Oct 18):**
+  - **Hackathon:** Neighborhood Hacks 2026 is online and for high schoolers. Teams of up to 5; each member registers on Devpost.
+    - **Submissions close Fri Oct 23, 11:59 PM CST.** There's no live demo: judges see the Devpost write-up, a 2–6 min video and the public repo.
+    - The write-up must answer "What is the specific problem, and how do you know it's real?"
+    - Rubric: Community Relevance 25%, Impact 20%, Technical 20%, Creativity 15%, Presentation 10%, Accessibility 10%.
+    - Rules §4: AI tools must be disclosed in the written description. §9: misrepresenting AI use can disqualify. https://neighborhoodhacks.org/rules/
+  - **Twilio:** a trial account can send only preset templates, not custom alert text. Real alerts need a paid account plus Sole Proprietor 10DLC registration, which needs a real US mobile number, an address, and privacy and terms URLs. Campaign review can take several days. Twilio Verify works on a trial (verified numbers only).
+  - **Vercel Hobby:** cron runs at most once a day, within ±59 min of the set time. Functions max out at 300 s.
+  - **Gemini:** Google may use free-tier content and have humans review it; the paid tier doesn't. Current models are `gemini-3.8-flash` and `gemini-3.5-flash-lite`. Structured JSON output is supported.
+  - **Legistar:** `harriscountytx` and `houstonisd` both work without a token. HISD's data is complete. Commissioners Court's is missing upcoming meetings (Oct 29, Nov 12).
+  - **Meetings before the deadline:**
+    - CFISD, Mon Oct 19, 6 PM (sign up by noon Oct 19).
+    - City Council, Tue Oct 20, 2 PM (sign up by 3 PM Oct 19).
+    - HISD, Thu Oct 22, 5 PM. Its agenda is only five teacher employment hearings, so it's not suitable for the real comment.
+    - **City Council's Tue Oct 27, 5 PM session already takes sign-ups on its online form, on any topic.**
+    - Commissioners Court (Oct 29), HCC (Oct 28) and Lone Star (Nov 5) are all after the deadline.
+- **Answers the owner agreed to (team notes; not in the plan):**
+  1. The owner is P5. The name is ShowUp HTX.
+  2. "Done" means the demo flow works end to end for the two demo addresses, plus the evidence. **After the demo flow works:**
+     - the other four registration recipes
+     - reminders 7a/7b and the protest reminder
+     - the timeline
+     - the "Why did I get this text?" page
+     - health checks and the 45-day recheck
+     - HISD Spanish agenda linking
+     - the HOA top-50 list
+     - Spanish coach tests
+     - Port, METRO and water authority stories
+  3. No classmate survey until the real lookup (Census + HCAD) works.
+  4. The paid Gemini tier is owned by an adult (an 18+ teammate or a parent), along with any paid Twilio account.
+  5. The Devpost write-up discloses AI use, and a teammate writes that section. This is the owner's answer to `INSTRUCTIONS.md`'s stop-and-ask rule.
+  6. Schedule to the real deadline:
+     - Mon: setup and checks.
+     - Tue–Wed: build.
+     - Thu: freeze at noon, fix bugs, record the video.
+     - Fri: write-up; submit by 6 PM CST.
+  7. A ~4 min video replaces the pitch slides and the backup video.
+  8. All five teammates must be eligible and registered on Devpost. Confirm.
+  9. Speak up may fill in only a factual opener (name, who you are, area, item). The user writes their position, experience, ask and closing.
+  10. Build the new app at the repo root using the tech plan's §2 layout. Leave `web/` untouched, and delete it before submission once sohankamsala agrees.
+  11. Carry over only the prototype's design system: `DESIGN.md`, color tokens, fonts and the shadcn components.
+  12. Stay on Vercel Hobby, and trigger jobs by hand with `CRON_SECRET`.
+  13. Use one model everywhere: `gemini-3.8-flash`.
+  14. **Agenda data:**
+      - Legistar for HISD.
+      - Gemini extraction for the demo MUD.
+      - Manual entry for everything else.
+      - Skip PrimeGov.
+      - Review items by flipping `review_status` in Supabase's table editor.
+  15. **Real comment:** not HISD on Oct 22 (personnel hearings). Skip CFISD on Mon Oct 19 unless a CFISD teammate already has a topic.
+- **Still open (owner unsure):**
+  - Paid Twilio with Sole Proprietor registration, falling back to a labeled "preview" mockup.
+  - Classmate survey Wed evening to Thu noon, with at least 10 people.
+  - A teammate registering with the app for City Council on Oct 27, then speaking.
+- **Files:** `agent_handoff.md`, `CLAUDE.md`, `web/AGENTS.md`
+- **Contract changes:** None.
+- **Checked:** Docs only; no code changed. Research came from web sources and read-only API calls; nothing was registered or submitted.
+- **Open issues / next:**
+  - Revision 4 of the plan still lists "prototype vs. plan" as an open Day 1 item, and §17 still has the prototype-screen table. Both are settled or moot per the owner, but the plan text wasn't edited.
+  - Iarush's `.plans/agent-scraper-spec.md` (v1.2) was pushed during this review and wins for P2. It replaces answer 14 (agenda data), the P2 parts of answers 2, 12 and 13, and the "Skip PrimeGov" line. Under the spec:
+    - Sources: Legistar for Commissioners Court and HISD, BoardBook for CFISD, PrimeGov plus Gemini for City Council, Gemini for Lone Star and HC MUD 489, and YAML manual entry.
+    - Scheduling: GitHub Actions every 30 minutes, with a daily Vercel backup.
+    - Model: Flash, retrying on Pro when validation drops too many items.
+    - Health checks and results-from-minutes are built in Phase 1.
+
 ### 2026-10-18: UI polish and palette studio
 - **Who:** BluePhoenix79 · UI/platform (part not assigned)
 - **Branch:** main
