@@ -33,6 +33,15 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-19: P5 Task 17: classmate quiz report
+- **Who:** PlaidMod · P5 Platform, Evidence and Pitch
+- **Branch:** main
+- **What changed:** `lib/quizReport.ts` turns `quiz_responses` into the plan's evidence lines, for example "14 of 18 (78%) didn't know they had a MUD." `scripts/quiz-report.ts --since <ISO> --until <ISO>` prints them along with "Results from N people who used our app." The time window leaves out the team's own test runs.
+- **Files:** `lib/quizReport.ts`, `scripts/quiz-report.ts`, `tests/platform/quizReport.test.ts`
+- **Contract changes:** None. The report reads P1's `quiz_responses` (`selected_types`, `actual_types`, `created_at`) and prints type keys until P1's display names exist.
+- **Checked:** `npm test` (121/121, including the plan's 14-of-18 example, rounding, and the window edges), typecheck and lint pass. Running the script needs `SUPABASE_SERVICE_ROLE_KEY` in `.env.local`.
+- **Open issues / next:** All 17 P5 tasks are coded. Next comes a whole-branch review, then the owner's dashboard steps (the secret key, admin accounts, turning off sign-ups) and the non-code checklist in `.plans/p5-platform-plan.md`.
+
 ### 2026-10-19: P5 Task 16: admin sign-in for the review queue
 - **Who:** PlaidMod · P5 Platform, Evidence and Pitch
 - **Branch:** main
