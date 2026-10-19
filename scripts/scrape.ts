@@ -3,6 +3,7 @@
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { parseArgs } from 'node:util';
+import { config as loadEnv } from 'dotenv';
 import { DateTime } from 'luxon';
 import { AdapterResultSchema, type Adapter, type AdapterKind, type RunMode } from '@/lib/adapters/types';
 import { getSource } from '@/lib/ingest/registry';
@@ -12,6 +13,7 @@ import { ZONE, nearTermWindow, resultsWindow, rotationWindow } from '@/lib/inges
 const ADAPTERS: Partial<Record<AdapterKind, () => Promise<Adapter>>> = {
   legistar: async () => (await import('@/lib/adapters/legistar')).legistarAdapter,
   boardbook: async () => (await import('@/lib/adapters/boardbook')).boardbookAdapter,
+  llm_extract: async () => (await import('@/lib/adapters/llmExtract')).llmExtractAdapter,
 };
 
 /** tests/golden/<folder>/ for --record. */
@@ -69,6 +71,8 @@ export function windowFor(
 }
 
 async function main() {
+  // GEMINI_* settings for llm_extract; a missing file just means no key (items are skipped with a warning).
+  loadEnv({ path: '.env.local', quiet: true });
   let args: ReturnType<typeof parseCli>;
   try {
     args = parseCli(process.argv.slice(2));

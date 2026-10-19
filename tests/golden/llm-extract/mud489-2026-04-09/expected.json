@@ -1,0 +1,80 @@
+{
+  "note": "Generated from the hand-written gemini_output.json with a frozen clock; reviewed by hand.",
+  "now": "2026-04-08T12:00:00-05:00",
+  "meeting": {
+    "external_id": "a8c3c2e30da367fa040d0a4ec65c5b26bd0c729a",
+    "body_id": "hcmud_489",
+    "date": "2026-04-09T13:30:00-05:00",
+    "type": "special",
+    "status": "scheduled",
+    "agenda_url": "https://hcmud489.com/static/5b87b10d3d899ec343e89ef87e8b282a/Special_Agenda_April_9_2026_HCMUD_489_c838005a4d.pdf"
+  },
+  "item_count": 7,
+  "dropped": 0,
+  "warnings": [],
+  "items": [
+    {
+      "external_id": "76dc2c3fbaa2c7625f49a0d0b6a71b21ea42bd88",
+      "agenda_number": "1",
+      "title": "Public comments",
+      "section": null,
+      "status": "upcoming",
+      "amounts": [],
+      "contains_private_person": false
+    },
+    {
+      "external_id": "0895657f4779eefea849ae1d7370805358c74122",
+      "agenda_number": "2",
+      "title": "Review and approval of the minutes of the meeting of the Board of Directors held January 19, 2026",
+      "section": null,
+      "status": "upcoming",
+      "amounts": [],
+      "contains_private_person": false
+    },
+    {
+      "external_id": "d0b7ba0bd65bfa8ec69e5678730d36276f34628d",
+      "agenda_number": "3",
+      "title": "Appointment of new Directors to fill the vacancies on the Board of Directors",
+      "section": null,
+      "status": "upcoming",
+      "amounts": [],
+      "contains_private_person": false
+    },
+    {
+      "external_id": "e4cdb611805d5711c9edc8eea8e6ba681626266c",
+      "agenda_number": "3.b",
+      "title": "Reorganization of the Board of Directors and election of officers",
+      "section": "Appointment of new Directors",
+      "status": "upcoming",
+      "amounts": [],
+      "contains_private_person": false
+    },
+    {
+      "external_id": "02c4972250731b477afd1a4d93e1c634e92a04d7",
+      "agenda_number": null,
+      "title": "Bookkeeper's report, including financial and investment reports and the payment of invoices presented",
+      "section": null,
+      "status": "upcoming",
+      "amounts": [],
+      "contains_private_person": false
+    },
+    {
+      "external_id": "3ea5839e0b8f7617d9a60d979c23cdb4ec250697",
+      "agenda_number": null,
+      "title": "Approval of Payment Services Agreement by and between the District and First Billing Services, LLC in connection with electronic payment program for tax payments",
+      "section": null,
+      "status": "upcoming",
+      "amounts": [],
+      "contains_private_person": false
+    },
+    {
+      "external_id": "c0555c5d44605add1b17cf8643a18d75113d6e0c",
+      "agenda_number": null,
+      "title": "Discuss requirements for the EPA's final National Primary Drinking Water Regulation concerning PFAS and testing schedule for same",
+      "section": null,
+      "status": "upcoming",
+      "amounts": [],
+      "contains_private_person": false
+    }
+  ]
+}
