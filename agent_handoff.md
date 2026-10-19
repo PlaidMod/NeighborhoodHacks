@@ -33,6 +33,46 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-19: Admin accounts, and a script for admins to set their own password
+- **Who:** PlaidMod · P5 Platform, Evidence and Pitch
+- **Branch:** main
+- **What changed:**
+  - **The team's five emails** are now in `ADMIN_EMAILS`, in the owner's `.env.local` and on Vercel.
+  - **Each has a confirmed Supabase account** with a temporary shared password, set by the owner. Ask PlaidMod for it; it isn't written anywhere in the repo.
+  - **Each admin can change their password** with `npm run admin -- set-password <email>`. The password is typed twice and never shown, and must be 12–72 characters.
+  - **No email step:** Supabase's built-in email can't send setup links to people outside the Supabase organization, so the script uses the secret key from `.env.local` instead.
+  - **`npm run admin -- create-all`** creates any missing accounts after someone is added to `ADMIN_EMAILS`.
+- **Files:** `lib/adminAccounts.ts`, `scripts/admin-account.ts`, `tests/platform/adminAccounts.test.ts`, `package.json` (`admin` script), `CLAUDE.md`, `.env.example`
+- **Contract changes:** None
+- **Checked:**
+  - `npm test` 503/503, typecheck and lint pass.
+  - Against the real project, a throwaway account was created, given a password, signed in, rejected a wrong password, then deleted.
+  - `set-password` refuses an email not on the list, and refuses to run where the password would show on screen.
+- **Open issues / next:**
+  - **Everyone changes the shared password** with `set-password` before the repo goes public. The login page is public, and admin emails show up in commit history.
+  - The owner turns off public sign-ups in Supabase (**Authentication → Sign In / Providers**).
+  - **P3 chooses `GEMINI_JUDGE_MODEL`.** Vercel has `gemini-3.5-flash-lite`, which works on Vertex; ask P5 to change it.
+
+### 2026-10-19: Supabase secret key and Gemini settings added to Vercel
+- **Who:** PlaidMod · P5 Platform, Evidence and Pitch
+- **Branch:** main (no code changes)
+- **What changed:** Vercel Production and Preview now have:
+  - `SUPABASE_SERVICE_ROLE_KEY` and `GEMINI_API_KEY` (a Vertex AI key), both Sensitive, so their values can't be read back from Vercel
+  - `GOOGLE_GENAI_USE_VERTEXAI=true`, `GEMINI_EXTRACT_MODEL=gemini-3.8-flash` and `GEMINI_JUDGE_MODEL=gemini-3.5-flash-lite`
+
+  The owner's `.env.local` has the same values.
+- **Files:** this log only
+- **Contract changes:** None
+- **Checked:**
+  - The Supabase key returned HTTP 200 from the REST API.
+  - `npx tsx scripts/gemini-smoke.ts` returned `{ ok: true }` on Vertex AI for `gemini-3.8-flash` and `gemini-3.5-flash-lite`.
+  - **`gemini-pro-latest` returns 404 NOT_FOUND on Vertex,** so P2's default fallback model fails there.
+  - `vercel env ls` lists all five variables for both environments.
+- **Open issues / next:**
+  - **P2:** set `GEMINI_EXTRACT_FALLBACK_MODEL` to a Pro model ID that Vertex lists, check it with `npx tsx scripts/gemini-smoke.ts --model <id>`, then ask P5 to add it to Vercel.
+  - No live page uses the database or Gemini yet, so nothing was redeployed. The next deploy picks these up.
+  - Teammates who need the keys locally get them from P5 privately. Because they're Sensitive, `vercel env pull` leaves them out.
+
 ### 2026-10-19: P2's scraper merged into `main` and moved into the root app
 - **Who:** PlaidMod · P5 Platform, Evidence and Pitch
 - **Branch:** main (merged `scrapper` at `c6a6990`)

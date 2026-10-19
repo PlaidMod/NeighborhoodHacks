@@ -48,6 +48,7 @@ npx vitest run tests/platform/tokens.test.ts   # run one test file
 npm run test:live                           # tests/live/: real sites and Gemini (vitest.live.config.ts)
 npm run scrape -- --source <id>             # P2 scraper; sources in data/sources.yaml, output in tmp/scrape
 npm run news -- --out tmp/news              # P2 news collector (add --articles to fetch article text)
+npm run admin -- set-password <email>       # choose your own /admin password (accounts: npm run admin -- create-all)
 ```
 
 - `npm test` runs `tests/**/*.test.ts` (P5's `tests/platform/`, P2's `tests/unit/`) in UTC with `fetch` blocked (`tests/setup/no-network.ts`). Tests that need the network go in `tests/live/` and run with `npm run test:live`.

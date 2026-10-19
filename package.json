@@ -16,7 +16,8 @@
     "test:watch": "vitest",
     "test:live": "vitest run --config vitest.live.config.ts",
     "scrape": "tsx scripts/scrape.ts",
-    "news": "tsx scripts/news.ts"
+    "news": "tsx scripts/news.ts",
+    "admin": "tsx scripts/admin-account.ts"
   },
   "dependencies": {
     "@google/genai": "^2.30.0",
