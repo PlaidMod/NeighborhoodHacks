@@ -7,7 +7,8 @@ export default defineConfig({
   },
   test: {
     include: ['tests/**/*.test.ts'],
-    exclude: ['web/**', 'node_modules/**'],
+    // tests/live/** reaches real sites and Gemini: npm run test:live (vitest.live.config.ts).
+    exclude: ['web/**', 'node_modules/**', 'tests/live/**'],
     setupFiles: ['tests/setup/no-network.ts'],
     environment: 'node',
     // Run in UTC so time-zone tests prove Chicago time comes from the code, not the machine.

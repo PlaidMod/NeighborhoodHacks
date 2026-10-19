@@ -10,14 +10,28 @@ export default defineConfig([
     rules: { 'react/no-unescaped-entities': 'off' },
   },
   {
-    // P2 (scraper spec Step 11): news never feeds agenda data, so ingest code can't import it.
+    // A leading underscore marks a value that's unused on purpose (P2's convention).
+    rules: {
+      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
+    },
+  },
+  {
+    // D26/D32 isolation (scraper spec): agenda code must never depend on the news module.
+    // tests/unit/news-isolation.test.ts checks this rule.
     files: ['lib/adapters/**', 'lib/ingest/**'],
     rules: {
       'no-restricted-imports': [
         'error',
-        { patterns: [{ group: ['@/lib/news/*', '**/lib/news/*', '../news/*'], message: 'News must not feed agenda data (scraper spec D26).' }] },
+        {
+          patterns: [
+            {
+              group: ['@/lib/news', '@/lib/news/**', '**/news/**', '../news', '../news/*', './news', './news/*'],
+              message: 'lib/adapters and lib/ingest must not import lib/news (D26, D32).',
+            },
+          ],
+        },
       ],
     },
   },
-  globalIgnores(['.next/**', 'out/**', 'build/**', 'next-env.d.ts', 'web/**', 'node_modules/**']),
+  globalIgnores(['.next/**', 'out/**', 'build/**', 'next-env.d.ts', 'web/**', 'node_modules/**', 'tmp/**']),
 ])

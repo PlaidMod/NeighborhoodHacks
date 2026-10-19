@@ -85,7 +85,10 @@ export interface LlmClient {
 
 export type GeminiModels = { extract: string; fallback: string };
 
-export function modelsFromEnv(env: NodeJS.ProcessEnv = process.env): GeminiModels {
+/** Any string map. (Next.js types make NODE_ENV required on NodeJS.ProcessEnv, so tests can't pass {}.) */
+export type EnvLike = Record<string, string | undefined>;
+
+export function modelsFromEnv(env: EnvLike = process.env): GeminiModels {
   return {
     extract: env.GEMINI_EXTRACT_MODEL?.trim() || DEFAULT_EXTRACT_MODEL,
     fallback: env.GEMINI_EXTRACT_FALLBACK_MODEL?.trim() || DEFAULT_FALLBACK_MODEL,
@@ -122,7 +125,7 @@ export function createGeminiClient(apiKey: string): LlmClient {
 }
 
 /** A client when GEMINI_API_KEY is set, else null (LLM steps then skip with a warning). */
-export function geminiFromEnv(env: NodeJS.ProcessEnv = process.env): LlmClient | null {
+export function geminiFromEnv(env: EnvLike = process.env): LlmClient | null {
   const key = env.GEMINI_API_KEY?.trim();
   return key ? createGeminiClient(key) : null;
 }

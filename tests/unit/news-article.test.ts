@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import { resetHostSpacing } from '@/lib/adapters/http';
 import type { NewsArticle, NewsMention } from '@/lib/adapters/types';
 import { HostGate, extractText, fetchArticles, hasPaywallMarker, wordCount, type FetchArticlesOptions } from '@/lib/news/article';
 import { parseFeeds, type FeedConfig, type MentionSource } from '@/lib/news/collect';
@@ -153,6 +154,9 @@ describe('fetchArticles', () => {
   });
 
   it('honors Crawl-delay and the 2 s minimum between same-host requests (fake timers)', async () => {
+    // Earlier tests leave real-clock times in http.ts's per-host spacing. If those times are
+    // after the fake clock's start, the fetch would wait hours, so clear them first.
+    resetHostSpacing();
     vi.useFakeTimers({ now: new Date('2026-10-19T12:00:00Z') });
     const f = mockFetch({
       [ROBOTS]: robotsFx('handmade-disallow'), // Crawl-delay: 5

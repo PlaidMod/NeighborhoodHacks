@@ -45,9 +45,13 @@ npm run typecheck                           # next typegen, then tsc --noEmit
 npm run lint                                # eslint . (next lint no longer exists)
 npm test                                    # vitest; unit tests can't reach the network
 npx vitest run tests/platform/tokens.test.ts   # run one test file
+npm run test:live                           # tests/live/: real sites and Gemini (vitest.live.config.ts)
+npm run scrape -- --source <id>             # P2 scraper; sources in data/sources.yaml, output in tmp/scrape
+npm run news -- --out tmp/news              # P2 news collector (add --articles to fetch article text)
 ```
 
-- `npm test` runs `tests/**/*.test.ts` in UTC with `fetch` blocked (`tests/setup/no-network.ts`). Tests that need the network go in a separate config, such as P2's planned `vitest.live.config.ts`.
+- `npm test` runs `tests/**/*.test.ts` (P5's `tests/platform/`, P2's `tests/unit/`) in UTC with `fetch` blocked (`tests/setup/no-network.ts`). Tests that need the network go in `tests/live/` and run with `npm run test:live`.
+- P2's code is `lib/adapters/`, `lib/ingest/`, `lib/news/`, `data/` and `tests/golden/`. ESLint stops `lib/adapters` and `lib/ingest` from importing `lib/news` (D26, D32).
 - npm 11 holds back packages' install scripts until approved. Nothing in the app needs them so far.
 - `web/` is the old test prototype, with its own `package.json` (`cd web && npm install && npm run dev`). The root's TypeScript, ESLint, vitest and Tailwind all ignore it.
 

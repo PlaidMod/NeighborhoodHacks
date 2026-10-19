@@ -33,6 +33,27 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-19: P2's scraper merged into `main` and moved into the root app
+- **Who:** PlaidMod · P5 Platform, Evidence and Pitch
+- **Branch:** main (merged `scrapper` at `c6a6990`)
+- **What changed:**
+  - **The merge** keeps both sides of this log and the branch's newer revision 5 of both plan files. The one line kept from `main` is the body-page "In the news" bullet.
+  - **The code moved, unchanged,** from `scraper P2/` into the layout in scraper spec §6: `lib/adapters/`, `lib/ingest/`, `lib/news/`, `data/`, `scripts/`, `tests/unit/`, `tests/golden/` and `vitest.live.config.ts`.
+  - **P2's dependencies and scripts** (`test:live`, `scrape`, `news`) are now in the root `package.json`, and the lockfile was regenerated. The root keeps ESLint 9 and TypeScript 5.9, which Next 16.4.2 needs; the branch used 10 and 6.
+  - **Root configs:** ESLint now uses P2's full news-isolation patterns and P2's `^_` unused-variable rule. Vitest excludes `tests/live/`. `GEMINI_JUDGE_MODEL` is added to `.env.example` and `lib/env.ts`.
+- **Two fixes to P2's files:**
+  - **`tests/unit/news-article.test.ts`:** the fake-timer Crawl-delay test now calls `resetHostSpacing()` first. Leftover real-clock spacing made it pass only when run before Oct 19 12:00 UTC.
+  - **`lib/adapters/gemini.ts`:** the `*FromEnv` functions now take a plain string map, because Next's `ProcessEnv` type requires `NODE_ENV`. This is a type change only.
+- **Files:** P2's folders above, `package.json`, `package-lock.json`, `eslint.config.mjs`, `vitest.config.ts`, `.env.example`, `lib/env.ts`, `CLAUDE.md`
+- **Contract changes (P2):**
+  - Work on `main` from the repo root from now on. The scripts read the root `.env.local`.
+  - Phase 2 can import `@/lib/db`. P1's `bodies` seed is the only Phase 2 prerequisite still missing.
+  - The v1.3 tables (`news_articles`, `news_article_items`, the 11c and `health()` state) still need migrations: P2 writes them, P5 applies them.
+- **Checked:** `npm test` 492/492 (P5's 128, P2's 364; UTC, network blocked), typecheck, lint (0 warnings) and build. `npm run scrape -- --source no_such_source` loads `data/sources.yaml` and makes no network calls.
+- **Open issues / next:**
+  - No live runs yet (no Gemini key).
+  - `gemini-pro-latest` won't work on Vertex (see the Vertex entry below).
+
 ### 2026-10-19: Gemini can run on Vertex AI; `.env.local` laid out for every key
 - **Who:** PlaidMod · P5 Platform, Evidence and Pitch
 - **Branch:** main
