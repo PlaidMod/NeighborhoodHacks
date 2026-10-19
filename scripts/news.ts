@@ -3,13 +3,19 @@
 // --record saves the raw feeds to tests/golden/news/feeds/.
 // --articles (Step 11b) also fetches article pages and writes articles.json (text included; local output only).
 // The previous <out>/articles.json is read so unchanged feed items are not refetched.
+// --link <dir> (Step 11c, needs --articles) links ok articles to items from <dir>/meetings.json + <dir>/items.json
+// with the LLM and writes links.json + link_state.json (skip-unchanged memory). Needs GEMINI_API_KEY.
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { parseArgs } from 'node:util';
+import { config as loadEnv } from 'dotenv';
 import { ArticleResultSchema, NewsResultSchema, type NewsArticle } from '@/lib/adapters/types';
 import { fetchArticles } from '@/lib/news/article';
 import { collectNews, loadFeeds } from '@/lib/news/collect';
+import { linkArticles, type LinkState } from '@/lib/news/linkArticles';
 import { loadTerms } from '@/lib/news/match';
+import { geminiFromEnv, modelsFromEnv } from '@/lib/adapters/gemini';
+import type { Item, Meeting } from '@/lib/adapters/types';
 
 export const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 
@@ -20,10 +26,11 @@ export function parseNewsCli(argv: string[]) {
       out: { type: 'string', default: 'tmp/news' },
       record: { type: 'boolean', default: false },
       articles: { type: 'boolean', default: false },
+      link: { type: 'string' },
     },
     strict: true,
   });
-  return { out: values.out!, record: values.record!, articles: values.articles! };
+  return { out: values.out!, record: values.record!, articles: values.articles!, link: values.link };
 }
 
 async function main() {
@@ -72,6 +79,24 @@ async function main() {
       2,
     ),
   );
+  if (!args.link) return;
+
+  loadEnv({ path: '.env.local', quiet: true });
+
+  const known = (f: string) => JSON.parse(readFileSync(join(args.link!, f), 'utf8'));
+  const statePath = join(args.out, 'link_state.json');
+  const prevState: Record<string, LinkState> = existsSync(statePath) ? JSON.parse(readFileSync(statePath, 'utf8')) : {};
+  const lr = await linkArticles(parsed.articles, {
+    items: known('items.json') as Item[],
+    meetings: known('meetings.json') as Meeting[],
+    llm: geminiFromEnv(),
+    models: modelsFromEnv(),
+    prev: prevState,
+  });
+  writeFileSync(join(args.out, 'links.json'), JSON.stringify(lr.links, null, 2));
+  writeFileSync(statePath, JSON.stringify(lr.state, null, 2));
+  writeFileSync(join(args.out, 'link_warnings.json'), JSON.stringify(lr.warnings, null, 2));
+  console.log(JSON.stringify({ links: lr.links, stats: lr.stats, warnings: lr.warnings }, null, 2));
 }
 
 if (process.argv[1] && /news\.ts$/.test(process.argv[1])) {
