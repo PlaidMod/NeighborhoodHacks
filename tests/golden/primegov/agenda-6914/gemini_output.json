@@ -1,0 +1,84 @@
+{
+  "meeting": {
+    "date": "2026-10-20",
+    "time": "2:00 P.M.",
+    "type": "regular",
+    "title": "City Council",
+    "comment_instructions_quote": "To reserve time to appear before Council call 832-393-1100, or email us at speakers@houstontx.gov"
+  },
+  "items": [
+    {
+      "agenda_number": "1",
+      "title": "PUBLIC HEARING to provide a Resolution of No Objection for one applicant seeking 4% Housing Tax Credits (HTCs) for the following multifamily development: Hays Street Apartments 1400-1500 Hays Street",
+      "section": "HEARINGS - 9:00 A.M.",
+      "source_quote": "PUBLIC HEARING to provide a Resolution of No Objection for one applicant seeking 4% Housing Tax Credits"
+    },
+    {
+      "agenda_number": "2",
+      "title": "RECOMMENDATION from Mayor for confirmation of the appointment or reappointment of the following individuals to the HOUSTON DOWNTOWN PARK CORPORATION BOARD OF DIRECTORS",
+      "section": "MISCELLANEOUS (CATEGORY)",
+      "source_quote": "of the following individuals to the HOUSTON DOWNTOWN PARK CORPORATION BOARD OF DIRECTORS"
+    },
+    {
+      "agenda_number": "5",
+      "title": "RECOMMENDATION from Director Houston Airport System for approval of Membership Fees in the AIRPORTS COUNCIL INTERNATIONAL - NORTH AMERICA for Calendar Year 2027 - $239,842.00 - Enterprise Fund",
+      "section": "MISCELLANEOUS (CATEGORY)",
+      "source_quote": "Fees in the AIRPORTS COUNCIL INTERNATIONAL - NORTH AMERICA for Calendar Year 2027 - $239,842.00"
+    },
+    {
+      "agenda_number": "6",
+      "title": "RECOMMENDATION from Chief Procurement Officer on behalf of Houston Public Works for approval of Change Order No. 6 in the amount of $1,829,025.15, awarded to MC2 CIVIL, LLC for Force Main Flow Diversion - DISTRICT D - EVANS-SHABAZZ",
+      "section": "MISCELLANEOUS (CATEGORY)",
+      "source_quote": "Change Order No. 6 in the amount of $1,829,025.15, awarded to MC2 CIVIL, LLC for Force Main Flow Diversion"
+    },
+    {
+      "agenda_number": "8",
+      "title": "APPROVE spending authority in the amount of $792,124.78 for Purchase of Automated Motor Pool and Car Sharing Program through the Sourcewell Puchasing Cooperative for the Fleet Management Department, awarded to RUSHCARE, INC - 31 Months - Fleet Management Fund",
+      "section": "PURCHASING AND TABULATION OF BIDS (CATEGORY)",
+      "source_quote": "APPROVE spending authority in the amount of $792,124.78 for Purchase of Automated Motor Pool and Car Sharing Program"
+    },
+    {
+      "agenda_number": "9",
+      "title": "APPROVE spending authority in an amount not to exceed $1,528,900.00 for Traffic Control Supplies and Services through Cooperative Agreement with The Local Government Purchasing Cooperative (BuyBoard), awarded to MOBOTREX, LLC - Through March 31, 2027 with 2 one-year options - Special Revenue Fund",
+      "section": "PURCHASING AND TABULATION OF BIDS (CATEGORY)",
+      "source_quote": "not to exceed $1,528,900.00 for Traffic Control Supplies and Services"
+    },
+    {
+      "agenda_number": "10",
+      "title": "ORDINANCE AMENDING ARTICLE IV OF CHAPTER 44 OF THE CODE OF ORDINANCES, HOUSTON, TEXAS, relating to Tax Abatement, including Revising and Reauthorizing Guidelines and Criteria Governing Tax Abatement Agreements and including a new Subsection for Infill Development Applications; containing findings and other provisions relating to the foregoing subject; providing for an effective date; providing for severability; and containing a savings clause",
+      "section": "ORDINANCES (CATEGORY)",
+      "source_quote": "relating to Tax Abatement, including Revising and Reauthorizing Guidelines and Criteria Governing Tax Abatement Agreements"
+    },
+    {
+      "agenda_number": "12",
+      "title": "ORDINANCE appropriating $250,000.00 out of Fire Consolidated Construction Fund; approving and authorizing Third Amendment to contract with ANSLOW BRYANT CONSTRUCTION, LTD to provide Construction Services for Fire Station 17 Renovation Project - DISTRICT B - JACKSON",
+      "section": "ORDINANCES (CATEGORY)",
+      "source_quote": "ORDINANCE appropriating $250,000.00 out of Fire Consolidated Construction Fund"
+    },
+    {
+      "agenda_number": "13",
+      "title": "ORDINANCE appropriating $7,387,000.00 out of Equipment Acquisition Consolidated Fund; for Planned Infrastructure Refresh Projects for Data Center Refresh, Network Refresh and DR Cloud Infrastructure for Houston Information Technology Services",
+      "section": "ORDINANCES (CATEGORY)",
+      "source_quote": "ORDINANCE appropriating $7,387,000.00 out of Equipment Acquisition Consolidated Fund"
+    },
+    {
+      "agenda_number": "18",
+      "title": "ORDINANCE approving and authorizing Joint Participation Interlocal Agreement with HARRIS COUNTY and REINVESTMENT ZONE NUMBER ONE (TIRZ 1) for Construction Improvements in and around Chimney Rock Road - DISTRICT J - POLLARD",
+      "section": "ORDINANCES (CATEGORY)",
+      "source_quote": "for Construction Improvements in and around Chimney Rock Road"
+    },
+    {
+      "agenda_number": "28",
+      "title": "ORDINANCE approving and authorizing contract with CSI CONSOLIDATED LLC DBA AIMS COMPANIES to provide Construction Services for Sewer Stoppage Cleaning and Television Inspection No. 12; setting a deadline for bidder to submit post-bid documents and holding the bidder in default if it fails to meet the deadline; providing funding for contingencies; providing a maximum contract amount - $6,716,115.00 - Enterprise Fund",
+      "section": "ORDINANCES (CATEGORY)",
+      "source_quote": "providing a maximum contract amount - $6,716,115.00 - Enterprise Fund"
+    },
+    {
+      "agenda_number": "34",
+      "title": "ORDINANCE granting to 3L ENVIRONMENTAL LLC, a Texas Limited Liability Company, the right, privilege, and franchise to collect, haul, and transport solid waste and industrial waste from commercial properties located within the City of Houston, Texas, pursuant to Chapter 39, Code of Ordinances, Houston, Texas - THIRD AND FINAL READING",
+      "section": "ORDINANCES (CATEGORY)",
+      "description": "ORDINANCE No. 2026-870; Passed second reading October 14, 2026",
+      "source_quote": "ORDINANCE granting to 3L ENVIRONMENTAL LLC, a Texas Limited Liability Company"
+    }
+  ]
+}
