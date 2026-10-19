@@ -33,6 +33,21 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-19: P5 Task 8: signed `bodies_token` for results links
+- **Who:** PlaidMod · P5 Platform, Evidence and Pitch
+- **Branch:** main
+- **What changed:** `lib/tokens.ts` has two functions:
+  - `signBodiesToken(ids)` signs a list of body IDs.
+  - `verifyBodiesToken(token)` returns the IDs, or **null** if the token is missing, cut off, edited, signed with another secret, or in an unknown version.
+- **Files:** `lib/tokens.ts`, `tests/platform/tokens.test.ts`
+- **Contract changes (shared, §3):**
+  - **Format:** `<payload>.<signature>`. The payload is base64url JSON `{"v":1,"b":[sorted unique ids]}`, and the signature is base64url HMAC-SHA256 with `BODIES_TOKEN_SECRET`.
+  - **Body IDs:** 1 to 64 IDs, each matching `^[a-z0-9][a-z0-9_-]{0,63}$`.
+  - The same set always gives the same token, so P3 can cache the weekly page by token.
+  - **P1** signs the token in `/api/lookup`. **P3** verifies it on `/weekly?t=`. When `verifyBodiesToken` returns null, show "enter your address again" instead of an error.
+- **Checked:** `npm test -- tokens` (13/13), typecheck and lint pass.
+- **Open issues / next:** Task 9 (the cron check and `vercel.json`) is next.
+
 ### 2026-10-19: P5 Task 7: shared Gemini client
 - **Who:** PlaidMod · P5 Platform, Evidence and Pitch
 - **Branch:** main
