@@ -33,6 +33,25 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-19: P5 Task 12: rate limiting and the browser ID
+- **Who:** PlaidMod · P5 Platform, Evidence and Pitch
+- **Branch:** main
+- **What changed:** `lib/rateLimit.ts` and a new database function, `increment_rate_limit` (security invoker, fixed `search_path`, execute revoked from public, anon and authenticated).
+  - **`checkRateLimit(key, rule)`** counts one call in a fixed window. It returns `{ allowed, remaining, resetAt }`. If the database can't be reached, it returns `allowed: true, degraded: true` so the demo keeps working.
+  - **Presets:** `RATE_LIMITS.lookupPerIp` (120 an hour, so a whole class can share a school IP), `coachPerBrowser` and `coachPerIp` (20 an hour, per §14).
+  - **IPs:** `hashIp(ip)` scrambles an IP with `IP_HASH_SECRET` plus the Chicago date, so raw IPs are never stored. `clientIp(req)` reads the visitor's IP.
+  - **Browser ID:** `BROWSER_ID_COOKIE = 'showup_bid'`. `readBrowserId(req)` returns null unless the cookie is a UUID; `newBrowserId()` makes one.
+  - About 1 call in 100 also deletes windows older than two days, matching the privacy page.
+- **Files:** `supabase/migrations/20261019112411_rate_limit_fn.sql`, `lib/rateLimit.ts`, `lib/database.types.ts` (function type), `tests/platform/rateLimit.test.ts`, `tests/platform/migrations.test.ts`
+- **Contract changes:**
+  - **P1 (`/api/lookup`):** `checkRateLimit(\`lookup:ip:${hashIp(clientIp(req))}\`, RATE_LIMITS.lookupPerIp)`. Return 429 `rate_limited` when it's not allowed.
+  - **P4 (`/api/coach`):** check both `coach:browser:<id>` and `coach:ip:<hash>`. Set the `showup_bid` cookie (httpOnly, `sameSite=lax`, 1 year) when `readBrowserId` returns null. Note that §14's 20 an hour **per IP** may block a class on shared Wi-Fi. Consider raising `coachPerIp`.
+  - **Every new SQL function** must be `security invoker` and revoke execute from public, anon and authenticated. `npm test` checks this.
+- **Checked:**
+  - `npm test` (83/83; the new function check failed first on a version without the security lines), typecheck and lint pass.
+  - In the database: calling the function twice returns 1 then 2; `anon` and `authenticated` can't run it; `get_advisors` shows only the expected notices. The test row was deleted.
+- **Open issues / next:** Task 13 (home page and the lookup flow) is next.
+
 ### 2026-10-19: P5 Task 11: site shell and security headers
 - **Who:** PlaidMod · P5 Platform, Evidence and Pitch
 - **Branch:** main

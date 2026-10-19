@@ -1173,7 +1173,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      increment_rate_limit: {
+        Args: { p_key: string; p_window_start: string }
+        Returns: number
+      }
     }
     Enums: {
       [_ in never]: never

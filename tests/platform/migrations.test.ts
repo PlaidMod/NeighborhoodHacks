@@ -60,3 +60,23 @@ describe('supabase migrations', () => {
     }
   })
 })
+
+describe('supabase migration functions', () => {
+  const FUNCTION = /create\s+(?:or\s+replace\s+)?function\s+(?:public\.)?"?(\w+)"?\s*\(([^)]*)\)/gi
+
+  it('every created function is security invoker and revokes execute from public, anon and authenticated', () => {
+    const all = loadSql().map((m) => m.sql).join('\n')
+    const problems: string[] = []
+    for (const match of all.matchAll(FUNCTION)) {
+      const name = match[1]
+      const body = all.slice(match.index, all.indexOf('$$;', match.index) + 3)
+      if (!/security\s+invoker/i.test(body)) problems.push(`${name}: not security invoker`)
+      const revoke = new RegExp(String.raw`revoke\s+execute\s+on\s+function\s+(?:public\.)?${name}\b[^;]*from\s+([^;]*);`, 'i')
+      const from = all.match(revoke)?.[1].toLowerCase() ?? ''
+      for (const role of ['public', 'anon', 'authenticated']) {
+        if (!from.includes(role)) problems.push(`${name}: execute not revoked from ${role}`)
+      }
+    }
+    expect(problems).toEqual([])
+  })
+})
