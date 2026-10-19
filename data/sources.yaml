@@ -1,0 +1,56 @@
+# Agenda source registry (agent-scraper-spec §5.2). News domains are rejected here (D24); see lib/ingest/registry.ts.
+- id: hc_commissioners_court
+  body_id: commissioners_court
+  adapter: legistar
+  config:
+    client: harriscountytx
+    body_ids: [138, 223]            # 223 = special meetings → type: special
+    exclude_comment_patterns: ["TEST - DO NOT USE"]
+    exclude_agenda_status: [Hidden]
+    section_body_map:                # D10: header text (case-insensitive, trimmed) → body_id
+      "Flood Control District": flood_control
+      "Port of Houston Authority": port_houston
+    expected_max_gap_days: 45        # health check (§9 P2-H)
+- id: hisd_board
+  body_id: hisd_board
+  adapter: legistar
+  config:
+    client: houstonisd
+    body_ids: [205, 138]
+    expected_max_gap_days: 21
+- id: cfisd_board
+  body_id: cfisd_board
+  adapter: boardbook
+  config: { org_id: 668, expected_max_gap_days: 21 }
+- id: houston_city_council
+  body_id: houston_city_council
+  adapter: primegov
+  config: { tenant: houstontx, committee_id: 1, document_template: Agenda, expected_max_gap_days: 14 }
+- id: lone_star_board
+  body_id: lone_star_board
+  adapter: llm_extract
+  config:
+    index_url: https://www.lonestar.edu/board-agendas
+    link_pattern: "\\.pdf$"
+    date_from: link_text             # or: filename
+    meeting_type_from_text: { special: "(?i)special" }
+    minutes_index_url: TODO          # verify where Lone Star posts minutes; may be the same page
+    minutes_link_pattern: "(?i)minutes"
+    expected_max_gap_days: 45
+- id: hcmud_489                       # D25: the demo MUD
+  body_id: hcmud_489
+  adapter: llm_extract
+  config:
+    index_url: https://hcmud489.com/board-meetings/
+    link_pattern: "(?i)/static/.+agenda_.+\\.pdf$"          # matches Agenda_, Special_Agenda_, ..._AGENDA_
+    date_from: filename                                     # "October_19_2026" (underscores)
+    meeting_type_from_text: { special: "(?i)special" }
+    default_time: "11:00"                                   # used only if the agenda text has no time
+    minutes_index_url: https://hcmud489.com/board-meetings/
+    minutes_link_pattern: "(?i)/static/.+minutes_.+\\.pdf$"
+    minutes_date_tolerance_days: 2                          # May agenda 19th vs minutes 18th
+    results_max_days: 75                                    # minutes lag 1–2 cycles (§2)
+    expected_max_gap_days: 45
+- id: manual
+  adapter: manual
+  config: { dir: data/manual }

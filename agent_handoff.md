@@ -1,4 +1,13 @@
-# Agent han### 2026-10-19: P2 scraper step 0: root TypeScript project setup
+# Agent han### 2026-10-19: P2 scraper step 1: shared types, ingest utilities, scrape CLI shell
+- **Who:** Iarush · P2 Agenda Data
+- **Branch:** scrapper
+- **What changed:** Added the scraper's shared types (zod schemas for Meeting, Item, AdapterResult, news types), an HTTP helper, text/date normalization (America/Chicago), hashing, amount parsing, personnel redaction, section attribution, validation, a classify stub, the source registry with the news-domain guard, and the `npm run scrape` CLI shell (no adapters yet).
+- **Files:** `lib/adapters/`, `lib/ingest/`, `scripts/scrape.ts`, `data/sources.yaml`, `tests/unit/`, `.plans/scraper-progress.md`
+- **Contract changes:** `Meeting`/`Item` extended per scraper spec §5.1/§12 (end_date, status, minutes_url, comment_rules_text, body_id, section, description, amounts with optional `kind: 'rate'`, attachments, contains_private_person, quote_verified). Affects P3 and P5.
+- **Checked:** npm run typecheck, npm run lint, npm test (66 passed)
+- **Open issues / next:** Step 2 (LegistarAdapter). `lib/rules/classify.ts` untouched (P3 owns it).
+
+### 2026-10-19: P2 scraper step 0: root TypeScript project setup
 - **Who:** Iarush · P2 Agenda Data
 - **Branch:** scrapper
 - **What changed:** Added a root Node/TypeScript project for the standalone scraper library (separate from `web/`): package.json scripts, strict tsconfig, vitest, eslint, `.env.example`, `.gitignore`, and the progress log `.plans/scraper-progress.md`.
