@@ -55,14 +55,13 @@ npx vitest run tests/platform/tokens.test.ts   # run one test file
 
 Next.js 16 has breaking changes compared with older versions: `middleware.ts` is now `proxy.ts`, `cookies()` and `headers()` must be awaited, and `next lint` is gone. Before writing Next-specific code, read the relevant guide in `node_modules/next/dist/docs/` and heed deprecation notices. `next dev` keeps a Next.js rules block in `AGENTS.md`; commit it rather than removing it.
 
-## Design system (the one thing carried over from `web/`)
+## Design system
 
-The look and the content rules come from `web/DESIGN.md`; read it before UI work. Copy these into the new app:
-- the color tokens: four base variables in `globals.css` (`--brick`, `--surface`, `--denim`, `--ink`), with every other shade derived from them, and the preset definitions in `web/src/lib/palette.ts`
-- the fonts: Overpass everywhere; Playfair and Libre Franklin (`font-headline`, `font-news`) only on news surfaces
-- the restyled shadcn components
-
-Its page patterns (§8) describe prototype screens and don't apply.
+The look and the content rules are in the root `DESIGN.md`. Read it before UI work, including its note on which sections are prototype-only. What's already in the app:
+- **Color tokens** in `app/globals.css`. There are four base variables (`--brick`, `--surface`, `--denim`, `--ink`), and every other shade is derived from them. `tests/platform/contrast.test.ts` fails if a change drops the main text pairs below 4.5:1.
+- **Fonts** in `app/layout.tsx`: Overpass everywhere; Playfair and Libre Franklin (`font-headline`, `font-news`) only on news surfaces.
+- **shadcn components** in `components/ui/` (pill buttons, 24px cards, 44px pill inputs). Add more with `npx shadcn@latest add <name>`, then restyle them to match.
+- **Shared pieces** in `components/civic.tsx`: `Panel`, `SectionTitle`, `Chip`, `ArrowCircle`, `Logo`, `BodyIcon` (keyed by `BodyType` from `lib/contracts/bodyTypes.ts`) and `TierPill` (shows "Urgent" for `sms` only).
 
 ## Rules that are easy to break
 

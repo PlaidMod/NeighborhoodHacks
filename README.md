@@ -5,7 +5,7 @@ Type your address and see every local government that affects you (school board,
 - **Live site:** https://showup-htx-six.vercel.app
 - **App code:** the repo root (Next.js 16, Supabase, Tailwind, shadcn/ui), built from `Technical_Implementation_Plan.md`
 - **Plans:** `Project_Plan.md` (what and why), `Technical_Implementation_Plan.md` (how), `.plans/` (part specs)
-- **Design system and contribution rules:** [`web/DESIGN.md`](web/DESIGN.md). Read it before you change any UI.
+- **Design system and contribution rules:** [`DESIGN.md`](DESIGN.md). Read it before you change any UI.
 
 ## Run locally
 

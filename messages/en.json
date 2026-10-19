@@ -3,6 +3,9 @@
     "title": "ShowUp HTX",
     "description": "Type your address to see every local government that affects you, what it's deciding next, and how to be heard."
   },
+  "Civic": {
+    "urgent": "Urgent"
+  },
   "Home": {
     "title": "ShowUp HTX"
   },

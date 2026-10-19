@@ -33,6 +33,30 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-19: P5 Task 10: design system brought into the app
+- **Who:** PlaidMod · P5 Platform, Evidence and Pitch
+- **Branch:** main
+- **What changed:**
+  - **Brought over from `web/`:** the color tokens (`app/globals.css`), the fonts (Overpass, plus Playfair and Libre Franklin for news), all 25 shadcn components (`components/ui/`), `cn()`, the favicon and `DESIGN.md`. `DESIGN.md` now sits at the root, with a top note marking its prototype-only sections.
+  - **Fixed along the way:**
+    - corner sizes now match DESIGN.md (`rounded-2xl` is 16px, `rounded-xl` is 12px)
+    - inputs are 44px pills with a denim focus ring
+    - toasts no longer need next-themes
+  - **New shared pieces** in `components/civic.tsx`: `Panel`, `SectionTitle`, `Chip`, `ArrowCircle`, `Logo`, `BodyIcon` and `TierPill`.
+  - The palette dev tool stayed behind.
+- **Files:** `app/globals.css`, `app/layout.tsx`, `app/favicon.ico`, `components/ui/*`, `components/civic.tsx`, `components.json`, `lib/utils.ts`, `lib/contrast.ts`, `lib/contracts/bodyTypes.ts`, `DESIGN.md`, `CLAUDE.md`, `AGENTS.md`, `README.md`, `messages/*.json` (`Civic` namespace), tests
+- **Contract changes:** **Draft for P1's sign-off:** `lib/contracts/bodyTypes.ts`. It lists the plan's 12 "Who governs you?" types as `QUIZ_BODY_TYPES`: `city_council`, `commissioners_court`, `school_board`, `college_board`, `mud`, `esd`, `water_authority`, `flood_control`, `port`, `metro`, `hcad`, `hoa`. `BodyType` is those plus `other`. `BodyIcon` and the quiz both use them. P1: if `bodies.type` should use different keys, change this file in one place.
+- **Checked:**
+  - `npm test` (70/70, including a contrast test that fails if a base color drops white-on-denim, white-on-brick or ink-on-white below 4.5:1), typecheck, lint and build all pass.
+  - In a browser, on a temporary sample page that was then deleted:
+    - pill buttons (40px), cards 24px, inputs 44px pills
+    - `rounded-2xl` 16px and `rounded-xl` 12px
+    - Overpass loaded, all 13 `BodyIcon` types rendered
+    - `TierPill` shows "Urgent" for `sms` only, and the input shows a denim focus ring
+- **Open issues / next:**
+  - Task 11 (site shell) is next.
+  - Earlier note: GitHub repo secret `CRON_SECRET` and variable `APP_URL` are now set, for P2's scheduler.
+
 ### 2026-10-19: P5 Task 9: cron request check and schedules
 - **Who:** PlaidMod · P5 Platform, Evidence and Pitch
 - **Branch:** main
