@@ -33,6 +33,21 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-19: P5 Task 15: demo mode caching
+- **Who:** PlaidMod · P5 Platform, Evidence and Pitch
+- **Branch:** main
+- **What changed:** `lib/demo.ts` has `demoCached(key, compute)`.
+  - **With `DEMO_MODE=true`,** it returns the cached answer from `demo_cache` and never calls the outside service. A missing answer throws `DemoCacheMissError`, naming the key, so gaps show up in the dry run instead of silently using the network.
+  - **With `DEMO_RECORD=true`,** live answers are saved as you click through the demo once.
+  - `lookupDemoKey(address)` is a hash, so not even the demo addresses are stored.
+- **Files:** `lib/demo.ts`, `tests/platform/demo.test.ts`
+- **Contract changes (how to use it):**
+  - **P1 (`/api/lookup`):** wrap the Census/HCAD work in `demoCached(lookupDemoKey(address), () => resolveLive(address))`, and skip writing `quiz_responses` when `isDemoMode()`.
+  - **P4 (coach, Step A):** wrap the Gemini explain call in `demoCached(\`explain:${itemId}:${lang}\`, …)`.
+  - **Meaning of demo mode:** "no Census, Gemini or Twilio calls." The database stays reachable, so §20's "network off" can't fully hold. **Production keeps `DEMO_MODE=false`,** because judges may open the live site. Record the video locally or on a preview deploy with `DEMO_MODE=true`.
+- **Checked:** `npm test` (110/110), typecheck and lint pass.
+- **Open issues / next:** Task 16 (admin sign-in) is next.
+
 ### 2026-10-19: P5 Task 14: stake picker
 - **Who:** PlaidMod · P5 Platform, Evidence and Pitch
 - **Branch:** main
