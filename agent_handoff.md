@@ -33,6 +33,20 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-19: P5 Task 7: shared Gemini client
+- **Who:** PlaidMod · P5 Platform, Evidence and Pitch
+- **Branch:** main
+- **What changed:** `lib/gemini.ts` is the one Gemini client for P2, P3 and P4.
+  - `generateJson({ schema, contents, system?, model?, temperature?, timeoutMs? })` asks for structured JSON and returns it after validating it against your zod schema. Gemini receives the schema with `$schema` removed, temperature defaults to 0 and the timeout to 120 s.
+  - **Errors:** a timeout throws `GeminiTimeoutError` (Google still bills a call cancelled on our side). Output that isn't JSON, or doesn't match the schema, throws `GeminiOutputError` with `issues` and `raw`.
+  - **Models:** `geminiModel('default' | 'extract' | 'extract_fallback')` reads `GEMINI_MODEL` (default `gemini-3.8-flash`) and `GEMINI_EXTRACT_MODEL` (falls back to the default). `GEMINI_EXTRACT_FALLBACK_MODEL` has no default, so leaving it unset throws.
+  - **PDFs:** `pdfPart(bytes)` builds inline PDF data and throws `PdfTooLargeError` at 20 MiB or more.
+  - **Testing:** `createGemini(fakeClient)` lets you test without the network.
+- **Files:** `lib/gemini.ts`, `scripts/gemini-smoke.ts`, `tests/platform/gemini.test.ts`
+- **Contract changes:** None. **P2:** per spec §6 this file exists, so use it instead of writing `lib/adapters/gemini.ts`. Pass `model: geminiModel('extract')`, and retry with `geminiModel('extract_fallback')` per D17.
+- **Checked:** `npm test` (43/43), typecheck and lint pass. The live smoke test (`npx tsx scripts/gemini-smoke.ts`) is waiting on the paid `GEMINI_API_KEY`.
+- **Open issues / next:** Once the adult account owner has the paid key, add it to `.env.local` and Vercel and run the smoke test.
+
 ### 2026-10-19: P5 Task 6: deployed to Vercel
 - **Who:** PlaidMod · P5 Platform, Evidence and Pitch
 - **Branch:** main
