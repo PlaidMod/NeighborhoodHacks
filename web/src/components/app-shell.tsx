@@ -1,9 +1,7 @@
 "use client"
 
 import {
-  Bell,
   BellRing,
-  ChevronDown,
   LayoutGrid,
   Map,
   MapPin,
@@ -19,7 +17,7 @@ import {
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import * as React from "react"
-import { BodyIcon, Logo, TYPE_ICON } from "@/components/civic"
+import { BodyIcon, Logo } from "@/components/civic"
 import { StoryProvider, useStory } from "@/components/story-sheet"
 import { Button } from "@/components/ui/button"
 import {
@@ -39,9 +37,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet"
-import { relevance } from "@/lib/data/updates"
 import { PERSONAS, relDay } from "@/lib/format"
 import { useProfile } from "@/lib/profile"
 import { cn } from "@/lib/utils"
@@ -82,7 +78,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
 function SidebarBody({ onNavigate }: { onNavigate?: () => void }) {
   const path = usePathname()
-  const { updates, profile } = useProfile()
+  const { updates } = useProfile()
   const urgent = updates.filter((u) => u.tier === "urgent" && new Date(u.date) >= new Date()).length
 
   const item = (m: (typeof MENU)[number]) => {
@@ -120,34 +116,15 @@ function SidebarBody({ onNavigate }: { onNavigate?: () => void }) {
         General
       </p>
       <nav className="space-y-1">{GENERAL.map(item)}</nav>
-
-      {!profile.sms && (
-        <div className="relative mt-auto overflow-hidden rounded-3xl bg-ink p-5 text-white">
-          <div className="absolute -top-10 -right-10 size-32 rounded-full border-[18px] border-white/5" />
-          <div className="absolute -right-4 -bottom-14 size-32 rounded-full border-[18px] border-brick/30" />
-          <BellRing className="relative size-6 text-brick-soft" />
-          <p className="relative mt-4 text-[1.05rem] leading-snug font-bold">Get a text for the big stuff</p>
-          <p className="relative mt-1 text-xs text-white/60">Tax hikes, bonds, and closures only.</p>
-          <Button asChild variant="white" size="sm" className="relative mt-4 w-full">
-            <Link href="/app/alerts" onClick={onNavigate}>
-              Turn on alerts
-            </Link>
-          </Button>
-        </div>
-      )}
     </div>
   )
 }
 
 function TopBar() {
-  const { profile, jurisdiction, updates, patch, isDemo } = useProfile()
+  const { profile, jurisdiction, patch, isDemo } = useProfile()
   const [mobileOpen, setMobileOpen] = React.useState(false)
   const [searchOpen, setSearchOpen] = React.useState(false)
-  const openStory = useStory()
   const initials = profile.name.slice(0, 2).toUpperCase()
-  const urgent = updates
-    .filter((u) => u.tier === "urgent" && relevance(u, profile.personas) > 0)
-    .slice(0, 4)
 
   React.useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -163,12 +140,12 @@ function TopBar() {
   return (
     <>
       {isDemo && (
-        <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 rounded-t-[28px] bg-denim px-4 py-2 text-center text-xs font-semibold text-white">
-          You're viewing a demo for Maya, a 17-year-old student in Third Ward.
-          <Link href="/start" className="underline underline-offset-2 hover:text-white/80">
+        <p className="px-4 pt-3 text-center text-xs text-muted-foreground">
+          Demo: Maya, 17, Third Ward.{" "}
+          <Link href="/start" className="font-semibold text-denim underline underline-offset-2">
             Use my address
           </Link>
-        </div>
+        </p>
       )}
       <header className="flex items-center gap-3 px-4 pt-4 pb-2 md:px-7 md:pt-5">
         <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
@@ -196,71 +173,6 @@ function TopBar() {
         <div className="ml-auto flex items-center gap-2">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="hidden h-11 items-center gap-2 rounded-full bg-white px-4 text-sm font-semibold hover:bg-white/80 md:flex">
-                <span className="text-muted-foreground">Viewing as</span>
-                {profile.personas.map((p) => PERSONAS.find((x) => x.id === p)?.label).join(", ") || "Resident"}
-                <ChevronDown className="size-4 text-muted-foreground" />
-              </button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-60 rounded-2xl p-1.5">
-              <DropdownMenuLabel className="text-xs text-muted-foreground">
-                Tailor explanations for
-              </DropdownMenuLabel>
-              {PERSONAS.map((p) => (
-                <DropdownMenuCheckboxItem
-                  key={p.id}
-                  checked={profile.personas.includes(p.id)}
-                  onSelect={(e) => e.preventDefault()}
-                  onCheckedChange={(on) =>
-                    patch({
-                      personas: on
-                        ? [...profile.personas, p.id]
-                        : profile.personas.filter((x) => x !== p.id),
-                    })
-                  }
-                  className="rounded-xl"
-                >
-                  {p.label}
-                </DropdownMenuCheckboxItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-
-          <Popover>
-            <PopoverTrigger asChild>
-              <button className="relative grid size-11 place-items-center rounded-full bg-white hover:bg-white/80">
-                <Bell className="size-[1.1rem]" />
-                {urgent.length > 0 && (
-                  <span className="absolute top-2.5 right-3 size-2 rounded-full bg-brick ring-2 ring-white" />
-                )}
-                <span className="sr-only">Urgent alerts</span>
-              </button>
-            </PopoverTrigger>
-            <PopoverContent align="end" className="w-[360px] rounded-3xl p-2">
-              <p className="px-3 pt-2 pb-1 text-sm font-bold">Urgent for you</p>
-              {urgent.map((u) => {
-                const Icon = TYPE_ICON[u.type]
-                return (
-                  <button
-                    key={u.id}
-                    onClick={() => openStory(u)}
-                    className="flex w-full gap-3 rounded-2xl p-3 text-left hover:bg-muted"
-                  >
-                    <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-brick-soft text-brick-deep">
-                      <Icon className="size-4" />
-                    </span>
-                    <span className="min-w-0">
-                      <span className="line-clamp-2 text-sm font-semibold">{u.title}</span>
-                      <span className="text-xs text-muted-foreground">{relDay(u.date)}</span>
-                    </span>
-                  </button>
-                )
-              })}
-            </PopoverContent>
-          </Popover>
-
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
               <button className="flex items-center gap-3 rounded-full py-1 pr-1 pl-1 hover:bg-white/60 md:pr-4">
                 <span className="grid size-11 place-items-center rounded-full bg-brick text-sm font-bold text-white">
                   {initials}
@@ -273,10 +185,27 @@ function TopBar() {
                 </span>
               </button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56 rounded-2xl p-1.5">
+            <DropdownMenuContent align="end" className="w-60 rounded-2xl p-1.5">
               <DropdownMenuLabel className="flex items-center gap-2 text-xs text-muted-foreground">
                 <MapPin className="size-3.5" /> {jurisdiction.area}, {jurisdiction.zip}
               </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuLabel className="text-xs text-muted-foreground">Explain things for a</DropdownMenuLabel>
+              {PERSONAS.map((p) => (
+                <DropdownMenuCheckboxItem
+                  key={p.id}
+                  checked={profile.personas.includes(p.id)}
+                  onSelect={(e) => e.preventDefault()}
+                  onCheckedChange={(on) =>
+                    patch({
+                      personas: on ? [...profile.personas, p.id] : profile.personas.filter((x) => x !== p.id),
+                    })
+                  }
+                  className="rounded-xl"
+                >
+                  {p.label}
+                </DropdownMenuCheckboxItem>
+              ))}
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild className="rounded-xl">
                 <Link href="/start">Change address</Link>

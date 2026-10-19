@@ -1,9 +1,9 @@
 "use client"
 
-import { Bookmark, BookmarkCheck, CalendarDays, Hash } from "lucide-react"
+import { Bookmark, BookmarkCheck, Hash } from "lucide-react"
 import Link from "next/link"
 import * as React from "react"
-import { BodyIcon, Chip, KIND_STYLE, TYPE_ICON, TierPill } from "@/components/civic"
+import { BodyIcon, Chip, KIND_STYLE, TierPill } from "@/components/civic"
 import { useStory } from "@/components/story-sheet"
 import { Switch } from "@/components/ui/switch"
 import type { Topic, Update } from "@/lib/data/types"
@@ -48,11 +48,6 @@ export default function Timeline() {
     ;(acc[k] ??= []).push(u)
     return acc
   }, {})
-
-  const keyDates = updates
-    .filter((u) => +new Date(u.date) >= now && (u.tier === "urgent" || u.comment))
-    .sort((a, b) => +new Date(a.date) - +new Date(b.date))
-    .slice(0, 6)
 
   return (
     <div className="grid gap-6 pt-4 xl:grid-cols-[minmax(0,1fr)_320px]">
@@ -167,29 +162,6 @@ export default function Timeline() {
           </ul>
         </div>
 
-        <div className="rounded-[24px] bg-white p-5">
-          <h2 className="font-bold">Key dates</h2>
-          <div className="mt-3 flex flex-wrap gap-2">
-            {keyDates.map((u) => (
-              <button
-                key={u.id}
-                onClick={() => openStory(u)}
-                className={cn(
-                  "inline-flex h-8 items-center gap-1.5 rounded-full px-3 text-xs font-bold ring-1 ring-border hover:bg-muted",
-                  u.tier === "urgent" && "bg-brick-soft text-brick-deep ring-brick-soft",
-                )}
-                title={u.title}
-              >
-                <CalendarDays className="size-3.5" />
-                {fmtDate(u.date)}
-                <span className="font-semibold opacity-70">
-                  · {bodies.find((b) => b.id === u.bodyId)?.short}
-                </span>
-              </button>
-            ))}
-          </div>
-        </div>
-
       </aside>
     </div>
   )
@@ -245,25 +217,12 @@ function FeedRow({
 }) {
   const { bodies, profile } = useProfile()
   const b = bodies.find((x) => x.id === u.bodyId)!
-  const Icon = TYPE_ICON[u.type]
-  const KindIcon = KIND_STYLE[b.kind].icon
   const future = daysFromNow(u.date) >= 0
   return (
     <li className="group flex gap-4 py-4">
-      <button
-        onClick={onOpen}
-        className={cn(
-          "relative hidden h-[92px] w-[124px] shrink-0 place-items-center overflow-hidden rounded-2xl sm:grid",
-          KIND_STYLE[b.kind].tile,
-        )}
-        aria-hidden
-        tabIndex={-1}
-      >
-        <KindIcon className="size-9 transition-transform group-hover:scale-110" strokeWidth={1.6} />
-      </button>
+      <BodyIcon kind={b.kind} className="mt-1" />
       <div className="min-w-0 flex-1">
         <p className="flex items-center gap-2 text-xs font-semibold text-muted-foreground">
-          <BodyIcon kind={b.kind} className="size-5 rounded-full sm:hidden [&_svg]:size-3" />
           {b.short}
           <span className="size-1 rounded-full bg-muted-foreground/40" />
           {TOPIC_LABEL[u.topic]}
@@ -273,11 +232,8 @@ function FeedRow({
         </button>
         <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">{whyFor(u, profile.personas)}</p>
         <div className="mt-2.5 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs font-semibold text-muted-foreground">
-          <span className="inline-flex items-center gap-1.5">
-            <Icon className="size-3.5" /> {TYPE_LABEL[u.type]}
-          </span>
-          <span className="inline-flex items-center gap-1.5">
-            <CalendarDays className="size-3.5" /> {future ? `${relDay(u.date)} · ${fmtTime(u.date)}` : fmtDate(u.date)}
+          <span>
+            {TYPE_LABEL[u.type]} · {future ? `${relDay(u.date)}, ${fmtTime(u.date)}` : fmtDate(u.date)}
           </span>
           {u.vote && <Chip tone="sage">{u.vote}</Chip>}
           {u.tier === "urgent" && <TierPill tier="urgent" />}

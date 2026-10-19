@@ -1,14 +1,14 @@
 "use client"
 
-import { ArrowRight, Clock, Mic, Newspaper, Vote } from "lucide-react"
+import { ArrowRight, Clock, Mic } from "lucide-react"
 import Link from "next/link"
 import * as React from "react"
-import { ArrowCircle, BodyIcon, Chip, KIND_STYLE, Panel, SectionTitle } from "@/components/civic"
+import { ArrowCircle, Panel, SectionTitle } from "@/components/civic"
 import { useStory } from "@/components/story-sheet"
 import { Button } from "@/components/ui/button"
 import type { Update } from "@/lib/data/types"
-import { ELECTION, relevance, whyFor } from "@/lib/data/updates"
-import { daysFromNow, fmtTime, money, monthDay, relDayLower } from "@/lib/format"
+import { ELECTION, relevance } from "@/lib/data/updates"
+import { daysFromNow, fmtTime, money, monthDay } from "@/lib/format"
 import { useNow, useProfile } from "@/lib/profile"
 import { cn } from "@/lib/utils"
 
@@ -28,9 +28,6 @@ export default function Home() {
     .sort((a, b) => +new Date(a.date) - +new Date(b.date))
   const thisWeek = upcoming.filter((u) => daysFromNow(u.date) <= 7)
   const urgent = upcoming.filter((u) => u.tier === "urgent")
-  const decided = mine
-    .filter((u) => u.type === "decision" && daysFromNow(u.date) >= -21)
-    .sort((a, b) => +new Date(b.date) - +new Date(a.date))
   const nextComment = upcoming
     .filter((u) => u.comment && +new Date(u.comment.deadline) > now)
     .sort((a, b) => +new Date(a.comment!.deadline) - +new Date(b.comment!.deadline))[0]
@@ -48,46 +45,30 @@ export default function Home() {
             {greeting()}, {profile.name}
           </h1>
           <p className="mt-1 text-[0.95rem] text-muted-foreground">
-            {thisWeek.length} things coming up near {jurisdiction.area} this week.{" "}
-            {daysFromNow(ELECTION.earlyStart) > 0
-              ? `Early voting starts ${relDayLower(ELECTION.earlyStart)}.`
-              : daysToElection >= 0
-                ? `Election Day is in ${daysToElection} days.`
-                : ""}
+            {thisWeek.length} things coming up near {jurisdiction.area} this week.
           </p>
         </div>
-        <div className="flex gap-2">
-          <Button asChild>
-            <Link href="/app/speak">
-              <Mic data-icon="inline-start" /> Draft a comment
-            </Link>
-          </Button>
-          <Button asChild variant="outline">
-            <Link href="/app/brief">This week's brief</Link>
-          </Button>
-        </div>
+        <Button asChild>
+          <Link href="/app/speak">
+            <Mic data-icon="inline-start" /> Draft a comment
+          </Link>
+        </Button>
       </div>
 
       {/* Stat cards */}
-      <div className="grid grid-cols-2 gap-3 md:gap-4 xl:grid-cols-4">
+      <div className="grid gap-3 sm:grid-cols-3 md:gap-4">
         <StatCard
           href="/app/districts"
           hero
           label="Governments over you"
           value={bodies.length}
-          note={mud ? `Including ${mud.short}, a utility district` : `${bodies.filter((b) => b.lastTurnout).length} hold elections`}
-        />
-        <StatCard
-          href="/app/timeline"
-          label="Coming up"
-          value={upcoming.length}
-          note={`${thisWeek.length} in the next 7 days`}
+          note={mud ? `Including ${mud.short}, a utility district` : "See what each one controls"}
         />
         <StatCard
           href="/app/timeline"
           label="Need your attention"
           value={urgent.length}
-          note={urgent[0] ? urgent[0].title.split(" ").slice(0, 5).join(" ") + "…" : "Nothing urgent"}
+          note={urgent.length ? "Urgent votes and deadlines" : "Nothing urgent"}
           tone="brick"
         />
         {isHomeowner ? (
@@ -107,21 +88,19 @@ export default function Home() {
         )}
       </div>
 
-      {/* Row 2 */}
-      <div className="grid gap-4 xl:grid-cols-4">
-        <StackCard className="xl:col-span-2" />
-        <Countdown u={nextComment} />
-        <Panel>
+      {/* Coming up + countdown */}
+      <div className="grid gap-4 xl:grid-cols-3">
+        <Panel className="xl:col-span-2">
           <SectionTitle
             action={
-              <Button asChild variant="outline" size="xs">
-                <Link href="/app/timeline">See all</Link>
-              </Button>
+              <Link href="/app/timeline" className="text-sm font-semibold text-denim hover:underline">
+                See all
+              </Link>
             }
           >
             Coming up
           </SectionTitle>
-          <ul className="-mx-2 space-y-0.5">
+          <ul className="-mx-2">
             {upcoming.slice(0, 4).map((u) => {
               const { month, day } = monthDay(u.date)
               const b = bodies.find((x) => x.id === u.bodyId)!
@@ -129,7 +108,7 @@ export default function Home() {
                 <li key={u.id}>
                   <button
                     onClick={() => openStory(u)}
-                    className="flex w-full items-center gap-3 rounded-2xl p-2 text-left transition-colors hover:bg-muted"
+                    className="flex w-full items-center gap-4 rounded-2xl p-2 text-left transition-colors hover:bg-muted"
                   >
                     <span
                       className={cn(
@@ -141,8 +120,8 @@ export default function Home() {
                       <span className="text-lg font-extrabold">{day}</span>
                     </span>
                     <span className="min-w-0 flex-1">
-                      <span className="line-clamp-2 text-[0.85rem] leading-snug font-bold">{u.title}</span>
-                      <span className="mt-0.5 block truncate text-xs text-muted-foreground">
+                      <span className="block truncate font-bold">{u.title}</span>
+                      <span className="mt-0.5 block truncate text-sm text-muted-foreground">
                         {b.short} · {fmtTime(u.date)}
                       </span>
                     </span>
@@ -152,37 +131,10 @@ export default function Home() {
             })}
           </ul>
         </Panel>
+        <Countdown u={nextComment} />
       </div>
 
-      {/* Row 3 */}
-      <div className="grid gap-4 xl:grid-cols-4">
-        <Panel className="xl:col-span-2">
-          <SectionTitle>Recently decided</SectionTitle>
-          <ul className="divide-y divide-line">
-            {decided.slice(0, 3).map((u) => {
-              const b = bodies.find((x) => x.id === u.bodyId)!
-              return (
-                <li key={u.id}>
-                  <button
-                    onClick={() => openStory(u)}
-                    className="group flex w-full items-start gap-4 py-3.5 text-left first:pt-0"
-                  >
-                    <BodyIcon kind={b.kind} />
-                    <span className="min-w-0 flex-1">
-                      <span className="block text-sm font-bold group-hover:text-denim">{u.title}</span>
-                      <span className="mt-0.5 line-clamp-1 text-xs text-muted-foreground">
-                        {whyFor(u, profile.personas)}
-                      </span>
-                    </span>
-                    {u.vote && <Chip tone="sage" className="hidden sm:inline-flex">{u.vote}</Chip>}
-                  </button>
-                </li>
-              )
-            })}
-          </ul>
-        </Panel>
-        <PersonaCard className="xl:col-span-2" />
-      </div>
+      <PersonaCard />
     </div>
   )
 }
@@ -305,145 +257,49 @@ function Countdown({ u }: { u?: Update }) {
   )
 }
 
-function StackCard({ className }: { className?: string }) {
-  const { bodies } = useProfile()
-  const [value, setValue] = React.useState(300_000)
-  const taxed = bodies.filter((b) => b.taxRate)
-  const total = taxed.reduce((s, b) => s + b.taxRate!, 0)
-
-  return (
-    <Panel className={className}>
-      <SectionTitle
-        action={
-          <Link href="/app/districts" className="text-xs font-bold text-denim hover:underline">
-            Explore your stack
-          </Link>
-        }
-      >
-        Who takes a slice of your tax bill
-      </SectionTitle>
-      <div className="flex items-end justify-between gap-4">
-        <div>
-          <p className="text-xs font-semibold text-muted-foreground">Estimated yearly total</p>
-          <p className="text-3xl font-extrabold tracking-tight tabular">{money((total * value) / 100)}</p>
-        </div>
-        <label className="w-48 text-right">
-          <span className="text-xs font-semibold text-muted-foreground">
-            Home value <b className="text-ink tabular">{money(value)}</b>
-          </span>
-          <input
-            type="range"
-            min={100_000}
-            max={900_000}
-            step={10_000}
-            value={value}
-            onChange={(e) => setValue(+e.target.value)}
-            className="mt-1 w-full accent-denim"
-          />
-        </label>
-      </div>
-      <div className="mt-4 flex h-4 overflow-hidden rounded-full">
-        {taxed.map((b) => (
-          <div
-            key={b.id}
-            title={`${b.short}: ${money((b.taxRate! * value) / 100)}`}
-            style={{ width: `${(b.taxRate! / total) * 100}%` }}
-            className={cn("h-full border-r-2 border-white last:border-r-0", KIND_STYLE[b.kind].dot)}
-          />
-        ))}
-      </div>
-      <ul className="mt-4 grid gap-x-6 gap-y-2 sm:grid-cols-2">
-        {taxed
-          .sort((a, b) => b.taxRate! - a.taxRate!)
-          .map((b) => (
-            <li key={b.id} className="flex items-center gap-2 text-sm">
-              <span className={cn("size-2.5 shrink-0 rounded-full", KIND_STYLE[b.kind].dot)} />
-              <span className="truncate font-medium">{b.short}</span>
-              <span className="ml-auto font-bold tabular">{money((b.taxRate! * value) / 100)}</span>
-            </li>
-          ))}
-      </ul>
-      <p className="mt-4 text-[11px] text-muted-foreground">
-        Approximate rates before homestead exemptions. Renters pay these indirectly through rent.
-      </p>
-    </Panel>
-  )
-}
-
-function PersonaCard({ className }: { className?: string }) {
+/** One persona-specific nudge, as a single slim banner. */
+function PersonaCard() {
   const { profile, bodies, updates } = useProfile()
   const openStory = useStory()
   const mud = bodies.find((b) => b.kind === "mud")
   const age = profile.age ?? 0
   const isStudent = profile.personas.includes("student")
 
-  if (isStudent && age >= 17 && age < 19) {
-    return (
-      <div className={cn("relative overflow-hidden rounded-[24px] bg-brick p-6 text-white md:p-8", className)}>
-        <Vote className="absolute -right-6 -bottom-8 size-48 text-white/10" strokeWidth={1.2} />
-        <Chip className="bg-white/15 text-white">For {age}-year-olds</Chip>
-        <p className="mt-5 max-w-sm text-[1.7rem] leading-tight font-extrabold tracking-tight">
-          You can register at 17 years and 10 months if you'll be 18 by Election Day.
-        </p>
-        <p className="mt-2 max-w-sm text-sm text-white/75">
-          Check if you're registered and find out when you'll be eligible. It takes about 30 seconds.
-        </p>
-        <Button asChild variant="white" className="mt-6">
-          <Link href="/app/vote">
-            Check my eligibility <ArrowRight data-icon="inline-end" />
-          </Link>
-        </Button>
-      </div>
-    )
-  }
+  let tone = "bg-sand text-ink"
+  let text = "Everything decided near you this week, in about four minutes."
+  let action: React.ReactNode = (
+    <Button asChild>
+      <Link href="/app/brief">
+        Read the brief <ArrowRight data-icon="inline-end" />
+      </Link>
+    </Button>
+  )
 
-  if (mud) {
+  if (isStudent && age >= 17 && age < 19) {
+    tone = "bg-brick text-white"
+    text = "You can register to vote at 17 years and 10 months if you'll be 18 by Election Day."
+    action = (
+      <Button asChild variant="white">
+        <Link href="/app/vote">
+          Check my eligibility <ArrowRight data-icon="inline-end" />
+        </Link>
+      </Button>
+    )
+  } else if (mud) {
     const bond = updates.find((u) => u.id === `${mud.id}-bond`)
-    const t = mud.lastTurnout!
-    return (
-      <div className={cn("relative overflow-hidden rounded-[24px] bg-ink p-6 text-white md:p-8", className)}>
-        <Chip className="bg-white/10 text-white">Your utility district</Chip>
-        <div className="mt-5 grid gap-6 sm:grid-cols-[1fr_auto] sm:items-end">
-          <div>
-            <p className="text-[1.7rem] leading-tight font-extrabold tracking-tight">
-              {t.votes} people decided the last {mud.short} election.
-            </p>
-            <p className="mt-2 text-sm text-white/70">
-              {mud.short} adds {money(mud.taxRate! * 3000)} a year to a $300K home, and there's a $38.5M bond on
-              your Nov 3 ballot.
-            </p>
-          </div>
-          <div className="flex gap-1" aria-hidden>
-            {Array.from({ length: 10 }).map((_, i) => (
-              <span
-                key={i}
-                className={cn("h-16 w-2.5 rounded-full", i === 0 ? "bg-brick" : "bg-white/10")}
-              />
-            ))}
-          </div>
-        </div>
-        {bond && (
-          <Button variant="white" className="mt-6" onClick={() => openStory(bond)}>
-            What's on the ballot <ArrowRight data-icon="inline-end" />
-          </Button>
-        )}
-      </div>
+    tone = "bg-ink text-white"
+    text = `${mud.lastTurnout!.votes} people decided the last ${mud.short} election. Now a $38.5M bond is on your ballot.`
+    action = bond && (
+      <Button variant="white" onClick={() => openStory(bond)}>
+        What's on the ballot <ArrowRight data-icon="inline-end" />
+      </Button>
     )
   }
 
   return (
-    <div className={cn("relative overflow-hidden rounded-[24px] bg-sand p-6 md:p-8", className)}>
-      <Newspaper className="absolute -right-4 -bottom-6 size-44 text-sand-deep/10" strokeWidth={1.2} />
-      <Chip className="bg-white/60 text-sand-deep">Every Sunday</Chip>
-      <p className="mt-5 max-w-sm text-[1.7rem] leading-tight font-extrabold tracking-tight">
-        Everything decided near you this week, in about four minutes.
-      </p>
-      <Button asChild className="mt-6">
-        <Link href="/app/brief">
-          Read this week's brief <ArrowRight data-icon="inline-end" />
-        </Link>
-      </Button>
+    <div className={cn("flex flex-col gap-4 rounded-[24px] p-6 md:flex-row md:items-center md:justify-between md:px-8", tone)}>
+      <p className="max-w-2xl text-[1.25rem] leading-snug font-extrabold tracking-tight">{text}</p>
+      <div className="shrink-0">{action}</div>
     </div>
   )
 }
-
