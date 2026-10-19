@@ -33,6 +33,24 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-19: P5 Task 4: English/Spanish translations and Chicago time
+- **Who:** PlaidMod · P5 Platform, Evidence and Pitch
+- **Branch:** main
+- **What changed:**
+  - next-intl is set up without a language in the URL. The language comes from the `NEXT_LOCALE` cookie, then the browser's `Accept-Language` header, then English (`pickLocale` in `lib/i18n.ts`).
+  - Every page gets `timeZone: 'America/Chicago'`, and `<html lang>` follows the language.
+  - `setLocale` (in `app/actions/locale.ts`) saves the choice.
+- **Files:** `i18n/request.ts`, `lib/i18n.ts`, `app/actions/locale.ts`, `messages/en.json`, `messages/es.json`, `next.config.ts`, `app/layout.tsx`, `app/(public)/page.tsx`, `tests/platform/i18n.test.ts`, `tests/platform/messages.test.ts`
+- **Contract changes:** None to the schema. **For every part:**
+  - Put all screen text in both `messages/en.json` and `messages/es.json`, under your own top-level namespace (`Results`, `Weekly`, `SpeakUp`, `Alerts` and so on). Use `useTranslations('Ns')` in client components, or `await getTranslations('Ns')` on the server.
+  - `npm test` fails if a key exists in only one file, if any message is empty, or if the `{placeholders}` differ between the two.
+  - Format dates, times and money with next-intl (`useFormatter()` or `getFormatter()`). The Chicago time zone is already applied.
+  - Pages are now rendered per request, because the language is read from the request.
+- **Checked:**
+  - `npm test` (32/32), typecheck, lint and `npm run build` pass.
+  - On a live production server, `Accept-Language: es-US` gives `<html lang="es">` with the Spanish description, and `en-US` gives English. A `NEXT_LOCALE=es` cookie overrides an English header.
+- **Open issues / next:** Task 5 (about, privacy and terms pages) is next.
+
 ### 2026-10-19: P5 Task 3: env access and the server database client
 - **Who:** PlaidMod · P5 Platform, Evidence and Pitch
 - **Branch:** main
