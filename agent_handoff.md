@@ -33,6 +33,25 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-19: P5 Task 3: env access and the server database client
+- **Who:** PlaidMod · P5 Platform, Evidence and Pitch
+- **Branch:** main
+- **What changed:**
+  - `lib/env.ts` reads environment variables through `getEnv(name)`, which throws a clear `MissingEnvError`. It also has `getOptionalEnv`, `isDemoMode`, `isDemoRecord`, `adminEmails` and `assertServer`.
+  - `lib/db.ts` exports `db()`, the one shared Supabase client with the secret key. It throws if anything calls it in a browser.
+  - `.env.example` lists every variable and which part uses it.
+- **Files:** `lib/env.ts`, `lib/db.ts`, `.env.example`, `tests/platform/env.test.ts`, `tests/platform/db.test.ts`
+- **Contract changes:** New env vars beyond §21 (plan files not edited):
+  - `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (admin sign-in)
+  - `SITE_URL`
+  - `GEMINI_MODEL`, `GEMINI_EXTRACT_MODEL` and `GEMINI_EXTRACT_FALLBACK_MODEL`
+  - `IP_HASH_SECRET`, `DEMO_RECORD`
+  - `SUPABASE_DB_URL` (local only)
+
+  **Usage:** import `db` from `@/lib/db` in server code and scripts. It works under plain `tsx` too: load `.env.local` with dotenv first. Never import it into a client component. **P2:** your Phase 2 gate for `lib/db.ts` is met.
+- **Checked:** `npm test` (17/17), `npm run typecheck` and `npm run lint` pass.
+- **Open issues / next:** Ask P5 for the secret key and other values for your `.env.local`. They're never posted in the repo or chat.
+
 ### 2026-10-19: P5 Task 2: Supabase database is live (28 tables, RLS on everywhere)
 - **Who:** PlaidMod · P5 Platform, Evidence and Pitch
 - **Branch:** main
