@@ -133,5 +133,38 @@
       "rate_limited": "Too many searches from this network right now. Wait a few minutes and try again.",
       "server_error": "Something went wrong on our end. Try again in a minute."
     }
+  },
+  "Stake": {
+    "metaTitle": "About you",
+    "title": "Which of these describe you?",
+    "lede": "Pick any. We'll show what matters most to you first. You can skip this.",
+    "pickAny": "Pick any that fit",
+    "stakes": {
+      "student": {
+        "label": "Student",
+        "hint": "School board, community college, transit and your first vote"
+      },
+      "parent": {
+        "label": "Parent",
+        "hint": "Your kids' school board, City Council and safety"
+      },
+      "renter": {
+        "label": "Renter",
+        "hint": "What shapes your rent, water bill and bus routes"
+      },
+      "homeowner": {
+        "label": "Homeowner",
+        "hint": "Property taxes, your utility district and appraisal deadlines"
+      }
+    },
+    "firstTimeVoters": "First-time voters: pick Student.",
+    "languageTitle": "Language",
+    "finding": "Finding your governments…",
+    "found": "Your governments are ready.",
+    "tryAnother": "Try another address",
+    "needAddress": "We need your address to find your governments.",
+    "enterAddress": "Enter your address",
+    "continue": "Continue",
+    "skip": "Skip"
   }
 }

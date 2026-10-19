@@ -33,6 +33,30 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-19: P5 Task 14: stake picker
+- **Who:** PlaidMod · P5 Platform, Evidence and Pitch
+- **Branch:** main
+- **What changed:** `/stake` asks "Which of these describe you?"
+  - **Cards:** four toggle cards (Student, Parent, Renter, Homeowner; pick any, `aria-pressed`), the note "First-time voters: pick Student." and a language choice.
+  - **Continue** saves the choice in the `showup_stakes` cookie, then goes to `/results` while a lookup is running or done, or home when there's no lookup (a reload or a direct visit). **Skip** goes the same way without saving.
+  - **Status:** while loading, the page says "Finding your governments…". A failed lookup shows the error with "Try another address."
+- **Files:** `lib/stakes.ts`, `app/actions/stakes.ts`, `components/stake/StakePicker.tsx`, `app/(public)/stake/page.tsx`, `messages/*.json` (`Stake`), `tests/platform/stakes.test.ts`
+- **Contract changes (P1, P3, P4):**
+  - Read stakes with `parseStakes(cookieValue)` from `@/lib/stakes`. On the server, use `parseStakes((await cookies()).get(STAKES_COOKIE)?.value)`. It returns `Stake[]` (`'student' | 'parent' | 'renter' | 'homeowner'`) in display order.
+  - In the browser the cookie shows URL-encoded (`student%2Crenter`). `parseStakes` handles both forms.
+  - No stakes means the visitor skipped, so use defaults.
+- **Checked:**
+  - `npm test` (104/104), typecheck, lint and build pass.
+  - In a browser at 390px:
+    - a direct visit works and Continue goes home
+    - Space and Enter toggle the cards
+    - Continue saves the cookie
+    - home → address → `/stake` keeps the lookup state and shows the error (expected until P1's route exists)
+    - saved stakes come back on return
+    - switching to Español keeps the selections
+    - nothing scrolls sideways
+- **Open issues / next:** Task 15 (demo mode) is next.
+
 ### 2026-10-19: P5 Task 13: home page and the address lookup flow
 - **Who:** PlaidMod · P5 Platform, Evidence and Pitch
 - **Branch:** main

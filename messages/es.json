@@ -133,5 +133,38 @@
       "rate_limited": "Hay demasiadas búsquedas desde esta red. Espera unos minutos e inténtalo de nuevo.",
       "server_error": "Algo salió mal de nuestro lado. Inténtalo de nuevo en un minuto."
     }
+  },
+  "Stake": {
+    "metaTitle": "Sobre ti",
+    "title": "¿Cuáles de estas opciones te describen?",
+    "lede": "Elige las que quieras. Te mostraremos primero lo que más te importa. Puedes saltar este paso.",
+    "pickAny": "Elige las que apliquen",
+    "stakes": {
+      "student": {
+        "label": "Estudiante",
+        "hint": "Junta escolar, colegio comunitario, transporte y tu primer voto"
+      },
+      "parent": {
+        "label": "Madre o padre",
+        "hint": "La junta escolar de tus hijos, el Concejo Municipal y la seguridad"
+      },
+      "renter": {
+        "label": "Inquilino",
+        "hint": "Lo que afecta tu renta, tu recibo de agua y las rutas de autobús"
+      },
+      "homeowner": {
+        "label": "Propietario",
+        "hint": "Impuestos a la propiedad, tu distrito de servicios y las fechas de tasación"
+      }
+    },
+    "firstTimeVoters": "¿Vas a votar por primera vez? Elige Estudiante.",
+    "languageTitle": "Idioma",
+    "finding": "Buscando tus gobiernos…",
+    "found": "Tus gobiernos están listos.",
+    "tryAnother": "Prueba otra dirección",
+    "needAddress": "Necesitamos tu dirección para encontrar tus gobiernos.",
+    "enterAddress": "Escribe tu dirección",
+    "continue": "Continuar",
+    "skip": "Saltar"
   }
 }
