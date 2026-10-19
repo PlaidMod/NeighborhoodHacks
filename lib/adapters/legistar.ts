@@ -26,7 +26,7 @@ export const PAGE_SIZE = 1000;
 /** Section headers in real agendas are short; longer one-liners are notes (prayer, pledges). */
 export const MAX_SECTION_LEN = 100;
 const SPECIAL_BODY_IDS = new Set([223]);
-const COMMENT_RULES_RE =
+export const COMMENT_RULES_RE =
   /public comment|address (the )?(court|board)|speak(er|ers)? |appearance|sign(ed)? up|register|zoom|live video/i;
 
 export const LegistarConfigSchema = z.object({

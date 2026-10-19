@@ -11,6 +11,7 @@ import { ZONE, nearTermWindow, resultsWindow, rotationWindow } from '@/lib/inges
 // Adapters register here as each step lands (Steps 2, 4, 7, 8, 9).
 const ADAPTERS: Partial<Record<AdapterKind, () => Promise<Adapter>>> = {
   legistar: async () => (await import('@/lib/adapters/legistar')).legistarAdapter,
+  boardbook: async () => (await import('@/lib/adapters/boardbook')).boardbookAdapter,
 };
 
 /** tests/golden/<folder>/ for --record. */

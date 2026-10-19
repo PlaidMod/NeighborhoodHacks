@@ -5,7 +5,8 @@ import type { Item } from '@/lib/adapters/types';
 
 const MATTER_RE = /hearing|grievance|personnel|termination|nonrenewal|appeal/i;
 const SECTION_RE = /closed session|executive session|hearing items|personnel/i;
-const TITLE_RE = /hearing examiner|proposed termination|nonrenewal|grievance|level (iii|3) appeal/i;
+// "good cause did not exist ... to resign their employment contracts" (CFISD contract abandonment, Step 4).
+const TITLE_RE = /hearing examiner|proposed termination|nonrenewal|grievance|level (iii|3) appeal|good cause did not exist/i;
 
 const ROLES = ['teacher', 'employee', 'principal', 'aide', 'counselor', 'coach', 'nurse', 'librarian', 'student', 'parent'];
 const ROLE_ALT = ROLES.join('|');
@@ -39,6 +40,10 @@ const EMBEDDED_NAME = new RegExp(
   'g',
 );
 
+// Three or more full names, so a pair like "Recommendation, TEA Docket No." can't trigger it.
+const FULL_NAME = `(?:${NAME_TOKEN}\\s+){1,3}${NAME_TOKEN}`;
+const NAME_LIST = new RegExp(`\\b${FULL_NAME}(?:\\s*,\\s*(?:and\\s+)?${FULL_NAME}){2,}`, 'g');
+
 /**
  * Redact a leading "Name, role[, School]" segment, then any embedded
  * "Name Name, [former] role [of School]" segment. Returns the new text and whether a name was removed.
@@ -60,7 +65,13 @@ export function redactText(text: string): { text: string; redacted: boolean } {
     redacted = true;
     return 'an employee';
   });
-  return { text: embedded, redacted };
+  // A list of two or more full names ("Daniela Perez, Dwight Bailey, and Jessica M…") with no
+  // role words (CFISD contract-abandonment items, Step 4).
+  const listed = embedded.replace(NAME_LIST, () => {
+    redacted = true;
+    return 'several employees';
+  });
+  return { text: listed, redacted };
 }
 
 export function redactPersonnel(item: Item): Item {
