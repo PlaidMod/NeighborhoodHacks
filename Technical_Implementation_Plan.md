@@ -1,0 +1,494 @@
+# Technical Implementation Plan
+
+**Revision 3, Oct 18, 2026**
+
+This file covers how each part is built. *Project_Plan.md* covers what the product does and why. Each section is tagged with the part that owns it:
+
+- **P1:** Lookup and Results
+- **P2:** Agenda Data
+- **P3:** Weekly News and Alerts
+- **P4:** Speak up
+- **P5:** Platform, Evidence and Pitch
+
+---
+
+## 1. Stack (P5)
+
+- **App:** Next.js (App Router, TypeScript), deployed on Vercel.
+- **Database:** Supabase Postgres with the `postgis` and `pg_trgm` extensions.
+- **AI:** Gemini API via the official Google Gen AI SDK. Server-side only. Used for:
+  - agenda extraction (P2)
+  - weekly story writing (P3)
+  - Speak up explanation and coaching (P4)
+
+  Use a paid-tier key. Confirm the model name, pricing and data-use terms on Day 1; free-tier terms may allow Google to use submitted content.
+- **SMS:** Twilio Programmable Messaging, plus Twilio Verify for phone confirmation.
+- **i18n:** next-intl, with `messages/en.json` and `messages/es.json`.
+- **Timezone:** all deadlines and meeting times are computed and displayed in `America/Chicago`.
+- **Database access:** every table has Row Level Security enabled, with no policies for the `anon` role. All reads and writes go through Next.js server routes using the service-role key, which is never sent to the client.
+
+## 2. Repository layout and ownership
+
+```
+app/
+  (public)/page.tsx                 home, address entry            P5
+  (public)/stake/                   stake picker                   P5
+  (public)/results/                 governs-you question, results  P1
+  (public)/bodies/[id]/             body pages                     P1
+  (public)/tax-receipt/             tax receipt                    P1
+  (public)/weekly/                  weekly news page               P3
+  (public)/timeline/                timeline                       P3
+  (public)/items/[id]/              item page                      P3
+  (public)/speak-up/[itemId]/       Speak up flow                  P4
+  (public)/alerts/                  opt-in, rules, why-this-text   P3
+  (public)/about/, privacy/, terms/                                P5
+  admin/review/                     review queue                   P2
+  api/lookup, api/quiz, api/tax-receipt, api/bodies               P1
+  api/cron/ingest                                                  P2
+  api/weekly, api/items, api/alerts/*, api/reminders,
+    api/twilio/inbound, api/cron/alerts                            P3
+  api/coach                                                        P4
+lib/
+  geo/        geocoder, PostGIS queries, merge rules               P1
+  hoa/        subdivision extraction, matching                     P1
+  adapters/   legistar.ts, llmExtract.ts, manual.ts                P2
+  rules/      classify.ts                                          P3
+  stories/    story generation, fact-check                         P3
+  sms/        twilio send, verify                                  P3
+  registration/  deadline resolver, channel builders               P4
+  coach/      prompts, schema validation, guardrails               P4
+  gemini.ts, db.ts, tokens.ts, rateLimit.ts                        P5
+scripts/
+  load-hcad.ts, load-boundaries.sh                                 P1
+supabase/migrations/                                               P5 (others add)
+tests/
+  golden/legistar, golden/llm-extract                              P2
+  rules, stories                                                   P3
+  coach                                                            P4
+  geo                                                              P1
+messages/en.json, es.json                                          P5 (all add keys)
+```
+
+**Shared contracts (agree on these on Day 1 so everyone can work in parallel):**
+- the database schema (section 16)
+- the `Meeting` and `Item` types (section 6)
+- the `bodies_token` format (section 3)
+- `classify()` signature (section 8)
+
+## 3. Address resolution (P1)
+
+**Route:** `POST /api/lookup`
+
+1. **Normalize** the input: uppercase, standard street-suffix abbreviations, separate the unit number.
+2. **Census Geocoder:** call the `geographies/onelineaddress` endpoint (current benchmark and vintage). Extract coordinates, county FIPS, incorporated place and unified school district. Reject if the county isn't `48201` (Harris County).
+3. **HCAD parcel match:** look up the normalized address in `hcad_parcels` for the account number, legal description and jurisdiction codes.
+4. **Fallback:** if Census fails but HCAD matches, use the parcel centroid as the point (if parcel geometry was loaded). If neither matches, return "address not found."
+5. **Response:**
+   - resolved bodies
+   - ballot list
+   - not-government entries
+   - regional list
+   - HOA candidate
+   - `bodies_token`: an HMAC-signed, URL-safe encoding of the body IDs, with no address or coordinates in it
+
+**Nothing about the address is stored.** Request logging must exclude request bodies.
+
+**HCAD data load** (`scripts/load-hcad.ts`, one-time on Day 1):
+- Download HCAD's bulk data files and load only these columns into `hcad_parcels` and `hcad_jurisdictions`:
+  - account number
+  - normalized site address
+  - legal description
+  - jurisdiction codes
+- Build `jurisdiction_map`, which maps each HCAD code to a `body_id`. Codes outside the curated set map to a generic "other taxing unit."
+
+## 4. Body resolution (P1)
+
+**Point-in-polygon:**
+```sql
+SELECT b.body_id
+FROM boundaries b
+WHERE ST_Contains(b.geom, ST_SetSRID(ST_MakePoint($lon, $lat), 4326));
+```
+- `boundaries.geom` has a GIST index.
+- Shapefiles are loaded with `ogr2ogr` and reprojected to EPSG:4326. Many Texas county layers ship in State Plane (EPSG:2278).
+- **Layers:**
+  - TCEQ water districts
+  - ESDs
+  - regional water authorities
+  - METRO service area
+  - Houston council districts
+  - commissioner, constable and JP precincts
+  - voting precincts
+  - trustee districts
+
+  Confirm each source on Day 1. Type in by hand for the demo addresses if a layer is missing.
+
+**Merge rules:**
+- **Taxing bodies** (ISD, college district, MUD/water district, ESD, city, Flood Control, Port): the HCAD jurisdiction codes are authoritative.
+- **Non-taxing bodies** (council, trustee and precinct districts, voting precinct, METRO, regional water authority): GIS is authoritative.
+- **Disagreement:** include the body with `verify = true` and log it.
+
+**Derived entries:**
+- **Ballot list:** `ballot_offices` joined to the resolved districts.
+- **Not a government:** CenterPoint (always), the water operator (from the MUD's `operator_name`), and the HOA candidate.
+- **Regional:** the static `regional_coming_soon` bodies.
+
+**Sort order:** a static `impact_rank` per body type, reordered client-side by the selected stake.
+
+## 5. HOA match (P1)
+
+1. **Extract the subdivision** from the HCAD legal description with a regex that strips lot, block, section and reserve tokens:
+   `LT 12 BLK 3 COPPERFIELD SEC 5` → `COPPERFIELD`
+2. **Query:**
+   ```sql
+   SELECT *, similarity(subdivision_name, $sub) AS score
+   FROM hoa_matches
+   WHERE subdivision_name % $sub
+   ORDER BY score DESC
+   LIMIT 1;
+   ```
+   Start the threshold at 0.4 and tune it during the HOA match test.
+3. **Return** the candidate with its `verified` flag and the master association if there is one. With no match, return `null`, and the UI shows a manual-entry field.
+4. **Corrections** go to `hoa_corrections` (anonymous, reviewed by hand).
+
+**Building the HOA table:**
+- **Source:** County Clerk management certificate filings.
+- **Priority order:**
+  1. demo subdivisions
+  2. survey participants' subdivisions
+  3. the top 50 subdivisions in each demo district
+- **Each row records:** the HOA name, the subdivisions it covers, the master association, the filing date, the source link and `verified`.
+
+## 6. Agenda scraper and pipeline (P2)
+
+**Shared types**
+```ts
+type Meeting = { external_id: string; body_id: string; date: string;
+  type: 'regular' | 'special'; agenda_url: string;
+  source_url_es?: string; video_url?: string };
+type Item = { external_id: string; meeting_external_id: string;
+  agenda_number?: string; title: string; matter_type?: string;
+  status: 'upcoming' | 'decided'; action?: string; vote_result?: string;
+  source_url: string; source_quote?: string };
+```
+
+### LegistarAdapter
+
+- **Covers:** Commissioners Court (`harriscountytx`) and HISD (`houstonisd`), plus CFISD if it turns out to be on Legistar.
+- **Calls:**
+  1. `GET https://webapi.legistar.com/v1/{client}/events`, filtered with OData from 7 days back to 30 days ahead.
+  2. `GET .../events/{id}/eventitems` for each event's items.
+  3. Page with `$top` and `$skip`; each response caps at 1,000 rows.
+- **Mapping:**
+  - item title → `title`
+  - agenda number → `agenda_number`
+  - matter type → `matter_type`
+  - action name and passed flag → `status`, `action`, `vote_result`
+  - the event's agenda file → `source_url`
+- **No PDF parsing.**
+- **Day 1 check:** confirm neither client needs an API token.
+
+### LLMExtractAdapter (Gemini)
+
+- **Covers:** the demo MUD, the demo college board, City Council (if the PrimeGov check fails), and CFISD (if it isn't on Legistar).
+- **Process:**
+  1. Code downloads the agenda PDF or HTML.
+  2. Gemini, with structured output, returns `Meeting` and `Item[]`, including an exact `source_quote` per item. It reads scanned PDFs directly.
+- **Validation in code:**
+  - `source_quote` must be a substring of the extracted source text (whitespace-normalized)
+  - dates must be real and within 60 days
+  - amounts must parse as numbers
+
+  Failures are dropped and logged.
+
+### PrimeGov check (City Council)
+
+- Spend at most 2 hours on Day 1 inspecting the `houstontx.primegov.com` portal's network requests.
+- If there's a usable JSON response, write a PrimeGovAdapter. Otherwise, City Council goes to LLMExtractAdapter.
+
+### ManualAdapter
+
+- Rows entered through the Supabase table editor. `source_url` is required.
+
+### Pipeline (`/api/cron/ingest`)
+
+1. Process one source per invocation, choosing the least recently checked, to stay within function time limits.
+2. Fetch meetings and items.
+3. **Upsert** by `(source_id, external_id)`. Runs are idempotent.
+4. **Change detection:** `content_hash` = hash of title + status + action. When the hash changes, re-run `classify()`. An item going from upcoming to decided moves sections and doesn't trigger new alerts.
+5. Run `classify()` → enrich → generate the story (section 9) → route.
+6. Store the raw API response or model output in `documents`.
+7. **Health check:** flag the source if the fetch fails, it returns no meetings for 14+ days, a required field is empty, or the quote check rejects more than 20% of items.
+
+## 7. Review queue (P2)
+
+- Items from LLMExtractAdapter that classify as `tier = 'sms'` get `review_status = 'pending'`. They don't enter `alert_queue` until approved. Legistar and manual items skip review.
+- **`/admin/review`** is protected by Supabase Auth, limited to an allowlist from `ADMIN_EMAILS`. It shows:
+  - the extracted item
+  - the source quote, highlighted in the source text
+  - the rule that fired
+  - Approve, Edit or Reject buttons
+- **Approve** enqueues alerts. **Edit** updates fields and re-runs `classify()`. **Reject** sets `tier = 'timeline'`.
+
+## 8. Rule engine (P3)
+
+- A pure function in `lib/rules/classify.ts`:
+  ```ts
+  classify(item, body, taxRates): { item_type, tier: 'sms'|'weekly'|'timeline', rule_fired?: string }
+  ```
+  No AI involved.
+- **Rules:**
+  - `tax_rate_increase`
+  - `bond`
+  - `board_election`
+  - `school_change`
+  - `leader_hire` (superintendent or chancellor, with "employment contract," not bare "contract")
+  - `meeting_moved`
+- **`tier = 'sms'`** only when `body.sms_eligible` is true and the item is upcoming. Otherwise, item types `tax`, `bond`, `budget`, `school`, `zoning`, `property`, `transit` and `water_rate` are `weekly`, and everything else is `timeline`.
+- **Time-based rules** (reminders 7a/7b, the protest deadline) are generated by the alerts job (section 11), not by `classify()`.
+- **Unit tests** cover every rule plus these near-misses:
+  - a vendor contract
+  - a tax rate at exactly the no-new-revenue rate
+  - a METRO item that matches a rule but must stay weekly
+
+## 9. Weekly story generation (P3)
+
+- **When:** generated once per item at ingest or on change, in English and Spanish, and stored on the item. Never generated per user.
+- **Gemini input:** structured facts (body, meeting date and time, amounts, rates, registration deadlines, last-election turnout, comment channels) plus the item title and text.
+- **Output schema:** `{headline, dek, body_paragraphs[2..4], renter_line}`
+- **Prompt rules:**
+  - AP-style news voice at about an 8th-grade reading level
+  - attribute everything to the agenda
+  - no predictions, opinions or judging adjectives
+  - always include when and how to weigh in
+- **Fact-check in code:**
+  - Every number, currency amount, date and time in the output must match a value in the input facts.
+  - Headline and dek are checked against a banned-words list (e.g. "slams," "outrageous," "finally," "controversial," "massive").
+  - On failure, regenerate once; if it fails again, use the plain template summary.
+- **Stored fields:** `story_en`, `story_es` (JSON), `story_source` (`ai` or `template`).
+- **UI label:** "Written with AI from the official agenda — see source," or no label for template stories.
+- **Golden tests:** saved facts for 5 items, run through the fact-check. Include deliberately wrong outputs that must be rejected.
+
+## 10. Weekly page (P3)
+
+- **Route:** `GET /api/weekly?t={bodies_token}`. Signed-up users can use `user_bodies` instead.
+- **Query:** items where `body_id` is in the set and `meeting_date` falls between 7 days ago and 14 days ahead.
+- **Sections:**
+  - **Lead story:** SMS-tier first, then soonest registration close, then the reader's stake.
+  - **"Coming up: you can still act":** status upcoming, sorted by registration close, then meeting date.
+  - **"Decided this week."**
+  - **Sidebar:** "Deadlines this week" (registration closes, elections, protest deadline) and "Your governments at a glance."
+- **Intro line** is a template, for example "This week: 3 decisions coming up across your 8 local governments, 2 with deadlines before Friday."
+- **Rendering:** server-rendered and cached per token for 1 hour.
+- **Speak up** buttons appear on "Coming up" items and link to `/speak-up/[itemId]`.
+
+## 11. SMS and alerts (P3)
+
+**Opt-in:**
+1. `POST /api/alerts/subscribe` sends a Twilio Verify code.
+2. `POST /api/alerts/verify` confirms it and stores `users.phone`.
+3. If `is_minor` is set, `parent_consent` must also be true (a checkbox for the hackathon).
+
+**Reminders:** `POST /api/reminders` writes `(user_id, item_id)`. This is the only server record that a user started Speak up. No draft content is stored.
+
+**`/api/cron/alerts`** (hourly if the Vercel plan allows, otherwise daily):
+1. Generate time-based alerts:
+   - 7a: registration opens today
+   - 7b: registration closes within 24 hours
+
+   Both use the registration resolver (section 13). Also generate the protest-deadline reminder for Homeowner users.
+2. Send `alert_queue` rows through Twilio.
+   - **Quiet hours:** 8:00 a.m.–8:00 p.m. Central; anything outside that window is held.
+   - **Idempotency:** a unique key `(user_id, item_id, rule)` in `alerts_sent`.
+
+**Message format:** `[Body]: [headline]. [deadline]. Speak up: [short link] Reply STOP to opt out.`
+
+**Opt-out:** Twilio's STOP handling, plus the `/api/twilio/inbound` webhook, which sets `users.sms_opted_out`.
+
+**Trial account:** until 10DLC or toll-free registration completes, only verified numbers can receive texts. Verify the team's phones for the demo.
+
+**"Why did I get this text?":** each alert link includes the `rule` key. The page shows the rule's plain-language text and the source.
+
+All cron routes check the `CRON_SECRET` header.
+
+## 12. "Who governs you?" question and results (P1)
+
+- **Fixed checklist** of 12 body types plus "I'm not sure," rendered while `/api/lookup` runs.
+- **Scoring is client-side:** selected types vs. resolved types.
+  - If HOA is selected, it's always scored as incorrect, with the teaching note.
+  - If the lookup hasn't returned when the user submits, show a loading state until it does.
+- **Stored data:** `POST /api/quiz` writes `{selected_types, actual_types, created_at}`. Types only, no identifiers.
+- **Results page:** the four sections (section 4), with missed bodies highlighted.
+
+## 13. Speak up: registration engine (P4)
+
+**Rule format** (`registration_methods.opens_rule` and `closes_rule`) is structured JSON:
+```json
+{"anchor": "meeting_start", "offset_days": -1, "time": "12:00", "business_days": false}
+{"anchor": "meeting_start", "offset_days": -3, "business_days": true}
+{"anchor": "meeting_start", "offset_hours": -1}
+{"anchor": "previous_weekday", "weekday": "monday", "time": "15:00"}
+```
+- `resolveDeadline(rule, meeting)` returns a timestamp in `America/Chicago`.
+- Business-day math skips weekends. A holiday list is optional.
+
+**Window state:** `before_open`, `open` or `closed`.
+
+**Channel builders:**
+- **`online_form`:** the deep link plus a checklist built from `required_fields`.
+- **`email`:** a `mailto:` link with `to`, `subject` and `body` filled in from `required_fields`.
+  - User-entered details stay in client state only.
+  - The subject is limited by `word_limit_subject`; Gemini proposes a shortened subject for the user to approve.
+- **`phone`:** a call script template (en/es).
+- **`card_at_meeting`:** arrive by the deadline minus 15 minutes.
+- **`written` / `remote`:** links and instructions from the recipe.
+
+**Student rule:** when the stake includes Student and the body type is MUD, ESD or Commissioners Court, the default channel is `written` (or `email`).
+
+**Progress:** `localStorage` keyed by `item_id`, storing state (`not_started` / `registered` / `confirmed`) and the draft. Wrapped in try/catch; the flow still works without storage.
+
+**Demo recipes:** City Council, HISD board, CFISD board, Commissioners Court, the demo MUD, and Lone Star College. Each has `last_verified` and is rechecked against each demo meeting's notice.
+
+## 14. Speak up: AI coach (P4)
+
+**Route:** `POST /api/coach` with `{mode: 'explain' | 'coach', item_id, draft?, lang}`.
+
+**Explain mode (Step A):**
+- Output schema: `{plain_summary, who_it_affects, questions_for_user[]}`
+- The UI labels it "AI explanation — check the source."
+
+**Coach mode (Step C):**
+```json
+{
+  "questions": [string],
+  "feedback": [{"area": "structure|clarity|timing|item_reference", "note": string}],
+  "cut_suggestions": [{"quote": string, "reason": string}],
+  "guardrail_hits": [{"quote": string, "category": "personal_attack|private_info|threat", "reason": string}],
+  "estimated_seconds": number
+}
+```
+
+**"Coach, not ghostwriter," enforced in code:**
+- The schema has no field for replacement text.
+- The server rejects any `quote` that isn't an exact substring of the draft.
+- The system prompt also forbids writing new sentences and adding or strengthening a position.
+
+**Guardrails, in two layers:**
+1. A deterministic pre-check: regex for phone numbers, email addresses and street addresses, plus a threat-phrase list in English and Spanish.
+2. Gemini classification.
+
+The client removes every `guardrail_hits` quote from the draft and shows its reason. The prompt defines criticism of decisions, policies or the body as allowed. Board members may be named in their public role.
+
+**Timing:** recomputed client-side as `word_count / 130 × 60`. The model's estimate is only a hint.
+
+**Limits:**
+- Draft capped at 2,000 characters.
+- 20 calls per hour per anonymous browser ID and per hashed IP (`rate_limits` table, fixed window).
+- 15-second Gemini timeout.
+
+**Privacy:** drafts are never written to the database or logs. The privacy policy says drafts are sent to Google (Gemini) for processing.
+
+## 15. Tax receipt (P1)
+
+- **Route:** `GET /api/tax-receipt?t={bodies_token}&value=250000`
+- **Calculation:** for each taxing body,
+  - `slice = adopted_rate × value / 100`
+  - sorted descending
+  - each slice includes `tax_set_by_body_id`, the last vote date, and the latest `elections` row
+- **Missing rates** are returned as `rate: null`. The UI shows "rate not loaded," and the total is labeled partial.
+- **Harris Health and HCDE** appear as slices (name, rate, who set it) without body pages.
+- **Scope:** rates are entered for every taxing unit at the two demo addresses.
+
+## 16. Data model (P5 creates migrations; owners in brackets)
+
+**Core [P1]**
+- **`bodies`:** id, name, type, category (`tracked` | `ballot_list` | `not_government` | `regional_coming_soon`), elected_or_appointed, sms_eligible, impact_rank, description_en, description_es, meeting_info_url, tax_set_by_body_id, operations_by_body_id, regulated_by, operator_name
+- **`boundaries`:** body_id, geom (GIST index)
+- **`jurisdiction_map`:** hcad_code, body_id
+- **`hcad_parcels`:** account, site_address_norm, legal_description, centroid (nullable)
+- **`hcad_jurisdictions`:** account, hcad_code
+- **`hoa_matches`:** id, subdivision_name (trigram index), hoa_body_id, master_hoa_body_id, source_url, filing_date, verified, last_checked
+- **`hoa_corrections`:** id, subdivision_name, suggested_hoa_name, created_at
+- **`ballot_offices`:** id, body_id, office_name, holder_name, next_election_date, source_url
+- **`tax_rates`:** body_id, year, adopted_rate, no_new_revenue_rate, voter_approval_rate, source_url
+- **`elections`:** body_id, date, type, votes_cast, registered_voters, result, source_url
+- **`deadlines`:** body_id, type, date, source_url
+- **`quiz_responses`:** id, selected_types, actual_types, created_at
+
+**Agendas [P2, P3]**
+- **`sources`:** id, body_id, adapter (`legistar` | `llm_extract` | `manual`), config (JSON), last_checked, last_success
+- **`documents`:** id, source_id, fetched_at, raw, content_hash
+- **`meetings`:** id, source_id, external_id, body_id, date, type, agenda_url, source_url_es, video_url
+- **`items`:** id, meeting_id, external_id, body_id, agenda_number, title, matter_type, item_type, status, action, vote_result, tier, rule_fired, review_status, source_quote, story_en, story_es, story_source, source_url, content_hash
+
+**Participation [P4]**
+- **`registration_methods`:** id, body_id, meeting_type, channel, opens_rule, closes_rule, required_fields, url, email, phone, word_limit_subject, minutes_per_speaker, reduced_minutes_rule, agenda_only, confirmation_type, remote_allowed, translation_request_rule, priority_groups, handouts_accepted, policy_url, last_verified
+
+**Users and alerts [P3]**
+- **`users`:** id, address_point (nullable), stakes, phone, phone_verified, language, is_minor, parent_consent, sms_opted_out
+- **`user_bodies`:** user_id, body_id
+- **`reminders`:** user_id, item_id, created_at
+- **`alert_queue`:** id, user_id, item_id, rule, scheduled_for
+- **`alerts_sent`:** user_id, item_id, rule, sent_at (unique on user_id + item_id + rule)
+
+**Operations [P5]**
+- **`rate_limits`:** key, window_start, count
+- **`demo_cache`:** key, payload
+
+## 17. Internationalization (P5 sets up; all parts add strings)
+
+- All UI strings and templates live in `messages/*.json`.
+- The language comes from the stake picker or the browser's `Accept-Language`.
+- Gemini prompts take `lang` and respond in it. Stories are generated in both languages.
+- HISD's Spanish agendas are posted outside Legistar. Store them as `meetings.source_url_es` and link them on Spanish pages.
+
+## 18. Demo mode (P5)
+
+- With `DEMO_MODE=true`, `/api/lookup` returns cached payloads from `demo_cache` for the two demo addresses. Census calls and Step A Gemini calls are bypassed, so the demo works without the network.
+- Weekly stories for demo items are pre-generated and stored.
+- A backup video of the full demo flow is recorded on Day 7.
+
+## 19. Security and privacy checklist (P5 owns; everyone follows)
+
+- Service-role key is server-only; RLS is enabled everywhere with no anon policies.
+- No addresses or drafts in the database or logs. `bodies_token` contains body IDs only.
+- Phone numbers only after Twilio Verify. STOP handling is on.
+- Gemini paid tier; Twilio and Google are named as processors in the privacy policy.
+- Admin routes are behind the Supabase Auth allowlist. Cron routes require `CRON_SECRET`.
+- Rate limits on `/api/coach` and `/api/lookup`.
+
+## 20. Testing
+
+| Test | Owner | Pass condition |
+|---|---|---|
+| 20-address verification | P1 | Every taxing body matches HCAD; disagreements explained |
+| HOA match | P1 | 20 addresses in covered subdivisions match the management certificate; misses counted |
+| Tax receipt | P1 | 2 demo addresses compared with the real HCAD bill; gap explained (exemptions) |
+| "Who governs you?" scoring | P1 | Actual set matches the verified lookup for both demo addresses |
+| Legistar golden | P2 | Saved responses from 5–10 meetings per client parse to the expected items |
+| Extraction golden | P2 | 5–10 saved documents give the expected items; fake quotes rejected |
+| Rule engine | P3 | Every rule fires on its sample; all near-misses don't |
+| Story fact-check | P3 | Correct stories pass; deliberately wrong numbers and dates are rejected |
+| SMS | P3 | No duplicates; quiet hours respected; STOP works |
+| Registration resolver | P4 | Deadlines for all 6 recipes match the official rules for real upcoming meetings |
+| Coach golden (EN/ES) | P4 | 5 drafts per language: item cited, time fits, no added opinion, criticism kept |
+| Guardrails (EN/ES) | P4 | 2+ examples each of attack, private info and threat removed; near-misses kept |
+| Demo dry run | P5 | Full demo flow runs in DEMO_MODE with the network off |
+
+## 21. Environment variables (P5)
+
+`SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `GEMINI_API_KEY`, `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_MESSAGING_SERVICE_SID`, `TWILIO_VERIFY_SID`, `BODIES_TOKEN_SECRET`, `CRON_SECRET`, `ADMIN_EMAILS`, `DEMO_MODE`
+
+## 22. Day 1 checks (blockers to clear first)
+
+| Check | Owner |
+|---|---|
+| Legistar `harriscountytx` and `houstonisd` work without a token | P2 |
+| CFISD's agenda platform (Legistar or not) | P2 |
+| PrimeGov portal has usable data (2-hour limit) | P2 |
+| Which HCAD bulk file has jurisdiction codes; file size | P1 |
+| Boundary sources for ESD, METRO, regional water and voting precinct | P1 |
+| Gemini model name, pricing, paid-tier data terms | P5 |
+| Vercel plan cron frequency and function duration limits | P5 |
+| Twilio registration started; privacy and terms pages live | P5 |
+| Shared schema, types and token format agreed by all five | Everyone |
