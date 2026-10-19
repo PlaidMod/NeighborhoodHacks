@@ -1,11 +1,17 @@
 # Project Plan
 
-**Revision 4, Oct 18, 2026**
+**Revision 5, Oct 19, 2026**
 **Working name:** [App Name] (placeholder ideas: "MyLayers", "WhoDecides")
 
 The companion file, *Technical_Implementation_Plan.md*, covers how each part is built.
 
 ---
+
+## What changed in revision 5
+
+- **News coverage perspectives (new core feature).** Each weekly story gets a collapsed "What news coverage says" block. It shows the viewpoints Houston news outlets report on that decision, grouped by who holds them, each with a short summary, an exact quote and a source link. When coverage is one-sided, the block says so. The full spec is `.plans/news-coverage-perspectives-spec.md`.
+- **The "news is never data" rule is relaxed.** P2 now reads article text from outlets with no paywall, stores it admin-only and matches articles to items. News still never creates items or feeds alerts, the rule engine, the review queue or the official story text.
+- **The "In the news" headline box on body pages is now core,** not stretch (scraper spec D26).
 
 ## What changed in revision 4
 
@@ -162,6 +168,7 @@ Student, Parent, Renter or Homeowner (pick any), plus a language choice. First-t
 - **"Coming up: you can still act":** story cards, each with a headline, dek, body tag, registration-closes countdown, Speak up button and source link.
 - **"Decided this week":** short briefs with the outcome, the vote count where available, and the source link. If a meeting has happened but its minutes aren't posted yet (common for MUDs and college boards), the brief says "Outcome not posted yet" and updates when the minutes appear.
 - **Sidebar:** "Deadlines this week" and "Your governments at a glance."
+- **"What news coverage says"** (on every story card, collapsed): the viewpoints news outlets report about the item, grouped by who holds them (for example "Residents near the plant" or "District board"). Each viewpoint has a one-sentence summary, a short exact quote and the outlet, date and link. A Sources list always shows every article used. If coverage mostly presents one view, a note says so; the app never fills in the missing side. Items with no coverage show "No news coverage found for this item."
 - **Footer:** "We summarize. We never recommend." Plus how stories are written and the data sources.
 
 **How stories are written:**
@@ -171,6 +178,16 @@ Student, Parent, Renter or Homeowner (pick any), plus a language choice. First-t
 - Every story is labeled: "Written with AI from the official agenda — see source."
 
 Example headline style: *"Harris County MUD 123 to vote Oct. 28 on $14 million water bond."*
+
+**How the news coverage block is built:**
+- Sources: Houston Public Media, Community Impact, Houston Landing, and the Houston TV stations' sites where their feeds and terms allow it. Only outlets with no paywall; the Houston Chronicle is excluded. News reporting and explainers only; opinion pieces and editorials are left out.
+- Gemini matches each article to the agenda item it's about, and must quote the article to prove the link.
+- Gemini then pulls out the viewpoints the articles report. Code checks that every quote is exact and every number appears in the article, and rejects loaded words and stance labels like "opponents." A second, separate Gemini pass checks each viewpoint against the articles and drops anything unfaithful or not neutral.
+- Public officials and organizations are named as the article names them. Private residents are described by role only.
+- Only coverage published before the meeting counts, so "Decided this week" briefs keep the debate as it stood before the vote.
+- English only for now; Spanish pages show it with a note.
+- Labeled: "Summaries written with AI from news coverage and checked by AI. Quotes are exact. Opinion pieces aren't included. We don't take sides."
+- News coverage never changes which items are shown, never triggers texts, and never changes the official story. Its only other effect: when two stories are otherwise tied, the one covered by more outlets is listed first.
 
 ### 7. Speak up tool
 
@@ -299,7 +316,7 @@ P1 picks both addresses on Day 1 and checks their bodies against HCAD records by
 
 1. Enter the CFISD address → the "Who governs you?" question → "You knew 3 of 9" → results with MUD, ESD and HOA highlighted.
 2. Tax receipt: "who sets each dollar," with turnout per slice.
-3. The weekly news page, with the lead story.
+3. The weekly news page, with the lead story. Open "What news coverage says" on a real item that several outlets have covered (picked by P4's watchlist).
 4. An SMS alert → Speak up → find your point → register by email with Houston City Council (using the HISD address) → the coach catches a guardrail issue → rehearsal timer.
 5. Close with evidence: the real comment delivered, plus the "Who governs you?" results.
 
@@ -349,7 +366,8 @@ Each part also moves the text on its own screens into the English and Spanish tr
 - Manual entry fallback.
 - Recheck rules: meetings in the next 72 hours on every run, to catch late-added items; past meetings until their results are posted (up to 45 days).
 - Linking HISD's Spanish agendas to their Legistar meetings.
-- Official sources only. News is never pulled in as data.
+- Official sources only for agenda data. News never creates or changes items.
+- News collection: the "In the news" headline feed for body pages, plus article text (outlets with no paywall, admin-only storage) and Gemini article-to-item matching for the coverage block.
 - Review queue admin page.
 - Ingest scheduled job and health checks.
 - Golden tests for both adapters.
@@ -358,6 +376,7 @@ Each part also moves the text on its own screens into the English and Spanish tr
 
 - Rule engine and rule tests.
 - Gemini story writing, fact-check and template fallback.
+- News coverage perspectives: viewpoint extraction, code checks, the Gemini judge pass, and the "What news coverage says" block.
 - Weekly news page and timeline.
 - SMS opt-in, phone verification, sending, quiet hours, reminders 7a/7b, protest reminder.
 - Twilio registration paperwork (10DLC or toll-free).
@@ -370,7 +389,7 @@ Each part also moves the text on its own screens into the English and Spanish tr
 - Gemini coach (Steps A and C) with guardrails and rate limits.
 - Speak up screens: Steps A–D, rehearsal timer, checklist, student rule.
 - Coach golden tests in English and Spanish.
-- Checking the demo bodies' meeting calendars and running the news watchlist, to find the best meeting for the real public comment.
+- Checking the demo bodies' meeting calendars and running the news watchlist, to find the best meeting for the real public comment and a real item with coverage from 2+ outlets for the demo's coverage block.
 
 ### Part 5: Platform, Evidence and Pitch
 
@@ -394,7 +413,7 @@ The real public comment happens on whatever day its meeting falls. Plan around t
 - **P1 Lookup:** load HCAD bulk data and boundary layers; Census Geocoder working end to end; pick the two demo addresses and check their bodies against HCAD records.
 - **P2 Agenda Data:** confirm Legistar works without a token for Commissioners Court and HISD; 2-hour PrimeGov check; check CFISD's agenda system; download sample MUD and college agendas.
 - **P3 News and Alerts:** rule engine skeleton; write story-writing prompt drafts; set up Twilio Verify; start Twilio registration as soon as P5's privacy and terms pages are live.
-- **P4 Speak up:** research and write the six registration recipes; deadline math; check the six demo bodies' meeting calendars. Also run a **news watchlist**: skim Community Impact, Houston Public Media, the Houston Chronicle and Houston Landing for upcoming fights at the demo bodies. This is for the team only; it helps find the best meeting for the real public comment. If that meeting falls on Day 2 or 3, tell the team the same day.
+- **P4 Speak up:** research and write the six registration recipes; deadline math; check the six demo bodies' meeting calendars. Also run a **news watchlist**: skim Community Impact, Houston Public Media, the Houston Chronicle and Houston Landing for upcoming fights at the demo bodies. This is for the team only; it helps find the best meeting for the real public comment, and a real upcoming item covered by 2+ outlets with no paywall to use as the demo's coverage block. If that meeting falls on Day 2 or 3, tell the team the same day.
 - **P5 Platform and Pitch:** in this order: Supabase project and the full database schema first, so the other parts can connect by midday; then security settings, the shared code files (`gemini.ts`, `db.ts`, `tokens.ts`, `rateLimit.ts`), translation setup, privacy and terms pages, and the Gemini and Vercel checks.
 
 ### Day 2
@@ -417,8 +436,8 @@ The real public comment happens on whatever day its meeting falls. Plan around t
 ### Day 4
 
 - **P1:** tax receipt; body pages; ballot list.
-- **P2:** ingest scheduled job; health checks.
-- **P3:** SMS opt-in, sending, quiet hours, reminders.
+- **P2:** ingest scheduled job; health checks; news article fetcher and article-to-item matching (after the agenda adapters are done).
+- **P3:** SMS opt-in, sending, quiet hours, reminders; start the news coverage extraction and judge pass.
 - **P4:** Steps C and D screens, rehearsal timer, student rule.
 - **P5:** collect "Who governs you?" results; begin the pitch outline.
 
@@ -426,7 +445,7 @@ The real public comment happens on whatever day its meeting falls. Plan around t
 
 - **P1:** finish the 20-address check; HOA top 50.
 - **P2:** harden adapters; golden tests for extraction.
-- **P3:** "Why did I get this text?" page; timeline.
+- **P3:** "Why did I get this text?" page; timeline; "What news coverage says" block on the weekly page.
 - **P4:** Spanish coach plus guardrail tests.
 - **P5:** accessibility and mobile polish; the real comment if a meeting falls here.
 
@@ -448,7 +467,9 @@ Don't start these unless everything else is done.
 - **Regional section, live:** real data for H-GAC Transportation Policy Council, TxDOT Houston District, TCEQ, PUC, the Subsidence District and SJRA.
 - **"I'm going" counter** and group features.
 - **"What happened after you spoke":** the vote result and the video timestamp of your comment.
-- **"In the news" box on body pages:** headline, outlet and link only (for example from Community Impact, Houston Public Media, the Houston Chronicle or Houston Landing). No copied article text. Never used to trigger alerts or write stories.
+- ~~**"In the news" box on body pages**~~: moved to core in revision 5 (scraper spec D26).
+- **News coverage block in Spanish:** translated summaries, with quotes kept in English.
+- **News coverage block on body pages, Speak up or item pages.**
 - **A full meeting-day screen.**
 - **More registration recipes and more auto-imported bodies.**
 - **Vietnamese translation.**
@@ -467,6 +488,7 @@ Don't start these unless everything else is done.
 6. **Weekly stories:** publish automatically once they pass the fact-check. Only SMS-triggering AI-extracted items go through the review queue.
 7. **Cross-device progress:** Speak up progress doesn't carry between devices.
 8. **Weekly page without an account:** shareable through a link based on body IDs; no signup needed.
+9. **News coverage block:** publishes automatically once it passes the code checks and the Gemini judge pass; there's no human review. Articles with no surviving viewpoint still appear in its Sources list.
 
 ---
 

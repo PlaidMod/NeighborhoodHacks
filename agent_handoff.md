@@ -33,6 +33,15 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-19: Plan revision 5: news coverage perspectives
+- **Who:** Iarush · part not set yet
+- **Branch:** main
+- **What changed:** Added a core feature, a "What news coverage says" block on weekly stories. It shows the viewpoints Houston outlets report on an agenda decision, grouped by stakeholder, each with a summary, an exact quote and a source link, plus a one-sided note. P2 now fetches article text from outlets with no paywall (stored admin-only, deleted after 90 days) and uses Gemini to match articles to items. P3 extracts viewpoints, runs code checks and a separate Gemini judge pass, and renders the block. News still never feeds items, classify, alerts, the review queue or story text; its only other effect is a weekly sort tie-breaker by outlet count.
+- **Files:** `.plans/news-coverage-perspectives-spec.md` (new), `.plans/agent-scraper-spec.md` (v1.3: D27–D35, Steps 11b and 11c, P2-A, §10, §12), `Project_Plan.md`, `Technical_Implementation_Plan.md` (§1, §2, §6, new §9a, §10, §16, §19–§22)
+- **Contract changes:** DB schema §16 gains `news_articles`, `news_article_items` (P2) and `item_perspectives` (P3), plus the existing D26 news tables. No news columns on `items`. The new env var `GEMINI_JUDGE_MODEL` affects P5. `Meeting`, `Item`, `bodies_token` and `classify()` are unchanged. The weekly sort order (§10) gains a last tie-break key, which affects P3.
+- **Checked:** Docs only; no code changed.
+- **Open issues / next:** TV station RSS feeds verified working on Oct 19 (KHOU, KPRC, ABC13, FOX 26). HPM, Community Impact and ABC13 block `Google-Extended` (Gemini) in robots.txt, and Click2Houston and FOX 26 block other AI crawlers. The owner chose the literal reading (scraper D36): obey only the `*` group or our own bot's group, so every outlet is fetched. P5 should prepare a pitch answer (scraper spec §12, item 22). Outlet terms of use are still unchecked, and Houston Landing still fails TLS. P5 needs to confirm the Gemini budget. P4's watchlist must find a real demo item with 2+ outlets covering it. Article storage is a copyright exposure the team accepted; recheck the outlets' terms.
+
 ### 2026-10-18: Plan revision 4: rebalanced P5
 - **Who:** PlaidMod · part not set yet
 - **Branch:** main

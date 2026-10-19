@@ -1,8 +1,10 @@
 # Technical Implementation Plan
 
-**Revision 4, Oct 18, 2026**
+**Revision 5, Oct 19, 2026**
 
-Revision 4 moves four Day 1 tasks off P5 (see *Project_Plan.md*, "What changed in revision 4"). The sections changed here are §11 (Twilio registration), §17 (translation ownership) and §22 (Day 1 checks).
+Revision 5 adds news coverage perspectives (see *Project_Plan.md*, "What changed in revision 5", and the full spec in `.plans/news-coverage-perspectives-spec.md`). The sections changed here are §1, §2, §6 (news), the new §9a, §10 (sort order), §16, §19, §20, §21 and §22.
+
+Revision 4 moved four Day 1 tasks off P5 (see *Project_Plan.md*, "What changed in revision 4"). The sections it changed were §11 (Twilio registration), §17 (translation ownership) and §22 (Day 1 checks).
 
 This file covers how each part is built. *Project_Plan.md* covers what the product does and why. Each section is tagged with the part that owns it:
 
@@ -20,7 +22,9 @@ This file covers how each part is built. *Project_Plan.md* covers what the produ
 - **Database:** Supabase Postgres with the `postgis` and `pg_trgm` extensions.
 - **AI:** Gemini API via the official Google Gen AI SDK. Server-side only. Used for:
   - agenda extraction (P2)
+  - news article → agenda item matching (P2)
   - weekly story writing (P3)
+  - news coverage viewpoint extraction and the separate judge pass (P3)
   - Speak up explanation and coaching (P4)
 
   Use a paid-tier key. Confirm the model name, pricing and data-use terms on Day 1; free-tier terms may allow Google to use submitted content.
@@ -54,8 +58,10 @@ lib/
   geo/        geocoder, PostGIS queries, merge rules               P1
   hoa/        subdivision extraction, matching                     P1
   adapters/   legistar.ts, llmExtract.ts, manual.ts                P2
+  news/       RSS mentions, article fetch, article→item matching   P2
   rules/      classify.ts                                          P3
   stories/    story generation, fact-check                         P3
+  perspectives/  coverage viewpoints: extract, checks, judge       P3
   sms/        twilio send, verify                                  P3
   registration/  deadline resolver, channel builders               P4
   coach/      prompts, schema validation, guardrails               P4
@@ -64,8 +70,8 @@ scripts/
   load-hcad.ts, load-boundaries.sh                                 P1
 supabase/migrations/                                               P5 (others add)
 tests/
-  golden/legistar, golden/llm-extract                              P2
-  rules, stories                                                   P3
+  golden/legistar, golden/llm-extract, golden/news-articles        P2
+  rules, stories, perspectives                                     P3
   coach                                                            P4
   geo                                                              P1
 messages/en.json, es.json                                          P5 (all add keys)
@@ -224,7 +230,18 @@ type Item = { external_id: string; meeting_external_id: string;
 - Harris County Tax Office Truth-in-Taxation notices (adopted, no-new-revenue and voter-approval rates) → `tax_rates`
 - The HCAD protest deadline → `deadlines`
 
-News sites are never a data source. They're used only as a team watchlist (P5) and, as a stretch goal, as headline-and-link boxes.
+### News (P2 collects; revision 5)
+
+News sites are never a source of **agenda data**: no meeting, item, result, classification, alert or official story comes from news. News is used in exactly three ways:
+- **Team watchlist** (P4, Day 1).
+- **"In the news" headline box** on body pages: RSS headline, outlet, date and link only (scraper spec D26, Step 11).
+- **News coverage perspectives** (scraper spec D27–D35, Steps 11b and 11c):
+  - P2 fetches the full text of body-matched articles, only from outlets with no paywall, using Readability, respecting robots.txt and filtering out opinion pieces before fetching.
+  - The text is stored admin-only in `news_articles` and deleted after 90 days.
+  - Gemini matches each article to items from a candidate list built by code, with an exact proof quote, into `news_article_items`.
+  - P3 turns these into the weekly block (§9a).
+
+Lint rules stop `lib/adapters`, `lib/ingest`, `lib/rules`, `lib/stories`, `lib/sms` and `lib/coach` from importing `lib/news` or `lib/perspectives`.
 
 ### Pipeline (`/api/cron/ingest`)
 
@@ -290,6 +307,34 @@ News sites are never a data source. They're used only as a team watchlist (P5) a
 - **Stored fields:** `story_en`, `story_es` (JSON), `story_source` (`ai` or `template`).
 - **UI label:** "Written with AI from the official agenda — see source," or no label for template stories.
 - **Golden tests:** saved facts for 5 items, run through the fact-check. Include deliberately wrong outputs that must be rejected.
+- Story generation never receives news article text or perspectives. The story stays "from the official agenda."
+
+## 9a. News coverage perspectives (P3; P2 supplies the data)
+
+The full spec is `.plans/news-coverage-perspectives-spec.md`. Summary:
+- **When:** a P3 job picks items with linked `ok` articles published before the meeting start. It regenerates when the hash of the linked articles changes, at most 5 items per run. The block is frozen at the meeting start; after that it changes only if a source article is removed.
+- **Extraction (Gemini):** `{groups: [{label, arguments: [{summary, quote, article_id}]}]}`, with at most 4 groups, 2 arguments per group and 8 in total.
+  - Labels say **who** holds a view, never the stance.
+  - Summaries use the article's attribution ("say", "argue").
+  - Officials and organizations are named as in the article; private individuals by role only.
+- **Code checks** (each failing argument is dropped):
+  - the quote is an exact substring of the article and 25 words or fewer
+  - every number in the summary appears in the article or the item facts
+  - summary ≤ 30 words and label ≤ 6 words
+  - no banned stance labels (`opponents`, `supporters`, `critics`, …)
+  - no banned words from the story list (§9)
+  - no names of private individuals (the role-word proximity rule)
+- **Judge pass:** a separate Gemini call on `GEMINI_JUDGE_MODEL`, which approves or rejects only and never rewrites. It checks `faithful`, `attributed`, `neutral_wording`, `label_fits` and `private_individual_named` per argument, plus an overall `one_sided`. If the judge call fails, the previous result is kept.
+- **Result:** `item_perspectives`:
+  - `state` is `ok`, or `sources_only` when no argument survives
+  - `one_sided = groups < 2 || judge.one_sided`
+  - groups are ordered by `sha1(item_id + label)`
+  - the full `sources` list is always stored
+- **UI:**
+  - a collapsed "What news coverage says (N outlets, M viewpoints)" block on each weekly story card
+  - a one-sided note, a Sources list, and the label "Summaries written with AI from news coverage and checked by AI. Quotes are exact. Opinion pieces aren't included. We don't take sides."
+  - empty state: "No news coverage found for this item."
+  - English only, with a Spanish note on `/es`
 
 ## 10. Weekly page (P3)
 
@@ -297,7 +342,8 @@ News sites are never a data source. They're used only as a team watchlist (P5) a
 - **Query:** items where `body_id` is in the set and `meeting_date` falls between 7 days ago and 14 days ahead.
 - **Sections:**
   - **Lead story:** SMS-tier first, then soonest registration close, then the reader's stake.
-  - **"Coming up: you can still act":** status upcoming, sorted by registration close, then meeting date.
+  - **"Coming up: you can still act":** status upcoming, sorted by registration close, then meeting date, then `item_perspectives.outlet_count` descending (no coverage counts as 0).
+  - **Coverage tie-breaker (revision 5):** outlet count is only ever the **last** sort key in a section. The lead story is chosen first, from the existing keys only, so coverage never makes an item the lead.
   - **"Decided this week":** `decided` items with their outcome, plus `awaiting_result` items labeled "Outcome not posted yet." Those are updated in place when the minutes appear.
   - **Sidebar:** "Deadlines this week" (registration closes, elections, protest deadline) and "Your governments at a glance."
 - **Intro line** is a template, for example "This week: 3 decisions coming up across your 8 local governments, 2 with deadlines before Friday."
@@ -447,6 +493,13 @@ The client removes every `guardrail_hits` quote from the draft and shows its rea
 - **`meetings`:** id, source_id, external_id, body_id, date, type, agenda_url, source_url_es, video_url
 - **`items`:** id, meeting_id, external_id, body_id, agenda_number, title, matter_type, item_type, status, action, vote_result, tier, rule_fired, review_status, source_quote, story_en, story_es, story_source, source_url, content_hash
 
+**News [P2, P3]** (revision 5; the full columns are in the scraper spec §9 P2-A and the perspectives spec §5)
+- **`news_mentions`**, **`news_mention_bodies`**, **`news_mention_items`** [P2]: the D26 headline box
+- **`news_articles`** [P2]: id, external_id, outlet, url, headline, published_at, feed_updated_at, fetched_at, text (nullable, admin-only, nulled after 90 days), text_deleted_at, word_count, content_hash, content_type, status, body_ids
+- **`news_article_items`** [P2]: article_id, item_id, proof_quote, model, linked_at
+- **`item_perspectives`** [P3]: item_id, articles_hash, state, groups (jsonb), sources (jsonb), outlet_count, one_sided, dropped_count, extract_model, judge_model, generated_at, frozen_at
+- No news columns on `items`.
+
 **Participation [P4]**
 - **`registration_methods`:** id, body_id, meeting_type, channel, opens_rule, closes_rule, required_fields, url, email, phone, word_limit_subject, minutes_per_speaker, reduced_minutes_rule, agenda_only, confirmation_type, remote_allowed, translation_request_rule, priority_groups, handouts_accepted, policy_url, last_verified
 
@@ -493,6 +546,8 @@ The client removes every `guardrail_hits` quote from the draft and shows its rea
 - Gemini paid tier; Twilio and Google are named as processors in the privacy policy.
 - Admin routes are behind the Supabase Auth allowlist. Cron routes require `CRON_SECRET`.
 - Rate limits on `/api/coach` and `/api/lookup`.
+- News article text (`news_articles.text`) is never returned by a public route. It's deleted 90 days after fetch. The privacy page says the app stores the text of public news articles to summarize them and shows only short quotes with links.
+- The news fetcher respects robots.txt, never fetches paywalled or opinion pages, and never tries to get around a paywall.
 
 ## 20. Testing
 
@@ -506,6 +561,10 @@ The client removes every `guardrail_hits` quote from the draft and shows its rea
 | Extraction golden | P2 | 5–10 saved documents give the expected items; fake quotes rejected |
 | Recheck windows | P2 | A supplemental item added to a meeting <72 hours away is picked up on the next run; a past meeting's item moves awaiting_result → decided when saved minutes are added |
 | Spanish agenda linking | P2 | Each saved HISD Spanish agenda links to the right Legistar meeting |
+| News article fetch | P2 | Opinion and robots-disallowed URLs are never requested; video pages become `too_short`; paywall pages become `paywalled` with no text stored |
+| Article → item matching | P2 | All 7 recorded cases in scraper Step 11c pass (unknown ID, fake quote and prompt injection are rejected) |
+| News isolation | P2/P3 | A run with news fixtures leaves `items`, `alert_queue`, the review queue and stories unchanged |
+| Coverage perspectives | P3 | Fake quotes, changed numbers, stance labels and private names are dropped; a failing judge verdict drops the argument; post-meeting articles don't change a frozen block |
 | Rule engine | P3 | Every rule fires on its sample; all near-misses don't |
 | Story fact-check | P3 | Correct stories pass; deliberately wrong numbers and dates are rejected |
 | SMS | P3 | No duplicates; quiet hours respected; STOP works |
@@ -516,7 +575,7 @@ The client removes every `guardrail_hits` quote from the draft and shows its rea
 
 ## 21. Environment variables (P5)
 
-`SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `GEMINI_API_KEY`, `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_MESSAGING_SERVICE_SID`, `TWILIO_VERIFY_SID`, `BODIES_TOKEN_SECRET`, `CRON_SECRET`, `ADMIN_EMAILS`, `DEMO_MODE`
+`SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `GEMINI_API_KEY`, `GEMINI_EXTRACT_MODEL`, `GEMINI_EXTRACT_FALLBACK_MODEL`, `GEMINI_JUDGE_MODEL`, `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_MESSAGING_SERVICE_SID`, `TWILIO_VERIFY_SID`, `BODIES_TOKEN_SECRET`, `CRON_SECRET`, `ADMIN_EMAILS`, `DEMO_MODE`
 
 ## 22. Day 1 checks (blockers to clear first)
 
@@ -534,6 +593,8 @@ The client removes every `guardrail_hits` quote from the draft and shows its rea
 | Privacy and terms pages live (needed for Twilio registration) | P5 |
 | Twilio registration started | P3 |
 | Meeting calendars checked for the six demo bodies; best meeting for the real public comment flagged to the team, especially if it falls on Day 2 or 3 | P4 |
-| News watchlist: skim Community Impact, Houston Public Media, Houston Chronicle and Houston Landing for upcoming fights at the demo bodies (team use only) | P4 |
+| News watchlist: skim Community Impact, Houston Public Media, Houston Chronicle and Houston Landing for upcoming fights at the demo bodies (team use only). Also pick the demo item for the coverage block: real, upcoming, covered by 2+ outlets with no paywall | P4 |
+| News outlets for the coverage block: feed URLs (including KHOU, KPRC, ABC13 and FOX 26), robots.txt and terms of use checked; any outlet that forbids automated access is disabled. Can run on the day P2 starts Step 11b. | P2 |
+| Gemini budget covers the news calls (up to 5 match calls per ingest run, plus 2 calls per item for P3's perspectives) | P5 |
 | Shared schema, types and token format agreed by all five | Everyone |
 | Where the prototype in `web/` and these plans disagree (tier names, user types, Fort Bend coverage, body list, routes; see `CLAUDE.md`) | Everyone |
