@@ -166,5 +166,21 @@
     "enterAddress": "Escribe tu dirección",
     "continue": "Continuar",
     "skip": "Saltar"
+  },
+  "Admin": {
+    "title": "Administración del equipo",
+    "loginTitle": "Acceso del equipo",
+    "loginIntro": "Solo para el equipo de ShowUp HTX. Pide una cuenta a P5.",
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "signIn": "Entrar",
+    "signingIn": "Entrando…",
+    "errors": {
+      "missing": "Escribe tu correo y tu contraseña.",
+      "invalid": "Ese correo y esa contraseña no coinciden con ninguna cuenta."
+    },
+    "signedInAs": "Sesión iniciada como {email}",
+    "reviewLink": "Abrir la cola de revisión",
+    "signOut": "Cerrar sesión"
   }
 }

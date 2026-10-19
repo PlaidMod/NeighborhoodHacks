@@ -33,6 +33,28 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-19: P5 Task 16: admin sign-in for the review queue
+- **Who:** PlaidMod · P5 Platform, Evidence and Pitch
+- **Branch:** main
+- **What changed:**
+  - `/admin/login` has an email-and-password form. It uses passwords, not email links, because Supabase's built-in email reaches only team members, 2 an hour.
+  - `/admin` shows "Signed in as …", a link to `/admin/review` (P2's page) and a sign-out button.
+  - `proxy.ts` (Next 16's request hook) refreshes the session on `/admin/*` only. It never touches `/api`, so cron calls can't be redirected.
+  - `requireAdmin()` checks the signed-in user with Supabase Auth and the `ADMIN_EMAILS` allowlist. Signed out goes to the login page; not on the list gets a 404.
+- **Files:** `proxy.ts`, `lib/supabase/server.ts`, `lib/adminAuth.ts`, `app/admin/{page.tsx,actions.ts,login/page.tsx}`, `components/admin/LoginForm.tsx`, `messages/*.json` (`Admin`), `tests/platform/adminAuth.test.ts`
+- **Contract changes (P2):**
+  - **Call `await requireAdmin()` first in `/admin/review` and in every one of its server actions and route handlers.** A layout check alone isn't enough.
+  - After that, read and write with `db()`. The signed-in user's own Supabase client still sees nothing, because of RLS.
+- **Checked:**
+  - `npm test` (114/114), typecheck, lint and build pass (the build lists "Proxy").
+  - Signed out, `/admin` returns 307 to `/admin/login`.
+  - `/api/cron/ingest` with the secret returns 404 (no route yet), not a redirect.
+  - A wrong email or password shows the inline error, using the real Supabase sign-in.
+  - Login pages send `Cache-Control: private, no-store`.
+- **Open issues / next:**
+  - **Owner, in the Supabase dashboard:** turn off public sign-ups and create a password account for each `ADMIN_EMAILS` address. After that, a successful sign-in still needs testing.
+  - Add the fifth teammate's email to `ADMIN_EMAILS` when known.
+
 ### 2026-10-19: P5 Task 15: demo mode caching
 - **Who:** PlaidMod · P5 Platform, Evidence and Pitch
 - **Branch:** main

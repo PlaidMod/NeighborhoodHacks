@@ -166,5 +166,21 @@
     "enterAddress": "Enter your address",
     "continue": "Continue",
     "skip": "Skip"
+  },
+  "Admin": {
+    "title": "Team admin",
+    "loginTitle": "Team sign-in",
+    "loginIntro": "For ShowUp HTX teammates only. Ask P5 for an account.",
+    "email": "Email",
+    "password": "Password",
+    "signIn": "Sign in",
+    "signingIn": "Signing in…",
+    "errors": {
+      "missing": "Enter your email and password.",
+      "invalid": "That email and password don't match an account."
+    },
+    "signedInAs": "Signed in as {email}",
+    "reviewLink": "Open the review queue",
+    "signOut": "Sign out"
   }
 }
