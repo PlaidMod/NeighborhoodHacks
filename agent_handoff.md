@@ -1,4 +1,13 @@
-# Agent handoff log
+# Agent han### 2026-10-19: P2 scraper step 0: root TypeScript project setup
+- **Who:** Iarush · P2 Agenda Data
+- **Branch:** scrapper
+- **What changed:** Added a root Node/TypeScript project for the standalone scraper library (separate from `web/`): package.json scripts, strict tsconfig, vitest, eslint, `.env.example`, `.gitignore`, and the progress log `.plans/scraper-progress.md`.
+- **Files:** `package.json`, `package-lock.json`, `tsconfig.json`, `vitest.config.ts`, `vitest.live.config.ts`, `eslint.config.js`, `.env.example`, `.gitignore`, `.plans/scraper-progress.md`, `tests/unit/setup.test.ts`
+- **Contract changes:** None
+- **Checked:** npm run typecheck, npm run lint, npm test (1 passed)
+- **Open issues / next:** P5 must merge root deps into the Next.js package.json later. Root configs exclude `web/`.
+
+doff log
 
 A shared log of changes made in this repo, so the next teammate or agent can catch up without reading every diff. Entries follow `INSTRUCTIONS.md`: record the teammate, never the agent or model.
 
