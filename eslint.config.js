@@ -10,4 +10,21 @@ export default tseslint.config(
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
     },
   },
+  {
+    // D26/D32 isolation: agenda code must never depend on the news module.
+    files: ['lib/adapters/**', 'lib/ingest/**'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['@/lib/news', '@/lib/news/**', '**/news/**', '../news', '../news/*', './news', './news/*'],
+              message: 'lib/adapters and lib/ingest must not import lib/news (D26, D32).',
+            },
+          ],
+        },
+      ],
+    },
+  },
 );

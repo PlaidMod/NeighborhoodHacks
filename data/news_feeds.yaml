@@ -1,0 +1,18 @@
+# The ONLY file where news domains are allowed (D24, D26). Read only by lib/news/.
+# Step 11 reads these RSS feeds. Step 11b fetches article pages only when fetch_articles is true.
+# Optional per-feed fields (defaults in lib/news/collect.ts):
+#   fetch_articles (true), opinion_path_patterns, opinion_categories, explainer_patterns, link_path_allow
+- { outlet: Houston Public Media, url: "https://www.houstonpublicmedia.org/feed/", enabled: true }
+- outlet: Community Impact
+  url: "https://communityimpact.com/rss/"
+  # statewide feed; keep Houston-area editions only (slugs verified against the live feed Oct 19, 2026)
+  link_path_allow: ["/cy-fair/", "/houston/", "/heights-river-oaks-montrose/", "/bellaire-meyerland-west-university/",
+                    "/spring-klein/", "/tomball-magnolia/", "/katy-fulshear/", "/lake-houston-humble-kingwood/", "/bay-area/"]
+  enabled: true
+# Houston Landing: TLS handshake fails (ERR_SSL_TLSV1_UNRECOGNIZED_NAME) on Oct 18 and 4 retries Oct 19; disabled
+- { outlet: Houston Landing, url: "https://houstonlanding.org/feed/", enabled: false }
+- { outlet: KHOU 11, url: "https://www.khou.com/feeds/syndication/rss/news/local", enabled: true }
+- { outlet: KPRC 2, url: "https://www.click2houston.com/arc/outboundfeeds/rss/category/news/local/?outputType=xml", enabled: true }
+- { outlet: ABC13, url: "https://abc13.com/feed/", enabled: true }   # sitewide; body-alias matching filters it
+- { outlet: FOX 26 Houston, url: "https://www.fox26houston.com/rss/category/local-news", enabled: true }
+# Houston Chronicle: excluded (no public RSS found, paywalled)
