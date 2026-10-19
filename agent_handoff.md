@@ -33,6 +33,32 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-19: P5 Task 2: Supabase database is live (28 tables, RLS on everywhere)
+- **Who:** PlaidMod · P5 Platform, Evidence and Pitch
+- **Branch:** main
+- **What changed:**
+  - Created Supabase project `showup-htx` (ID `elsvhqqwdxwsuvkbchdq`, us-east-1, free plan; URL `https://elsvhqqwdxwsuvkbchdq.supabase.co`).
+  - Applied the full §16 schema plus P2's additions in six migrations. Every table has RLS on with **no policies**, so the public key reads and writes nothing; only server code with the secret key can.
+  - Generated types are in `lib/database.types.ts`.
+- **Files:** `supabase/migrations/*.sql`, `lib/database.types.ts`, `tests/platform/migrations.test.ts`
+- **Contract changes (shared; please read):**
+  - **Keys:** `bodies.id` and `sources.id` are text slugs (e.g. `hcmud_489`). **P1: confirm your body slugs.** Every other table has a uuid `id`. Body foreign keys use `on update cascade`.
+  - **Value lists** use text plus a `check` constraint, not Postgres enums. Examples: `items.status`, `tier`, `vote_result`, `review_status`; `sources.adapter` (`legistar | boardbook | primegov | llm_extract | manual`).
+  - **New `items.source_id`** (not in §16): P2's upsert key `(source_id, external_id)` needs it. `meetings` has the same unique key.
+  - **`items.review_status` is nullable,** because Legistar, BoardBook and manual items skip review. Suggested rule for P2 and P3: an item may text only when `tier = 'sms'` and `coalesce(review_status, 'approved') = 'approved'`.
+  - **`alert_queue.item_id` and `alerts_sent.item_id` are nullable,** for the HCAD protest reminder. `alerts_sent` is `unique nulls not distinct (user_id, item_id, rule)`, so a reminder with no item still can't be sent twice; tested.
+  - **Geometry** is `extensions.geometry(MultiPolygon, 4326)` for `boundaries.geom` (use `ogr2ogr -nlt PROMOTE_TO_MULTI`), and `Point` for centroids. PostGIS and pg_trgm live in the `extensions` schema.
+  - **Loading order:** `hcad_jurisdictions.account` references `hcad_parcels`, so load parcels first.
+- **How to add a migration:** write a new file in `supabase/migrations/` and ask P5 to apply it. P5 applies it through the Supabase connection and renames the file to the version the database records. Never `create policy`; `npm test` checks every migration for RLS.
+- **Checked:**
+  - In the database: 28 tables, 0 without RLS, 0 policies, extensions in `extensions`.
+  - With the publishable key: reading `bodies` or `users` returns `[]`, and inserts get 401 or an RLS error.
+  - `get_advisors` (security) shows only the expected "RLS enabled, no policy" notices.
+  - `npm test` (6/6), `npm run typecheck` and `npm run lint` pass.
+- **Open issues / next:**
+  - **P1:** the free plan holds 500 MB, and a full HCAD load (about 1.5 million accounts, times their tax codes) likely won't fit. Load only the ZIPs the demo and the classmate survey need. For bulk loads, use the session-pooler connection string (Supabase dashboard → Connect) as a local-only `SUPABASE_DB_URL`.
+  - P5 Task 3 (`lib/env.ts`, `lib/db.ts`) is next.
+
 ### 2026-10-19: P5 Task 1: root Next.js app and shared tooling
 - **Who:** PlaidMod · P5 Platform, Evidence and Pitch
 - **Branch:** main
