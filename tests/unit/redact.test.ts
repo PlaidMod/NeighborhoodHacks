@@ -14,7 +14,7 @@ const base: Item = {
   source_url: 'https://example.gov',
 };
 
-describe('redactPersonnel (rules; HISD fixtures come in Step 3)', () => {
+describe('redactPersonnel (rules; fixture tests in redact-fixtures.test.ts)', () => {
   it('removes the name and school', () => {
     const out = redactPersonnel({
       ...base,

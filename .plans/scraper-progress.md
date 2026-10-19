@@ -32,3 +32,13 @@ Started 2026-10-19 on branch `scrapper`. Entries follow `.plans/agent-scraper-sp
 - DEVIATION: `harriscountytx-1242` eventitems is 1,921 rows / 2.7 MB / did: compacted (null fields and GUIDs dropped) and trimmed to the first 1,019 rows (977 KB); see fixture README.
 - Fixed: `parseAmounts` read "0.1972-acre" as a tax rate; bare rates now exclude measurements, and "per $100 of value" is part of the rate text.
 - Notes for P3/P5: `section` may be a path ("CLOSED SESSION / Personnel"); closed-session tests should match the whole string. `agenda_number` keeps HISD's "a)" form. Results mode refetches `/events/{id}` (not the filtered list) plus eventitems.
+
+## Step 3: Redaction against real data: DONE WITH DEVIATIONS
+- What was built: `tests/unit/redact-fixtures.test.ts` (all 5 HISD 1332 hearing items: no name, no name token, no school anywhere in output; closed-session items with no name unchanged; leak test over every fixture using `leakingName()` = 2+ consecutive capitalized non-stopword tokens before the first comma; no personnel-sensitive output still matches a redaction pattern; §5.4 near-misses kept). `redactText()` gained an embedded-name rule. `houstonisd-1306/expected.json` regenerated (one new redacted title, nothing else changed).
+- Checks: typecheck ✔ lint ✔ tests ✔ (114 passed) smoke ✔
+  - hc_commissioners_court default window: meetings 0, items 0, warnings 0 (calendar gap, §2).
+  - hc_commissioners_court `--from 2026-09-01`: meetings 5, items 1,259, warnings 2, redacted 0.
+  - hisd_board: meetings 1, items 10, redacted 5, warnings 0.
+  - Each run twice: identical external_id sets; no leaks.
+- DEVIATION: spec's rule only covers a leading "Name, role" / found HISD 1306 closed-session item b) names a person mid-sentence ("including termination of Travis Johnson, former principal of Kashmere High School,") / did: added an embedded rule (2–4 capitalized tokens, comma, optional former/current/interim/assistant, role word, optional "of/at <School>") that replaces the segment with "an employee". The 1306 item now has `contains_private_person = true`. The name stays only in the raw fixture (the public record), per §5.4.
+- Notes for P3: `contains_private_person` can now be true on closed-session items too, not only hearings.

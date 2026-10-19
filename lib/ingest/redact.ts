@@ -29,15 +29,38 @@ export function isPersonnelSensitive(item: Pick<Item, 'matter_type' | 'section' 
   );
 }
 
-/** Redact a leading "Name, role[, School]" segment. Returns the new text and whether a name was removed. */
+// Embedded "Name Name, [former] role [of School]" anywhere in the text (found in real data:
+// HISD 1306 closed session "including termination of Travis Johnson, former principal of
+// Kashmere High School,"). Needs 2-4 capitalized tokens so a single word can't trigger it.
+const SCHOOL_WORDS = '(?:School|Elementary|Middle|High|Academy|Campus|College|Center|ES|MS|HS)';
+const EMBEDDED_NAME = new RegExp(
+  `\\b(?:${NAME_TOKEN}\\s+){1,3}${NAME_TOKEN}\\s*,\\s*(?:(?:former|current|interim|assistant)\\s+)?(?:${ROLE_ALT})s?\\b` +
+    `(?:\\s+(?:of|at)\\s+[^,]*?\\b${SCHOOL_WORDS}\\b[^,]*|\\s*,\\s*[^,]*?\\b${SCHOOL_WORDS}\\b[^,]*(?=,|$))?`,
+  'g',
+);
+
+/**
+ * Redact a leading "Name, role[, School]" segment, then any embedded
+ * "Name Name, [former] role [of School]" segment. Returns the new text and whether a name was removed.
+ */
 export function redactText(text: string): { text: string; redacted: boolean } {
-  const m = text.match(LEADING_NAME);
-  if (!m || !LEADING_NAME_CS.test(text)) return { text, redacted: false };
-  let rest = text.slice(m[0].length);
-  const school = rest.match(SCHOOL_SEGMENT);
-  if (school) rest = rest.slice(school[0].length);
-  // Drop the role too: "An employee" already says what is needed.
-  return { text: `An employee${rest}`, redacted: true };
+  let out = text;
+  let redacted = false;
+  const m = out.match(LEADING_NAME);
+  if (m && LEADING_NAME_CS.test(out)) {
+    let rest = out.slice(m[0].length);
+    const school = rest.match(SCHOOL_SEGMENT);
+    if (school) rest = rest.slice(school[0].length);
+    // Drop the role too: "An employee" already says what is needed.
+    out = `An employee${rest}`;
+    redacted = true;
+  }
+  const embedded = out.replace(EMBEDDED_NAME, (seg, offset: number) => {
+    if (offset === 0 && seg.startsWith('An employee')) return seg;
+    redacted = true;
+    return 'an employee';
+  });
+  return { text: embedded, redacted };
 }
 
 export function redactPersonnel(item: Item): Item {
