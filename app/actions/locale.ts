@@ -12,3 +12,12 @@ export async function setLocale(locale: Locale): Promise<void> {
   const cookieStore = await cookies()
   cookieStore.set(LOCALE_COOKIE, locale, { path: '/', sameSite: 'lax', maxAge: ONE_YEAR })
 }
+
+/**
+ * Form version for the language toggle. A plain form works even before the page's
+ * JavaScript loads, and Next.js re-renders the page after the cookie changes.
+ */
+export async function switchLocale(formData: FormData): Promise<void> {
+  const locale = formData.get('locale')
+  if (isLocale(locale)) await setLocale(locale)
+}

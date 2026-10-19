@@ -33,8 +33,8 @@ export function Logo({ className, light }: { className?: string; light?: boolean
         </svg>
       </span>
       <span className={cn("text-[1.15rem] font-extrabold tracking-tight", light ? "text-white" : "text-ink")}>
-        {word}
-        <span className={cn("ml-1 font-semibold", light ? "text-white/60" : "text-muted-foreground")}>{place}</span>
+        {word}{" "}
+        <span className={cn("font-semibold", light ? "text-white/60" : "text-muted-foreground")}>{place}</span>
       </span>
     </Link>
   )

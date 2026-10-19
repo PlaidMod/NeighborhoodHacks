@@ -33,6 +33,29 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-19: P5 Task 11: site shell and security headers
+- **Who:** PlaidMod · P5 Platform, Evidence and Pitch
+- **Branch:** main
+- **What changed:** Every page under `app/(public)/` now gets the shell:
+  - a "Skip to content" link, first in tab order
+  - a header with the logo, an About link and the English/Español toggle
+  - a footer with "We summarize. We never recommend." and links to About, Privacy and Terms
+
+  The language toggle is a plain form that calls a server action (`switchLocale`), so it works even before the page's JavaScript loads. Next.js re-renders the page in the new language, and the visitor stays on the same page. Every route also sends the four security headers.
+- **Files:** `app/(public)/layout.tsx`, `components/shell/{SiteHeader,SiteFooter,LanguageToggle}.tsx`, `app/actions/locale.ts`, `next.config.ts`, `components/civic.tsx` (the logo now reads as "ShowUp HTX"), `messages/*.json` (`Shell` namespace)
+- **Contract changes:** None.
+  - **For pages in `app/(public)/`:** use a single `<main id="main">` per page; the skip link targets it.
+  - **For other screens** (stake picker, Speak up), you can drop in `<LanguageToggle />` from `@/components/shell/LanguageToggle`. It's a server component.
+- **Checked:**
+  - `npm test` (70/70), typecheck, lint and build pass.
+  - `curl -sI` shows `X-Content-Type-Options`, `Referrer-Policy`, `X-Frame-Options` and `Permissions-Policy`.
+  - In a browser at 390px and 1440px:
+    - nothing scrolls sideways (both languages)
+    - the first Tab reaches "Skip to content", which floats over the page
+    - Español switches the header, footer and page, and sets `<html lang="es">`; the choice survives a reload
+    - clicking right after the page loads still works (the first version, a client-side button, ignored early clicks)
+- **Open issues / next:** Task 12 (rate limiting) is next.
+
 ### 2026-10-19: P5 Task 10: design system brought into the app
 - **Who:** PlaidMod · P5 Platform, Evidence and Pitch
 - **Branch:** main

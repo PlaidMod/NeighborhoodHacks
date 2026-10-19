@@ -3,6 +3,17 @@
     "title": "ShowUp HTX",
     "description": "Escribe tu dirección para ver cada gobierno local que te afecta, lo que va a decidir y cómo hacerte escuchar."
   },
+  "Shell": {
+    "skip": "Saltar al contenido",
+    "navLabel": "Principal",
+    "about": "Acerca de",
+    "language": "Idioma",
+    "neutral": "Resumimos. Nunca recomendamos.",
+    "footerNavLabel": "Información del sitio",
+    "privacy": "Privacidad",
+    "terms": "Términos",
+    "project": "Un proyecto estudiantil para Neighborhood Hacks 2026."
+  },
   "Civic": {
     "urgent": "Urgente"
   },
