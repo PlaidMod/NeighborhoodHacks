@@ -33,6 +33,15 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-18: Plan revision 4: rebalanced P5
+- **Who:** PlaidMod · part not set yet
+- **Branch:** main
+- **What changed:** P5's Day 1 was overloaded, and every other part waits on it. Moved meeting calendar checks and the news watchlist to P4, Twilio registration to P3, and demo address picking to P1. Each part now converts its own screens' text for English/Spanish, and P5 only sets up the system. P5 does the database schema first on Day 1. Added a timing-risk note for the real public comment and a Day 1 "Everyone" decision on where the prototype and the plan disagree.
+- **Files:** `Project_Plan.md`, `Technical_Implementation_Plan.md` (§11, §17, §22)
+- **Contract changes:** None. Ownership and schedule only; no schema, type or token changes.
+- **Checked:** Docs only; no code changed.
+- **Open issues / next:** P1, P3 and P4 each picked up a Day 1 task; check that your Day 1 still fits. The prototype vs. plan decision is still open.
+
 ### 2026-10-18: Added INSTRUCTIONS.md (binding agent rules)
 - **Who:** PlaidMod · part not set yet
 - **Branch:** main

@@ -1,11 +1,22 @@
 # Project Plan
 
-**Revision 3, Oct 18, 2026**
+**Revision 4, Oct 18, 2026**
 **Working name:** [App Name] (placeholder ideas: "MyLayers", "WhoDecides")
 
 The companion file, *Technical_Implementation_Plan.md*, covers how each part is built.
 
 ---
+
+## What changed in revision 4
+
+- **P5 rebalanced.** P5's Day 1 had about 10 items, and the other four parts can't connect anything real until P5's database and shared code exist. Four tasks moved to the parts they already overlap with:
+  - **Meeting calendar checks and the news watchlist → P4.** P4 is already reading the same six bodies' websites on Day 1 for the registration recipes.
+  - **Twilio registration → P3.** P3 owns texting and is already setting up Twilio Verify on Day 1.
+  - **Picking and confirming the demo addresses → P1.** P1 has to verify those addresses' bodies anyway.
+  - **Moving each screen's text into the English/Spanish translation files → each screen's owner.** P5 sets up the translation system only.
+- **P5's Day 1 order:** the database schema comes first, so the other parts can connect by midday.
+- **Real public comment timing risk:** if the best meeting falls before Speak up is ready (Day 2 or 3), P4 flags it on Day 1 (see "Evidence plan").
+- **New Day 1 decision for everyone:** where the existing prototype in `web/` and this plan disagree (alert tier names, user types, Fort Bend coverage, the body list, page routes). See `CLAUDE.md`, "Prototype vs. plan."
 
 ## What changed in revision 3
 
@@ -282,7 +293,7 @@ English and Spanish throughout, at about an 8th-grade reading level. Vietnamese 
 - **HISD address, inside the City of Houston:** City Council, HCC, the appointed HISD board.
 - **CFISD address, unincorporated:** likely a MUD, an ESD, a regional water authority, Lone Star College and an HOA. This is the "governments you didn't know you had" showcase.
 
-Confirm both addresses' actual bodies with the lookup and HCAD before locking them in.
+P1 picks both addresses on Day 1 and checks their bodies against HCAD records by hand, then confirms them again with the lookup once it works, before locking them in.
 
 ## Demo flow (about 3 minutes)
 
@@ -299,10 +310,11 @@ Confirm both addresses' actual bodies with the lookup and HCAD before locking th
 Strongest to weakest:
 
 **1. One real public comment before demo day.**
-- Check every demo body's meeting calendar on Day 1.
+- P4 checks every demo body's meeting calendar on Day 1. P5 organizes everything after that.
 - A teammate uses Speak up, registers, and delivers the comment (or submits it in writing where accepted).
 - Bring a photo, a short clip, or the meeting video timestamp.
 - Describe it as: "drafted with our app's coaching and delivered at the [body] meeting on [date]."
+- **Timing risk:** if the best meeting falls on Day 2 or 3, Speak up won't be ready yet. P4 flags this to the team on Day 1, and the speaking teammate prepares from the body's official speaker instructions instead. In that case, don't describe the comment as drafted with the app's coaching; describe only what actually happened.
 
 **2. "Who governs you?" results.**
 - 15–20 classmates (and parents if possible) use the app once lookup works (Days 3–5).
@@ -317,8 +329,11 @@ Strongest to weakest:
 
 Each teammate owns one part end to end: data, backend and screens. The technical plan lists the exact files and tasks for each part.
 
+Each part also moves the text on its own screens into the English and Spanish translation files. P5 sets up the translation system only (technical plan §17 lists which prototype screens belong to which part).
+
 ### Part 1: Lookup and Results ("Who governs me?")
 
+- Picking the two demo addresses and confirming their bodies.
 - Address lookup: Census Geocoder, HCAD bulk data, GIS boundaries.
 - Rules for when sources disagree, and the 20-address verification.
 - HOA matching and the HOA table: management certificates, demo subdivisions, survey subdivisions, top 50.
@@ -345,6 +360,7 @@ Each teammate owns one part end to end: data, backend and screens. The technical
 - Gemini story writing, fact-check and template fallback.
 - Weekly news page and timeline.
 - SMS opt-in, phone verification, sending, quiet hours, reminders 7a/7b, protest reminder.
+- Twilio registration paperwork (10DLC or toll-free).
 - "Why did I get this text?" page and the published rules screen.
 
 ### Part 4: Speak up
@@ -354,13 +370,14 @@ Each teammate owns one part end to end: data, backend and screens. The technical
 - Gemini coach (Steps A and C) with guardrails and rate limits.
 - Speak up screens: Steps A–D, rehearsal timer, checklist, student rule.
 - Coach golden tests in English and Spanish.
+- Checking the demo bodies' meeting calendars and running the news watchlist, to find the best meeting for the real public comment.
 
 ### Part 5: Platform, Evidence and Pitch
 
-- Next.js, Supabase and Vercel setup; database schema; security settings; environment variables.
-- Shared design (app shell, navigation, components) and the English/Spanish translation setup.
+- Next.js, Supabase and Vercel setup; database schema; security settings; environment variables. The Next.js app and Vercel deployment already exist from the prototype.
+- Shared design (app shell, navigation, components) and the English/Spanish translation setup (the system only; each part moves its own screens' text into it).
 - Home and stake picker screens.
-- Privacy policy and terms pages; Twilio registration paperwork.
+- Privacy policy and terms pages (P3 needs them live for Twilio registration).
 - Demo mode and demo cache.
 - Organizing the real public comment, and collecting the "Who governs you?" results from classmates.
 - Pitch slides, demo script, backup video.
@@ -373,11 +390,12 @@ The real public comment happens on whatever day its meeting falls. Plan around t
 
 ### Day 1
 
-- **P1 Lookup:** load HCAD bulk data and boundary layers; Census Geocoder working end to end.
+- **Everyone:** agree on the shared schema, types and token format, and decide where the prototype and this plan disagree (see "What changed in revision 4").
+- **P1 Lookup:** load HCAD bulk data and boundary layers; Census Geocoder working end to end; pick the two demo addresses and check their bodies against HCAD records.
 - **P2 Agenda Data:** confirm Legistar works without a token for Commissioners Court and HISD; 2-hour PrimeGov check; check CFISD's agenda system; download sample MUD and college agendas.
-- **P3 News and Alerts:** rule engine skeleton; write story-writing prompt drafts; set up Twilio Verify.
-- **P4 Speak up:** research and write the six registration recipes; deadline math.
-- **P5 Platform and Pitch:** set up Next.js, Supabase and Vercel; database schema; security; translation setup; publish privacy and terms pages; start Twilio registration; check meeting calendars; pick demo addresses. Also run a **news watchlist**: skim Community Impact, Houston Public Media, the Houston Chronicle and Houston Landing for upcoming fights at the demo bodies. This is for the team only; it helps find the best meeting for the real public comment.
+- **P3 News and Alerts:** rule engine skeleton; write story-writing prompt drafts; set up Twilio Verify; start Twilio registration as soon as P5's privacy and terms pages are live.
+- **P4 Speak up:** research and write the six registration recipes; deadline math; check the six demo bodies' meeting calendars. Also run a **news watchlist**: skim Community Impact, Houston Public Media, the Houston Chronicle and Houston Landing for upcoming fights at the demo bodies. This is for the team only; it helps find the best meeting for the real public comment. If that meeting falls on Day 2 or 3, tell the team the same day.
+- **P5 Platform and Pitch:** in this order: Supabase project and the full database schema first, so the other parts can connect by midday; then security settings, the shared code files (`gemini.ts`, `db.ts`, `tokens.ts`, `rateLimit.ts`), translation setup, privacy and terms pages, and the Gemini and Vercel checks.
 
 ### Day 2
 
@@ -385,7 +403,8 @@ The real public comment happens on whatever day its meeting falls. Plan around t
 - **P2:** Legistar adapter plus golden tests.
 - **P3:** rule engine done with tests; story writing plus fact-check.
 - **P4:** Step B (registration) working end to end for City Council.
-- **P5:** app shell, home screen, stake picker, shared components.
+- **P5:** adapt the prototype's app shell, home screen and stake picker to this plan; shared components.
+- **Everyone:** once P5's translation setup is in, start moving your own screens' text into the message files.
 
 ### Day 3
 

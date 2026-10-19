@@ -1,6 +1,8 @@
 # Technical Implementation Plan
 
-**Revision 3, Oct 18, 2026**
+**Revision 4, Oct 18, 2026**
+
+Revision 4 moves four Day 1 tasks off P5 (see *Project_Plan.md*, "What changed in revision 4"). The sections changed here are §11 (Twilio registration), §17 (translation ownership) and §22 (Day 1 checks).
 
 This file covers how each part is built. *Project_Plan.md* covers what the product does and why. Each section is tagged with the part that owns it:
 
@@ -327,6 +329,8 @@ News sites are never a data source. They're used only as a team watchlist (P5) a
 
 **Opt-out:** Twilio's STOP handling, plus the `/api/twilio/inbound` webhook, which sets `users.sms_opted_out`.
 
+**Registration (P3):** start 10DLC or toll-free registration on Day 1, as soon as P5's privacy and terms pages are live.
+
 **Trial account:** until 10DLC or toll-free registration completes, only verified numbers can receive texts. Verify the team's phones for the demo.
 
 **"Why did I get this text?":** each alert link includes the `rule` key. The page shows the rule's plain-language text and the source.
@@ -457,8 +461,19 @@ The client removes every `guardrail_hits` quote from the draft and shows its rea
 - **`rate_limits`:** key, window_start, count
 - **`demo_cache`:** key, payload
 
-## 17. Internationalization (P5 sets up; all parts add strings)
+## 17. Internationalization (P5 sets up; each part converts its own screens)
 
+- **P5 sets up the system:** next-intl, the `messages/en.json` and `messages/es.json` files, language detection, and the shared components' text.
+- **Each part moves its own screens' text** into the message files. In the current prototype (`web/src/app`), every screen has English written directly in the code:
+
+  | Prototype screen | Converted by |
+  |---|---|
+  | `/` landing, `/start` onboarding, `/app` home, app shell and shared components | P5 |
+  | `/app/districts`, `/app/districts/[id]`, `/app/vote` | P1 |
+  | `/app/timeline`, `/app/brief`, `/app/alerts` | P3 |
+  | `/app/speak` | P4 |
+
+  The mock data in `web/src/lib/data/` is replaced by real data, not translated.
 - All UI strings and templates live in `messages/*.json`.
 - The language comes from the stake picker or the browser's `Accept-Language`.
 - Gemini prompts take `lang` and respond in it. Stories are generated in both languages.
@@ -507,13 +522,18 @@ The client removes every `guardrail_hits` quote from the draft and shows its rea
 
 | Check | Owner |
 |---|---|
+| Supabase project and the full schema (§16) live by midday, before P5's other Day 1 work | P5 |
 | Legistar `harriscountytx` and `houstonisd` work without a token | P2 |
 | CFISD's agenda platform (Legistar or not) | P2 |
 | PrimeGov portal has usable data (2-hour limit) | P2 |
 | Which HCAD bulk file has jurisdiction codes; file size | P1 |
 | Boundary sources for ESD, METRO, regional water and voting precinct | P1 |
+| Two demo addresses picked; their bodies checked against HCAD records | P1 |
 | Gemini model name, pricing, paid-tier data terms | P5 |
 | Vercel plan cron frequency and function duration limits | P5 |
-| Twilio registration started; privacy and terms pages live | P5 |
-| News watchlist: skim Community Impact, Houston Public Media, Houston Chronicle and Houston Landing for upcoming fights at the demo bodies (team use only) | P5 |
+| Privacy and terms pages live (needed for Twilio registration) | P5 |
+| Twilio registration started | P3 |
+| Meeting calendars checked for the six demo bodies; best meeting for the real public comment flagged to the team, especially if it falls on Day 2 or 3 | P4 |
+| News watchlist: skim Community Impact, Houston Public Media, Houston Chronicle and Houston Landing for upcoming fights at the demo bodies (team use only) | P4 |
 | Shared schema, types and token format agreed by all five | Everyone |
+| Where the prototype in `web/` and these plans disagree (tier names, user types, Fort Bend coverage, body list, routes; see `CLAUDE.md`) | Everyone |
