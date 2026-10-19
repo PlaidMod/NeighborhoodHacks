@@ -1,4 +1,5 @@
 import { getTranslations } from 'next-intl/server'
+import { LookupProvider } from '@/components/flow/LookupProvider'
 import { SiteFooter } from '@/components/shell/SiteFooter'
 import { SiteHeader } from '@/components/shell/SiteHeader'
 
@@ -13,7 +14,8 @@ export default async function PublicLayout({ children }: Readonly<{ children: Re
         {t('skip')}
       </a>
       <SiteHeader />
-      {children}
+      {/* Keeps the address lookup alive across home → stake picker → results. */}
+      <LookupProvider>{children}</LookupProvider>
       <SiteFooter />
     </>
   )

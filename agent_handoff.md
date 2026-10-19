@@ -33,6 +33,27 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-19: P5 Task 13: home page and the address lookup flow
+- **Who:** PlaidMod · P5 Platform, Evidence and Pitch
+- **Branch:** main
+- **What changed:**
+  - **Home (`/`):** the headline "Who governs your block?", the address form, a privacy note, and a stack of government "layers" that settles in on load (turned off under reduced motion). The page is in English and Spanish.
+  - **Submitting:** the form checks the address on submit (empty or over 200 characters shows an inline error, cleared on edit). It then starts the lookup and goes to `/stake`.
+  - **`LookupProvider`** (in `app/(public)/layout.tsx`) keeps the lookup running across home → stake picker → results. The address stays in memory only: never in storage, a cookie or the URL. The form also posts rather than using GET, so a submit before the JavaScript loads can't put the address in a URL.
+- **Files:** `lib/contracts/lookup.ts`, `lib/address.ts`, `lib/flow/lookupState.ts`, `components/flow/LookupProvider.tsx`, `components/home/{AddressForm,GovernmentStack}.tsx`, `app/(public)/page.tsx`, `app/(public)/layout.tsx`, `messages/*.json` (`Home`, `Lookup`)
+- **Contract changes (draft for P1's sign-off):** `lib/contracts/lookup.ts`.
+  - **Request:** `POST /api/lookup` with `{ address }`.
+  - **Success:** `{ bodies_token, bodies, ballot, not_government, regional, hoa }`.
+  - **Errors:** `{ error: { code, message } }` with codes `invalid_address` 400, `not_found` 404, `outside_harris` 422, `rate_limited` 429, `server_error` 500. The messages for each code are in `messages/*.json` → `Lookup.errors`.
+  - **P1's `/results`:** use `useLookup()` from `@/components/flow/LookupProvider`. It returns `state` (`idle | loading | done | error`), `start` and `reset`. While it's loading, show the "Who governs you?" question. If someone opens `/results` directly with `idle`, send them home.
+- **Checked:**
+  - `npm test` (94/94: address normalizing and limits; the reducer ignores stale answers from a double submit and answers after a reset), typecheck, lint and build pass.
+  - In a browser at 1440px and 390px:
+    - no sideways scrolling
+    - an empty submit shows "Enter your street address, city and ZIP." with `aria-invalid`, and typing clears it
+    - a real address sends `POST /api/lookup` and goes to `/stake`, with no address in any URL (both 404 for now: P1's route and P5 Task 14)
+- **Open issues / next:** Task 14 (the stake picker) is next.
+
 ### 2026-10-19: P5 Task 12: rate limiting and the browser ID
 - **Who:** PlaidMod · P5 Platform, Evidence and Pitch
 - **Branch:** main

@@ -18,7 +18,25 @@
     "urgent": "Urgente"
   },
   "Home": {
-    "title": "ShowUp HTX"
+    "title": "¿Quién gobierna tu cuadra?",
+    "lede": "Escribe tu dirección para ver cada gobierno local que te afecta, incluso los que nunca has oído mencionar, y cómo hablar antes de que voten.",
+    "addressLabel": "Tu dirección",
+    "addressPlaceholder": "Calle, ciudad y código postal",
+    "submit": "Buscar mis gobiernos",
+    "privacyNote": "Usamos tu dirección una sola vez para encontrar tus gobiernos. No la guardamos.",
+    "coverage": "Por ahora, solo direcciones del condado de Harris.",
+    "errors": {
+      "empty": "Escribe tu calle, ciudad y código postal.",
+      "too_long": "Eso es más largo que una dirección. Escribe solo la calle, la ciudad y el código postal."
+    },
+    "stack": {
+      "city_council": "Concejo Municipal",
+      "school_board": "Junta escolar",
+      "commissioners_court": "Corte de Comisionados",
+      "flood_control": "Distrito de Control de Inundaciones",
+      "mud": "Distrito de servicios (MUD)",
+      "more": "Y otros que nunca has oído mencionar"
+    }
   },
   "About": {
     "metaTitle": "Acerca de ShowUp HTX",
@@ -105,6 +123,15 @@
         "title": "Un proyecto estudiantil",
         "body": "ShowUp HTX es un proyecto estudiantil creado para Neighborhood Hacks 2026. Se ofrece tal como está, sin garantías."
       }
+    }
+  },
+  "Lookup": {
+    "errors": {
+      "invalid_address": "Eso no parece una dirección. Revísala e inténtalo de nuevo.",
+      "not_found": "No encontramos esa dirección. Revisa el número de la calle y el código postal.",
+      "outside_harris": "Esa dirección está fuera del condado de Harris. Por ahora, ShowUp HTX cubre el condado de Harris.",
+      "rate_limited": "Hay demasiadas búsquedas desde esta red. Espera unos minutos e inténtalo de nuevo.",
+      "server_error": "Algo salió mal de nuestro lado. Inténtalo de nuevo en un minuto."
     }
   }
 }

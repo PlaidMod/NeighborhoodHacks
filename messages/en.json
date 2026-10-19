@@ -18,7 +18,25 @@
     "urgent": "Urgent"
   },
   "Home": {
-    "title": "ShowUp HTX"
+    "title": "Who governs your block?",
+    "lede": "Type your address to see every local government that affects you, including ones you've never heard of, and how to speak up before they vote.",
+    "addressLabel": "Your home address",
+    "addressPlaceholder": "Street, city and ZIP",
+    "submit": "Find my governments",
+    "privacyNote": "We use your address once to find your governments. We don't save it.",
+    "coverage": "Harris County addresses only for now.",
+    "errors": {
+      "empty": "Enter your street address, city and ZIP.",
+      "too_long": "That's longer than an address. Enter just the street, city and ZIP."
+    },
+    "stack": {
+      "city_council": "City Council",
+      "school_board": "School board",
+      "commissioners_court": "Commissioners Court",
+      "flood_control": "Flood Control District",
+      "mud": "Utility district (MUD)",
+      "more": "And ones you've never heard of"
+    }
   },
   "About": {
     "metaTitle": "About ShowUp HTX",
@@ -105,6 +123,15 @@
         "title": "A student project",
         "body": "ShowUp HTX is a student project built for Neighborhood Hacks 2026. It is provided as is, without warranties."
       }
+    }
+  },
+  "Lookup": {
+    "errors": {
+      "invalid_address": "That doesn't look like an address. Check it and try again.",
+      "not_found": "We couldn't find that address. Check the street number and ZIP.",
+      "outside_harris": "That address is outside Harris County. ShowUp HTX covers Harris County for now.",
+      "rate_limited": "Too many searches from this network right now. Wait a few minutes and try again.",
+      "server_error": "Something went wrong on our end. Try again in a minute."
     }
   }
 }
