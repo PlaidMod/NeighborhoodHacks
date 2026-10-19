@@ -33,6 +33,18 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-19: P5 Task 1: root Next.js app and shared tooling
+- **Who:** PlaidMod · P5 Platform, Evidence and Pitch
+- **Branch:** main
+- **What changed:** The real app now lives at the repo root, on Next.js 16.4.2, with Tailwind through `@tailwindcss/postcss`, vitest, ESLint and strict TypeScript, using the `@/*` → `./*` alias. `.gitattributes` forces LF line endings, and the root `.gitignore` keeps out `.env*`, `.next`, `.vercel` and the like. P5's full plan is in `.plans/p5-platform-plan.md`.
+- **Files:** `package.json`, `tsconfig.json`, `next.config.ts`, `postcss.config.mjs`, `eslint.config.mjs`, `vitest.config.ts`, `.gitattributes`, `.gitignore`, `app/`, `tests/`, `CLAUDE.md` (Commands), `AGENTS.md` (Next's rules block), `.plans/p5-platform-plan.md`
+- **Contract changes:** None to the schema or types. **For P2:** the root `package.json`, `tsconfig.json`, `eslint.config.mjs` and `vitest.config.ts` now exist.
+  - Rebase `scrapper` onto `main` and add your dependencies and scripts (`test:live`, `scrape`, `news`) to these files rather than creating new ones.
+  - `"type": "module"` is set. Your news-isolation `no-restricted-imports` rule is already in `eslint.config.mjs`.
+  - `npm test` blocks `fetch`, so put live tests in a `vitest.live.config.ts`.
+- **Checked:** `npm run typecheck`, `npm run lint`, `npm test` (1/1) and `npm run build` all pass. `next dev` served `/` with status 200.
+- **Open issues / next:** Task 2 (Supabase project and schema) is next.
+
 ### 2026-10-18: Plan revision 5: news "might come up" box (settled Iarush's way)
 - **Who:** PlaidMod · P5 Platform, Evidence and Pitch
 - **Branch:** main

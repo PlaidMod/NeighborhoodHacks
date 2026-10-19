@@ -32,16 +32,25 @@ The owner's planning-review entry records the team's answers on scope, schedule 
 
 ## Commands
 
-The plan's app doesn't exist yet. Add its build, lint and test commands here once it does. Until then, the only runnable code is the test prototype:
+Run these from the repo root (Node 22 or later):
 
 ```bash
-cd web && npm install && npm run dev   # test prototype only
-cd web && npm test                     # palette unit tests (Node 22.18+, built-in runner)
+npm install
+npm run dev                                 # http://localhost:3000
+npm run build
+npm run typecheck                           # next typegen, then tsc --noEmit
+npm run lint                                # eslint . (next lint no longer exists)
+npm test                                    # vitest; unit tests can't reach the network
+npx vitest run tests/platform/tokens.test.ts   # run one test file
 ```
+
+- `npm test` runs `tests/**/*.test.ts` in UTC with `fetch` blocked (`tests/setup/no-network.ts`). Tests that need the network go in a separate config, such as P2's planned `vitest.live.config.ts`.
+- npm 11 holds back packages' install scripts until approved. Nothing in the app needs them so far.
+- `web/` is the old test prototype, with its own `package.json` (`cd web && npm install && npm run dev`). The root's TypeScript, ESLint, vitest and Tailwind all ignore it.
 
 ## Next.js caveat
 
-`web/AGENTS.md` warns that the current Next.js (16) has breaking changes compared with older versions. In the new app, read the relevant guide in `node_modules/next/dist/docs/` before writing Next-specific code, and heed deprecation notices.
+Next.js 16 has breaking changes compared with older versions: `middleware.ts` is now `proxy.ts`, `cookies()` and `headers()` must be awaited, and `next lint` is gone. Before writing Next-specific code, read the relevant guide in `node_modules/next/dist/docs/` and heed deprecation notices. `next dev` keeps a Next.js rules block in `AGENTS.md`; commit it rather than removing it.
 
 ## Design system (the one thing carried over from `web/`)
 

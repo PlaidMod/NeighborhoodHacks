@@ -8,3 +8,13 @@ These apply to every AI agent working in this repo (Codex, Cursor, Copilot, Gemi
 4. **The spec is `Project_Plan.md` and `Technical_Implementation_Plan.md`, plus part specs in `.plans/`.** `.plans/agent-scraper-spec.md` wins over the plan files for P2's work. Don't change the plan files unless a teammate asks for that specific change. If something conflicts with them, follow the plan and raise the conflict.
 5. **`web/` is a test prototype.** Don't build on it. The real app is built at the repo root, using the tech plan's §2 layout. Only its design system (`web/DESIGN.md`: tokens, fonts, components) carries over.
 6. See `CLAUDE.md` for the deadline, commands and the rules that are easy to break.
+
+<!-- BEGIN:nextjs-agent-rules -->
+
+## This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+
+<!-- END:nextjs-agent-rules -->
