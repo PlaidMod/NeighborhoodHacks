@@ -191,3 +191,82 @@ export async function runExtraction(
   }
   return run;
 }
+
+// ---------------------------------------------------------------------------------------------
+// Results from minutes (agent-scraper-spec §8 Step 10, D22). The LLM reports outcomes only; code
+// matches them to existing items (never creates items) and checks every quote.
+
+export const OutcomeSchema = z.object({
+  agenda_number: z.string().optional(),
+  title_fragment: z.string(),
+  outcome: z.enum(['passed', 'failed', 'tabled', 'no_action']),
+  source_quote: z.string(),
+});
+export type Outcome = z.infer<typeof OutcomeSchema>;
+export const OutcomesSchema = z.object({ outcomes: z.array(OutcomeSchema) });
+export type Outcomes = z.infer<typeof OutcomesSchema>;
+
+export function outcomesJsonSchema(): Record<string, unknown> {
+  const { $schema: _drop, ...schema } = z.toJSONSchema(OutcomesSchema) as Record<string, unknown>;
+  return schema;
+}
+
+export const OUTCOME_RULES = [
+  'You read the official minutes of a local-government meeting and report what happened to agenda items.',
+  'Rules:',
+  '- Report only items the minutes say were acted on, deferred or discussed without action. Never invent outcomes.',
+  '- outcome: "passed" (approved, adopted, authorized, ratified, accepted), "failed" (motion failed or denied),',
+  '  "tabled" (deferred, tabled, postponed), "no_action" (discussed or received, no vote taken).',
+  '- agenda_number: only if the minutes print the item number.',
+  '- title_fragment: a few words naming the item, taken from the minutes heading or the known item list.',
+  '- source_quote: copy 20 to 200 characters EXACTLY from the minutes that show the outcome (e.g. the motion sentence). Never paraphrase.',
+  '- Write "an employee" in place of the name of any private individual.',
+].join('\n');
+
+export type KnownItemRef = { agenda_number?: string; title: string };
+
+export function buildOutcomesPrompt(items: KnownItemRef[]): string {
+  if (!items.length) return OUTCOME_RULES;
+  const list = items.map((i) => `- ${i.agenda_number ? `${i.agenda_number}: ` : ''}${i.title.slice(0, 160)}`).join('\n');
+  return `${OUTCOME_RULES}\nKnown agenda items for this meeting (use their wording for title_fragment):\n${list}`;
+}
+
+export function parseOutcomes(raw: string): { ok: true; value: Outcomes } | { ok: false; error: string } {
+  let json: unknown;
+  try {
+    json = JSON.parse(raw);
+  } catch (e) {
+    return { ok: false, error: `invalid JSON: ${(e as Error).message}` };
+  }
+  const r = OutcomesSchema.safeParse(json);
+  return r.success ? { ok: true, value: r.data } : { ok: false, error: `schema: ${r.error.issues.map((i) => i.path.join('.') + ' ' + i.message).join('; ')}` };
+}
+
+export type OutcomesRun = { model: string; raw: string[]; parsed: (Outcomes | null)[]; errors: string[] };
+
+/** Run outcome extraction over minutes: text chunks for text-layer docs, the PDF for scanned docs. */
+export async function runOutcomes(
+  llm: LlmClient,
+  model: string,
+  input: { pages: string[]; scanned: boolean; pdf?: Uint8Array; items: KnownItemRef[] },
+): Promise<OutcomesRun> {
+  const system = buildOutcomesPrompt(input.items);
+  const schema = outcomesJsonSchema();
+  const run: OutcomesRun = { model, raw: [], parsed: [], errors: [] };
+  const requests =
+    input.scanned && input.pdf ? [{ pdf: input.pdf }] : chunkPages(input.pages).map((c) => ({ text: c.join(PAGE_BREAK) }));
+  for (const req of requests) {
+    try {
+      const raw = await llm.generateJson({ model, system, schema, timeoutMs: EXTRACT_TIMEOUT_MS, ...req });
+      run.raw.push(raw);
+      const p = parseOutcomes(raw);
+      run.parsed.push(p.ok ? p.value : null);
+      if (!p.ok) run.errors.push(`${model}: ${p.error}`);
+    } catch (e) {
+      run.raw.push('');
+      run.parsed.push(null);
+      run.errors.push(`${model}: ${(e as Error).message}`);
+    }
+  }
+  return run;
+}

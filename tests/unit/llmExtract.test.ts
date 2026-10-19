@@ -285,8 +285,9 @@ describe('adapter run (offline)', () => {
     expect(r.items).toEqual([]);
     expect(r.warnings).toEqual(['llm_unavailable: GEMINI_API_KEY is not set; agenda items were not extracted']);
   });
-  it('results mode is left for Step 10', async () => {
+  it('results mode without known meetings does nothing but warn (Step 10 tests: minutes.test.ts)', async () => {
     const r = await createLlmExtractAdapter({ http, now, llm: null }).run(source, { kind: 'results', meeting_external_ids: ['x'] }, window);
-    expect(r.warnings[0]).toMatch(/Step 10/);
+    expect(r.result_updates).toEqual([]);
+    expect(r.warnings).toEqual(['meeting x: not in the known meetings; skipped']);
   });
 });

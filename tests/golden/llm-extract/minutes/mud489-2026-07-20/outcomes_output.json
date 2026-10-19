@@ -1,0 +1,17 @@
+{
+  "outcomes": [
+    { "title_fragment": "Approval of minutes", "outcome": "passed", "source_quote": "Director McBride moved that the minutes of the meeting held on June 15," },
+    { "title_fragment": "Bookkeeper's Report and Quarterly Investment Report", "outcome": "passed", "source_quote": "Bookkeeper's Report be approved, as presented, and the disbursements listed therein be approved" },
+    { "title_fragment": "Tax Assessor-Collector's Report", "outcome": "passed", "source_quote": "that the Tax Assessor-Collector's Report he approved, as presented" },
+    { "title_fragment": "Delinquent tax collections attorney report", "outcome": "tabled", "source_quote": "The Board deferred consideration of a Delinquent Tax Collections Report" },
+    { "title_fragment": "Garbage and Recycling Collection Services", "outcome": "no_action", "source_quote": "it was noted that no action was required of the Board at this time" },
+    { "title_fragment": "Engineer's Report", "outcome": "passed", "source_quote": "that the Engineer's Report and the action items listed therein, be approved and authorized" },
+    { "title_fragment": "Bioswale management proposal", "outcome": "passed", "source_quote": "seconded by Director Harper-Veith and unanimously carried, that such proposal be approved" },
+    { "title_fragment": "District website updates", "outcome": "tabled", "source_quote": "The Board deferred consideration of a Communications Report" },
+    { "title_fragment": "Developer's Report", "outcome": "no_action", "source_quote": "It was noted that no action was required by the Board in connection with such report" },
+    { "title_fragment": "Resolution Designating Location in District for Posting Notices of Meetings", "outcome": "passed", "source_quote": "the Resolution Designating Location in District for Posting Notices of Meetings be approved" },
+    { "title_fragment": "Local Government Bond, Tax, and Project Database report", "outcome": "passed", "source_quote": "Director Harper-Veith seconded the motion which carried unanimously" },
+    { "title_fragment": "Ratify approval of business travel accident insurance", "outcome": "passed", "source_quote": "the Board's prior approval of the proposal from Gallagher be approved and ratified in all respects" },
+    { "title_fragment": "Operator's Report", "outcome": "passed", "source_quote": "Maintenance Report and the action items listed therein, be approved and authorized, as appropriate" }
+  ]
+}

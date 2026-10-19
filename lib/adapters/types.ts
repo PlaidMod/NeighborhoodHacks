@@ -85,7 +85,12 @@ export type AdapterResult = z.infer<typeof AdapterResultSchema>;
 export type RunMode =
   | { kind: 'rotation' } // today → +30 days
   | { kind: 'near_term' } // now → +72 hours
-  | { kind: 'results'; meeting_external_ids: string[] };
+  | {
+      kind: 'results';
+      meeting_external_ids: string[];
+      /** Step 10: the stored meetings and items of those meetings (Phase 1: a saved scrape's JSON; Phase 2: the DB). */
+      known?: { meetings: Meeting[]; items: Item[] };
+    };
 
 export const AdapterKindSchema = z.enum(['legistar', 'boardbook', 'primegov', 'llm_extract', 'manual']);
 export type AdapterKind = z.infer<typeof AdapterKindSchema>;

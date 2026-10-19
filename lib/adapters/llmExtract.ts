@@ -4,6 +4,7 @@ import type { Adapter, AdapterDocument, AdapterResult, Item, Meeting, RunMode, S
 import { PDF_TIMEOUT_MS, getBytes, type HttpOptions } from './http';
 import { DiscoveryConfigSchema, discover, type DiscoveredDoc } from './discover';
 import { getPdfText, type PdfText } from './pdfText';
+import { runMinutesResults } from './minutes';
 import {
   geminiFromEnv,
   modelsFromEnv,
@@ -297,10 +298,6 @@ export function createLlmExtractAdapter(deps: LlmExtractDeps = {}): Adapter {
   return {
     async run(source: SourceConfig, mode: RunMode, window, prev): Promise<AdapterResult> {
       const result: AdapterResult = { meetings: [], items: [], documents: [], result_updates: [], warnings: [] };
-      if (mode.kind === 'results') {
-        result.warnings.push('llm_extract results mode (minutes) is not implemented yet (Step 10)');
-        return result;
-      }
       const cfg = LlmExtractConfigSchema.parse(source.config);
       const bodyId = source.body_id ?? source.id;
       const now = (deps.now ?? (() => new Date()))();
@@ -308,6 +305,37 @@ export function createLlmExtractAdapter(deps: LlmExtractDeps = {}): Adapter {
       const models = deps.models ?? modelsFromEnv();
       const pdfText = deps.pdfText ?? getPdfText;
       const http = { timeoutMs: PDF_TIMEOUT_MS, ...deps.http };
+
+      if (mode.kind === 'results') {
+        // Step 10 (D22): outcomes from minutes for known meetings; never creates items.
+        const known = mode.known ?? { meetings: [], items: [] };
+        const meetings = mode.meeting_external_ids.flatMap((id) => {
+          const m = known.meetings.find((x) => x.external_id === id);
+          if (!m) result.warnings.push(`meeting ${id}: not in the known meetings; skipped`);
+          return m ? [m] : [];
+        });
+        const minutesIndex = typeof cfg.minutes_index_url === 'string' && /^https?:\/\//.test(cfg.minutes_index_url) ? cfg.minutes_index_url : undefined;
+        if (!minutesIndex && meetings.some((m) => !m.minutes_url)) {
+          result.warnings.push(`${source.id}: no minutes_index_url configured; only meetings with minutes_url are checked`);
+        }
+        const out = await runMinutesResults({
+          meetings,
+          items: known.items,
+          discovery: minutesIndex
+            ? { ...cfg, index_url: minutesIndex, link_pattern: String(cfg.minutes_link_pattern ?? '(?i)minutes'), follow_notice_page: false }
+            : undefined,
+          tolerance_days: typeof cfg.minutes_date_tolerance_days === 'number' ? cfg.minutes_date_tolerance_days : 0,
+          window: { from: window.from, to: new Date(Math.min(window.to.getTime(), now.getTime())) },
+          llm,
+          models,
+          http,
+          pdfText,
+        });
+        result.documents.push(...out.documents);
+        result.result_updates.push(...out.updates);
+        result.warnings.push(...out.warnings);
+        return result;
+      }
 
       const found = await discover(cfg, window, { http: deps.http });
       const stamp = () => new Date().toISOString();

@@ -5,6 +5,7 @@ import { PDF_TIMEOUT_MS, getBytes, getText, type HttpOptions } from './http';
 import { geminiFromEnv, modelsFromEnv, type GeminiModels, type LlmClient } from './gemini';
 import { extractDocument } from './llmExtract';
 import { getPdfText, type PdfText } from './pdfText';
+import { runMinutesResults } from './minutes';
 import { documentContentHash } from '@/lib/ingest/hash';
 import { ZONE, toChicagoIso } from '@/lib/ingest/normalize';
 
@@ -156,7 +157,27 @@ export function createPrimeGovAdapter(deps: PrimeGovDeps = {}): Adapter {
       }
 
       if (mode.kind === 'results') {
-        result.warnings.push('primegov results mode (minutes) is not implemented yet (Step 10)');
+        // Step 10 (D22): minutes come from each meeting's documentList; there is no minutes index.
+        const known = mode.known ?? { meetings: [], items: [] };
+        const meetings = mode.meeting_external_ids.flatMap((id) => {
+          const pg = byId.get(Number(id));
+          const m = pg ? mapMeeting(pg, cfg, bodyId).meeting : known.meetings.find((x) => x.external_id === id);
+          if (!m) result.warnings.push(`meeting ${id}: not in the PrimeGov lists or the known meetings; skipped`);
+          return m ? [m] : [];
+        });
+        const out = await runMinutesResults({
+          meetings,
+          items: known.items,
+          tolerance_days: 0,
+          window: { from: window.from, to: new Date(Math.min(window.to.getTime(), now.getTime())) },
+          llm,
+          models,
+          http: { timeoutMs: PDF_TIMEOUT_MS, ...deps.http },
+          pdfText,
+        });
+        result.documents.push(...out.documents);
+        result.result_updates.push(...out.updates);
+        result.warnings.push(...out.warnings);
         return result;
       }
 
