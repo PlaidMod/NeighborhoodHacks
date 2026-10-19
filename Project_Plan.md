@@ -149,7 +149,7 @@ Student, Parent, Renter or Homeowner (pick any), plus a language choice. First-t
 - **Masthead:** "[App Name] Weekly: Your Local Governments," with the week's date range and an English/Spanish toggle.
 - **Lead story:** the most urgent "you can still act" item, with a large headline, dek, story, deadline countdown, a Speak up button and the source link.
 - **"Coming up: you can still act":** story cards, each with a headline, dek, body tag, registration-closes countdown, Speak up button and source link.
-- **"Decided this week":** short briefs with the outcome, the vote count where available, and the source link.
+- **"Decided this week":** short briefs with the outcome, the vote count where available, and the source link. If a meeting has happened but its minutes aren't posted yet (common for MUDs and college boards), the brief says "Outcome not posted yet" and updates when the minutes appear.
 - **Sidebar:** "Deadlines this week" and "Your governments at a glance."
 - **Footer:** "We summarize. We never recommend." Plus how stories are written and the data sources.
 
@@ -332,6 +332,9 @@ Each teammate owns one part end to end: data, backend and screens. The technical
 - PrimeGov check for City Council.
 - Gemini extraction adapter (MUD, college board, CFISD if not on Legistar), with the quote check.
 - Manual entry fallback.
+- Recheck rules: meetings in the next 72 hours on every run, to catch late-added items; past meetings until their results are posted (up to 45 days).
+- Linking HISD's Spanish agendas to their Legistar meetings.
+- Official sources only. News is never pulled in as data.
 - Review queue admin page.
 - Ingest scheduled job and health checks.
 - Golden tests for both adapters.
@@ -374,7 +377,7 @@ The real public comment happens on whatever day its meeting falls. Plan around t
 - **P2 Agenda Data:** confirm Legistar works without a token for Commissioners Court and HISD; 2-hour PrimeGov check; check CFISD's agenda system; download sample MUD and college agendas.
 - **P3 News and Alerts:** rule engine skeleton; write story-writing prompt drafts; set up Twilio Verify.
 - **P4 Speak up:** research and write the six registration recipes; deadline math.
-- **P5 Platform and Pitch:** set up Next.js, Supabase and Vercel; database schema; security; translation setup; publish privacy and terms pages; start Twilio registration; check meeting calendars; pick demo addresses.
+- **P5 Platform and Pitch:** set up Next.js, Supabase and Vercel; database schema; security; translation setup; publish privacy and terms pages; start Twilio registration; check meeting calendars; pick demo addresses. Also run a **news watchlist**: skim Community Impact, Houston Public Media, the Houston Chronicle and Houston Landing for upcoming fights at the demo bodies. This is for the team only; it helps find the best meeting for the real public comment.
 
 ### Day 2
 
@@ -426,6 +429,7 @@ Don't start these unless everything else is done.
 - **Regional section, live:** real data for H-GAC Transportation Policy Council, TxDOT Houston District, TCEQ, PUC, the Subsidence District and SJRA.
 - **"I'm going" counter** and group features.
 - **"What happened after you spoke":** the vote result and the video timestamp of your comment.
+- **"In the news" box on body pages:** headline, outlet and link only (for example from Community Impact, Houston Public Media, the Houston Chronicle or Houston Landing). No copied article text. Never used to trigger alerts or write stories.
 - **A full meeting-day screen.**
 - **More registration recipes and more auto-imported bodies.**
 - **Vietnamese translation.**

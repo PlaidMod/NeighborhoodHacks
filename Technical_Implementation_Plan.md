@@ -168,7 +168,7 @@ type Meeting = { external_id: string; body_id: string; date: string;
   source_url_es?: string; video_url?: string };
 type Item = { external_id: string; meeting_external_id: string;
   agenda_number?: string; title: string; matter_type?: string;
-  status: 'upcoming' | 'decided'; action?: string; vote_result?: string;
+  status: 'upcoming' | 'awaiting_result' | 'decided'; action?: string; vote_result?: string;
   source_url: string; source_quote?: string };
 ```
 
@@ -210,12 +210,32 @@ type Item = { external_id: string; meeting_external_id: string;
 
 - Rows entered through the Supabase table editor. `source_url` is required.
 
+### HISD Spanish agendas (linking step)
+
+- HISD posts Spanish agendas on its own site, not on Legistar.
+- A small job finds each Spanish agenda PDF (with LLMExtractAdapter for the page, or manual entry), matches it to the Legistar meeting by date, and stores it as `meetings.source_url_es`.
+- Spanish item pages link to it.
+
+### Official sources that are not agenda sites (hand-entered, not scraped)
+
+- Harris County election results (turnout for MUD, ESD, bond and trustee elections) → `elections`
+- Harris County Tax Office Truth-in-Taxation notices (adopted, no-new-revenue and voter-approval rates) → `tax_rates`
+- The HCAD protest deadline → `deadlines`
+
+News sites are never a data source. They're used only as a team watchlist (P5) and, as a stretch goal, as headline-and-link boxes.
+
 ### Pipeline (`/api/cron/ingest`)
 
 1. Process one source per invocation, choosing the least recently checked, to stay within function time limits.
-2. Fetch meetings and items.
+2. Fetch meetings and items, using these recheck windows:
+   - **Near-term meetings (next 72 hours):** rechecked on every run, regardless of the source's `last_checked`. Commissioners Court can add supplemental items up to 72 hours ahead and emergency items up to 1 hour ahead.
+   - **Upcoming meetings (3–30 days ahead):** checked on the normal rotation.
+   - **Past meetings with `awaiting_result` items:** the minutes or results page is rechecked daily for up to 45 days after the meeting. After that, the item stays `awaiting_result` and is flagged in the health check.
 3. **Upsert** by `(source_id, external_id)`. Runs are idempotent.
-4. **Change detection:** `content_hash` = hash of title + status + action. When the hash changes, re-run `classify()`. An item going from upcoming to decided moves sections and doesn't trigger new alerts.
+4. **Change detection:** `content_hash` = hash of title + status + action. When the hash changes, re-run `classify()`.
+   - **Upcoming → decided:** moves sections and triggers no new alerts.
+   - **Upcoming → awaiting_result:** applies automatically once the meeting date has passed with no outcome posted. This is mainly for LLM-extracted and manual sources; Legistar items usually go straight to decided.
+   - **New items on a near-term meeting:** go through the full pipeline. If their registration window has already closed, the SMS text uses the "registration may already be closed" wording (section 11).
 5. Run `classify()` → enrich → generate the story (section 9) → route.
 6. Store the raw API response or model output in `documents`.
 7. **Health check:** flag the source if the fetch fails, it returns no meetings for 14+ days, a required field is empty, or the quote check rejects more than 20% of items.
@@ -276,7 +296,7 @@ type Item = { external_id: string; meeting_external_id: string;
 - **Sections:**
   - **Lead story:** SMS-tier first, then soonest registration close, then the reader's stake.
   - **"Coming up: you can still act":** status upcoming, sorted by registration close, then meeting date.
-  - **"Decided this week."**
+  - **"Decided this week":** `decided` items with their outcome, plus `awaiting_result` items labeled "Outcome not posted yet." Those are updated in place when the minutes appear.
   - **Sidebar:** "Deadlines this week" (registration closes, elections, protest deadline) and "Your governments at a glance."
 - **Intro line** is a template, for example "This week: 3 decisions coming up across your 8 local governments, 2 with deadlines before Friday."
 - **Rendering:** server-rendered and cached per token for 1 hour.
@@ -302,6 +322,8 @@ type Item = { external_id: string; meeting_external_id: string;
    - **Idempotency:** a unique key `(user_id, item_id, rule)` in `alerts_sent`.
 
 **Message format:** `[Body]: [headline]. [deadline]. Speak up: [short link] Reply STOP to opt out.`
+
+**Late-added items** (registration window already closed when ingested): the `[deadline]` part becomes "Registration to speak may already be closed; you can still send a written comment." The link opens Speak up on the written or email channel.
 
 **Opt-out:** Twilio's STOP handling, plus the `/api/twilio/inbound` webhook, which sets `users.sms_opted_out`.
 
@@ -467,6 +489,8 @@ The client removes every `guardrail_hits` quote from the draft and shows its rea
 | "Who governs you?" scoring | P1 | Actual set matches the verified lookup for both demo addresses |
 | Legistar golden | P2 | Saved responses from 5–10 meetings per client parse to the expected items |
 | Extraction golden | P2 | 5–10 saved documents give the expected items; fake quotes rejected |
+| Recheck windows | P2 | A supplemental item added to a meeting <72 hours away is picked up on the next run; a past meeting's item moves awaiting_result → decided when saved minutes are added |
+| Spanish agenda linking | P2 | Each saved HISD Spanish agenda links to the right Legistar meeting |
 | Rule engine | P3 | Every rule fires on its sample; all near-misses don't |
 | Story fact-check | P3 | Correct stories pass; deliberately wrong numbers and dates are rejected |
 | SMS | P3 | No duplicates; quiet hours respected; STOP works |
@@ -491,4 +515,5 @@ The client removes every `guardrail_hits` quote from the draft and shows its rea
 | Gemini model name, pricing, paid-tier data terms | P5 |
 | Vercel plan cron frequency and function duration limits | P5 |
 | Twilio registration started; privacy and terms pages live | P5 |
+| News watchlist: skim Community Impact, Houston Public Media, Houston Chronicle and Houston Landing for upcoming fights at the demo bodies (team use only) | P5 |
 | Shared schema, types and token format agreed by all five | Everyone |
