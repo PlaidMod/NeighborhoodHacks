@@ -1,22 +1,4 @@
-# Agent han### 2026-10-19: P2 scraper step 1: shared types, ingest utilities, scrape CLI shell
-- **Who:** Iarush · P2 Agenda Data
-- **Branch:** scrapper
-- **What changed:** Added the scraper's shared types (zod schemas for Meeting, Item, AdapterResult, news types), an HTTP helper, text/date normalization (America/Chicago), hashing, amount parsing, personnel redaction, section attribution, validation, a classify stub, the source registry with the news-domain guard, and the `npm run scrape` CLI shell (no adapters yet).
-- **Files:** `lib/adapters/`, `lib/ingest/`, `scripts/scrape.ts`, `data/sources.yaml`, `tests/unit/`, `.plans/scraper-progress.md`
-- **Contract changes:** `Meeting`/`Item` extended per scraper spec §5.1/§12 (end_date, status, minutes_url, comment_rules_text, body_id, section, description, amounts with optional `kind: 'rate'`, attachments, contains_private_person, quote_verified). Affects P3 and P5.
-- **Checked:** npm run typecheck, npm run lint, npm test (66 passed)
-- **Open issues / next:** Step 2 (LegistarAdapter). `lib/rules/classify.ts` untouched (P3 owns it).
-
-### 2026-10-19: P2 scraper step 0: root TypeScript project setup
-- **Who:** Iarush · P2 Agenda Data
-- **Branch:** scrapper
-- **What changed:** Added a root Node/TypeScript project for the standalone scraper library (separate from `web/`): package.json scripts, strict tsconfig, vitest, eslint, `.env.example`, `.gitignore`, and the progress log `.plans/scraper-progress.md`.
-- **Files:** `package.json`, `package-lock.json`, `tsconfig.json`, `vitest.config.ts`, `vitest.live.config.ts`, `eslint.config.js`, `.env.example`, `.gitignore`, `.plans/scraper-progress.md`, `tests/unit/setup.test.ts`
-- **Contract changes:** None
-- **Checked:** npm run typecheck, npm run lint, npm test (1 passed)
-- **Open issues / next:** P5 must merge root deps into the Next.js package.json later. Root configs exclude `web/`.
-
-doff log
+# Agent handoff log
 
 A shared log of changes made in this repo, so the next teammate or agent can catch up without reading every diff. Entries follow `INSTRUCTIONS.md`: record the teammate, never the agent or model.
 
@@ -50,6 +32,33 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 ---
 
 ## Entries
+
+### 2026-10-19: P2 scraper Phase 1 complete (steps 2–13)
+- **Who:** Iarush · P2 Agenda Data
+- **Branch:** scrapper
+- **What changed:** Standalone scraper library (no DB, no Next.js): Legistar (Commissioners Court, HISD), BoardBook (CFISD), PrimeGov (City Council), LLM extraction (Lone Star, HC MUD 489) and manual YAML adapters; results from minutes; news headline collector, article fetcher and article→item matching; pure `health()`. Per-step details, smoke tables and a "Handoff to P5/P3" section are in `.plans/scraper-progress.md`. Also moved the step 0/1 entries, which had been inserted above this file's title, down here unchanged.
+- **Files:** `lib/adapters/`, `lib/ingest/`, `lib/news/`, `scripts/`, `data/`, `tests/`, `.plans/scraper-progress.md`
+- **Contract changes:** `Meeting`/`Item` per scraper spec §12.1 (`Item.status` upcoming|awaiting_result|decided, `Meeting` end_date/status/minutes_url/comment_rules_text, `vote_result` passed|failed|no_action, `AdapterResult.result_updates`). Additions: optional `is_demo` on Meeting/Item; `RunMode` results takes optional `known`; no `content_hash` on Item/Meeting types (computed at write time); `health()` returns `details`; redaction also covers embedded names and 3+ name lists ("several employees"). DB columns per spec P2-A (P5). Affects P3 and P5.
+- **Checked:** npm run typecheck, npm run lint, npm test (364 passed); live smoke of every source (table in progress log).
+- **Open issues / next:** No GEMINI_API_KEY: all LLM fixtures hand-written, model ids unverified, live LLM smokes owed. Live BoardBook smoke and BoardBook results mode owed (session was in the 00:00–05:00 window). 5 outlets `fetch_articles: false` (terms of use); Houston Landing disabled. Phase 2 waits for P5's platform.
+
+### 2026-10-19: P2 scraper step 1: shared types, ingest utilities, scrape CLI shell
+- **Who:** Iarush · P2 Agenda Data
+- **Branch:** scrapper
+- **What changed:** Added the scraper's shared types (zod schemas for Meeting, Item, AdapterResult, news types), an HTTP helper, text/date normalization (America/Chicago), hashing, amount parsing, personnel redaction, section attribution, validation, a classify stub, the source registry with the news-domain guard, and the `npm run scrape` CLI shell (no adapters yet).
+- **Files:** `lib/adapters/`, `lib/ingest/`, `scripts/scrape.ts`, `data/sources.yaml`, `tests/unit/`, `.plans/scraper-progress.md`
+- **Contract changes:** `Meeting`/`Item` extended per scraper spec §5.1/§12 (end_date, status, minutes_url, comment_rules_text, body_id, section, description, amounts with optional `kind: 'rate'`, attachments, contains_private_person, quote_verified). Affects P3 and P5.
+- **Checked:** npm run typecheck, npm run lint, npm test (66 passed)
+- **Open issues / next:** Step 2 (LegistarAdapter). `lib/rules/classify.ts` untouched (P3 owns it).
+
+### 2026-10-19: P2 scraper step 0: root TypeScript project setup
+- **Who:** Iarush · P2 Agenda Data
+- **Branch:** scrapper
+- **What changed:** Added a root Node/TypeScript project for the standalone scraper library (separate from `web/`): package.json scripts, strict tsconfig, vitest, eslint, `.env.example`, `.gitignore`, and the progress log `.plans/scraper-progress.md`.
+- **Files:** `package.json`, `package-lock.json`, `tsconfig.json`, `vitest.config.ts`, `vitest.live.config.ts`, `eslint.config.js`, `.env.example`, `.gitignore`, `.plans/scraper-progress.md`, `tests/unit/setup.test.ts`
+- **Contract changes:** None
+- **Checked:** npm run typecheck, npm run lint, npm test (1 passed)
+- **Open issues / next:** P5 must merge root deps into the Next.js package.json later. Root configs exclude `web/`.
 
 ### 2026-10-19: Plan revision 5: news coverage perspectives
 - **Who:** Iarush · part not set yet
