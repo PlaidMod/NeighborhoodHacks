@@ -5,5 +5,92 @@
   },
   "Home": {
     "title": "ShowUp HTX"
+  },
+  "About": {
+    "metaTitle": "Acerca de ShowUp HTX",
+    "title": "Acerca de ShowUp HTX",
+    "pitch": "Escribe tu dirección, mira cada gobierno que te afecta, incluso los que nunca has oído mencionar, y recibe ayuda para hablar antes de la votación.",
+    "storiesTitle": "Cómo escribimos las noticias",
+    "storiesBody": "Cada noticia semanal se escribe con IA a partir de la agenda oficial y luego se revisa con código: cada número y fecha debe coincidir con la agenda; si no, mostramos un resumen sencillo. Las noticias escritas así llevan esta etiqueta:",
+    "storiesLabel": "Escrito con IA a partir de la agenda oficial — ver la fuente",
+    "sourcesTitle": "De dónde viene nuestra información",
+    "sourcesBody": "Las agendas y actas oficiales que publica cada gobierno, el Distrito de Tasación Central de Harris (HCAD) y la búsqueda de direcciones de la Oficina del Censo de EE. UU. Cada noticia y cada asunto enlaza a su fuente.",
+    "neutralTitle": "Somos neutrales",
+    "neutralBody": "Resumimos. Nunca recomendamos. No le decimos a nadie cómo votar ni qué postura tomar."
+  },
+  "Legal": {
+    "effective": "Vigente desde el 19 de octubre de 2026",
+    "contactTitle": "Contacto",
+    "contactBody": "¿Preguntas o solicitudes? Abre un reporte en la página del proyecto:",
+    "privacy": {
+      "metaTitle": "Política de privacidad",
+      "title": "Política de privacidad",
+      "intro": "ShowUp HTX te ayuda a conocer tus gobiernos locales y a hacerte escuchar. Recopilamos lo mínimo posible. Esto es lo que guardamos y por qué.",
+      "address": {
+        "title": "Tu dirección",
+        "body": "Usamos tu dirección una sola vez, para encontrar tus gobiernos locales, y luego la olvidamos. Nunca la guardamos. Los enlaces a tus resultados solo contienen una lista de identificadores de gobiernos, no tu dirección."
+      },
+      "cookies": {
+        "title": "Sin cuentas, pocas cookies",
+        "body": "No necesitas una cuenta. Usamos unas pocas cookies pequeñas: tu idioma (NEXT_LOCALE), los roles que elegiste, como estudiante o inquilino (showup_stakes), y un identificador aleatorio del navegador (showup_bid) que limita cuántas veces puede usarse el asistente de IA. Los administradores del equipo también reciben una cookie de inicio de sesión."
+      },
+      "rateLimits": {
+        "title": "Límites de uso",
+        "body": "Para evitar abusos, guardamos una copia codificada (hash) de tu dirección IP hasta por dos días, solo para limitar cuántas veces se puede usar la aplicación. La copia codificada cambia cada día."
+      },
+      "quiz": {
+        "title": "Respuestas de \"¿Quién te gobierna?\"",
+        "body": "Si respondes la pregunta \"¿Quién te gobierna?\", guardamos tus respuestas de forma anónima, solo como tipos de gobierno (por ejemplo, \"junta escolar\"). Nada en ellas te identifica."
+      },
+      "drafts": {
+        "title": "Borradores de comentarios",
+        "body": "Los borradores de \"Habla\" nunca se guardan en nuestros servidores. Tu progreso se queda en tu propio navegador. Para darte comentarios, enviamos tu borrador a la API Gemini de Google, que lo procesa por nosotros."
+      },
+      "alerts": {
+        "title": "Alertas por mensaje de texto",
+        "body": "Las alertas por mensaje de texto son opcionales. Si te inscribes, guardamos tu número de teléfono después de que lo verifiques, y Twilio envía los mensajes por nosotros. El programa se llama \"ShowUp HTX alerts\". La frecuencia de los mensajes varía. Pueden aplicarse tarifas de mensajes y datos. Responde STOP para dejar de recibirlos o HELP para pedir ayuda. Si tienes menos de 18 años, uno de tus padres debe aceptar antes de que te enviemos mensajes."
+      },
+      "sharing": {
+        "title": "No compartimos para publicidad",
+        "body": "No compartimos tu número de celular ni tu consentimiento para recibir mensajes de texto con terceros para fines de publicidad."
+      },
+      "processors": {
+        "title": "Servicios que manejan datos por nosotros",
+        "body": "Supabase (nuestra base de datos), Vercel (aloja el sitio web), Google (la API Gemini, para resúmenes y comentarios sobre tus borradores) y Twilio (mensajes de texto)."
+      },
+      "news": {
+        "title": "Enlaces a noticias",
+        "body": "Las páginas de los gobiernos muestran titulares y enlaces de medios de noticias externos. No copiamos los artículos."
+      }
+    },
+    "terms": {
+      "metaTitle": "Términos de uso",
+      "title": "Términos de uso",
+      "intro": "Al usar ShowUp HTX, aceptas estos términos.",
+      "info": {
+        "title": "Información, no asesoría",
+        "body": "ShowUp HTX ofrece información, no asesoría legal. Resumimos registros públicos oficiales y podemos cometer errores. Antes de actuar, revisa la fuente oficial que enlazamos en cada página."
+      },
+      "neutral": {
+        "title": "Somos neutrales",
+        "body": "Nunca recomendamos cómo votar ni qué postura tomar."
+      },
+      "speakUp": {
+        "title": "Tu comentario es tuyo",
+        "body": "\"Habla\" te orienta. Tú escribes y envías tu propio comentario. Nunca te inscribimos ni enviamos nada por ti."
+      },
+      "conduct": {
+        "title": "Úsalo con respeto",
+        "body": "No uses ShowUp HTX para amenazas ni acoso, ni para compartir información privada de otras personas."
+      },
+      "alerts": {
+        "title": "Alertas por mensaje de texto",
+        "body": "\"ShowUp HTX alerts\" envía mensajes sobre decisiones de los gobiernos que sigues. La frecuencia de los mensajes varía. Pueden aplicarse tarifas de mensajes y datos. Responde STOP para dejar de recibirlos o HELP para pedir ayuda. Las compañías telefónicas no son responsables de mensajes retrasados o no entregados."
+      },
+      "asIs": {
+        "title": "Un proyecto estudiantil",
+        "body": "ShowUp HTX es un proyecto estudiantil creado para Neighborhood Hacks 2026. Se ofrece tal como está, sin garantías."
+      }
+    }
   }
 }

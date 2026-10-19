@@ -33,6 +33,31 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-19: P5 Task 5: about, privacy and terms pages (English and Spanish)
+- **Who:** PlaidMod · P5 Platform, Evidence and Pitch
+- **Branch:** main
+- **What changed:** Added `/about`, `/privacy` and `/terms` in both languages. The privacy page covers everything the plan and Twilio need:
+  - your address isn't saved
+  - the cookies (`NEXT_LOCALE`, `showup_stakes`, `showup_bid`) and the hashed IPs
+  - anonymous quiz answers
+  - drafts sent to Google's Gemini API
+  - the text program ("ShowUp HTX alerts," message frequency, "Msg & data rates may apply," STOP and HELP, parent consent under 18)
+  - "we do not share your mobile number … for marketing"
+  - the services that handle data (Supabase, Vercel, Google, Twilio)
+  - news headline links
+
+  Styling is plain for now; the design tokens arrive in P5 Task 10.
+- **Files:** `app/(public)/{about,privacy,terms}/page.tsx`, `components/legal/LegalDocument.tsx`, `lib/brand.ts` (`APP_NAME`, `CONTACT_URL`), `messages/en.json`, `messages/es.json`
+- **Contract changes:** None.
+- **Checked:**
+  - `npm test` (32/32, including en/es message parity), typecheck, lint and build pass.
+  - On a production server, all three pages return 200 and switch to Spanish for `es-MX`.
+  - In a browser at 390px, none of the six page/language combinations scrolls sideways.
+- **Open issues / next:**
+  - **The contact link (GitHub Issues) returns 404 for anyone logged out, because the repo is private.** Twilio's reviewers will hit that. P3: if Twilio asks for a working contact, we need a team email or a public repo before you submit.
+  - The Spanish name for "Speak up" is "Habla" on these pages. P4, rename it if you choose another.
+  - There's no favicon yet (it shows as a console 404); it comes with Task 10.
+
 ### 2026-10-19: P5 Task 4: English/Spanish translations and Chicago time
 - **Who:** PlaidMod · P5 Platform, Evidence and Pitch
 - **Branch:** main
