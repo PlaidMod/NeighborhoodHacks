@@ -22,7 +22,7 @@ Read `../INSTRUCTIONS.md` (at the repo root) before doing anything. Its rules on
 
 ## Plan stress test (once per teammate)
 
-At the start of a session, check whether your teammate has done the plan stress test, using the rules at the top of `../plan_stress_test.md`. If they haven't, run it before other work, unless they say to skip it or do it later.
+At the start of a session, check whether your teammate has done the plan stress test, using the rules at the top of `../plan_stress_test.md`. If they haven't, run it before other work, unless they say to skip it or do it later. **Exception:** if you're running autonomously under a `.plans/` spec, don't stop for it. Note in that spec's progress log that it's pending.
 
 ## Handoff log (required)
 

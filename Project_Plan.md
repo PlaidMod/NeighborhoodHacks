@@ -1,11 +1,15 @@
 # Project Plan
 
-**Revision 4, Oct 18, 2026**
+**Revision 5, Oct 18, 2026**
 **Working name:** [App Name] (placeholder ideas: "MyLayers", "WhoDecides")
 
 The companion file, *Technical_Implementation_Plan.md*, covers how each part is built.
 
 ---
+
+## What changed in revision 5
+
+- **News "might come up" box** (from P2's scraper spec v1.2, decision D26): body pages show news headline links labeled "may come up at a future meeting." News still never feeds items, alerts or stories. The "In the news" box moves from stretch goals to the core product.
 
 ## What changed in revision 4
 
@@ -144,6 +148,7 @@ Each body page shows:
 - who sets its tax and who runs it
 - whether it's elected or appointed
 - its next meeting
+- an "In the news" box: headline, outlet and link only, labeled "may come up at a future meeting." No copied article text. It's never used for items, alerts or stories.
 
 ### 4. "Who sets each dollar" tax receipt
 
@@ -349,7 +354,7 @@ Each part also moves the text on its own screens into the English and Spanish tr
 - Manual entry fallback.
 - Recheck rules: meetings in the next 72 hours on every run, to catch late-added items; past meetings until their results are posted (up to 45 days).
 - Linking HISD's Spanish agendas to their Legistar meetings.
-- Official sources only. News is never pulled in as data.
+- Official sources only for items, alerts and stories. News appears only as headline links on body pages, labeled "may come up at a future meeting" (scraper spec D26).
 - Review queue admin page.
 - Ingest scheduled job and health checks.
 - Golden tests for both adapters.
@@ -448,7 +453,6 @@ Don't start these unless everything else is done.
 - **Regional section, live:** real data for H-GAC Transportation Policy Council, TxDOT Houston District, TCEQ, PUC, the Subsidence District and SJRA.
 - **"I'm going" counter** and group features.
 - **"What happened after you spoke":** the vote result and the video timestamp of your comment.
-- **"In the news" box on body pages:** headline, outlet and link only (for example from Community Impact, Houston Public Media, the Houston Chronicle or Houston Landing). No copied article text. Never used to trigger alerts or write stories.
 - **A full meeting-day screen.**
 - **More registration recipes and more auto-imported bodies.**
 - **Vietnamese translation.**

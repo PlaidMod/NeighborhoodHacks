@@ -1,6 +1,8 @@
 # Technical Implementation Plan
 
-**Revision 4, Oct 18, 2026**
+**Revision 5, Oct 18, 2026**
+
+Revision 5 updates §6 for the news "might come up" box (P2's scraper spec, D26).
 
 Revision 4 moves four Day 1 tasks off P5 (see *Project_Plan.md*, "What changed in revision 4"). The sections changed here are §11 (Twilio registration), §17 (translation ownership) and §22 (Day 1 checks).
 
@@ -224,7 +226,7 @@ type Item = { external_id: string; meeting_external_id: string;
 - Harris County Tax Office Truth-in-Taxation notices (adopted, no-new-revenue and voter-approval rates) → `tax_rates`
 - The HCAD protest deadline → `deadlines`
 
-News sites are never a data source. They're used only as a team watchlist (P5) and, as a stretch goal, as headline-and-link boxes.
+News sites are never a source for items, alerts or stories. They're used only as a team watchlist and, per P2's scraper spec (D26), for headline links on body pages labeled "may come up at a future meeting." Article text is never stored.
 
 ### Pipeline (`/api/cron/ingest`)
 
