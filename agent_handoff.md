@@ -33,6 +33,36 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-19: Gemini can run on Vertex AI; `.env.local` laid out for every key
+- **Who:** PlaidMod · P5 Platform, Evidence and Pitch
+- **Branch:** main
+- **What changed:**
+  - **Vertex AI needs no change to either Gemini client.**
+    - `lib/gemini.ts` and P2's `lib/adapters/gemini.ts` both call `new GoogleGenAI({ apiKey })`.
+    - With `GOOGLE_GENAI_USE_VERTEXAI=true`, `@google/genai` 2.30.0 sends the same call to Vertex AI (`aiplatform.googleapis.com`), using the key. Without it, the call goes to the Gemini API.
+  - **`.env.example`:** adds `GOOGLE_GENAI_USE_VERTEXAI=true`, plus where to get the Gemini, Supabase secret and Twilio keys.
+  - **`scripts/gemini-smoke.ts`:** a new `--model <id>` option checks that a model ID works, and the output names the backend it used.
+  - **The owner's `.env.local`** now follows the template. Every existing value is kept, and the blank lines are the keys still to fill in.
+- **Files:** `.env.example`, `scripts/gemini-smoke.ts`
+- **Contract changes (P2, P3, P4):**
+  - **The team's Gemini key will be a Vertex AI key.** Wherever `GEMINI_API_KEY` is set, also set `GOOGLE_GENAI_USE_VERTEXAI=true`. That includes `scraper P2/.env.local`, because P2's scripts load that file. If the switch is missing, the Vertex key goes to the Gemini API and the call fails.
+  - **P2: `gemini-pro-latest` is a Gemini API alias.**
+    - Vertex's model list (Gemini Enterprise Agent Platform > Model versions) has no `-latest` aliases.
+    - Its only long-lived Pro text model, `gemini-2.5-pro`, retires Oct 20, 2026.
+    - Pick the extraction fallback (and P3's judge model) from that list, then check it with `npx tsx scripts/gemini-smoke.ts --model <id>`.
+    - `gemini-3.8-flash` is GA on Vertex.
+  - **FYI:** Google's 3.8 Flash guide says the backend ignores `temperature` for this model; determinism comes from `thinking_level` and the response schema. Both clients send `temperature: 0`, which is harmless.
+- **Checked:**
+  - `npm test` (128/128), typecheck and lint pass.
+  - A probe with a fake `fetch` (no network) confirmed both endpoints: `generativelanguage.googleapis.com` when the switch is unset, and `aiplatform.googleapis.com` when it's `true`. Both send the key in the `x-goog-api-key` header.
+  - Without a key, the smoke script stops with `MissingEnvError`.
+  - No live call yet, because there's no key.
+- **Open issues / next:**
+  - The owner adds the Vertex key and runs the smoke test.
+  - The owner shares the key privately with P2 for `scraper P2/.env.local`.
+  - The Gemini key and the switch need adding to Vercel, after the owner approves.
+  - **Free keys may lack 3.8 Flash:** Google's express-mode page (the free 90-day trial) doesn't list `gemini-3.8-flash`, so a key without billing may not reach it.
+
 ### 2026-10-19: P5 final review fixes (rate limits, demo cache, admin cookies, privacy page)
 - **Who:** PlaidMod · P5 Platform, Evidence and Pitch
 - **Branch:** main
