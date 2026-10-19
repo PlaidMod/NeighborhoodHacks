@@ -9,10 +9,12 @@
   link_path_allow: ["/cy-fair/", "/houston/", "/heights-river-oaks-montrose/", "/bellaire-meyerland-west-university/",
                     "/spring-klein/", "/tomball-magnolia/", "/katy-fulshear/", "/lake-houston-humble-kingwood/", "/bay-area/"]
   enabled: true
+  fetch_articles: false   # terms: "Scrapes, harvests, or collects data without our written consent" is prohibited (Step 11b)
 # Houston Landing: TLS handshake fails (ERR_SSL_TLSV1_UNRECOGNIZED_NAME) on Oct 18 and 4 retries Oct 19; disabled
 - { outlet: Houston Landing, url: "https://houstonlanding.org/feed/", enabled: false }
-- { outlet: KHOU 11, url: "https://www.khou.com/feeds/syndication/rss/news/local", enabled: true }
-- { outlet: KPRC 2, url: "https://www.click2houston.com/arc/outboundfeeds/rss/category/news/local/?outputType=xml", enabled: true }
-- { outlet: ABC13, url: "https://abc13.com/feed/", enabled: true }   # sitewide; body-alias matching filters it
-- { outlet: FOX 26 Houston, url: "https://www.fox26houston.com/rss/category/local-news", enabled: true }
+- { outlet: KHOU 11, fetch_articles: false, url: "https://www.khou.com/feeds/syndication/rss/news/local", enabled: true }
+- { outlet: KPRC 2, fetch_articles: false, url: "https://www.click2houston.com/arc/outboundfeeds/rss/category/news/local/?outputType=xml", enabled: true }
+- { outlet: ABC13, fetch_articles: false, url: "https://abc13.com/feed/", enabled: true }   # sitewide; body-alias matching filters it
+- { outlet: FOX 26 Houston, fetch_articles: false, url: "https://www.fox26houston.com/rss/category/local-news", enabled: true }
+# fetch_articles: false on KHOU/KPRC/ABC13/FOX 26: terms of use forbid automated copying/storage (see .plans/scraper-progress.md, Step 11b)
 # Houston Chronicle: excluded (no public RSS found, paywalled)

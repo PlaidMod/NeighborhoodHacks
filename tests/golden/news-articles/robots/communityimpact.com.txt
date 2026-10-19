@@ -1,0 +1,162 @@
+User-Agent: *
+Allow: /
+Disallow: /api/
+Disallow: /account/
+Disallow: /article/
+Disallow: /r/
+Disallow: /preview/
+Disallow: /preview_article/
+Disallow: /preview-article/
+Disallow: /search/
+
+User-Agent: OAI-SearchBot
+Allow: /
+Disallow: /api/
+Disallow: /account/
+Disallow: /article/
+Disallow: /r/
+Disallow: /preview/
+Disallow: /preview_article/
+Disallow: /preview-article/
+Disallow: /search/
+
+User-Agent: ChatGPT-User
+Allow: /
+Disallow: /api/
+Disallow: /account/
+Disallow: /article/
+Disallow: /r/
+Disallow: /preview/
+Disallow: /preview_article/
+Disallow: /preview-article/
+Disallow: /search/
+
+User-Agent: PerplexityBot
+Allow: /
+Disallow: /api/
+Disallow: /account/
+Disallow: /article/
+Disallow: /r/
+Disallow: /preview/
+Disallow: /preview_article/
+Disallow: /preview-article/
+Disallow: /search/
+
+User-Agent: Perplexity-User
+Allow: /
+Disallow: /api/
+Disallow: /account/
+Disallow: /article/
+Disallow: /r/
+Disallow: /preview/
+Disallow: /preview_article/
+Disallow: /preview-article/
+Disallow: /search/
+
+User-Agent: ClaudeBot
+Allow: /
+Disallow: /api/
+Disallow: /account/
+Disallow: /article/
+Disallow: /r/
+Disallow: /preview/
+Disallow: /preview_article/
+Disallow: /preview-article/
+Disallow: /search/
+
+User-Agent: Claude-User
+Allow: /
+Disallow: /api/
+Disallow: /account/
+Disallow: /article/
+Disallow: /r/
+Disallow: /preview/
+Disallow: /preview_article/
+Disallow: /preview-article/
+Disallow: /search/
+
+User-Agent: Claude-SearchBot
+Allow: /
+Disallow: /api/
+Disallow: /account/
+Disallow: /article/
+Disallow: /r/
+Disallow: /preview/
+Disallow: /preview_article/
+Disallow: /preview-article/
+Disallow: /search/
+
+User-Agent: Google-Extended
+Allow: /
+Disallow: /api/
+Disallow: /account/
+Disallow: /article/
+Disallow: /r/
+Disallow: /preview/
+Disallow: /preview_article/
+Disallow: /preview-article/
+Disallow: /search/
+
+User-Agent: Applebot-Extended
+Allow: /
+Disallow: /api/
+Disallow: /account/
+Disallow: /article/
+Disallow: /r/
+Disallow: /preview/
+Disallow: /preview_article/
+Disallow: /preview-article/
+Disallow: /search/
+
+User-Agent: meta-externalagent
+Allow: /
+Disallow: /api/
+Disallow: /account/
+Disallow: /article/
+Disallow: /r/
+Disallow: /preview/
+Disallow: /preview_article/
+Disallow: /preview-article/
+Disallow: /search/
+
+User-Agent: GPTBot
+Disallow: /
+
+User-Agent: CCBot
+Disallow: /
+
+User-Agent: Bingbot
+Crawl-delay: 10
+
+User-Agent: DuckDuckBot
+Crawl-delay: 10
+
+User-Agent: Yandex
+Crawl-delay: 10
+
+User-Agent: AhrefsBot
+Disallow: /
+Crawl-delay: 20
+
+User-Agent: SemrushBot
+Disallow: /
+Crawl-delay: 20
+
+User-Agent: DotBot
+Disallow: /
+Crawl-delay: 20
+
+User-Agent: MJ12bot
+Disallow: /
+Crawl-delay: 20
+
+User-Agent: BLEXBot
+Disallow: /
+Crawl-delay: 20
+
+User-Agent: Bytespider
+Disallow: /
+Crawl-delay: 20
+
+Sitemap: https://communityimpact.com/sitemap.xml
+Sitemap: https://communityimpact.com/news-sitemap.xml
