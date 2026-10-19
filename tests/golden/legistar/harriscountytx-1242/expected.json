@@ -1,0 +1,172 @@
+{
+  "meeting": {
+    "external_id": "1242",
+    "date": "2026-09-17T09:00:00-05:00",
+    "type": "regular",
+    "status": "scheduled",
+    "agenda_url": "https://harriscountytx.legistar1.com/harriscountytx/meetings/2026/9/1242_A_Commissioners_Court_26-09-17_Agenda.pdf",
+    "has_comment_rules": true
+  },
+  "item_count": 573,
+  "spot_checks": [
+    {
+      "external_id": "198857",
+      "title": "September 11, 2026 - NOTICE OF A PUBLIC MEETING",
+      "agenda_number": null,
+      "section": "Public Notice",
+      "status": "awaiting_result",
+      "vote_result": null
+    },
+    {
+      "external_id": "198354",
+      "title": "Request for approval of an interlocal agreement with Terranova West Municipal Utility District, in the amount of $3,656.25, for reimbursement of mowing HCFCD Unit K531-01-00 for a term of five years (Cypress Creek Watershed, Project ID K531-01-00-V005, Agreement No. 1578, Precinct 3).",
+      "agenda_number": "146",
+      "section": "Flood Control District",
+      "status": "decided",
+      "vote_result": "passed"
+    },
+    {
+      "external_id": "198537",
+      "title": "Request by the Constable of Precinct 7 for approval to accept from the Texas Department of Transportation grant funds in the amount of $94,111.27, with a match of $25,247.56, for the FY27 STEP Comprehensive Grant.",
+      "agenda_number": "289",
+      "section": "Grants",
+      "status": "decided",
+      "vote_result": "passed"
+    },
+    {
+      "external_id": "198678",
+      "title": "Request for approval of an agreement with Strategic Recovery Solutions to provide addiction and mental health recovery services and participate in peer-based recovery support systems at Channelview Foundation of Hope, a department health and social services hub that provides free and low-cost care to East Harris County residents, for one year with up to three annual renewals, at no cost to the county.",
+      "agenda_number": "432",
+      "section": "Commissioner, Precinct 2",
+      "status": "decided",
+      "vote_result": "passed"
+    },
+    {
+      "external_id": "198801",
+      "title": "Request by Harris Health System for approval to lease property for supplemental parking at 1600 N Main, Houston, TX 77009.",
+      "agenda_number": "575",
+      "section": "Emergency/Supplemental items",
+      "status": "decided",
+      "vote_result": "passed"
+    }
+  ],
+  "attribution_hits": [
+    {
+      "external_id": "198340",
+      "body_id": "flood_control"
+    },
+    {
+      "external_id": "198341",
+      "body_id": "flood_control"
+    },
+    {
+      "external_id": "198342",
+      "body_id": "flood_control"
+    },
+    {
+      "external_id": "198343",
+      "body_id": "flood_control"
+    },
+    {
+      "external_id": "198344",
+      "body_id": "flood_control"
+    },
+    {
+      "external_id": "198345",
+      "body_id": "flood_control"
+    },
+    {
+      "external_id": "198346",
+      "body_id": "flood_control"
+    },
+    {
+      "external_id": "198347",
+      "body_id": "flood_control"
+    },
+    {
+      "external_id": "198348",
+      "body_id": "flood_control"
+    },
+    {
+      "external_id": "198349",
+      "body_id": "flood_control"
+    },
+    {
+      "external_id": "198350",
+      "body_id": "flood_control"
+    },
+    {
+      "external_id": "198351",
+      "body_id": "flood_control"
+    },
+    {
+      "external_id": "198352",
+      "body_id": "flood_control"
+    },
+    {
+      "external_id": "198353",
+      "body_id": "flood_control"
+    },
+    {
+      "external_id": "198354",
+      "body_id": "flood_control"
+    },
+    {
+      "external_id": "198357",
+      "body_id": "flood_control"
+    },
+    {
+      "external_id": "198355",
+      "body_id": "flood_control"
+    },
+    {
+      "external_id": "198356",
+      "body_id": "flood_control"
+    },
+    {
+      "external_id": "198358",
+      "body_id": "flood_control"
+    },
+    {
+      "external_id": "198360",
+      "body_id": "flood_control"
+    },
+    {
+      "external_id": "198363",
+      "body_id": "flood_control"
+    },
+    {
+      "external_id": "198362",
+      "body_id": "flood_control"
+    },
+    {
+      "external_id": "198361",
+      "body_id": "flood_control"
+    },
+    {
+      "external_id": "198364",
+      "body_id": "flood_control"
+    },
+    {
+      "external_id": "198365",
+      "body_id": "flood_control"
+    },
+    {
+      "external_id": "198359",
+      "body_id": "flood_control"
+    },
+    {
+      "external_id": "198366",
+      "body_id": "flood_control"
+    },
+    {
+      "external_id": "198367",
+      "body_id": "flood_control"
+    },
+    {
+      "external_id": "198368",
+      "body_id": "flood_control"
+    }
+  ],
+  "redacted_titles": []
+}

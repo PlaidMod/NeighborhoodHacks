@@ -9,7 +9,9 @@ import { getSource } from '@/lib/ingest/registry';
 import { ZONE, nearTermWindow, resultsWindow, rotationWindow } from '@/lib/ingest/normalize';
 
 // Adapters register here as each step lands (Steps 2, 4, 7, 8, 9).
-const ADAPTERS: Partial<Record<AdapterKind, () => Promise<Adapter>>> = {};
+const ADAPTERS: Partial<Record<AdapterKind, () => Promise<Adapter>>> = {
+  legistar: async () => (await import('@/lib/adapters/legistar')).legistarAdapter,
+};
 
 /** tests/golden/<folder>/ for --record. */
 const GOLDEN_DIR: Record<AdapterKind, string> = {

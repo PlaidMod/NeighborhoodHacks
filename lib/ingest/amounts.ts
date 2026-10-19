@@ -15,9 +15,10 @@ const SCALE: Record<string, number> = {
 };
 
 // Order matters: rates first, so "$0.3891 per $100" is one rate and not two dollar amounts.
-const RATE_PER_100 = /\$\s?(\d+\.\d+)\s+per\s+\$\s?100(?:\s+(?:of\s+)?(?:assessed\s+|taxable\s+)?valuation)?/gi;
-// Bare tax rate like "0.389100": leading 0, 4-6 decimals, not part of a larger number or a $ amount.
-const RATE_BARE = /(?<![\d.$,])0\.\d{4,6}(?![\d.])/g;
+const RATE_PER_100 = /\$\s?(\d+\.\d+)\s+per\s+\$\s?100(?:\s+(?:of\s+)?(?:assessed\s+|taxable\s+)?(?:valuation|value))?/gi;
+// Bare tax rate like "0.389100": leading 0, 4-6 decimals, not part of a larger number or a $ amount,
+// and not a measurement such as "0.1972-acre" or "0.0332 acres".
+const RATE_BARE = /(?<![\d.$,])0\.\d{4,6}(?![\d.\-A-Za-z])(?!\s*(?:acres?|miles?|feet|foot|ft|sq)\b)/g;
 const DOLLAR =
   /\$\s?(\d{1,3}(?:,\d{3})+|\d+)(\.\d+)?(?:\s?(thousand|million|billion|mm|bn|[kmb])\b)?/gi;
 

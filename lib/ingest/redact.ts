@@ -55,3 +55,18 @@ export function redactPersonnel(item: Item): Item {
     contains_private_person: true,
   };
 }
+
+// Leak check (§8 Step 3): two or more consecutive capitalized, non-stopword tokens
+// before the first comma means a name may have survived redaction.
+const LEAK_STOPWORDS = new Set(['a', 'an', 'the', 'of', 'and', 'for', 'to', 'in', 'on', 'at', 'by', 'with']);
+
+export function leakingName(text: string): boolean {
+  const head = text.split(',')[0] ?? '';
+  let run = 0;
+  for (const tok of head.split(/\s+/).filter(Boolean)) {
+    const capital = /^[A-Z][A-Za-z'’.-]*$/.test(tok) && !LEAK_STOPWORDS.has(tok.toLowerCase());
+    run = capital ? run + 1 : 0;
+    if (run >= 2) return true;
+  }
+  return false;
+}
