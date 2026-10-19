@@ -1,0 +1,22 @@
+{
+  "meeting": {
+    "date": "2026-10-01",
+    "time": "10:30 a.m.",
+    "type": "regular",
+    "title": "Regular Meeting of the Lone Star College System Board of Trustees Including Tax Rate Public Hearing"
+  },
+  "items": [
+    { "agenda_number": "V", "title": "Convene Tax Rate Public Hearing for Tax Year 2026", "section": "Tax Rate Public Hearing", "source_quote": "V. Convene Tax Rate Public Hearing for Tax Year 2026" },
+    { "agenda_number": "VII", "title": "Presentation of the Fiscal Year 2026–2027 Proposed Tax Rate", "section": "Tax Rate Public Hearing", "source_quote": "VII. Presentation of the Fiscal Year 2026–2027 Proposed Tax Rate" },
+    { "agenda_number": "XII", "title": "Approval of the Minutes of the September 3, 2026 Regular Meeting", "section": "Regular Meeting", "source_quote": "Approval of the Minutes of the September 3, 2026 Regular Meeting" },
+    { "agenda_number": "1", "title": "Consideration and Approval of a Motion to Levy the Maintenance and Operations (\"M&O\") Component of the Ad Valorem Tax Rate for Tax Year 2026", "section": "Financial Reports and Considerations", "description": "That the Board of Trustees approve the M&O portion of the property tax rate to be increased by the adoption of a tax rate of $0.0839 per $100 of assessed valuation, which is effectively a 7.98 percent increase in the tax rate.", "source_quote": "Consideration and Approval of a Motion to Levy the Maintenance and Operations" },
+    { "agenda_number": "2", "title": "Consideration and Approval of a Motion to Levy the Interest and Sinking (\"I&S\") Component of the Ad Valorem Tax Rate for Tax Year 2026", "section": "Financial Reports and Considerations", "description": "That the Board of Trustees approve the I&S portion of the property tax rate of $0.0219 per $100 of taxable assessed valuation for Tax Year 2026.", "source_quote": "Consideration and Approval of a Motion to Levy the Interest and Sinking" },
+    { "agenda_number": "3", "title": "Consideration and Approval of a Motion and Adoption of a Resolution Levying the Total Ad Valorem Tax Rate for Tax Year 2026", "section": "Financial Reports and Considerations", "source_quote": "Adoption of a Resolution Levying the Total Ad Valorem Tax Rate for Tax Year 2026" },
+    { "agenda_number": "4", "title": "Consideration and Approval of the Annual Appointment of County Tax Assessor-Collectors to Collect Property Taxes Levied on Behalf of Lone Star College System", "section": "Financial Reports and Considerations", "source_quote": "Annual Appointment of County Tax Assessor-" },
+    { "agenda_number": "11", "title": "Consideration and Approval to Authorize the Chancellor or Designee to Negotiate and Execute Contracts and Amendments on Behalf of Lone Star College System for the Purchase of Cisco Smartnet Hardware Licensing, Replacement, and Support Services", "section": "Financial Reports and Considerations", "source_quote": "for the Purchase of Cisco Smartnet Hardware Licensing, Replacement, and" },
+    { "agenda_number": "14", "title": "Consideration and Approval to Authorize the Chancellor or Designee to Negotiate and Execute Contracts and Amendments on Behalf of Lone Star College System for Roof Replacement Construction Services for the Lone Star College-CyFair Center for the Arts Building", "section": "Financial Reports and Considerations", "source_quote": "for Roof Replacement Construction Services for the Lone Star College-" },
+    { "agenda_number": "18", "title": "Consideration and Approval of the Proposed 2027 Internal Audit Plan", "section": "Financial Reports and Considerations", "source_quote": "18. Consideration and Approval of the Proposed 2027 Internal Audit Plan" },
+    { "agenda_number": "20", "title": "Consideration and Authorization for the Chancellor or Designee to Execute Employment Contracts for the Attached Individuals", "section": "Personnel Reports and Considerations", "source_quote": "Employment Contracts for the Attached Individuals" },
+    { "agenda_number": "XVI", "title": "Closed Session", "description": "The Board of Trustees, in accordance with Section 551.001, et seq., of the Texas Government Code (the Open Meetings Act) will move into Closed Session under one or more of the following provision(s) of the Act", "source_quote": "will move into Closed Session under one or" }
+  ]
+}
