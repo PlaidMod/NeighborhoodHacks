@@ -15,6 +15,8 @@ export const MeetingSchema = z.object({
   video_url: z.string().optional(),
   minutes_url: z.string().optional(),
   comment_rules_text: z.string().optional(),
+  /** D18: true only for the team's fake demo data (manual YAML). Absent = false. */
+  is_demo: z.boolean().optional(),
 });
 export type Meeting = z.infer<typeof MeetingSchema>;
 
@@ -46,6 +48,8 @@ export const ItemSchema = z.object({
   source_url: z.string().min(1),
   source_quote: z.string().optional(),
   quote_verified: z.boolean().optional(),
+  /** D18: true only for the team's fake demo data (manual YAML). Absent = false. */
+  is_demo: z.boolean().optional(),
 });
 export type Item = z.infer<typeof ItemSchema>;
 

@@ -15,6 +15,7 @@ const ADAPTERS: Partial<Record<AdapterKind, () => Promise<Adapter>>> = {
   boardbook: async () => (await import('@/lib/adapters/boardbook')).boardbookAdapter,
   llm_extract: async () => (await import('@/lib/adapters/llmExtract')).llmExtractAdapter,
   primegov: async () => (await import('@/lib/adapters/primegov')).primeGovAdapter,
+  manual: async () => (await import('@/lib/adapters/manual')).manualAdapter,
 };
 
 /** tests/golden/<folder>/ for --record. */
