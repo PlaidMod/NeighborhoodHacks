@@ -1,6 +1,6 @@
 "use client"
 
-import { ArrowRight, Clock, Mic } from "lucide-react"
+import { ArrowRight, ChevronRight, Clock, MapPin, Mic } from "lucide-react"
 import Link from "next/link"
 import * as React from "react"
 import { ArrowCircle, Panel, SectionTitle } from "@/components/civic"
@@ -37,36 +37,37 @@ export default function Home() {
   const isHomeowner = profile.personas.includes("homeowner")
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
       {/* Heading row */}
-      <div className="flex flex-col gap-5 pt-4 md:flex-row md:items-end md:justify-between">
+      <div className="flex flex-col gap-5 pt-6 pb-1 md:flex-row md:items-end md:justify-between">
         <div className="rise">
+          <p className="mb-3 flex items-center gap-1.5 text-xs font-semibold text-muted-foreground"><MapPin className="size-3.5" aria-hidden /> {jurisdiction.area}, Houston</p>
           <h1 className="text-[2.1rem] leading-tight font-extrabold tracking-[-0.03em] md:text-[2.6rem]">
             {greeting()}, {profile.name}
           </h1>
           <p className="mt-1 text-[0.95rem] text-muted-foreground">
-            {thisWeek.length} things coming up near {jurisdiction.area} this week.
+            Your neighborhood at a glance. {thisWeek.length} things coming up this week.
           </p>
         </div>
         <Button asChild>
           <Link href="/app/speak">
-            <Mic data-icon="inline-start" /> Draft a comment
+            <Mic data-icon="inline-start" /> Prepare to speak
           </Link>
         </Button>
       </div>
 
       {/* Stat cards */}
-      <div className="grid gap-3 sm:grid-cols-3 md:gap-4">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:gap-4">
         <StatCard
           href="/app/districts"
           hero
-          label="Governments over you"
+          label="Your local governments"
           value={bodies.length}
           note={mud ? `Including ${mud.short}, a utility district` : "See what each one controls"}
         />
         <StatCard
           href="/app/timeline"
-          label="Need your attention"
+          label="Worth your attention"
           value={urgent.length}
           note={urgent.length ? "Urgent votes and deadlines" : "Nothing urgent"}
           tone="brick"
@@ -100,7 +101,7 @@ export default function Home() {
           >
             Coming up
           </SectionTitle>
-          <ul className="-mx-2">
+          <ul className="-mx-1 divide-y divide-line">
             {upcoming.slice(0, 4).map((u) => {
               const { month, day } = monthDay(u.date)
               const b = bodies.find((x) => x.id === u.bodyId)!
@@ -108,7 +109,7 @@ export default function Home() {
                 <li key={u.id}>
                   <button
                     onClick={() => openStory(u)}
-                    className="flex w-full items-center gap-4 rounded-2xl p-2 text-left transition-colors hover:bg-muted"
+                    className="group flex w-full items-center gap-4 rounded-2xl px-1 py-4 text-left transition-colors duration-150 hover:bg-muted"
                   >
                     <span
                       className={cn(
@@ -120,11 +121,12 @@ export default function Home() {
                       <span className="text-lg font-extrabold">{day}</span>
                     </span>
                     <span className="min-w-0 flex-1">
-                      <span className="block truncate font-bold">{u.title}</span>
-                      <span className="mt-0.5 block truncate text-sm text-muted-foreground">
+                      <span className="block text-[0.95rem] leading-snug font-semibold">{u.title}</span>
+                      <span className="mt-1.5 block text-xs text-muted-foreground">
                         {b.short} · {fmtTime(u.date)}
                       </span>
                     </span>
+                    <ChevronRight className="size-4 shrink-0 text-muted-foreground" aria-hidden />
                   </button>
                 </li>
               )
@@ -158,8 +160,8 @@ function StatCard({
     <Link
       href={href}
       className={cn(
-        "group rise relative flex min-h-[156px] flex-col justify-between overflow-hidden rounded-[24px] bg-white p-5 transition-transform hover:-translate-y-0.5",
-        hero && "bg-denim text-white",
+        "group rise relative flex min-h-[144px] flex-col justify-between gap-4 overflow-hidden rounded-[24px] bg-white p-5 transition-transform motion-safe:hover:-translate-y-0.5 md:min-h-[168px] md:p-6",
+        hero && "col-span-2 bg-denim text-white sm:col-span-1",
       )}
     >
       {hero && (
@@ -169,19 +171,19 @@ function StatCard({
         </>
       )}
       <div className="relative flex items-start justify-between gap-2">
-        <p className={cn("text-[0.9rem] font-bold", hero ? "text-white" : "text-ink")}>{label}</p>
-        <ArrowCircle className={hero ? "bg-white text-denim" : "text-ink"} />
+        <p className={cn("text-sm font-semibold", hero ? "text-white" : "text-muted-foreground")}>{label}</p>
+        <ArrowCircle className={hero ? "bg-white text-denim" : "hidden text-ink sm:grid"} />
       </div>
       <div className="relative">
         <p
           className={cn(
-            "text-[2.6rem] leading-none font-extrabold tracking-tight tabular",
+            "text-[2.6rem] leading-none font-bold tracking-tight tabular",
             tone === "brick" && "text-brick",
           )}
         >
           {value}
         </p>
-        <p className={cn("mt-2 truncate text-xs font-medium", hero ? "text-white/75" : "text-muted-foreground")}>
+        <p className={cn("mt-2 min-h-10 text-xs leading-relaxed sm:min-h-0", hero ? "text-white/80" : "text-muted-foreground")}>
           {note}
         </p>
       </div>
@@ -210,7 +212,7 @@ function Countdown({ u }: { u?: Update }) {
   const b = u && bodies.find((x) => x.id === u.bodyId)
   const pad = (n: number) => String(n).padStart(2, "0")
   return (
-    <div className="relative flex min-h-[260px] flex-col justify-between overflow-hidden rounded-[24px] bg-ink p-6 text-white">
+    <div className="relative flex min-h-[280px] flex-col justify-between overflow-hidden rounded-[24px] bg-ink p-6 text-white md:p-7">
       <svg className="pointer-events-none absolute inset-0 h-full w-full opacity-[0.12]" aria-hidden>
         {Array.from({ length: 9 }).map((_, i) => (
           <circle key={i} cx="105%" cy="110%" r={40 + i * 28} fill="none" stroke="white" strokeWidth="1" />
@@ -240,8 +242,8 @@ function Countdown({ u }: { u?: Update }) {
               </>
             )}
           </p>
-          <p className="mt-3 line-clamp-2 text-sm font-semibold">{u.title}</p>
-          <p className="text-xs text-white/60">{b?.short}</p>
+          <p className="mt-4 text-sm leading-relaxed font-semibold">{u.title}</p>
+          <p className="mt-1.5 text-xs text-white/75">{b?.short}</p>
         </div>
       ) : (
         <p className="relative text-lg font-bold">No open comment windows right now.</p>
@@ -276,10 +278,10 @@ function PersonaCard() {
   )
 
   if (isStudent && age >= 17 && age < 19) {
-    tone = "bg-brick text-white"
+    tone = "bg-denim-soft text-denim-deep"
     text = "You can register to vote at 17 years and 10 months if you'll be 18 by Election Day."
     action = (
-      <Button asChild variant="white">
+      <Button asChild variant="outline">
         <Link href="/app/vote">
           Check my eligibility <ArrowRight data-icon="inline-end" />
         </Link>
@@ -298,7 +300,7 @@ function PersonaCard() {
 
   return (
     <div className={cn("flex flex-col gap-4 rounded-[24px] p-6 md:flex-row md:items-center md:justify-between md:px-8", tone)}>
-      <p className="max-w-2xl text-[1.25rem] leading-snug font-extrabold tracking-tight">{text}</p>
+      <p className="max-w-2xl text-[0.95rem] leading-relaxed font-semibold">{text}</p>
       <div className="shrink-0">{action}</div>
     </div>
   )

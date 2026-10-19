@@ -64,6 +64,7 @@ export default function Timeline() {
             return (
               <button
                 key={t}
+                aria-pressed={on}
                 onClick={() => setTopics((c) => (on ? c.filter((x) => x !== t) : [...c, t]))}
                 className={cn(
                   "inline-flex h-9 shrink-0 items-center gap-1.5 rounded-full bg-white px-4 text-sm font-semibold text-muted-foreground ring-1 ring-border transition-colors hover:text-ink",
@@ -176,12 +177,12 @@ function FeatureCard({ u, rank, onOpen }: { u: Update; rank: number; onOpen: () 
     <button
       onClick={onOpen}
       className={cn(
-        "group relative flex min-h-[300px] flex-col justify-between overflow-hidden rounded-[24px] p-5 text-left text-white transition-transform hover:-translate-y-0.5",
+        "group relative flex min-h-[300px] flex-col justify-between overflow-hidden rounded-[24px] p-5 text-left text-white transition-transform motion-safe:hover:-translate-y-0.5",
         dark ? "bg-ink" : "bg-denim",
       )}
     >
       <Icon
-        className="absolute -top-6 -right-6 size-52 text-white/[0.07] transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6"
+        className="absolute -top-6 -right-6 size-52 text-white/[0.07] transition-transform duration-300 motion-safe:group-hover:scale-110 motion-safe:group-hover:rotate-6"
         strokeWidth={1.2}
       />
       <span className="relative inline-flex w-fit items-center gap-1.5 rounded-full bg-white px-3 py-1 text-xs font-bold text-brick">

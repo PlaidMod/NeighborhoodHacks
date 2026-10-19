@@ -59,7 +59,7 @@ The visual language combines three reference designs. Copy their rules, not thei
 
 All colors are CSS variables in `src/app/globals.css` and are exposed as Tailwind utilities (`bg-denim`, `text-brick-deep`, and so on). **Never write a hex value in a component.** If you need a new color, add a token to `globals.css` and to this table.
 
-**Three base colors drive the palette:** red (`--brick`), white (`--surface`), and blue (`--denim`). The `-deep` and `-soft` shades, `--canvas`, `--line`, `--muted`, and `--border` are derived from them with `color-mix()`, so changing a base recolors everything. Edit only the three bases; never hand-set a derived shade. The hex values below are the defaults.
+**Four base colors drive the palette:** accent (`--brick`), paper (`--surface`), primary (`--denim`), and ink (`--ink`). The `-deep` and `-soft` shades, `--canvas`, `--line`, `--muted`, `--muted-foreground`, and `--border` derive from them with `color-mix()`. Edit the bases; never hand-set a derived shade. White cards and semantic body-kind colors remain consistent between palettes. The hex values below are reference values for the default direction; derived shades are defined in CSS.
 
 | Token | Hex | Tailwind | Role |
 |---|---|---|---|
@@ -124,12 +124,14 @@ These ratios are for the default palette. If you change a base color, re-check t
 
 ### Dev palette picker
 
-`src/components/dev-palette.tsx` adds a floating swatch button so the team can try color schemes live.
+`src/components/dev-palette.tsx` adds a floating **Palette** button so the team can try color schemes live. Preset values and validation live in `src/lib/palette.ts`; components use tokens only.
 
 - **Where it shows:** automatically in `npm run dev`. On the deployed site, add `?dev=1` to any URL. It remembers this in localStorage, and `?dev=0` turns it off.
-- **What it does:** three pickers (Red, White, Blue) override `--brick`, `--surface`, and `--denim` on `<html>`, and every derived shade updates instantly. It also has presets (Americana, Old Glory, Bayou, Astros, Newsprint), a hex input for each color, and **Reset**.
-- **Making a palette permanent:** click **Copy CSS**, paste the three lines into `:root` in `globals.css`, and re-check contrast.
-- **Rules:** it's a dev tool, so never link to it from the product UI. New colors must keep deriving from the three bases.
+- **What it does:** four pickers (Accent, Paper, Primary, Ink) update root tokens instantly, with transitions suppressed during a swap. Six presets: Americana, Old Glory, Bayou, Space City, Newsprint, Field notes. A check and pressed state identify the selected preset. Valid colors persist between pages and reloads; invalid partial hex edits never reach CSS or storage. Old three-color settings are migrated.
+- **Contrast:** shows WCAG small-text checks for body on paper and white on primary, accent, and ink. This is not a whole-page accessibility certification; inspect muted text, tints, and other semantic colors before publishing. These presets target light surfaces, not dark mode.
+- **Making a palette permanent:** click **Copy CSS**, paste the complete root block's four declarations into the existing `:root` in `globals.css`, and re-check contrast. Clipboard failures reveal selectable CSS instead of reporting success.
+- **Reset:** restores the shipped defaults and clears saved colors. Escape or outside click closes the keyboard-accessible popover and returns focus to its trigger. On mobile, the panel fits the viewport and scrolls independently.
+- **Rules:** this is a team preview tool; never link to it from product navigation. Palette definitions are the exception to the no-hex rule. Core shades keep deriving from the four bases.
 
 ---
 
@@ -224,7 +226,7 @@ Use Tailwind steps only. These are the ones we use:
 
 - **Dashboard:** `grid xl:grid-cols-4 gap-4`, where cards span 1–2 columns. Stat cards use `grid-cols-2 xl:grid-cols-4`.
 - **Feed with rail:** `xl:grid-cols-[minmax(0,1fr)_320px] gap-6`, with a sticky rail (`xl:sticky xl:top-4 xl:self-start`).
-- **Bento:** `md:grid-cols-4 auto-rows-[220px] gap-4`, with tiles spanning `md:col-span-2` or `md:row-span-2`.
+- **Bento:** one column on phones, two at `sm`, four at `xl`; 220px minimum rows, 240px desktop rows. Tall tiles span rows only at `xl`, keeping headlines and actions apart at intermediate widths.
 - Use `minmax(0,1fr)` for any column that holds text that might overflow.
 - **Mobile first:** everything must work at 390px wide with no horizontal page scroll. Only horizontal chip rows may scroll (`overflow-x-auto scrollbar-none`).
 
@@ -342,10 +344,10 @@ Use `toast.success("Comment copied")` from `sonner` for confirmations of quiet a
 
 ### A · Dashboard (`/app`)
 
-- Greeting headline, then a one-line status sentence ("6 things coming up near Third Ward this week."), then **at most two buttons** on the right.
-- Three rows, and no more: 4 stat cards; then the tax breakdown (2 columns), the countdown tile, and "Coming up" (4 items); then "Recently decided" (3 items) and the persona feature card.
+- Location eyebrow, greeting headline, then a one-line status sentence, with one main action on the right.
+- Three rows: 3 stat cards; then "Coming up" (4 items) and the countdown; then one slim persona feature. Rows wrap titles instead of truncating them. Secondary row text stays regular weight; numbers carry the hierarchy.
 - **Don't add a fourth row or squeeze in another panel.** If something new belongs on home, it replaces something. Decorative charts and gamified scores were removed on purpose.
-- **The persona feature card changes based on who's viewing**: a voter registration card for 17–18-year-old students, the MUD story for MUD residents, and the brief promo otherwise. When adding persona logic, add a branch here; don't add another card.
+- **The persona feature changes based on who's viewing**: a quiet denim-tint voter-registration prompt for students, the MUD story for MUD residents, and the brief promo otherwise. General eligibility information does not use an urgent red fill. Add a branch here rather than another card.
 
 ### B · Feed (`/app/timeline`)
 
@@ -441,13 +443,13 @@ Motion explains change. It's never decoration.
 | Pattern | Spec |
 |---|---|
 | Content entering | `.rise`: 8px up and fade, 0.5s `cubic-bezier(0.2,0.8,0.2,1)`. Stagger lists with `animationDelay` of 50–90ms per item, capped at about 8 items. |
-| Clickable card hover | `transition-transform hover:-translate-y-0.5` (bento: `-translate-y-1`) |
+| Clickable card hover | `transition-transform motion-safe:hover:-translate-y-0.5` |
 | Arrow circle | Rotates 45° on group hover |
 | Decorative tile icon | `group-hover:scale-110` plus a slight rotate, `duration-500` |
 | Toggles and selection | Color transitions only (`transition-colors`) |
-| Live numbers | The countdown ticks every second; progress bars use `transition-all duration-700` |
+| Live numbers | The countdown ticks every second; progress bars name only the property that changes |
 
-- `prefers-reduced-motion` turns off `.rise`. Any new keyframe animation must respect it too.
+- `prefers-reduced-motion` turns off `.rise` and reduces animation/transition duration. Transform-based hover effects must also use `motion-safe:`. Shared buttons press to `0.96` over 150ms ease-out only without reduced motion, never when disabled.
 - Don't animate layout shifts, bounce, or loop anything except the live countdown and practice timer.
 
 ---
@@ -491,7 +493,7 @@ src/
       vote/  alerts/
   components/
     ui/                     shadcn primitives (restyled: pill buttons, 24px cards)
-    dev-palette.tsx         dev-only red/white/blue color picker
+    dev-palette.tsx         dev-only palette studio
     civic.tsx               Logo, BodyIcon, Chip, TierPill, ArrowCircle, Panel, SectionTitle, KIND_STYLE, TYPE_ICON
     app-shell.tsx           sidebar, top bar, search, alerts popover
     story-sheet.tsx         useStory() + the update detail sheet
@@ -521,7 +523,7 @@ Copy this into your PR description and check each item.
 ```
 Design
 - [ ] Uses existing components (Panel, Chip, TierPill, BodyIcon, Button variants) before new ones
-- [ ] Colors come from tokens only; no new hex values; the palette still derives from the three bases
+- [ ] Components use tokens; preset values live in lib/palette.ts; core shades derive from the four bases
 - [ ] News fonts (font-headline, font-news) appear only on news surfaces; tools inside them use font-sans
 - [ ] Brick is used only for urgent / speak-up / errors; one primary button per view
 - [ ] Radius nests 28 → 24 → 16; cards have no resting shadow

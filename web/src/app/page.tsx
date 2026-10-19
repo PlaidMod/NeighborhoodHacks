@@ -27,7 +27,7 @@ export default function Landing() {
         </header>
 
         {/* Hero */}
-        <section className="grid gap-12 px-5 pt-12 pb-16 md:px-10 lg:grid-cols-[1.1fr_1fr] lg:gap-16 lg:pt-20 lg:pb-24">
+        <section id="main-content" className="grid gap-12 px-5 pt-12 pb-16 md:px-10 lg:grid-cols-[1.1fr_1fr] lg:gap-16 lg:pt-20 lg:pb-24">
           <div className="rise flex flex-col justify-center">
             <span className="mb-6 inline-flex w-fit items-center gap-2 rounded-full bg-white px-3 py-1.5 text-xs font-bold text-denim ring-1 ring-border">
               <span className="size-1.5 rounded-full bg-brick" />

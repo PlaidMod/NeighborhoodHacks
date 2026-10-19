@@ -87,8 +87,8 @@
 
 :root {
   /*
-   * The three base colors: red, white, and blue. Everything below is derived
-   * from them, so the dev palette picker can swap them at runtime.
+   * Four editable bases: accent, paper, primary and ink. Keep derived tokens
+   * here so Palette studio recolors every surface consistently.
    */
   --brick: #b23a48; /* red */
   --surface: #faf7f2; /* white (warm paper) */
@@ -100,7 +100,7 @@
   --denim-deep: color-mix(in oklab, var(--denim) 75%, black);
   --denim-soft: color-mix(in oklab, var(--denim) 13%, white);
   --canvas: color-mix(in oklab, var(--surface) 93%, #5a4630);
-  --line: color-mix(in oklab, var(--surface) 96%, #5a4630);
+  --line: color-mix(in oklab, var(--surface) 91%, var(--ink));
   --paper: color-mix(in oklab, var(--surface) 35%, white);
 
   --sand: #e8dccb;
@@ -123,7 +123,7 @@
   --secondary: var(--denim-soft);
   --secondary-foreground: var(--denim-deep);
   --muted: color-mix(in oklab, var(--surface) 94%, #5a4630);
-  --muted-foreground: #5c6b80;
+  --muted-foreground: color-mix(in oklab, var(--ink) 72%, var(--surface));
   --accent: var(--muted);
   --accent-foreground: var(--ink);
   --destructive: var(--brick);
@@ -152,6 +152,7 @@
   }
   body {
     @apply bg-background text-foreground;
+    line-height: 1.5;
   }
   button:not(:disabled),
   [role="button"]:not(:disabled) {
@@ -168,6 +169,42 @@
   ::selection {
     background: var(--denim-soft);
     color: var(--denim-deep);
+  }
+  :where(a, button, input, textarea, select):focus-visible {
+    outline: 2px solid var(--denim);
+    outline-offset: 3px;
+  }
+}
+
+/* Palette changes are immediate, including controls inside portals. */
+.palette-changing *,
+.palette-changing *::before,
+.palette-changing *::after {
+  transition: none !important;
+}
+
+.palette-preset {
+  transition: background-color 150ms ease-out, border-color 150ms ease-out;
+}
+@media (hover: hover) {
+  .palette-preset:hover { border-color: var(--denim); }
+  .palette-launcher:hover { background-color: var(--denim-deep); }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  [data-slot="button"] {
+    transition: background-color 150ms ease-out, color 150ms ease-out, border-color 150ms ease-out, box-shadow 150ms ease-out, scale 150ms ease-out;
+  }
+  [data-slot="button"]:not(:disabled):not([aria-disabled="true"]):active {
+    scale: 0.96;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
 

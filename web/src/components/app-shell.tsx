@@ -68,7 +68,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </aside>
           <div className="min-w-0 flex-1 rounded-[28px] bg-surface">
             <TopBar />
-            <main className="px-4 pb-10 md:px-7">{children}</main>
+            <main id="main-content" className="px-4 pb-24 md:px-8">{children}</main>
           </div>
         </div>
       </div>
@@ -90,8 +90,9 @@ function SidebarBody({ onNavigate }: { onNavigate?: () => void }) {
         onClick={onNavigate}
         className={cn(
           "group relative flex h-11 items-center gap-3 rounded-2xl px-4 text-[0.92rem] font-semibold text-muted-foreground transition-colors hover:bg-white/70 hover:text-ink",
-          active && "bg-white text-ink",
+          active && "bg-denim-soft text-denim-deep",
         )}
+        aria-current={active ? "page" : undefined}
       >
         {active && <span className="absolute top-2.5 bottom-2.5 -left-0 w-1 rounded-r-full bg-denim" />}
         <m.icon className={cn("size-[1.15rem]", active ? "text-denim" : "")} strokeWidth={2} />
@@ -116,6 +117,10 @@ function SidebarBody({ onNavigate }: { onNavigate?: () => void }) {
         General
       </p>
       <nav className="space-y-1">{GENERAL.map(item)}</nav>
+      <div className="mt-auto px-4 pt-10 pb-2">
+        <p className="text-xs font-semibold text-ink">Your neighborhood. Your voice.</p>
+        <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">Independent & nonpartisan.<br />Built by Houston students.</p>
+      </div>
     </div>
   )
 }
@@ -140,14 +145,14 @@ function TopBar() {
   return (
     <>
       {isDemo && (
-        <p className="px-4 pt-3 text-center text-xs text-muted-foreground">
-          Demo: Maya, 17, Third Ward.{" "}
+        <p className="rounded-t-[28px] border-b border-line bg-white/60 px-4 py-2 text-center text-[11px] text-muted-foreground">
+          Sample data · Exploring Third Ward as Maya.{" "}
           <Link href="/start" className="font-semibold text-denim underline underline-offset-2">
             Use my address
           </Link>
         </p>
       )}
-      <header className="flex items-center gap-3 px-4 pt-4 pb-2 md:px-7 md:pt-5">
+      <header className="flex items-center gap-3 px-4 pt-5 pb-3 md:px-8 md:pt-6">
         <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
           <Button variant="ghost" size="icon" className="lg:hidden" onClick={() => setMobileOpen(true)}>
             <Menu />
@@ -173,8 +178,8 @@ function TopBar() {
         <div className="ml-auto flex items-center gap-2">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="flex items-center gap-3 rounded-full py-1 pr-1 pl-1 hover:bg-white/60 md:pr-4">
-                <span className="grid size-11 place-items-center rounded-full bg-brick text-sm font-bold text-white">
+              <button aria-label="Profile and interests" className="flex items-center gap-3 rounded-full py-1 pr-1 pl-1 hover:bg-white/60 md:pr-4">
+                <span className="grid size-10 place-items-center rounded-full bg-denim-soft text-sm font-bold text-denim-deep">
                   {initials}
                 </span>
                 <span className="hidden text-left leading-tight xl:block">

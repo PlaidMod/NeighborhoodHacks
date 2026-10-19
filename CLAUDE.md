@@ -31,7 +31,7 @@ npx tsc --noEmit     # must pass clean
 npx shadcn@latest add <name>   # then restyle per DESIGN.md
 ```
 
-No test runner is set up yet. The tech plan's test layout (`tests/golden/...`, `tests/rules`, etc.) doesn't exist yet.
+`npm test` in `web/` runs the palette unit tests with Node's built-in runner (Node 22.18+ for native TypeScript loading). The tech plan's backend test layout (`tests/golden/...`, `tests/rules`, etc.) doesn't exist yet.
 
 ## Next.js 16 caveat
 
@@ -66,7 +66,7 @@ Ask the user which side to follow before reconciling either one.
 
 Read `web/DESIGN.md` before any UI change; its §15 is the PR checklist. The rules most often broken:
 
-- **Colors:** use tokens only. No hex values or `text-[#…]` in components. The palette derives from three base variables in `globals.css` (`--brick`, `--surface`, `--denim`); edit only those.
+- **Colors:** use tokens only. No hex values or `text-[#…]` for styling in components. The palette derives from four base variables in `globals.css` (`--brick`, `--surface`, `--denim`, `--ink`). Preset definitions live in `src/lib/palette.ts`; follow `DESIGN.md` for the preview tool and contrast checks.
 - **Fonts:** Overpass everywhere. Playfair and Libre Franklin (`font-headline`, `font-news`) are allowed only on news surfaces.
 - **"Now":** read it with `useNow()`, never `Date.now()` in render. The React compiler lint rule rejects impure render code.
 - **Data:** keep it in `src/lib/data/`. Pages never hardcode meetings or bodies.

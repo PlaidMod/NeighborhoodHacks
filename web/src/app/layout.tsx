@@ -23,6 +23,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`${overpass.variable} ${playfair.variable} ${franklin.variable} h-full antialiased`}>
       <body className="min-h-full">
+        <a href="#main-content" className="sr-only fixed top-3 left-3 z-[100] rounded-full bg-ink px-5 py-3 text-sm font-semibold text-white focus:not-sr-only">Skip to content</a>
         <ProfileProvider>
           <TooltipProvider delayDuration={200}>{children}</TooltipProvider>
         </ProfileProvider>

@@ -25,7 +25,7 @@ export function Logo({ className, light }: { className?: string; light?: boolean
     <Link href="/" className={cn("group inline-flex items-center gap-2", className)}>
       <span
         className={cn(
-          "grid size-8 place-items-center rounded-[10px] bg-brick text-white shadow-[inset_0_-2px_0_rgb(0_0_0/0.15)] transition-transform group-hover:-rotate-6",
+          "grid size-8 place-items-center rounded-[10px] bg-brick text-white shadow-[inset_0_-2px_0_rgb(0_0_0/0.15)] transition-transform motion-safe:group-hover:-rotate-6",
         )}
       >
         <svg viewBox="0 0 24 24" className="size-4" aria-hidden>
@@ -123,7 +123,7 @@ export function ArrowCircle({ className }: { className?: string }) {
   return (
     <span
       className={cn(
-        "grid size-8 shrink-0 place-items-center rounded-full border border-current/25 transition-transform group-hover:rotate-45",
+        "grid size-8 shrink-0 place-items-center rounded-full border border-current/25 transition-transform motion-safe:group-hover:rotate-45",
         className,
       )}
     >

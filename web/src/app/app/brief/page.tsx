@@ -14,9 +14,9 @@ import { cn } from "@/lib/utils"
 
 /** Tile styles for the bento grid, from the sports-page reference. */
 const TILES = [
-  { cls: "md:col-span-2 md:row-span-1 bg-denim text-white", btn: "text-denim", big: true },
-  { cls: "md:row-span-2 bg-ink text-white", btn: "text-ink" },
-  { cls: "md:row-span-2 bg-brick text-white", btn: "text-brick" },
+  { cls: "sm:col-span-2 xl:row-span-1 bg-denim text-white", btn: "text-denim", big: true },
+  { cls: "xl:row-span-2 bg-ink text-white", btn: "text-ink" },
+  { cls: "xl:row-span-2 bg-brick text-white", btn: "text-brick" },
   { cls: "bg-sand text-ink", btn: "text-sand-deep", light: true },
   { cls: "bg-denim-soft text-ink", btn: "text-denim", light: true },
 ]
@@ -82,7 +82,7 @@ export default function Brief() {
       </header>
 
       {/* Bento */}
-      <section className="mt-8 grid auto-rows-[220px] gap-4 md:grid-cols-4">
+      <section className="mt-8 grid auto-rows-[minmax(220px,auto)] gap-4 sm:grid-cols-2 xl:auto-rows-[240px] xl:grid-cols-4">
         {top.map((u, i) => {
           const t = TILES[i]
           const b = bodies.find((x) => x.id === u.bodyId)!
@@ -90,15 +90,16 @@ export default function Brief() {
           return (
             <button
               key={u.id}
+              aria-label={u.title}
               onClick={() => openStory(u)}
               className={cn(
-                "group relative flex flex-col justify-between overflow-hidden rounded-[28px] p-6 text-left transition-transform hover:-translate-y-1",
+                "group relative flex flex-col justify-between gap-6 overflow-hidden rounded-[28px] p-6 text-left transition-transform motion-safe:hover:-translate-y-0.5",
                 t.cls,
               )}
             >
               <Icon
                 className={cn(
-                  "absolute -right-8 -bottom-8 size-48 transition-transform duration-500 group-hover:scale-110 group-hover:-rotate-6",
+                  "absolute -right-8 -bottom-8 size-44 transition-transform duration-300 motion-safe:group-hover:scale-110 motion-safe:group-hover:-rotate-6",
                   t.light ? "text-ink/[0.06]" : "text-white/[0.08]",
                 )}
                 strokeWidth={1.1}
@@ -113,7 +114,7 @@ export default function Brief() {
                 <p
                   className={cn(
                     "mt-2 font-headline leading-[1.1] font-bold",
-                    t.big ? "max-w-[85%] text-[1.75rem]" : "text-[1.3rem]",
+                    t.big ? "max-w-[24ch] text-[1.5rem] xl:text-[1.75rem]" : "text-[1.3rem]",
                   )}
                 >
                   {u.title}
@@ -126,7 +127,7 @@ export default function Brief() {
                 )}
               >
                 {u.comment && daysFromNow(u.date) >= 0 ? "Read and respond" : "Read more"}
-                <ChevronRight className="size-3.5 transition-transform group-hover:translate-x-0.5" />
+                <ChevronRight className="size-3.5 transition-transform motion-safe:group-hover:translate-x-0.5" />
               </span>
             </button>
           )

@@ -198,7 +198,7 @@ export function Speak() {
                         setError(null)
                       }}
                       className={cn(
-                        "flex items-center gap-3 rounded-2xl p-4 text-left font-semibold ring-1 ring-border transition-all hover:ring-denim/40",
+                        "flex items-center gap-3 rounded-2xl p-4 text-left font-semibold ring-1 ring-border transition-[box-shadow,background-color,color] hover:ring-denim/40",
                         stance === s.id && "bg-denim-soft ring-2 ring-denim",
                       )}
                     >
@@ -380,7 +380,7 @@ function Draft({
           </div>
           <div className="mt-2 h-2.5 overflow-hidden rounded-full bg-muted">
             <div
-              className={cn("h-full rounded-full transition-all", over ? "bg-brick" : "bg-denim")}
+              className={cn("h-full rounded-full transition-[width,background-color]", over ? "bg-brick" : "bg-denim")}
               style={{ width: `${pct}%` }}
             />
           </div>
@@ -473,7 +473,7 @@ function Practice({ draft, u, minutes, bodyName }: { draft: string; u: Update; m
               setRunning(!active)
               markDone("practice")
             }}
-            className="grid size-14 place-items-center rounded-full bg-white text-ink transition-transform hover:scale-105"
+            className="grid size-14 place-items-center rounded-full bg-white text-ink transition-transform motion-safe:hover:scale-105"
             aria-label={active ? "Pause" : "Start"}
           >
             {active ? <Pause className="size-5" /> : <Play className="size-5 translate-x-0.5" />}
@@ -483,7 +483,7 @@ function Practice({ draft, u, minutes, bodyName }: { draft: string; u: Update; m
               setRunning(false)
               setLeft(limit)
             }}
-            className="grid size-14 place-items-center rounded-full bg-brick text-white transition-transform hover:scale-105"
+            className="grid size-14 place-items-center rounded-full bg-brick text-white transition-transform motion-safe:hover:scale-105"
             aria-label="Reset"
           >
             <RotateCcw className="size-5" />

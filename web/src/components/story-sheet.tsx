@@ -31,7 +31,7 @@ export function StoryProvider({ children }: { children: React.ReactNode }) {
     <StoryContext.Provider value={show}>
       {children}
       <Sheet open={open} onOpenChange={setOpen}>
-        <SheetContent className="w-full gap-0 overflow-y-auto border-0 bg-surface p-0 sm:max-w-xl! sm:rounded-l-[28px]">
+        <SheetContent className="w-full gap-0 overflow-y-auto overscroll-contain border-0 bg-surface p-0 sm:max-w-xl! sm:rounded-l-[28px]">
           {story && <Story u={story} close={() => setOpen(false)} />}
         </SheetContent>
       </Sheet>

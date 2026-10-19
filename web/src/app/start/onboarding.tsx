@@ -102,7 +102,7 @@ export function Onboarding() {
         </aside>
 
         {/* Step content */}
-        <main className="flex flex-col p-6 md:p-12">
+        <main id="main-content" className="flex flex-col p-6 md:p-12">
           {step > 0 && (
             <button
               onClick={() => setStep((s) => s - 1)}
@@ -154,7 +154,7 @@ export function Onboarding() {
                       onClick={() => toggle(p.id)}
                       aria-pressed={on}
                       className={cn(
-                        "group relative flex flex-col items-start gap-6 rounded-3xl bg-white p-5 text-left ring-1 ring-border transition-all hover:-translate-y-0.5 hover:ring-denim/40",
+                        "group relative flex flex-col items-start gap-6 rounded-3xl bg-white p-5 text-left ring-1 ring-border transition-[transform,box-shadow,background-color,color] motion-safe:hover:-translate-y-0.5 hover:ring-denim/40",
                         on && "bg-denim text-white ring-denim hover:ring-denim",
                       )}
                     >
