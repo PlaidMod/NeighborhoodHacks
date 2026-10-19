@@ -14,6 +14,8 @@ export type HttpOptions = {
   /** Override for tests (defaults to real setTimeout sleep). */
   sleep?: (ms: number) => Promise<void>;
   retries?: number;
+  /** Per-request timeout (default 30 s). It also covers reading the body. */
+  timeoutMs?: number;
 };
 
 export class HttpError extends Error {
@@ -58,7 +60,7 @@ export async function httpGet(url: string, opts: HttpOptions = {}): Promise<Resp
     try {
       const res = await doFetch(url, {
         headers: { 'User-Agent': USER_AGENT, ...opts.headers },
-        signal: AbortSignal.timeout(TIMEOUT_MS),
+        signal: AbortSignal.timeout(opts.timeoutMs ?? TIMEOUT_MS),
         redirect: 'follow',
       });
       if (res.ok) return res;
@@ -84,6 +86,9 @@ export async function getText(url: string, opts?: HttpOptions): Promise<string> 
 export async function getJson<T = unknown>(url: string, opts?: HttpOptions): Promise<T> {
   return JSON.parse(await getText(url, { ...opts, headers: { Accept: 'application/json', ...opts?.headers } })) as T;
 }
+
+/** Large PDFs (Lone Star agendas are ~8 MB) need longer than the 30 s default to download. */
+export const PDF_TIMEOUT_MS = 120_000;
 
 /** GET raw bytes (PDFs). */
 export async function getBytes(url: string, opts?: HttpOptions): Promise<Uint8Array> {
