@@ -1,7 +1,7 @@
-import { createHash } from 'node:crypto'
+import { createHmac } from 'node:crypto'
 import type { Json } from './database.types'
 import { db } from './db'
-import { isDemoMode, isDemoRecord } from './env'
+import { getEnv, getOptionalEnv, isDemoMode, isDemoRecord } from './env'
 import { normalizeAddressInput } from './address'
 
 // Demo mode (Technical_Implementation_Plan.md section 18).
@@ -54,15 +54,18 @@ export async function demoCached<T>(
     return cached as T
   }
   const result = await compute()
-  if (opts.record ?? isDemoRecord()) await store.set(key, result)
+  // Never record on a production deployment: real visitors' answers must not be cached.
+  const record = (opts.record ?? isDemoRecord()) && getOptionalEnv('VERCEL_ENV') !== 'production'
+  if (record) await store.set(key, result)
   return result
 }
 
 /**
- * Cache key for an address lookup. It's a hash, so not even the demo addresses
- * are stored in the database.
+ * Cache key for an address lookup: an HMAC keyed with a server secret, so the key can't be
+ * matched against a list of addresses (such as hcad_parcels). P1 should cache only the final
+ * lookup response (body IDs and sections), never raw Census or HCAD output.
  */
-export function lookupDemoKey(address: string): string {
+export function lookupDemoKey(address: string, secret: string = getEnv('IP_HASH_SECRET')): string {
   const normalized = normalizeAddressInput(address).toUpperCase()
-  return `lookup:${createHash('sha256').update(normalized).digest('hex')}`
+  return `lookup:${createHmac('sha256', secret).update(`demo-lookup:${normalized}`).digest('hex')}`
 }

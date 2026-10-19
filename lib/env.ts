@@ -24,6 +24,8 @@ export type EnvName =
   | 'IP_HASH_SECRET'
   | 'DEMO_RECORD'
   | 'SUPABASE_DB_URL'
+  // Set by Vercel: 'production', 'preview' or 'development'
+  | 'VERCEL_ENV'
 
 export class MissingEnvError extends Error {
   constructor(public readonly variable: EnvName) {

@@ -60,7 +60,7 @@
       "intro": "ShowUp HTX helps you find your local governments and speak up. We collect as little as we can. Here is what we keep and why.",
       "address": {
         "title": "Your address",
-        "body": "We use your address once, to find your local governments, and then we forget it. We never save it. Links to your results hold only a list of government IDs, not your address."
+        "body": "We send your address once to the U.S. Census Bureau's address lookup to find your local governments, and then we forget it. We never save it. Links to your results hold only a list of government IDs, not your address."
       },
       "cookies": {
         "title": "No accounts, a few cookies",
@@ -88,7 +88,7 @@
       },
       "processors": {
         "title": "Services that handle data for us",
-        "body": "Supabase (our database), Vercel (hosts the website), Google (the Gemini API, for summaries and comment feedback) and Twilio (text messages)."
+        "body": "Supabase (our database), Vercel (hosts the website), the U.S. Census Bureau (finds where your address is), Google (the Gemini API, for summaries and comment feedback) and Twilio (text messages)."
       },
       "news": {
         "title": "News links",

@@ -1,6 +1,7 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 import { getEnv } from '@/lib/env'
+import { authCookieOptions } from '@/lib/supabase/cookieOptions'
 
 // Next.js 16 request hook (formerly middleware). It only refreshes the admin sign-in
 // session, so it runs on /admin pages and nowhere else. It must never match /api:
@@ -10,6 +11,7 @@ export async function proxy(request: NextRequest) {
   let response = NextResponse.next({ request })
 
   const supabase = createServerClient(getEnv('NEXT_PUBLIC_SUPABASE_URL'), getEnv('NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY'), {
+    cookieOptions: authCookieOptions(),
     cookies: {
       getAll() {
         return request.cookies.getAll()

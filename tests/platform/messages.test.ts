@@ -38,6 +38,13 @@ describe('message files', () => {
     expect(empty.map(([k]) => k)).toEqual([])
   })
 
+  it('the privacy page says the address goes to the U.S. Census Bureau', () => {
+    expect(en['Legal.privacy.address.body']).toMatch(/Census Bureau/)
+    expect(en['Legal.privacy.processors.body']).toMatch(/Census Bureau/)
+    expect(es['Legal.privacy.address.body']).toMatch(/Oficina del Censo/)
+    expect(es['Legal.privacy.processors.body']).toMatch(/Oficina del Censo/)
+  })
+
   it('placeholders match between languages', () => {
     const mismatched = Object.keys(en).filter(
       (k) => k in es && placeholders(en[k]).join() !== placeholders(es[k]).join(),

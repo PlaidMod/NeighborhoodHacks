@@ -1,6 +1,6 @@
 import { createHmac, randomUUID } from 'node:crypto'
 import { db } from './db'
-import { getEnv } from './env'
+import { MissingEnvError, getEnv } from './env'
 import { TIME_ZONE } from './i18n'
 
 // Fixed-window rate limits stored in the rate_limits table (section 14 and section 19).
@@ -64,7 +64,12 @@ export async function checkRateLimit(
   try {
     const count = await (opts.store ?? supabaseRateLimitStore).increment(key, start)
     return { allowed: count <= rule.limit, remaining: Math.max(0, rule.limit - count), resetAt }
-  } catch {
+  } catch (error) {
+    // A missing env var is a setup mistake, not a database hiccup: fail loudly instead of
+    // silently turning every limit off.
+    if (error instanceof MissingEnvError) throw error
+    // Never log the key: it can contain a hashed IP or a browser ID.
+    console.warn(`Rate limit check failed, so the call was allowed: ${error instanceof Error ? error.message : String(error)}`)
     return { allowed: true, remaining: rule.limit, resetAt, degraded: true }
   }
 }

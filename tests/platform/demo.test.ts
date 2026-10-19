@@ -1,4 +1,5 @@
-import { describe, expect, it, vi } from 'vitest'
+import { createHash } from 'node:crypto'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { DemoCacheMissError, demoCached, lookupDemoKey, type DemoCacheStore } from '@/lib/demo'
 
 function memoryStore(initial: Record<string, unknown> = {}): DemoCacheStore & { data: Map<string, unknown> } {
@@ -50,12 +51,33 @@ describe('demoCached', () => {
   })
 })
 
+describe('demoCached in production', () => {
+  afterEach(() => {
+    vi.unstubAllEnvs()
+  })
+
+  it('refuses record mode on production deployments, so real visitors are never cached', async () => {
+    vi.stubEnv('VERCEL_ENV', 'production')
+    const store = memoryStore()
+    await expect(demoCached('k', async () => 'live', { store, demoMode: false, record: true })).resolves.toBe('live')
+    expect(store.data.size).toBe(0)
+  })
+})
+
 describe('lookupDemoKey', () => {
+  const SECRET = 'test-demo-secret'
+
   it("ignores case and spacing, and the key doesn't contain the address", () => {
-    const a = lookupDemoKey('  12014 Fallbrook Dr ')
-    const b = lookupDemoKey('12014 FALLBROOK DR')
+    const a = lookupDemoKey('  12014 Fallbrook Dr ', SECRET)
+    const b = lookupDemoKey('12014 FALLBROOK DR', SECRET)
     expect(a).toBe(b)
     expect(a).toMatch(/^lookup:[0-9a-f]{64}$/)
     expect(a.toUpperCase()).not.toContain('FALLBROOK')
+  })
+
+  it('is keyed with a secret, so it cannot be matched against a list of addresses', () => {
+    const plain = 'lookup:' + createHash('sha256').update('12014 FALLBROOK DR').digest('hex')
+    expect(lookupDemoKey('12014 Fallbrook Dr', SECRET)).not.toBe(plain)
+    expect(lookupDemoKey('12014 Fallbrook Dr', SECRET)).not.toBe(lookupDemoKey('12014 Fallbrook Dr', 'other-secret'))
   })
 })

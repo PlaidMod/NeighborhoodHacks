@@ -33,6 +33,44 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-19: P5 final review fixes (rate limits, demo cache, admin cookies, privacy page)
+- **Who:** PlaidMod · P5 Platform, Evidence and Pitch
+- **Branch:** main
+- **What changed:** A fresh whole-branch review of P5 found no critical issues. These five are fixed:
+  - **Rate limiter:**
+    - `checkRateLimit` now throws `MissingEnvError` when a key is missing, instead of quietly allowing every call.
+    - On a database error it still allows the call, and now logs a warning. The warning never includes the key.
+  - **Demo cache:**
+    - `lookupDemoKey` is now an HMAC keyed with `IP_HASH_SECRET`, so a cache key can't be matched against `hcad_parcels` addresses.
+    - `DEMO_RECORD` is ignored on production deployments (`VERCEL_ENV=production`).
+  - **Admin session cookies** are now `httpOnly`, `sameSite=lax`, and `Secure` in production (`lib/supabase/cookieOptions.ts`).
+  - **Privacy page:** it now says the address goes to the U.S. Census Bureau's address lookup, and lists the Census Bureau among the services that process data.
+  - **`lib/database.types.ts`:** I regenerated it from the database. It matches the committed file exactly, so it needed no change.
+- **Files:** `lib/rateLimit.ts`, `lib/demo.ts`, `lib/env.ts` (`VERCEL_ENV`), `lib/supabase/{cookieOptions,server}.ts`, `proxy.ts`, `messages/*.json`, `.env.example`, `tests/platform/{rateLimit,demo,authCookies,messages}.test.ts`
+- **Contract changes:**
+  - **P1, `lookupDemoKey(address, secret?)`:**
+    - Pass your own normalized address. Otherwise "Dr" and "Drive" give different keys, and demo mode misses the cache.
+    - Cache only the final lookup response (body IDs and sections), never raw Census or HCAD output.
+  - **P1 and P4:** `checkRateLimit` now throws when `SUPABASE_SERVICE_ROLE_KEY` is missing. That key must be on Vercel before your routes ship.
+  - **P1:** `/results` must live under `app/(public)/`, because `useLookup()` throws outside that folder. It must also handle the `error` state, not just `idle`: if a lookup fails while someone presses Continue, they can still land on `/results`.
+  - **P2:** call `await requireAdmin()` outside any `try/catch`. Its redirect and its 404 work by throwing.
+- **Checked:**
+  - `npm test` (128/128), typecheck, lint and build pass. Each new test failed before its fix.
+  - None of the secrets appear in `.next/static`.
+  - The server role can run `increment_rate_limit`: `has_function_privilege` returns true.
+- **Open issues / next:**
+  - **The new cookie flags can't be checked in a browser yet:** nobody can sign in until the admin accounts exist.
+  - **Deferred small items:**
+    - `readBrowserId` can throw on a malformed cookie.
+    - Old rate-limit rows are cleaned up only on about 1 call in 100.
+    - IPv6 addresses aren't grouped by /64.
+    - The migration test misses some patterns.
+    - The time-zone wiring has no test.
+    - **`scripts/quiz-report.ts` reads at most 1,000 rows** and filters them in JavaScript. Fix this before using its numbers in the pitch.
+    - The lookup `fetch` has no timeout.
+    - The admin sign-in has no rate limit.
+    - The `rate_limited` copy is wrong, and the news fonts are preloaded on every page.
+
 ### 2026-10-19: P5 Task 17: classmate quiz report
 - **Who:** PlaidMod · P5 Platform, Evidence and Pitch
 - **Branch:** main

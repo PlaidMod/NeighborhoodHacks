@@ -1,4 +1,5 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
+import { MissingEnvError } from '@/lib/env'
 import {
   BROWSER_ID_COOKIE,
   RATE_LIMITS,
@@ -65,6 +66,21 @@ describe('checkRateLimit', () => {
   it('coach presets match the plan (20 an hour)', () => {
     expect(RATE_LIMITS.coachPerBrowser).toEqual({ limit: 20, windowSeconds: 3600 })
     expect(RATE_LIMITS.coachPerIp).toEqual({ limit: 20, windowSeconds: 3600 })
+  })
+
+  it('rethrows MissingEnvError instead of failing open', async () => {
+    const misconfigured: RateLimitStore = { increment: () => Promise.reject(new MissingEnvError('SUPABASE_SERVICE_ROLE_KEY')) }
+    await expect(checkRateLimit('k', RULE, { store: misconfigured, now: NOW })).rejects.toBeInstanceOf(MissingEnvError)
+  })
+
+  it('warns, without the key, when it fails open', async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    const broken: RateLimitStore = { increment: () => Promise.reject(new Error('database down')) }
+    await checkRateLimit('coach:ip:secret-hash', RULE, { store: broken, now: NOW })
+    const logged = warn.mock.calls.map((call) => call.join(' ')).join('\n')
+    warn.mockRestore()
+    expect(logged).toContain('database down')
+    expect(logged).not.toContain('secret-hash')
   })
 
   it('store failure returns allowed and degraded', async () => {

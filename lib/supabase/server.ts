@@ -1,6 +1,7 @@
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import { getEnv } from '@/lib/env'
+import { authCookieOptions } from './cookieOptions'
 
 /**
  * A Supabase client that acts as the signed-in team member (admin sign-in only).
@@ -10,6 +11,7 @@ import { getEnv } from '@/lib/env'
 export async function createSupabaseServerClient() {
   const cookieStore = await cookies()
   return createServerClient(getEnv('NEXT_PUBLIC_SUPABASE_URL'), getEnv('NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY'), {
+    cookieOptions: authCookieOptions(),
     cookies: {
       getAll() {
         return cookieStore.getAll()

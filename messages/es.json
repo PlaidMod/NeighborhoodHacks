@@ -60,7 +60,7 @@
       "intro": "ShowUp HTX te ayuda a conocer tus gobiernos locales y a hacerte escuchar. Recopilamos lo mínimo posible. Esto es lo que guardamos y por qué.",
       "address": {
         "title": "Tu dirección",
-        "body": "Usamos tu dirección una sola vez, para encontrar tus gobiernos locales, y luego la olvidamos. Nunca la guardamos. Los enlaces a tus resultados solo contienen una lista de identificadores de gobiernos, no tu dirección."
+        "body": "Enviamos tu dirección una sola vez a la búsqueda de direcciones de la Oficina del Censo de EE. UU. para encontrar tus gobiernos locales, y luego la olvidamos. Nunca la guardamos. Los enlaces a tus resultados solo contienen una lista de identificadores de gobiernos, no tu dirección."
       },
       "cookies": {
         "title": "Sin cuentas, pocas cookies",
@@ -88,7 +88,7 @@
       },
       "processors": {
         "title": "Servicios que manejan datos por nosotros",
-        "body": "Supabase (nuestra base de datos), Vercel (aloja el sitio web), Google (la API Gemini, para resúmenes y comentarios sobre tus borradores) y Twilio (mensajes de texto)."
+        "body": "Supabase (nuestra base de datos), Vercel (aloja el sitio web), la Oficina del Censo de EE. UU. (ubica tu dirección), Google (la API Gemini, para resúmenes y comentarios sobre tus borradores) y Twilio (mensajes de texto)."
       },
       "news": {
         "title": "Enlaces a noticias",
