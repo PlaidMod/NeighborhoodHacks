@@ -33,6 +33,24 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-19: P5 Task 9: cron request check and schedules
+- **Who:** PlaidMod · P5 Platform, Evidence and Pitch
+- **Branch:** main
+- **What changed:**
+  - `lib/cron.ts` has `isAuthorizedCron(req)` and `unauthorizedCronResponse()` (a 401 with a JSON error). If `CRON_SECRET` is unset, every request is rejected, including `Bearer undefined`.
+  - `vercel.json` schedules both daily jobs (Hobby runs each at most once a day):
+    - `/api/cron/ingest` at 12:00 UTC, about 6–8 AM Central. That stays clear of BoardBook's midnight–5 AM maintenance window.
+    - `/api/cron/alerts` at 16:00 UTC, about 10 AM–noon Central, inside the 8 AM–8 PM quiet-hours window on both sides of Nov 1.
+- **Files:** `lib/cron.ts`, `vercel.json`, `tests/platform/cron.test.ts`
+- **Contract changes (P2 and P3, please read):**
+  - Cron routes **export both `GET` and `POST`**. The first line of each is `if (!isAuthorizedCron(req)) return unauthorizedCronResponse()`.
+  - Callers send `Authorization: Bearer <CRON_SECRET>`. Vercel cron does this itself.
+  - **P2's GitHub Actions** command is `curl -fsS -H "Authorization: Bearer $CRON_SECRET" "$APP_URL/api/cron/ingest"`, with `CRON_SECRET` as a repo secret and `APP_URL` as a repo variable.
+  - Runs can be missed or fire twice, so make the jobs safe to repeat.
+  - **Don't add a second `vercel.json`;** edit this one.
+- **Checked:** `npm test` (64/64), typecheck and lint pass.
+- **Open issues / next:** The GitHub `CRON_SECRET` secret and `APP_URL` variable are waiting on the owner's OK.
+
 ### 2026-10-19: P5 Task 8: signed `bodies_token` for results links
 - **Who:** PlaidMod · P5 Platform, Evidence and Pitch
 - **Branch:** main
