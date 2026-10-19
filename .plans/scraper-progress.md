@@ -148,3 +148,55 @@ Started 2026-10-19 on branch `scrapper`. Entries follow `.plans/agent-scraper-sp
 - DEVIATION: most flags are derived from the adapters' existing warning strings (`fetch failed`, `dropped: source_quote not in text`, `rejected: source_quote not in minutes`, `retrying with`, `scanned document|minutes`, `news feed failed|empty or unparseable`); a change in those strings needs a matching change here. `row_cap_hit_unpaginated` fires when a meeting list or one meeting's items is an exact non-zero multiple of 1000 (Legistar page size). `redaction_leak_suspected` = a personnel/private item whose title/description/quote would still be changed by `redactText`, or a private item where `leakingName` fires.
 - DEVIATION: the two HISD fixtures (1306, 1332) have byte-identical `comment_rules_text`, so the "only date/Zoom differ" test appends a hand-written date, time, day name, Zoom URL and meeting ID line to each; the positive test hand-edits the sign-up deadline ("by 12:00 p.m. the day before" → "by 5:00 p.m. two business days before").
 - Notes: `tax_rate_item_seen` fires on Lone Star Oct 1 items V, VII, 1, 2, 3; not on item 4 ("Levied", not "levy") or any event 1244 arbitrage/commercial-paper item.
+
+## Step 13: Phase 1 wrap-up: DONE WITH DEVIATIONS
+- What was built: `tests/golden/README.md` (re-recording, trimmed and hand-written fixtures), the smoke and news tables below, and the "Handoff to P5/P3" section.
+- Checks: typecheck ✔ lint ✔ tests ✔ (364 passed) smoke ✔ (table below; check-scrape OK for every run)
+- DEVIATION: the owed live BoardBook smoke was NOT run. Node showed 01:44 Central on Oct 19, inside the 00:00–05:00 maintenance window, so `cfisd_board` hit the adapter guard (no request sent). BoardBook results mode (CFISD minutes HTML at `/Public/Minutes/668?meeting=…`) is still not wired. Both stay open.
+- Smoke runs (Oct 19, ~01:45 Central, no `GEMINI_API_KEY`). Flags = `health()` with history = this run only, so `no_meetings_*` reflects the window, not a real outage:
+
+  | Source | Meetings | Items | Warnings | Flags |
+  |---|---|---|---|---|
+  | hc_commissioners_court (default window) | 0 | 0 | 0 | `no_meetings_45d` (calendar gap Oct 15–Jan 14, §2) |
+  | hc_commissioners_court `--from 2026-09-01` | 5 | 1,259 | 2 (1242 hit 1,000 rows, paginated; 1243 has 0 items) | `tax_rate_item_seen`, `comment_rules_missing` (info) |
+  | hisd_board | 1 | 10 (5 redacted) | 0 | none |
+  | cfisd_board | 0 | 0 | 1 (maintenance window, not fetched) | `no_meetings_21d` |
+  | houston_city_council | 1 | 0 | 1 (`llm_unavailable`) | none |
+  | lone_star_board (default window) | 0 | 0 | 0 | `no_meetings_45d` (Oct 1 meeting is before the window) |
+  | hcmud_489 | 1 | 0 | 1 (`llm_unavailable`) | none |
+  | manual | 0 | 0 | 0 | `no_meetings_14d` (no data files by design, D18) |
+
+- News (`npm run news -- --articles --out tmp/news`): 0 warnings. Links not run (no key).
+
+  | Outlet | Mentions | Articles by status | Links |
+  |---|---|---|---|
+  | Houston Public Media | 1 (commissioners_court, Flock cameras) | ok 1 (575 words, reused, not refetched) | 0 |
+  | Community Impact | 0 | n/a (`fetch_articles: false`) | 0 |
+  | KHOU 11 | 0 | n/a (`fetch_articles: false`) | 0 |
+  | KPRC 2 | 0 | n/a (`fetch_articles: false`) | 0 |
+  | ABC13 | 0 | n/a (`fetch_articles: false`) | 0 |
+  | FOX 26 Houston | 0 | n/a (`fetch_articles: false`) | 0 |
+  | Houston Landing | feed disabled (TLS failure) | n/a | 0 |
+
+## Handoff to P5/P3
+
+Spec §12 items 1–22 still apply as written, with these updates from the build:
+
+1. **Types (everyone):** as §12.1, plus:
+   - `Item.status` = `upcoming | awaiting_result | decided`; `Meeting` has `end_date`, `status`, `minutes_url`, `comment_rules_text`.
+   - optional `is_demo` on `MeetingSchema` and `ItemSchema` (D18; only the manual adapter sets it).
+   - `RunMode` `results` takes an optional `known: {meetings, items}`; Phase 2 fills it from the DB.
+   - `Item`/`Meeting` have **no `content_hash` field**. Compute it at write time with `itemContentHash` / `meetingContentHash` (`lib/ingest/hash.ts`). Adapters hash documents only.
+   - `Amount.kind?: 'rate'`; `SourceConfigSchema` = {id, body_id?, adapter, config}.
+   - `section` may be a path ("CLOSED SESSION / Personnel"); match the whole string. HISD `agenda_number` keeps "a)".
+2. **Schema (P5):** P2-A as written. Also persist Step 11c `state` (content_hash + candidate_hash per article) next to `news_article_items`, and the `health()` history fields `tax_items_seen` / `comment_rules_missing_reported`.
+3. **health() (P5, admin page):** returns `{ok, flags, details}`. `details` carries tax-rate items (P1), comment-rules texts + word diff (P4), offending ids and per-outlet article failures. Several flags are derived from adapter warning strings; change both together.
+4. **Redaction (P3):** wider than §5.4: embedded "…termination of Name, former principal of School," → "an employee", and lists of 3+ names → "several employees" (CFISD 9.C). `contains_private_person` can be true on closed-session items, not only hearings. `source_quote` is redacted too, so a redacted quote is no longer a substring of the raw text.
+5. **classify (P3):** as §12.3. LLM items carry `quote_verified`; `false` (scanned docs, scanned minutes) goes to review (D6).
+6. **Results (P5):** `ResultUpdate.action` is `passed|failed|tabled|no_action`; apply it and set `status = decided`. BoardBook (CFISD) results mode is **not wired** (minutes are HTML).
+7. **City Council:** `meeting.external_id` = PrimeGov id; `end_date` set only when the title's last day is after `dateTime`. `comment_rules_text` is not set (speaker rules are a later deterministic parse).
+8. **News (P1/P3/P5):** 6 outlets enabled; Houston Landing `enabled: false` (TLS failure). Community Impact, KHOU, KPRC, ABC13 and FOX 26 have `fetch_articles: false` because their terms forbid automated copying/storage; only HPM article text is fetched. This shrinks the coverage block's source pool (§12.21: the demo item needs 2+ fetchable outlets, currently only HPM). Owner decision: keep, or seek written consent.
+9. **LLM (P5):** there was no `GEMINI_API_KEY`. Model ids in `.env.example` (`gemini-3.8-flash`, `gemini-pro-latest`) were checked against the SDK's `Model` union only, not the live models endpoint. All LLM golden outputs are hand-written; re-record them once a key exists (`tests/golden/README.md`). Live LLM smokes (extraction, minutes, article links) are owed.
+10. **CFISD:** the live BoardBook smoke is still owed (run after 05:00 Central). §12.9 (record Oct 19 results) is still open.
+11. **Lone Star:** `minutes_index_url` is `TODO` (minutes are at `https://www.lonestar.edu/board-minutes.htm`).
+12. **Root package (P5):** root `package.json` holds only P2 deps; merge into the Next.js `package.json`. Use `paths` only (TypeScript 6 rejects `baseUrl`).
