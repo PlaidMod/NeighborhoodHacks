@@ -14,7 +14,7 @@ export async function LegalDocument({ doc, sections }: Props) {
   return (
     <main id="main" className="mx-auto max-w-prose px-4 py-10">
       <h1 className="text-3xl font-extrabold tracking-tight">{t(`${doc}.title`)}</h1>
-      <p className="mt-2 text-sm">{t('effective')}</p>
+      <p className="mt-2 text-sm">{t(`${doc}.effective`)}</p>
       <p className="mt-6">{t(`${doc}.intro`)}</p>
       {sections.map((key) => (
         <section key={key} className="mt-8">

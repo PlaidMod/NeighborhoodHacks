@@ -24,6 +24,7 @@ export type EnvName =
   | 'GEMINI_EXTRACT_FALLBACK_MODEL'
   | 'GEMINI_JUDGE_MODEL'
   | 'IP_HASH_SECRET'
+  | 'COACH_TRUSTED_IP_HEADER'
   | 'DEMO_RECORD'
   | 'SUPABASE_DB_URL'
   // Set by Vercel: 'production', 'preview' or 'development'

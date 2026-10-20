@@ -21,6 +21,7 @@ ShowUp HTX: a 5-person high school team's entry for Neighborhood Hacks 2026. A u
 - **Hosting and data:**
   - **Vercel:** project `showup-htx` on the `majority-illusion` team. Production is https://showup-htx-six.vercel.app. Pushes to `main` deploy, but deploys of teammates' commits wait for the owner's approval, because the repo is private.
   - **Supabase:** project `showup-htx` (ID `elsvhqqwdxwsuvkbchdq`). Environment values live in `.env.local` (see `.env.example`) and in Vercel. Never commit them.
+  - **AI:** the team moved every model call to OpenRouter on Oct 20, 2026 (`lib/openrouter.ts`, used by `lib/gemini.ts` and `lib/adapters/gemini.ts`). That replaces the tech plan's Gemini-direct setup (§1). Until `OPENROUTER_API_KEY` is set, calls still go straight to Gemini. Model names stay in the `GEMINI_*_MODEL` variables, and each one must be on OpenRouter's model list with structured output.
 
 ## Binding rules
 
@@ -61,7 +62,7 @@ npm run admin -- set-password <email>       # choose your own /admin password (a
 - npm 11 holds back packages' install scripts until approved. Nothing in the app needs them so far.
 - `web/` is the original prototype, kept for reference, with its own `package.json` (`cd web && npm install && npm run dev`). The root's TypeScript, ESLint, vitest and Tailwind all ignore it. Its screens were moved to the root (see above), so change them there, not in `web/`.
 
-P4 now lives in the root app: `/app/speak`, `/speak-up/[itemId]`, `/api/coach`, `components/speak` and `lib/{speak,registration,coach}`. It uses the shared Gemini SDK and rate-limit database when configured, with local fallbacks. `npm test` also runs `npm run test:p4` (Node's built-in runner for the migrated pure-helper tests). See `docs/p4-status.md` for live verification and remaining evidence.
+P4 now lives in the root app: `/app/speak`, `/speak-up/[itemId]`, `/api/coach`, `components/speak` and `lib/{speak,registration,coach}`. It uses the shared AI client (`lib/gemini.ts`) and rate-limit database when configured, with local fallbacks. `npm test` also runs `npm run test:p4` (Node's built-in runner for the migrated pure-helper tests). See `docs/p4-status.md` for live verification and remaining evidence.
 
 ## Next.js caveat
 

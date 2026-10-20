@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest'
 import { z } from 'zod'
 import { createGemini, openRouterClient, pdfPart } from '@/lib/gemini'
-import { createOpenRouterClient, geminiFromEnv } from '@/lib/adapters/gemini'
+import { DEFAULT_EXTRACT_MODEL, DEFAULT_FALLBACK_MODEL, createOpenRouterClient, geminiFromEnv } from '@/lib/adapters/gemini'
+import { DEFAULT_GEMINI_MODEL } from '@/lib/gemini'
 import { llmConfigured, openRouterModel } from '@/lib/openrouter'
 
 function fakeFetch(reply: string, seen: { url?: string; init?: RequestInit }[]): typeof fetch {
@@ -15,6 +16,15 @@ describe('OpenRouter transport', () => {
   it('prefixes bare Gemini model IDs and keeps full IDs', () => {
     expect(openRouterModel('gemini-3.8-flash')).toBe('google/gemini-3.8-flash')
     expect(openRouterModel('openai/gpt-x')).toBe('openai/gpt-x')
+  })
+
+  // Checked against openrouter.ai/api/v1/models on Oct 20, 2026. "gemini-pro-latest" isn't an
+  // OpenRouter model, so the D17 retry would fail. gemini-4-argon is Google's current flagship,
+  // with structured output and PDF input, and the Google SDK knows the same bare name.
+  it('default models are ones OpenRouter serves', () => {
+    expect(openRouterModel(DEFAULT_GEMINI_MODEL)).toBe('google/gemini-3.8-flash')
+    expect(openRouterModel(DEFAULT_EXTRACT_MODEL)).toBe('google/gemini-3.8-flash')
+    expect(openRouterModel(DEFAULT_FALLBACK_MODEL)).toBe('google/gemini-4-argon')
   })
 
   it('counts either key as configured', () => {

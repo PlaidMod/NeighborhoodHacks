@@ -16,7 +16,9 @@ export const POST = createCoachHandler({
   provider: llmConfigured() ? sharedCoachProvider : undefined,
   store: sharedReady ? sharedCoachStore : undefined,
   digestSecret: sharedReady ? getOptionalEnv('IP_HASH_SECRET') : undefined,
-  trustedIpHeader: process.env.COACH_TRUSTED_IP_HEADER,
+  // x-real-ip on Vercel, which overwrites it so visitors can't fake it. Unset, every visitor
+  // shares one IP budget of 20 coach calls an hour.
+  trustedIpHeader: getOptionalEnv('COACH_TRUSTED_IP_HEADER'),
   async resolveItem(id, zip) {
     if (/^[0-9a-f-]{36}$/i.test(id) || id.startsWith('sample-')) {
       const item = await loadItem(id)

@@ -42,6 +42,8 @@ export interface CoachHandlerOptions {
 
 export function createCoachHandler(options: CoachHandlerOptions) {
   const store = options.store ?? new MemoryRateLimitStore()
+  // Trimmed, because a header name with a stray newline makes Headers.get throw.
+  const ipHeader = options.trustedIpHeader?.trim() || undefined
   const salt = options.digestSecret ?? randomBytes(32)
   const hash = (value: string) => createHmac("sha256", salt).update(value).digest("hex")
   return async function POST(request: Request): Promise<Response> {
@@ -55,7 +57,7 @@ export function createCoachHandler(options: CoachHandlerOptions) {
     if (!input) return json({ error: "invalid_request" }, 400)
     const cookieId = request.headers.get("cookie")?.split(";").map(v => v.trim()).find(v => v.startsWith("showup_coach_id="))?.slice("showup_coach_id=".length)
     const browserId = isBrowserId(cookieId) ? cookieId : input.browser_id ?? randomUUID()
-    const candidateIp = options.trustedIpHeader ? request.headers.get(options.trustedIpHeader)?.trim() : undefined
+    const candidateIp = ipHeader ? request.headers.get(ipHeader)?.trim() : undefined
     // No default proxy-header trust. The shared unknown-IP bucket is conservative.
     const ip = candidateIp && isIP(candidateIp) ? candidateIp : "unavailable"
     let limit

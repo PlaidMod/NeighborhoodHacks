@@ -67,6 +67,19 @@ it('distributed increments enforce both quotas and database failures fail closed
   expect((await handler(req())).status).toBe(503)
 })
 
+it('a trusted IP header gives each visitor their own budget, even with stray whitespace from the env value', async () => {
+  const keys: string[] = []
+  const store = { consume: (k: string[]) => { keys.push(...k); return { allowed: true, retryAfter: 0 } } }
+  // An env value pasted with a trailing newline must not crash the route on an invalid header name.
+  const handler = createCoachHandler({ resolveItem: () => null, store, trustedIpHeader: 'x-real-ip\n', digestSecret: 'test' })
+  const req = (ip: string) => new Request('https://example.org/api/coach', { method: 'POST', headers: { Origin: 'https://example.org', 'Content-Type': 'application/json', 'x-real-ip': ip }, body: JSON.stringify({ mode: 'explain', item_id: 'sample-one', lang: 'en' }) })
+  await handler(req('203.0.113.7'))
+  await handler(req('198.51.100.9'))
+  const ipKeys = keys.filter(k => k.startsWith('ip:'))
+  expect(ipKeys).toHaveLength(2)
+  expect(ipKeys[0]).not.toBe(ipKeys[1])
+})
+
 it('awaits the live item resolver and keeps lookup errors private', async () => {
   const request = () => new Request('https://example.org/api/coach', { method: 'POST', headers: { Origin: 'https://example.org', 'Content-Type': 'application/json' }, body: JSON.stringify({ mode: 'explain', item_id: 'sample-one', lang: 'en' }) })
   const handler = createCoachHandler({ resolveItem: async () => ({ id: 'sample-one', title: 'Official agenda', summary: 'Official agenda text', why: '', audiences: [], source: 'https://example.org', bodyName: 'Council', minutes: 2, isSample: false }) })

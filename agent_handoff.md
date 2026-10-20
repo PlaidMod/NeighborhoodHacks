@@ -33,6 +33,32 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-20: OpenRouter confirmed as the AI provider; coach IP limit and privacy page fixed
+- **Who:** PlaidMod · P5 Platform
+- **Branch:** main
+- **What changed:**
+  - **OpenRouter:** PlaidMod confirmed it for every AI call, which replaces tech plan §1's Gemini direct and answers Iarush's entry below. Gemini direct stays only until `OPENROUTER_API_KEY` is set.
+  - **Fallback model:** P2's default `gemini-pro-latest` isn't on OpenRouter. It's now `gemini-4-argon`, Google's flagship, which is on OpenRouter's model list (checked Oct 20) with structured output and PDF input; the Google SDK takes the same name.
+  - **Coach IP limit:** with no trusted header, every visitor on Vercel shared one IP budget, so the whole site got 20 coach calls an hour. `COACH_TRUSTED_IP_HEADER=x-real-ip` is now set in Vercel production and preview, and the handler trims the value.
+  - **Privacy page:** names the cookies actually set (`showup_coach_id`, `showup_bodies`, `showup_sub`; `showup_bid` was never set), Photon/OpenStreetMap street suggestions, and OpenRouter. Its date is now Oct 20; the terms page keeps Oct 19.
+- **Files:** `lib/adapters/gemini.ts`, `lib/coach/http.ts`, `app/api/coach/route.ts`, `lib/env.ts`, `.env.example`, `messages/{en,es}.json`, `components/legal/LegalDocument.tsx`, `CLAUDE.md`, `tests/platform/openrouter.test.ts`, `tests/coach/integration.test.ts`
+- **Contract changes:**
+  - None to the schema or types.
+  - `Legal.effective` is now `Legal.privacy.effective` and `Legal.terms.effective`.
+  - New env var `COACH_TRUSTED_IP_HEADER` (P4).
+  - Older entries that call OpenRouter optional, or Gemini the provider, are out of date.
+- **Checked:**
+  - The 2 new tests failed first, then passed.
+  - `npm test`: 650 Vitest + 69 P4 tests pass. Typecheck, lint and build pass.
+  - The built `/privacy` (en, es) and `/terms` pages show the new text and dates.
+  - `google/gemini-3.8-flash` and Vercel's judge model `google/gemini-3.5-flash-lite` are on OpenRouter with structured output.
+  - No live OpenRouter call was made (no key yet).
+- **Open issues / next:**
+  - When the key arrives: add it to `.env.local` and Vercel, remove `GEMINI_API_KEY` and `GOOGLE_GENAI_USE_VERTEXAI`, and make one live call.
+  - P3: the news spec wants a Pro judge. 3.5 Flash Lite was picked because Pro wasn't usable on Vertex, and `gemini-4-argon` is available now.
+  - Tech plan §1 still says Gemini direct.
+  - `BROWSER_ID_COOKIE`/`readBrowserId` in `lib/rateLimit.ts` are unused, because P4 uses its own cookie.
+
 ### 2026-10-20: Route LLM calls through OpenRouter when its key is set
 - **Who:** Iarush
 - **Branch:** main

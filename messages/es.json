@@ -55,20 +55,20 @@
     "neutralBody": "Resumimos. Nunca recomendamos. No le decimos a nadie cómo votar ni qué postura tomar."
   },
   "Legal": {
-    "effective": "Vigente desde el 19 de octubre de 2026",
     "contactTitle": "Contacto",
     "contactBody": "¿Preguntas o solicitudes? Abre un reporte en la página del proyecto:",
     "privacy": {
       "metaTitle": "Política de privacidad",
       "title": "Política de privacidad",
+      "effective": "Vigente desde el 20 de octubre de 2026",
       "intro": "ShowUp HTX te ayuda a conocer tus gobiernos locales y a hacerte escuchar. Recopilamos lo mínimo posible. Esto es lo que guardamos y por qué.",
       "address": {
         "title": "Tu dirección",
-        "body": "Enviamos tu dirección una sola vez a la búsqueda de direcciones de la Oficina del Censo de EE. UU. para encontrar tus gobiernos locales, y luego la olvidamos. Nunca la guardamos. Los enlaces a tus resultados solo contienen una lista de identificadores de gobiernos, no tu dirección."
+        "body": "Enviamos tu dirección una sola vez a la búsqueda de direcciones de la Oficina del Censo de EE. UU. para encontrar tus gobiernos locales, y luego la olvidamos. Nunca la guardamos. Mientras escribes, enviamos solo el nombre de la calle, nunca el número de tu casa, a Photon, un buscador gratuito de calles basado en OpenStreetMap, para sugerirte calles. Los enlaces a tus resultados solo contienen una lista de identificadores de gobiernos, no tu dirección."
       },
       "cookies": {
         "title": "Sin cuentas, pocas cookies",
-        "body": "No necesitas una cuenta. Usamos unas pocas cookies pequeñas: tu idioma (NEXT_LOCALE), los roles que elegiste, como estudiante o inquilino (showup_stakes), y un identificador aleatorio del navegador (showup_bid) que limita cuántas veces puede usarse el asistente de IA. Los administradores del equipo también reciben una cookie de inicio de sesión."
+        "body": "No necesitas una cuenta. Usamos unas pocas cookies pequeñas: tu idioma (NEXT_LOCALE), los roles que elegiste, como estudiante o inquilino (showup_stakes), los identificadores de tus gobiernos, para mostrarte sus novedades (showup_bodies), y un identificador aleatorio del navegador (showup_coach_id) que limita cuántas veces puede usarse el asistente de IA. Si te inscribes en las alertas por mensaje de texto, otra cookie (showup_sub) recuerda que te inscribiste. No contiene tu número de teléfono. Los administradores del equipo también reciben una cookie de inicio de sesión."
       },
       "rateLimits": {
         "title": "Límites de uso",
@@ -80,7 +80,7 @@
       },
       "drafts": {
         "title": "Borradores de comentarios",
-        "body": "Los borradores de \"Habla\" nunca se guardan en nuestros servidores. Tu progreso se queda en tu propio navegador. Para darte comentarios, enviamos tu borrador a la API Gemini de Google, que lo procesa por nosotros."
+        "body": "Los borradores de \"Habla\" nunca se guardan en nuestros servidores. Tu progreso se queda en tu propio navegador. Para darte comentarios, enviamos tu borrador a OpenRouter, que lo pasa a un modelo de IA de Google (Gemini) que lo procesa por nosotros."
       },
       "alerts": {
         "title": "Alertas por mensaje de texto",
@@ -92,7 +92,7 @@
       },
       "processors": {
         "title": "Servicios que manejan datos por nosotros",
-        "body": "Supabase (nuestra base de datos), Vercel (aloja el sitio web), la Oficina del Censo de EE. UU. (ubica tu dirección), Google (la API Gemini, para resúmenes y comentarios sobre tus borradores) y Twilio (mensajes de texto)."
+        "body": "Supabase (nuestra base de datos), Vercel (aloja el sitio web), la Oficina del Censo de EE. UU. (ubica tu dirección), Photon y OpenStreetMap (sugieren nombres de calles mientras escribes), OpenRouter y Google (modelos de IA, para resúmenes y comentarios sobre tus borradores) y Twilio (mensajes de texto)."
       },
       "news": {
         "title": "Enlaces a noticias",
@@ -100,6 +100,7 @@
       }
     },
     "terms": {
+      "effective": "Vigente desde el 19 de octubre de 2026",
       "metaTitle": "Términos de uso",
       "title": "Términos de uso",
       "intro": "Al usar ShowUp HTX, aceptas estos términos.",
@@ -484,7 +485,7 @@
     "gemini": "Explicación de IA — revisa la fuente",
     "busy": "Revisando…",
     "failed": "No se pudo obtener orientación. Tu borrador sigue aquí. Inténtalo de nuevo.",
-    "privacy": "Los borradores se guardan en este navegador, nunca en nuestra base de datos. Pedir orientación de IA envía tu borrador a Google (Gemini) cuando está configurado. No incluyas información privada de otras personas.",
+    "privacy": "Los borradores se guardan en este navegador, nunca en nuestra base de datos. Pedir orientación de IA envía tu borrador, a través de OpenRouter, al modelo Gemini de Google. No incluyas información privada de otras personas.",
     "continue": "Continuar",
     "back": "Atrás",
     "nextDraft": "Escribir mi propio comentario",

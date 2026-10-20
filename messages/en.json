@@ -55,20 +55,20 @@
     "neutralBody": "We summarize. We never recommend. We don't tell anyone how to vote or what position to take."
   },
   "Legal": {
-    "effective": "Effective October 19, 2026",
     "contactTitle": "Contact",
     "contactBody": "Questions or requests? Open an issue on our project page:",
     "privacy": {
       "metaTitle": "Privacy policy",
       "title": "Privacy policy",
+      "effective": "Effective October 20, 2026",
       "intro": "ShowUp HTX helps you find your local governments and speak up. We collect as little as we can. Here is what we keep and why.",
       "address": {
         "title": "Your address",
-        "body": "We send your address once to the U.S. Census Bureau's address lookup to find your local governments, and then we forget it. We never save it. Links to your results hold only a list of government IDs, not your address."
+        "body": "We send your address once to the U.S. Census Bureau's address lookup to find your local governments, and then we forget it. We never save it. While you type, we send only the street name, never your house number, to Photon, a free street search built on OpenStreetMap, to suggest matching streets. Links to your results hold only a list of government IDs, not your address."
       },
       "cookies": {
         "title": "No accounts, a few cookies",
-        "body": "You don't need an account. We set a few small cookies: your language (NEXT_LOCALE), the roles you picked, like student or renter (showup_stakes), and a random browser ID (showup_bid) that limits how often the AI coach can run. Team admins also get a sign-in cookie."
+        "body": "You don't need an account. We set a few small cookies: your language (NEXT_LOCALE), the roles you picked, like student or renter (showup_stakes), the IDs of your governments, so the app can show their updates (showup_bodies), and a random browser ID (showup_coach_id) that limits how often the AI coach can run. If you sign up for text alerts, one more cookie (showup_sub) remembers that you signed up. It doesn't hold your phone number. Team admins also get a sign-in cookie."
       },
       "rateLimits": {
         "title": "Limits on use",
@@ -80,7 +80,7 @@
       },
       "drafts": {
         "title": "Comment drafts",
-        "body": "Speak up drafts are never stored on our servers. Your progress stays in your own browser. To give you feedback, we send your draft to Google's Gemini API, which processes it for us."
+        "body": "Speak up drafts are never stored on our servers. Your progress stays in your own browser. To give you feedback, we send your draft to OpenRouter, which passes it to an AI model from Google (Gemini) that processes it for us."
       },
       "alerts": {
         "title": "Text alerts",
@@ -92,7 +92,7 @@
       },
       "processors": {
         "title": "Services that handle data for us",
-        "body": "Supabase (our database), Vercel (hosts the website), the U.S. Census Bureau (finds where your address is), Google (the Gemini API, for summaries and comment feedback) and Twilio (text messages)."
+        "body": "Supabase (our database), Vercel (hosts the website), the U.S. Census Bureau (finds where your address is), Photon and OpenStreetMap (suggest street names as you type), OpenRouter and Google (AI models, for summaries and comment feedback) and Twilio (text messages)."
       },
       "news": {
         "title": "News links",
@@ -100,6 +100,7 @@
       }
     },
     "terms": {
+      "effective": "Effective October 19, 2026",
       "metaTitle": "Terms of use",
       "title": "Terms of use",
       "intro": "By using ShowUp HTX, you agree to these terms.",
@@ -484,7 +485,7 @@
     "gemini": "AI explanation — check the source",
     "busy": "Checking…",
     "failed": "Couldn't get feedback. Your draft is still here. Try again.",
-    "privacy": "Drafts are saved in this browser, never in our database. Asking for AI feedback sends your draft to Google (Gemini) when configured. Don't include someone else's private information.",
+    "privacy": "Drafts are saved in this browser, never in our database. Asking for AI feedback sends your draft through OpenRouter to Google's Gemini model. Don't include someone else's private information.",
     "continue": "Continue",
     "back": "Back",
     "nextDraft": "Write my own comment",

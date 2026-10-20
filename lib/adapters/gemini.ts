@@ -9,7 +9,9 @@ import { PAGE_BREAK } from './pdfText';
 
 export const EXTRACT_TIMEOUT_MS = 120_000;
 export const DEFAULT_EXTRACT_MODEL = 'gemini-3.8-flash';
-export const DEFAULT_FALLBACK_MODEL = 'gemini-pro-latest';
+// D17's "current Pro model": Google's flagship, checked on OpenRouter's model list on Oct 20, 2026
+// (structured output and PDF input). The same bare name works with the Google SDK.
+export const DEFAULT_FALLBACK_MODEL = 'gemini-4-argon';
 
 /** Chunking: split above ~150k chars into ~100k-char chunks on page boundaries, 1 page overlap. */
 export const CHUNK_TRIGGER_CHARS = 150_000;
