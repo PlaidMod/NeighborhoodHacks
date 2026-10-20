@@ -33,6 +33,37 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-19: P3 pages, APIs, alerts and news coverage perspectives
+- **Who:** sohankamsala · P3 Weekly News and Alerts
+- **Branch:** main (local commits; not pushed)
+- **What changed:** Finished P3's user-facing side on top of the core logic:
+  - **Pages:** `/weekly` (bento brief; the teammate picked this layout), `/items/[id]`, `/timeline`, `/alerts` (opt-in, published rules, text preview) and `/alerts/why`
+  - **API routes:** `/api/weekly`, `/api/items/[id]`, `/api/alerts/subscribe` and `/verify`, `/api/reminders`, `/api/twilio/inbound`, `/api/cron/alerts` and `/api/cron/stories`
+  - **Story job:** writes stories for items with `needs_story = true`
+  - **Perspectives (§9a):** extract, code checks, judge, freeze, removal, the `item_perspectives` migration and the "What news coverage says" block
+  - **Messages:** `News`, `Weekly`, `Timeline`, `Item`, `Alerts` and `Coverage` keys in `messages/en.json` and `es.json`
+- **Sample data:** without the Supabase keys, the pages show labeled sample data (`lib/weekly/sample.ts`) run through the real `classify()` and template stories. Sample coverage uses placeholder outlets, never real ones.
+- **Contract changes:**
+  - **New migration:** `supabase/migrations/20261019230000_item_perspectives.sql` (P3 table). P5 applies it and regenerates `lib/database.types.ts`. Until then, perspectives code uses an untyped client.
+  - **New cookie:** `showup_sub`, a signed `users.id` (HMAC with `BODIES_TOKEN_SECRET`), set after phone verification. **P4:** call `POST /api/reminders {item_id}`; it returns 401 `not_subscribed` without the cookie.
+  - **ESLint:** `lib/rules`, `lib/stories` and `lib/sms` can't import `lib/news` or `lib/perspectives` (perspectives spec §8).
+  - **Cron:** `/api/cron/alerts` now runs the story job and the perspectives job before alerts. `vercel.json` is unchanged.
+- **Checked:**
+  - `npm test` 611/611, `npm run lint` and typecheck pass.
+  - In the browser, at 1366px and 390px (no horizontal scroll), all five pages render in English and Spanish with no console errors or missing message keys.
+  - Alerts sign-up errors and the preview state were tested in the browser.
+  - No live Supabase, Gemini or Twilio calls were made, because there are no keys on this machine.
+- **Open issues / next:**
+  - **P5:** apply the `item_perspectives` migration.
+  - **P5:** the cron needs `SITE_URL` set so text links and the Twilio signature URL are right.
+  - **P5:** `GEMINI_JUDGE_MODEL=gemini-3.5-flash-lite` (already on Vercel) is P3's choice: a different model from the 3.8 Flash extractor, as the spec asks, and Pro isn't usable on Vertex.
+  - **P4:** `registration_closes_at` is null for real items until P4's registration resolver exists. The weekly page, texts and 7a/7b reminders read it from `lib/weekly/data.ts` and the `windows` argument of `runAlertsJob`.
+  - **P2:** the perspectives job reads `news_article_items` and `news_articles` (spec §5). Until those tables are migrated, it logs a warning and the weekly page shows "No news coverage found."
+  - **P1:** pages need `?t=<bodies_token>` from the results page. There's no `/api/lookup` yet, which is why the home address box currently says "We couldn't find that address" for every address.
+  - **Twilio:** still not registered (needs an adult account owner). Without keys, sign-up shows a labeled preview and nothing is sent or saved.
+  - **Spec deviation:** bento tiles are whole-card links, so they show only "N news outlets"; the full coverage disclosure appears on the rest of "Coming up," on "Decided," and on item pages.
+  - **Stress test:** still deferred for sohankamsala.
+
 ### 2026-10-19: P3 core logic: rule engine, stories, SMS, weekly builder
 - **Who:** sohankamsala · P3 Weekly News and Alerts
 - **Branch:** main (uncommitted)
