@@ -18,4 +18,4 @@ npm run dev                  # http://localhost:3000
 npm test                     # unit tests (no network)
 ```
 
-`web/` is an earlier test prototype with sample data. It isn't the app and isn't deployed from this repo.
+`web/` is the original prototype. Its screens now live in the root app under `/app` and `/start`, where their sample data is being replaced with real data. `web/` itself isn't deployed.

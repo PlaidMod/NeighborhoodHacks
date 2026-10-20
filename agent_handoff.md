@@ -13,7 +13,7 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
    - `Meeting` and `Item` types (§6)
    - `bodies_token` format (§3)
    - the `classify()` signature (§8)
-   - types in `web/src/lib/data/types.ts`
+   - types in `lib/prototype/types.ts` (the `/app` screens' data shapes; moved from `web/src/lib/data/types.ts`)
 6. **On a merge conflict in this file,** keep both entries, newest first.
 
 ## Entry template
@@ -32,6 +32,31 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 ---
 
 ## Entries
+
+### 2026-10-20: The prototype UI is now the app's UI (`/app`, `/start`)
+- **Who:** sohankamsala · P3 Weekly News and Alerts
+- **Branch:** main (local commit; not pushed)
+- **What changed:** The team decided to use the prototype's finished UI instead of rebuilding it. Its screens were moved from `web/` into the root app as they were, and their demo data is now being replaced with real data screen by screen.
+  - **Routes:** `/app` (dashboard), `/app/brief`, `/app/timeline`, `/app/districts`, `/app/districts/[id]`, `/app/speak`, `/app/vote`, `/app/alerts` and `/start`, all with the prototype's sidebar shell.
+  - **Real data so far:**
+    - After an address lookup, `/results` has "Open your dashboard". It goes through `/app/use?t=<bodies_token>`, which keeps the token in an httpOnly `showup_bodies` cookie (body IDs only).
+    - With that cookie, every `/app` screen shows the reader's real bodies and P3's real items (`lib/weekly/data.ts`: `classify()` tiers, stories, the AI label and source links).
+    - `/app/alerts` uses P3's real Twilio sign-up (`AlertSignup`).
+    - Without the cookie, the screens show the demo neighborhood with its "Sample data" label. Without Supabase, they show P3's labeled sample items.
+  - **Still demo data:** body descriptions beyond what's known for 7 bodies, `/app/speak`, `/app/vote` and `/start` onboarding.
+- **Files:** `app/(prototype)/`, `components/prototype/`, `lib/prototype/` (`live.ts` maps real data onto the screens, `liveData.ts` loads it), `app/(public)/results/page.tsx`, `tests/prototype/`, and the docs: `CLAUDE.md`, `AGENTS.md`, `web/AGENTS.md`, `DESIGN.md` (top note), `README.md`, plus the contract list at the top of this file.
+- **Contract changes:**
+  - **Docs:** `CLAUDE.md` and `AGENTS.md` used to say `web/` was throwaway. They now say its UI is the app's UI and its sample data gets replaced. Earlier entries that call `web/` throwaway are out of date.
+  - **New cookie:** `showup_bodies` holds a `bodies_token`.
+  - The `lib/prototype/types.ts` `Update` type gains `aiWritten` and `itemPath`.
+- **PlaidMod, please confirm:** this reverses the old "don't build on `web/`" rule. Tech plan §17 already assigns each part its prototype screens to convert (P1: districts and vote; P3: timeline, brief and alerts; P4: speak; P5: home, onboarding and shell). Change it back if you disagree.
+- **Checked:** `npm test`, lint and typecheck pass. In the browser, I went from the address box through the stake picker and results to the dashboard, then opened every `/app` screen and a story. There were no console errors and no horizontal scroll at 1366px or 390px.
+- **Open issues / next:**
+  - **Everyone:** the screen text is still English in code. Move it into `messages/*.json` per tech plan §17.
+  - **P1:** body pages need real descriptions; `toBody()` in `lib/prototype/live.ts` leaves them empty rather than inventing them.
+  - **P4:** `/app/speak` builds a comment from a template; check it against the "never ghostwrites" rule before wiring it to real data.
+  - **P5:** `/weekly`, `/timeline` and `/alerts` (P3's earlier pages) duplicate `/app/brief`, `/app/timeline` and `/app/alerts`. Decide whether to redirect them; text links still go to `/items/[id]`, which stays.
+  - The dev palette picker wasn't carried over.
 
 ### 2026-10-19: Address suggestions and a stand-in /api/lookup
 - **Who:** sohankamsala · P3 Weekly News and Alerts (filling a P1 gap)
@@ -461,7 +486,7 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
    - `Meeting` and `Item` types (§6)
    - `bodies_token` format (§3)
    - the `classify()` signature (§8)
-   - types in `web/src/lib/data/types.ts`
+   - types in `lib/prototype/types.ts` (the `/app` screens' data shapes; moved from `web/src/lib/data/types.ts`)
 6. **On a merge conflict in this file,** keep both entries, newest first.
 
 ## Entry template

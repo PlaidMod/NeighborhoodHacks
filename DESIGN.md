@@ -1,6 +1,7 @@
 # ShowUp HTX design system
 
 > **Read this first (Oct 19, 2026).** This file was copied from the old test prototype in `web/`. Its tokens, type, spacing, radius, motion, icons, accessibility, voice and neutrality rules apply to the real app at the repo root. These parts describe the prototype and are replaced by `Project_Plan.md` and `Technical_Implementation_Plan.md`:
+> - **Update, Oct 20, 2026:** the prototype's screens were moved into the root app under `/app/*` and `/start` (`app/(prototype)/`), so **§2 routes and §5, §7 and §8 patterns describe live screens again.** The items below still hold where the plan differs (stakes, tier names, privacy).
 > - **§2** (prototype routes) and **§8** (prototype page patterns).
 > - **§3** "Government body colors" and "Dev palette picker". Body colors now live in `BODY_STYLE` in `components/civic.tsx`, keyed by the plan's body types; the palette picker wasn't carried over.
 > - **§5** shell and dashboard grids; **§7** stat card, date tile and story sheet.

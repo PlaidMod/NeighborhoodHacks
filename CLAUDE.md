@@ -12,7 +12,12 @@ ShowUp HTX: a 5-person high school team's entry for Neighborhood Hacks 2026. A u
   - `Technical_Implementation_Plan.md` covers how it's built: the stack (§1), the file layout (§2), the DB schema (§16), and the shared contracts every part depends on: `Meeting`/`Item` types (§6), `bodies_token` (§3), `classify()` (§8).
   - `.plans/agent-scraper-spec.md` (P2, v1.2) wins over the plan files for P2's work. Its §12 lists the changes other parts must know about: extended types, extra schema columns, `classify()` rules and more. That includes the news "might come up" box on body pages (D26), which the plan files now include too.
 - **Don't change the plan files** unless a teammate asks for that specific change. If something conflicts with the plan, follow the plan and raise the conflict.
-- **`web/` is a throwaway test prototype.** Don't build on it, study its architecture, or reconcile the plan with it. The only thing taken from it is its design system (see below). The plan's app is built at the repo root, using the §2 layout.
+- **The prototype UI is the app's UI** (changed Oct 20, 2026; see `agent_handoff.md`). The screens first built in `web/` now live at the repo root:
+  - `app/(prototype)/app/*` (`/app`, `/app/brief`, `/app/timeline`, `/app/districts`, `/app/speak`, `/app/vote`, `/app/alerts`) and `app/(prototype)/start` (`/start`), with the sidebar shell in `components/prototype/`.
+  - Their demo data is in `lib/prototype/` and is shown with a "Sample data" label. **Replace it piece by piece with real data; don't drop or redesign a screen to do it.** `lib/prototype/live.ts` maps real data (the reader's `bodies_token`, P3's items) onto the screens' types, and `lib/prototype/profile.tsx` prefers it over the demo whenever it's there.
+  - When you wire your part's screen to real data, record which screen and which data in `agent_handoff.md`.
+  - The rest of the app (APIs, DB, jobs, `lib/`) follows the plan's §2 layout. Where a screen and the plan disagree on behavior (tier names, stakes, neutrality, privacy), the plan wins: change the screen, not the plan.
+  - Don't add features to `web/` itself. It's kept as the original reference and runs on its own.
 - **Hosting and data:**
   - **Vercel:** project `showup-htx` on the `majority-illusion` team. Production is https://showup-htx-six.vercel.app. Pushes to `main` deploy, but deploys of teammates' commits wait for the owner's approval, because the repo is private.
   - **Supabase:** project `showup-htx` (ID `elsvhqqwdxwsuvkbchdq`). Environment values live in `.env.local` (see `.env.example`) and in Vercel. Never commit them.
@@ -54,7 +59,7 @@ npm run admin -- set-password <email>       # choose your own /admin password (a
 - `npm test` runs `tests/**/*.test.ts` (P5's `tests/platform/`, P2's `tests/unit/`) in UTC with `fetch` blocked (`tests/setup/no-network.ts`). Tests that need the network go in `tests/live/` and run with `npm run test:live`.
 - P2's code is `lib/adapters/`, `lib/ingest/`, `lib/news/`, `data/` and `tests/golden/`. ESLint stops `lib/adapters` and `lib/ingest` from importing `lib/news` (D26, D32).
 - npm 11 holds back packages' install scripts until approved. Nothing in the app needs them so far.
-- `web/` is the old test prototype, with its own `package.json` (`cd web && npm install && npm run dev`). The root's TypeScript, ESLint, vitest and Tailwind all ignore it.
+- `web/` is the original prototype, kept for reference, with its own `package.json` (`cd web && npm install && npm run dev`). The root's TypeScript, ESLint, vitest and Tailwind all ignore it. Its screens were moved to the root (see above), so change them there, not in `web/`.
 
 ## Next.js caveat
 
@@ -66,6 +71,7 @@ The look and the content rules are in the root `DESIGN.md`. Read it before UI wo
 - **Color tokens** in `app/globals.css`. There are four base variables (`--brick`, `--surface`, `--denim`, `--ink`), and every other shade is derived from them. `tests/platform/contrast.test.ts` fails if a change drops the main text pairs below 4.5:1.
 - **Fonts** in `app/layout.tsx`: Overpass everywhere; Playfair and Libre Franklin (`font-headline`, `font-news`) only on news surfaces.
 - **shadcn components** in `components/ui/` (pill buttons, 24px cards, 44px pill inputs). Add more with `npx shadcn@latest add <name>`, then restyle them to match.
+- **Prototype screens** in `app/(prototype)/` reuse the shared pieces through `components/prototype/civic.tsx`, which adds the demo-data versions of `BodyIcon` and `TierPill`. When a screen is fully on real data, switch it to the shared ones.
 - **Shared pieces** in `components/civic.tsx`: `Panel`, `SectionTitle`, `Chip`, `ArrowCircle`, `Logo`, `BodyIcon` (keyed by `BodyType` from `lib/contracts/bodyTypes.ts`) and `TierPill` (shows "Urgent" for `sms` only).
 
 ## Rules that are easy to break

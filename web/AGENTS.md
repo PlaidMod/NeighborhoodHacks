@@ -8,9 +8,9 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 <!-- END:nextjs-agent-rules -->
 
-## This folder is a test prototype
+## This folder is the original prototype
 
-Don't build features here. The real app is built at the repo root, following `../Technical_Implementation_Plan.md` (see `../CLAUDE.md`). Only the design system in `DESIGN.md` (tokens, fonts, components) carries over.
+Its screens are the app's UI, and they now live at the repo root: `../app/(prototype)/`, `../components/prototype/` and `../lib/prototype/` (see `../CLAUDE.md`). Make changes there, not here. At the root, the demo data is being replaced piece by piece with real data. This folder is kept unchanged as the reference it came from.
 
 ## Design rules
 
@@ -26,4 +26,4 @@ At the start of a session, check whether your teammate has done the plan stress 
 
 ## Handoff log (required)
 
-At the start of a session, read the newest entries in `../agent_handoff.md` (at the repo root). After you add, edit or delete anything, add an entry there before you finish or commit, using the template and rules at the top of that file. Flag any change to a shared contract (DB schema, `Meeting`/`Item` types, `bodies_token`, `classify()`, `src/lib/data/types.ts`).
+At the start of a session, read the newest entries in `../agent_handoff.md` (at the repo root). After you add, edit or delete anything, add an entry there before you finish or commit, using the template and rules at the top of that file. Flag any change to a shared contract (DB schema, `Meeting`/`Item` types, `bodies_token`, `classify()`, `lib/prototype/types.ts` at the root).

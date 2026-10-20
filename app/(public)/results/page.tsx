@@ -81,6 +81,11 @@ export default function ResultsPage() {
             <p className="mt-6 text-sm text-muted-foreground">{t('limits')}</p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Button asChild size="lg">
+                {/* /app/use remembers the bodies_token (body IDs only) so the dashboard shows these governments.
+                    A plain <a>: it's a route handler that sets a cookie and redirects, not a page. */}
+                <a href={`/app/use?t=${encodeURIComponent(state.data.bodies_token)}`}>{t('dashboard')}</a>
+              </Button>
+              <Button asChild size="lg" variant="outline">
                 <Link href={`/weekly?t=${encodeURIComponent(state.data.bodies_token)}`}>{t('weekly')}</Link>
               </Button>
               <Button asChild size="lg" variant="outline">
