@@ -52,9 +52,9 @@ export default async function AlertsPage({ searchParams }: { searchParams: Promi
   ]
 
   return (
-    <main id="main" className="mx-auto max-w-7xl px-4 md:px-8 pt-6 pb-16">
+    <main id="main" className="mx-auto max-w-7xl px-4 md:px-8 2xl:max-w-[1440px] pt-6 pb-16">
       <NewsNav active="alerts" token={token} />
-      <div className="mt-8 grid gap-10 lg:grid-cols-[minmax(0,1fr)_360px]">
+      <div className="mt-8 grid grid-cols-[minmax(0,1fr)] gap-10 lg:grid-cols-[minmax(0,1fr)_360px]">
         <div className="min-w-0 space-y-10">
           <header>
             <h1 className="text-[2.1rem] leading-tight font-extrabold tracking-[-0.03em] text-ink md:text-[2.5rem]">{t('title')}</h1>
@@ -98,7 +98,7 @@ export default async function AlertsPage({ searchParams }: { searchParams: Promi
           <div className="mx-auto w-full max-w-[340px] rounded-[40px] bg-ink p-3">
             <div className="space-y-3 rounded-[30px] bg-surface p-4 text-[13px] leading-snug">
               {previews.map((text, i) => (
-                <p key={i} className="w-fit max-w-[90%] rounded-[18px] rounded-bl-md bg-white px-3.5 py-2.5 break-words text-ink">
+                <p key={i} className="w-fit max-w-[90%] rounded-[18px] rounded-bl-md bg-white px-3.5 py-2.5 [overflow-wrap:anywhere] text-ink">
                   {text}
                 </p>
               ))}

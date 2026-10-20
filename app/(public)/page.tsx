@@ -5,7 +5,7 @@ import { GovernmentStack } from '@/components/home/GovernmentStack'
 export default async function Home() {
   const t = await getTranslations('Home')
   return (
-    <main id="main" className="mx-auto max-w-7xl px-4 md:px-8 py-12 md:py-20">
+    <main id="main" className="mx-auto max-w-7xl px-4 md:px-8 2xl:max-w-[1440px] py-12 md:py-20">
       <div className="grid items-center gap-12 lg:grid-cols-[1.15fr_0.85fr] xl:gap-20">
         <div>
           <h1 className="text-[2.6rem] leading-[1.05] font-extrabold tracking-[-0.03em] text-ink md:text-[3.4rem] xl:text-[4.25rem]">

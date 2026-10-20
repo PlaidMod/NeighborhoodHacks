@@ -36,10 +36,15 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 ### 2026-10-19: Wider page layout on large screens
 - **Who:** sohankamsala · P3 Weekly News and Alerts
 - **Branch:** main (local commit; not pushed)
-- **What changed:** On a 1920px screen the site sat in a narrow 1024px column with wide empty margins. The header, footer, home page, `/weekly` and `/alerts` now use `max-w-7xl` (1280px) with `md:px-8`. At `xl`, the home headline and lede are larger so the hero fills the wider column. Reading pages (`/items/[id]`, `/timeline`) keep their narrow measure.
-- **Files:** `components/shell/SiteHeader.tsx`, `components/shell/SiteFooter.tsx`, `app/(public)/page.tsx` (P5's), `app/(public)/weekly/page.tsx`, `app/(public)/alerts/page.tsx`
+- **What changed:** On a 1920px screen the site sat in a narrow 1024px column with wide empty margins.
+  - The header, footer, home page and every P3 page now use `max-w-7xl` (1280px) with `md:px-8`, and 1440px at `2xl` (≥1536px).
+  - At `xl`, the home headline and lede are larger so the hero fills the wider column.
+  - Reading pages (`/items/[id]`, `/timeline`, `/alerts/why`) keep a `max-w-3xl` text column, aligned to the same left edge as the header instead of centered, so the tabs line up with the logo.
+  - Headlines are smaller below 640px, so a story isn't eight lines of title on a 320px phone.
+  - `/alerts` overflowed at 320px because of an unbreakable link in the sample texts; it now wraps.
+- **Files:** `components/shell/SiteHeader.tsx`, `components/shell/SiteFooter.tsx`, `app/(public)/page.tsx` (P5's), and P3's pages under `app/(public)/` (`weekly`, `timeline`, `items/[id]`, `alerts`, `alerts/why`), plus `components/weekly/Coverage.tsx`
 - **Contract changes:** None. **PlaidMod:** these are your shell and home files; change them back if you'd rather.
-- **Checked:** Screenshots at 1920, 1366 and 390px; phones are unchanged. `npm test`, lint and typecheck pass.
+- **Checked:** A Playwright sweep of 9 pages at 9 widths (320, 375, 414, 768, 1024, 1280, 1440, 1920 and 2560) found no horizontal scroll and no content past the viewport edge. Screenshots at 320, 768, 1024, 1920 and 2560 were reviewed. `npm test`, lint and typecheck pass.
 - **Open issues / next:** None.
 
 ### 2026-10-19: P3 pages, APIs, alerts and news coverage perspectives

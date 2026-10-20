@@ -26,7 +26,7 @@ export default async function TimelinePage({ searchParams }: { searchParams: Pro
   const resolved = await resolveBodies(token)
   if (!resolved.bodies) {
     return (
-      <main id="main" className="mx-auto max-w-3xl px-4">
+      <main id="main" className="mx-auto max-w-7xl px-4 md:px-8 2xl:max-w-[1440px]">
         <NeedAddress reason={resolved.reason} />
       </main>
     )
@@ -45,10 +45,11 @@ export default async function TimelinePage({ searchParams }: { searchParams: Pro
   const filterHref = (key: Filter) => withToken(key === 'all' ? '/timeline' : `/timeline?f=${key}`, token)
 
   return (
-    <main id="main" className="mx-auto max-w-3xl px-4 pt-6 pb-16 font-news text-ink">
+    <main id="main" className="mx-auto max-w-7xl px-4 pt-6 pb-16 font-news text-ink md:px-8 2xl:max-w-[1440px]">
       <NewsNav active="timeline" token={token} />
+      <div className="max-w-3xl">
       {resolved.mode === 'sample' && <SampleNotice className="mt-4" />}
-      <h1 className="mt-6 font-headline text-[2.2rem] leading-tight font-black">{t('title')}</h1>
+      <h1 className="mt-6 font-headline text-[1.9rem] leading-tight font-black sm:text-[2.2rem]">{t('title')}</h1>
       <p className="mt-2 text-muted-foreground">{t('lede')}</p>
 
       <nav aria-label={t('filtersLabel')} className="mt-6 flex flex-wrap gap-2 font-sans">
@@ -96,6 +97,7 @@ export default async function TimelinePage({ searchParams }: { searchParams: Pro
           ))}
         </ul>
       )}
+      </div>
     </main>
   )
 }

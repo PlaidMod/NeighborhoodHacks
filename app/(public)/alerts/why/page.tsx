@@ -18,8 +18,9 @@ export default async function WhyPage({ searchParams }: { searchParams: Promise<
   const itemId = item && /^[a-z0-9-]{1,64}$/i.test(item) ? item : null
 
   return (
-    <main id="main" className="mx-auto max-w-3xl px-4 pt-6 pb-16">
+    <main id="main" className="mx-auto max-w-7xl px-4 pt-6 pb-16 md:px-8 2xl:max-w-[1440px]">
       <NewsNav active="alerts" />
+      <div className="max-w-3xl">
       <h1 className="mt-8 text-[2rem] leading-tight font-extrabold tracking-tight text-ink">{t('whyTitle')}</h1>
       {known ? (
         <div className="mt-6 rounded-[24px] bg-denim-soft p-6 text-denim-deep">
@@ -37,6 +38,7 @@ export default async function WhyPage({ searchParams }: { searchParams: Promise<
       <Link href="/alerts#rules" className="mt-6 inline-block text-sm font-semibold text-denim underline-offset-2 hover:underline">
         {t('allRules')}
       </Link>
+      </div>
     </main>
   )
 }

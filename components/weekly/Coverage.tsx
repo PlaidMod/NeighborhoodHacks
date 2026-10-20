@@ -55,7 +55,7 @@ export function Coverage({ coverage, className }: { coverage: CoverageData | nul
                 {g.arguments.map((a) => (
                   <li key={a.quote} className="border-l-2 border-border pl-3">
                     <p>{a.summary_en}</p>
-                    <p className="mt-0.5 break-words text-muted-foreground">
+                    <p className="mt-0.5 [overflow-wrap:anywhere] text-muted-foreground">
                       “{a.quote}” — {link(a.url, `${a.outlet}, ${date(a.published_at)}`)}
                     </p>
                   </li>
@@ -73,7 +73,7 @@ export function Coverage({ coverage, className }: { coverage: CoverageData | nul
             <p className="font-bold">{t('sources')}</p>
             <ul className="mt-1 space-y-1">
               {c.sources.map((s) => (
-                <li key={s.url} className="break-words">
+                <li key={s.url} className="[overflow-wrap:anywhere]">
                   {s.outlet}: {link(s.url, `“${s.headline}”`)} · {date(s.published_at)}
                 </li>
               ))}

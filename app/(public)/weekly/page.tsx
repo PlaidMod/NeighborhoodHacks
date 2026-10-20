@@ -41,7 +41,7 @@ export default async function WeeklyPage({ searchParams }: { searchParams: Promi
   const resolved = await resolveBodies(token)
   if (!resolved.bodies) {
     return (
-      <main id="main" className="mx-auto max-w-7xl px-4 md:px-8">
+      <main id="main" className="mx-auto max-w-7xl px-4 md:px-8 2xl:max-w-[1440px]">
         <NeedAddress reason={resolved.reason} />
       </main>
     )
@@ -70,7 +70,7 @@ export default async function WeeklyPage({ searchParams }: { searchParams: Promi
   const nothing = !edition.lead && edition.decided.length === 0
 
   return (
-    <main id="main" className="mx-auto max-w-7xl px-4 md:px-8 pt-6 pb-16 font-news text-ink">
+    <main id="main" className="mx-auto max-w-7xl px-4 md:px-8 2xl:max-w-[1440px] pt-6 pb-16 font-news text-ink">
       <NewsNav active="weekly" token={token} />
       {resolved.mode === 'sample' && <SampleNotice className="mt-4" />}
 
@@ -80,7 +80,7 @@ export default async function WeeklyPage({ searchParams }: { searchParams: Promi
           <span className="rounded-full bg-brick-soft px-2.5 py-1 text-brick-deep">{t('kicker')}</span>
           <span>{t('range', { from: day(edition.from), to: day(edition.to) })}</span>
         </p>
-        <h1 className="mt-4 font-headline text-[2.4rem] leading-[1.04] font-black md:text-[3.4rem]">{t('title')}</h1>
+        <h1 className="mt-4 font-headline text-[2rem] leading-[1.06] font-black sm:text-[2.4rem] md:text-[3.4rem]">{t('title')}</h1>
         <p className="mt-3 max-w-2xl text-[1.05rem] text-muted-foreground">{edition.intro}</p>
       </header>
 
@@ -108,7 +108,7 @@ export default async function WeeklyPage({ searchParams }: { searchParams: Promi
                     {item.body_name}
                     {urgent && <span className={cn('ml-2', light ? 'text-brick' : 'text-white')}>● {tn('urgent')}</span>}
                   </p>
-                  <h2 className={cn('mt-2 line-clamp-5 font-headline leading-[1.12] font-bold', 'big' in tile && tile.big ? 'text-[1.7rem]' : 'text-[1.25rem]')}>
+                  <h2 className={cn('mt-2 line-clamp-5 font-headline leading-[1.12] font-bold', 'big' in tile && tile.big ? 'text-[1.4rem] sm:text-[1.7rem]' : 'text-[1.25rem]')}>
                     {headline(item)}
                   </h2>
                   {'big' in tile && tile.big && s?.dek && <p className="mt-2 max-w-xl text-sm text-white/80">{s.dek}</p>}
@@ -133,7 +133,7 @@ export default async function WeeklyPage({ searchParams }: { searchParams: Promi
         </section>
       )}
 
-      <div className="mt-12 grid gap-10 lg:grid-cols-[minmax(0,1fr)_340px]">
+      <div className="mt-12 grid grid-cols-[minmax(0,1fr)] gap-10 lg:grid-cols-[minmax(0,1fr)_340px]">
         <div className="min-w-0 space-y-12">
           {/* The rest of "Coming up", with Speak up buttons */}
           {moreComingUp.length > 0 && (

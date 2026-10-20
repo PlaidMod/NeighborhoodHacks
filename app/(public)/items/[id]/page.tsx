@@ -48,8 +48,9 @@ export default async function ItemPage({
   const ruleText = isRule(why) ? RULE_TEXT[why][lang] : null
 
   return (
-    <main id="main" className="mx-auto max-w-3xl px-4 pt-6 pb-16 font-news text-ink">
+    <main id="main" className="mx-auto max-w-7xl px-4 pt-6 pb-16 font-news text-ink md:px-8 2xl:max-w-[1440px]">
       <NewsNav active="weekly" token={token} />
+      <div className="max-w-3xl">
       <Link
         href={withToken('/weekly', token)}
         className="mt-6 inline-flex items-center gap-1.5 font-sans text-sm font-semibold text-muted-foreground hover:text-ink"
@@ -74,7 +75,7 @@ export default async function ItemPage({
           <span className="text-denim">{item.body_name}</span>
           {item.tier === 'sms' && upcoming && <span className="text-brick"> · {tn('urgent')}</span>}
         </p>
-        <h1 className="mt-3 font-headline text-[2rem] leading-[1.08] font-black md:text-[2.6rem]">{story?.headline ?? item.title}</h1>
+        <h1 className="mt-3 font-headline text-[1.6rem] leading-[1.1] font-black sm:text-[2rem] md:text-[2.6rem]">{story?.headline ?? item.title}</h1>
         {story?.dek && <p className="mt-4 text-[1.15rem] leading-relaxed text-ink/80">{story.dek}</p>}
         <p className="mt-5 border-y border-border py-2.5 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
           {item.meeting_status === 'cancelled' ? tn('cancelled') : when(item.meeting_date)}
@@ -116,6 +117,7 @@ export default async function ItemPage({
 
       <StorySource source={item.story_source} url={item.source_url} className="mt-6" />
       <Coverage coverage={item.coverage} className="mt-6" />
+      </div>
     </main>
   )
 }
