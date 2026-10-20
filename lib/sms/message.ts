@@ -63,10 +63,12 @@ export function itemAlertText(
   lang: Lang,
 ) {
   const { text: dl } = deadlineText(a.deadline, lang)
-  const tail = `. ${dl}. ${SPEAK[lang]}: ${a.link} ${STOP[lang]}`
+  const tail = ` ${dl}. ${SPEAK[lang]}: ${a.link} ${STOP[lang]}`
   const head = `${a.body}: `
-  const room = MAX_SMS_CHARS - head.length - tail.length
-  return `${head}${clip(a.headline.replace(/\.$/, ""), room)}${tail}`
+  const room = MAX_SMS_CHARS - head.length - tail.length - 1
+  const headline = clip(a.headline.replace(/\.$/, ""), room)
+  // A shortened headline already ends in "…"; don't add a period after it.
+  return `${head}${headline}${headline.endsWith("…") ? "" : "."}${tail}`
 }
 
 /** Reminder texts (7a, 7b) and the protest-deadline reminder. */

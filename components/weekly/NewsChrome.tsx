@@ -18,7 +18,7 @@ export async function NewsNav({ active, token }: { active: 'weekly' | 'timeline'
   const links = [
     { key: 'weekly', href: withToken('/weekly', token), label: t('thisWeek') },
     { key: 'timeline', href: withToken('/timeline', token), label: t('latest') },
-    { key: 'alerts', href: '/alerts', label: t('alerts') },
+    { key: 'alerts', href: withToken('/alerts', token), label: t('alerts') },
   ] as const
   return (
     <nav aria-label={t('nav')} className="flex gap-6 border-b border-border font-news text-sm font-semibold">
