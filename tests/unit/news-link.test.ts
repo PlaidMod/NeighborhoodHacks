@@ -236,7 +236,7 @@ describe('linkArticles run behaviour', () => {
   it('without an LLM it warns once and links nothing', async () => {
     const r = await linkArticles([c.article, { ...c.article, external_id: 'b' }], { items: c.items, meetings: c.meetings, llm: null, models: MODELS });
     expect(r.links).toEqual([]);
-    expect(r.warnings).toEqual(['llm_unavailable: GEMINI_API_KEY is not set; articles were not linked']);
+    expect(r.warnings).toEqual(['llm_unavailable: no OPENROUTER_API_KEY or GEMINI_API_KEY is set; articles were not linked']);
   });
 
   it('bad JSON and thrown errors become warnings', async () => {

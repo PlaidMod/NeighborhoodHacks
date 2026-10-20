@@ -189,7 +189,7 @@ export function createPrimeGovAdapter(deps: PrimeGovDeps = {}): Adapter {
         .sort((a, b) => a.dateTime.localeCompare(b.dateTime));
 
       if (!llm && selected.some((m) => pickAgendaDocument(m.documentList ?? [], cfg.document_template))) {
-        result.warnings.push('llm_unavailable: GEMINI_API_KEY is not set; agenda items were not extracted');
+        result.warnings.push('llm_unavailable: no OPENROUTER_API_KEY or GEMINI_API_KEY is set; agenda items were not extracted');
       }
       for (const pg of selected) {
         const { meeting, agenda } = mapMeeting(pg, cfg, bodyId);

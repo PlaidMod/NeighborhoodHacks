@@ -1,6 +1,7 @@
 import { createCoachHandler } from '@/lib/coach/http'
 import { sharedCoachProvider, sharedCoachStore } from '@/lib/coach/shared'
 import { getOptionalEnv } from '@/lib/env'
+import { llmConfigured } from '@/lib/openrouter'
 import { bodiesFor } from '@/lib/prototype/bodies'
 import { updatesFor } from '@/lib/prototype/updates'
 import { ZIPS } from '@/lib/prototype/zips'
@@ -12,7 +13,7 @@ export const runtime = 'nodejs'
 
 const sharedReady = !!(getOptionalEnv('SUPABASE_URL') && getOptionalEnv('SUPABASE_SERVICE_ROLE_KEY') && getOptionalEnv('IP_HASH_SECRET'))
 export const POST = createCoachHandler({
-  provider: getOptionalEnv('GEMINI_API_KEY') ? sharedCoachProvider : undefined,
+  provider: llmConfigured() ? sharedCoachProvider : undefined,
   store: sharedReady ? sharedCoachStore : undefined,
   digestSecret: sharedReady ? getOptionalEnv('IP_HASH_SECRET') : undefined,
   trustedIpHeader: process.env.COACH_TRUSTED_IP_HEADER,

@@ -362,7 +362,7 @@ export function createLlmExtractAdapter(deps: LlmExtractDeps = {}): Adapter {
       }
 
       if (!llm && found.docs.length) {
-        result.warnings.push('llm_unavailable: GEMINI_API_KEY is not set; agenda items were not extracted');
+        result.warnings.push('llm_unavailable: no OPENROUTER_API_KEY or GEMINI_API_KEY is set; agenda items were not extracted');
       }
       for (const doc of found.docs) {
         let fetched: Awaited<ReturnType<typeof fetchText>>;

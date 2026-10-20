@@ -4,7 +4,7 @@
 // --articles (Step 11b) also fetches article pages and writes articles.json (text included; local output only).
 // The previous <out>/articles.json is read so unchanged feed items are not refetched.
 // --link <dir> (Step 11c, needs --articles) links ok articles to items from <dir>/meetings.json + <dir>/items.json
-// with the LLM and writes links.json + link_state.json (skip-unchanged memory). Needs GEMINI_API_KEY.
+// with the LLM and writes links.json + link_state.json (skip-unchanged memory). Needs OPENROUTER_API_KEY or GEMINI_API_KEY.
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { parseArgs } from 'node:util';

@@ -191,7 +191,7 @@ export async function linkArticles(articles: NewsArticle[], deps: LinkArticlesDe
       continue;
     }
     if (!deps.llm) {
-      if (!warnedNoLlm) out.warnings.push('llm_unavailable: GEMINI_API_KEY is not set; articles were not linked');
+      if (!warnedNoLlm) out.warnings.push('llm_unavailable: no OPENROUTER_API_KEY or GEMINI_API_KEY is set; articles were not linked');
       warnedNoLlm = true;
       continue;
     }

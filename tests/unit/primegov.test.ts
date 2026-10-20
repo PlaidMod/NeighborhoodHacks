@@ -197,7 +197,7 @@ describe('adapter run (offline)', () => {
     const { http, urls } = fakeHttp();
     const r = await createPrimeGovAdapter({ http, now: () => NOW, llm: null }).run(source, { kind: 'rotation' }, window);
     expect(r.meetings).toHaveLength(1);
-    expect(r.warnings).toEqual(['llm_unavailable: GEMINI_API_KEY is not set; agenda items were not extracted']);
+    expect(r.warnings).toEqual(['llm_unavailable: no OPENROUTER_API_KEY or GEMINI_API_KEY is set; agenda items were not extracted']);
     expect(urls.some((u) => u.includes('CompiledDocument'))).toBe(false);
   });
   it('past window: archived meetings filtered by committee and window', async () => {

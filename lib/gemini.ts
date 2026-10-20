@@ -1,9 +1,11 @@
 import { GoogleGenAI, type Part } from '@google/genai'
 import { z } from 'zod'
 import { assertServer, getEnv, getOptionalEnv } from './env'
+import { openRouterJson, openRouterKey, type OpenRouterContent } from './openrouter'
 
 // Shared Gemini client for P2 (agenda extraction), P3 (stories) and P4 (the coach).
 // Server-only: the API key never reaches the browser.
+// Calls go through OpenRouter when OPENROUTER_API_KEY is set, otherwise straight to Gemini.
 
 export const DEFAULT_GEMINI_MODEL = 'gemini-3.8-flash'
 export const DEFAULT_TIMEOUT_MS = 120_000
@@ -120,12 +122,53 @@ export function createGemini(client: GeminiClientLike) {
   }
 }
 
+type GenerateContentRequest = {
+  model: string
+  contents: string | Part[]
+  config: { systemInstruction?: string; temperature?: number; responseJsonSchema: Record<string, unknown>; abortSignal?: AbortSignal; httpOptions?: { timeout?: number } }
+}
+
+function toOpenRouterContent(contents: string | Part[]): string | OpenRouterContent[] {
+  if (typeof contents === 'string') return contents
+  return contents.map((part): OpenRouterContent => {
+    if (part.inlineData?.mimeType === 'application/pdf' && part.inlineData.data) {
+      return { type: 'file', file: { filename: 'document.pdf', file_data: `data:application/pdf;base64,${part.inlineData.data}` } }
+    }
+    if (typeof part.text === 'string') return { type: 'text', text: part.text }
+    throw new Error('OpenRouter transport supports only text and PDF parts.')
+  })
+}
+
+/** A GeminiClientLike that sends the request to OpenRouter instead. */
+export function openRouterClient(apiKey: string, fetchImpl?: typeof fetch): GeminiClientLike {
+  return {
+    models: {
+      async generateContent(raw: unknown) {
+        const req = raw as GenerateContentRequest
+        const text = await openRouterJson({
+          apiKey,
+          fetchImpl,
+          model: req.model,
+          system: req.config.systemInstruction,
+          content: toOpenRouterContent(req.contents),
+          schema: req.config.responseJsonSchema,
+          temperature: req.config.temperature,
+          timeoutMs: req.config.httpOptions?.timeout ?? DEFAULT_TIMEOUT_MS,
+          signal: req.config.abortSignal,
+        })
+        return { text }
+      },
+    },
+  }
+}
+
 let shared: ReturnType<typeof createGemini> | undefined
 
 /** Asks Gemini for JSON that matches `schema`, and validates the answer. Server-only. */
 export function generateJson<T>(opts: GenerateJsonOptions<T>): Promise<T> {
   assertServer('generateJson()')
-  shared ??= createGemini(new GoogleGenAI({ apiKey: getEnv('GEMINI_API_KEY') }))
+  const routerKey = openRouterKey()
+  shared ??= createGemini(routerKey ? openRouterClient(routerKey) : new GoogleGenAI({ apiKey: getEnv('GEMINI_API_KEY') }))
   return shared.generateJson(opts)
 }
 

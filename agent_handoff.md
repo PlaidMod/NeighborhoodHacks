@@ -33,6 +33,15 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-20: Route LLM calls through OpenRouter when its key is set
+- **Who:** Iarush
+- **Branch:** main
+- **What changed:** Added an OpenRouter transport (`lib/openrouter.ts`). When `OPENROUTER_API_KEY` is set, every LLM call (shared `generateJson` for stories/coach/perspectives, and P2's `geminiFromEnv()` for extraction, minutes and news linking) goes to OpenRouter; otherwise Gemini is used as before. Routes now gate on `llmConfigured()` (either key). Model IDs still come from `GEMINI_*_MODEL`; bare IDs get a `google/` prefix.
+- **Files:** `lib/openrouter.ts`, `lib/gemini.ts`, `lib/adapters/gemini.ts`, `lib/env.ts`, coach/cron routes, `llm_unavailable` warning text in P2 adapters + tests, `.env.example`, `tests/platform/openrouter.test.ts`.
+- **Contract changes:** None to schema/types. New env var `OPENROUTER_API_KEY`. Deviates from tech plan §1 (Gemini direct): the team should confirm. `llm_unavailable` warning text changed (P2).
+- **Checked:** `npm test` 648 Vitest (incl. 5 new OpenRouter tests) + 69 P4 pass; ESLint clean. `tsc --noEmit` errors only in pre-existing `scraper P2/tmp/` scripts, none in changed files. No live OpenRouter call made.
+- **Open issues / next:** Add `OPENROUTER_API_KEY` to `.env.local` and Vercel. `gemini-pro-latest` (P2 fallback default) is likely not an OpenRouter ID; set `GEMINI_EXTRACT_FALLBACK_MODEL` to a real one. `lib/coach/gemini.ts` (test-only) unchanged.
+
 ### 2026-10-20: Validate configured P4 and prepare publication
 - **Who:** BluePhoenix79 · P4 Speak up
 - **Branch:** main

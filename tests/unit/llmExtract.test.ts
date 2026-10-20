@@ -283,7 +283,7 @@ describe('adapter run (offline)', () => {
     const r = await createLlmExtractAdapter({ http, now, llm: null, models: MODELS, pdfText }).run(source, { kind: 'rotation' }, window);
     expect(r.meetings.map((m) => m.date)).toEqual(['2026-10-19T11:00:00-05:00']);
     expect(r.items).toEqual([]);
-    expect(r.warnings).toEqual(['llm_unavailable: GEMINI_API_KEY is not set; agenda items were not extracted']);
+    expect(r.warnings).toEqual(['llm_unavailable: no OPENROUTER_API_KEY or GEMINI_API_KEY is set; agenda items were not extracted']);
   });
   it('results mode without known meetings does nothing but warn (Step 10 tests: minutes.test.ts)', async () => {
     const r = await createLlmExtractAdapter({ http, now, llm: null }).run(source, { kind: 'results', meeting_external_ids: ['x'] }, window);

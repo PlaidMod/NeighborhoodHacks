@@ -1,5 +1,6 @@
 import { GoogleGenAI } from '@google/genai';
 import { z } from 'zod';
+import { openRouterJson, openRouterKey, pdfContent } from '../openrouter';
 import { PAGE_BREAK } from './pdfText';
 
 // Gemini client and agenda-extraction schema (agent-scraper-spec §8 Step 6, D17).
@@ -124,8 +125,21 @@ export function createGeminiClient(apiKey: string): LlmClient {
   };
 }
 
-/** A client when GEMINI_API_KEY is set, else null (LLM steps then skip with a warning). */
+/** The same LlmClient, sent through OpenRouter (OPENROUTER_API_KEY). */
+export function createOpenRouterClient(apiKey: string, fetchImpl?: typeof fetch): LlmClient {
+  return {
+    async generateJson({ model, system, text, pdf, schema, timeoutMs }) {
+      if (pdf && pdf.length >= MAX_INLINE_PDF_BYTES) throw new Error(`PDF is ${pdf.length} bytes; over the inline limit`);
+      const content = pdf ? [pdfContent(pdf)] : (text ?? '');
+      return openRouterJson({ apiKey, fetchImpl, model, system, content, schema, timeoutMs });
+    },
+  };
+}
+
+/** An OpenRouter client when OPENROUTER_API_KEY is set, else a Gemini client when GEMINI_API_KEY is set, else null (LLM steps then skip with a warning). */
 export function geminiFromEnv(env: EnvLike = process.env): LlmClient | null {
+  const routerKey = openRouterKey(env);
+  if (routerKey) return createOpenRouterClient(routerKey);
   const key = env.GEMINI_API_KEY?.trim();
   return key ? createGeminiClient(key) : null;
 }

@@ -211,7 +211,7 @@ export async function runMinutesResults(input: MinutesInput): Promise<MinutesOut
     const url = urls.get(m.external_id);
     if (!url) continue; // minutes not posted yet: normal
     if (!input.llm) {
-      if (!warnedNoLlm) out.warnings.push('llm_unavailable: GEMINI_API_KEY is not set; minutes were not read');
+      if (!warnedNoLlm) out.warnings.push('llm_unavailable: no OPENROUTER_API_KEY or GEMINI_API_KEY is set; minutes were not read');
       warnedNoLlm = true;
       out.warnings.push(`meeting ${m.external_id}: minutes found at ${url}`);
       continue;

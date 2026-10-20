@@ -1,5 +1,6 @@
 import { isAuthorizedCron, unauthorizedCronResponse } from '@/lib/cron'
 import { getOptionalEnv } from '@/lib/env'
+import { llmConfigured } from '@/lib/openrouter'
 import { geminiModel } from '@/lib/gemini'
 import { geminiExtractor, geminiJudge, judgeModel, runPerspectivesJob, supabasePerspectivesStore } from '@/lib/perspectives/job'
 import { runAlertsJob, supabaseAlertsStore } from '@/lib/sms/job'
@@ -18,13 +19,13 @@ export async function GET(req: Request) {
   if (!isAuthorizedCron(req)) return unauthorizedCronResponse()
   const stories = await runStoryJob({
     store: supabaseStoryStore,
-    generate: getOptionalEnv('GEMINI_API_KEY') ? geminiStoryGenerator : undefined,
+    generate: llmConfigured() ? geminiStoryGenerator : undefined,
     limit: 10,
   })
   // News coverage blocks (perspectives spec §6). They never feed texts, so a failure here,
   // such as P2's news tables not existing yet, must not stop the alerts below.
   let perspectives: unknown = 'skipped: no Gemini key'
-  if (getOptionalEnv('GEMINI_API_KEY')) {
+  if (llmConfigured()) {
     try {
       perspectives = await runPerspectivesJob({
         store: supabasePerspectivesStore,
