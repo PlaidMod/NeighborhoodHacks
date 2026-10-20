@@ -298,7 +298,7 @@
     "oneSided": "The coverage we found mostly presents one view. Other views may exist. Check the agenda and public comments.",
     "sources": "Sources",
     "label": "Summaries written with AI from news coverage and checked by AI. Quotes are exact. Opinion pieces aren't included. We don't take sides.",
-    "englishOnly": "",
+    "englishOnly": "This section is only available in English.",
     "outlets": "{count, plural, one {# news outlet} other {# news outlets}}",
     "tieBreak": "When two stories are otherwise tied, the one covered by more news outlets is listed first."
   }
