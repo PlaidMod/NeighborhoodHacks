@@ -464,6 +464,59 @@ export type Database = {
           },
         ]
       }
+      item_perspectives: {
+        Row: {
+          articles_hash: string
+          dropped_count: number
+          extract_model: string | null
+          frozen_at: string
+          generated_at: string
+          groups: Json
+          item_id: string
+          judge_model: string | null
+          one_sided: boolean
+          outlet_count: number
+          sources: Json
+          state: string
+        }
+        Insert: {
+          articles_hash: string
+          dropped_count?: number
+          extract_model?: string | null
+          frozen_at: string
+          generated_at?: string
+          groups?: Json
+          item_id: string
+          judge_model?: string | null
+          one_sided?: boolean
+          outlet_count?: number
+          sources?: Json
+          state: string
+        }
+        Update: {
+          articles_hash?: string
+          dropped_count?: number
+          extract_model?: string | null
+          frozen_at?: string
+          generated_at?: string
+          groups?: Json
+          item_id?: string
+          judge_model?: string | null
+          one_sided?: boolean
+          outlet_count?: number
+          sources?: Json
+          state?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "item_perspectives_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: true
+            referencedRelation: "items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       items: {
         Row: {
           action: string | null

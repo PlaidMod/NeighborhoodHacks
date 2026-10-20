@@ -33,6 +33,23 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-20: `item_perspectives` table added; prototype-UI rule confirmed
+- **Who:** PlaidMod · P5 Platform
+- **Branch:** main
+- **What changed:**
+  - Applied P3's `item_perspectives` migration to Supabase. Supabase recorded it as version `20261020054945`, so the file is renamed to match. The old file name in the 2026-10-19 P3 entry is out of date.
+  - Added the table to `lib/database.types.ts`, from Supabase's generated types. Nothing else in that file changed.
+  - **PlaidMod confirmed the Oct 20 rule change:** the prototype UI is the app's UI (see "The prototype UI is now the app's UI" below). Older entries that call `web/` throwaway are out of date.
+- **Files:** `supabase/migrations/20261020054945_item_perspectives.sql` (renamed), `lib/database.types.ts`
+- **Contract changes:** DB schema: new P3 table `item_perspectives`, with RLS on and no policies.
+- **Checked:**
+  - Supabase: 0 tables without RLS, 0 policies, and the new table is empty.
+  - The security advisor shows only the expected "RLS enabled, no policy" notices.
+  - `npm test` (636/636, including the migrations RLS checks), typecheck and lint pass.
+- **Open issues / next:**
+  - **P3:** `lib/perspectives/job.ts` can use `db()` instead of its untyped client, now that the types include the table.
+  - **Deploy:** Vercel blocked sohankamsala's push (`540e161`), because the repo is private, and it can't be redeployed. It goes live with PlaidMod's next push or a CLI deploy by PlaidMod.
+
 ### 2026-10-20: P3's app screens follow the plan, in English and Spanish
 - **Who:** sohankamsala · P3 Weekly News and Alerts
 - **Branch:** main (local commit; not pushed)
