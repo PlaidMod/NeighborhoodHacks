@@ -1,6 +1,6 @@
 "use client"
 
-import { ArrowUpRight, CalendarCheck2, CircleCheck, Flag, IdCard, MapPinned, School, Vote } from "lucide-react"
+import { ArrowUpRight, CalendarCheck2, CircleCheck, Flag, MapPinned, Vote } from "lucide-react"
 import * as React from "react"
 import { BodyIcon, Chip, Panel, SectionTitle } from "@/components/civic"
 import { useStory } from "@/components/story-sheet"
@@ -128,22 +128,10 @@ export default function VotePage() {
               </Button>
             </div>
           </div>
-          <div className="grid gap-3 sm:grid-cols-2">
-            <div className="rounded-[24px] bg-white p-5">
-              <IdCard className="size-5 text-denim" />
-              <p className="mt-3 font-bold">Bring a photo ID</p>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Texas driver's license, passport, or state ID. A student ID doesn't count.
-              </p>
-            </div>
-            <div className="rounded-[24px] bg-white p-5">
-              <School className="size-5 text-denim" />
-              <p className="mt-3 font-bold">Register at school</p>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Texas high schools must offer registration forms at least twice a year. Ask the front office.
-              </p>
-            </div>
-          </div>
+          <p className="px-1 text-sm text-muted-foreground">
+            Bring a Texas driver's license, passport, or state ID (student IDs don't count). Texas high schools must
+            also offer registration forms twice a year.
+          </p>
         </section>
       </div>
 

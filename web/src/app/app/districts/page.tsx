@@ -38,7 +38,7 @@ export default function Districts() {
             <Link
               key={b.id}
               href={`/app/districts/${b.id}`}
-              className="group rise grid items-center gap-4 rounded-[24px] bg-white p-5 transition-[transform,box-shadow] motion-safe:hover:-translate-y-0.5 hover:shadow-[0_12px_32px_-16px_rgb(27_38_59/0.25)] md:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_minmax(0,0.8fr)_auto] md:gap-6"
+              className="group rise grid items-center gap-4 rounded-[24px] bg-white p-5 transition-[transform,box-shadow] motion-safe:hover:-translate-y-0.5 hover:shadow-[0_12px_32px_-16px_rgb(27_38_59/0.25)] md:grid-cols-[minmax(0,1fr)_auto_auto] md:gap-6"
               style={{ animationDelay: `${i * 50}ms` }}
             >
               <div className="flex min-w-0 items-center gap-4">
@@ -56,7 +56,6 @@ export default function Districts() {
                   <p className="truncate text-xs font-semibold text-denim">{b.yourSeat ?? b.seats}</p>
                 </div>
               </div>
-              <p className="line-clamp-2 text-sm text-muted-foreground">{b.tagline}</p>
               <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm">
                 {b.taxRate && (
                   <div>
