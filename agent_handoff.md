@@ -33,6 +33,46 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-19: P3 core logic: rule engine, stories, SMS, weekly builder
+- **Who:** sohankamsala · P3 Weekly News and Alerts
+- **Branch:** main (uncommitted)
+- **What changed:** Built P3's server logic as tested library code in P5's root app (tech plan §2). Covered:
+  - `classify()` with all six rules (§8)
+  - story writing with code fact-check and template fallback, using P5's `lib/gemini.ts` (§9)
+  - SMS logic: consent, quiet hours, message format with the late-added wording, reminders 7a/7b, protest reminder, send dedupe, Twilio REST client, STOP/HELP keywords and webhook signature check (§11)
+  - the weekly page and timeline section builder (§10)
+  - Twilio registration paperwork, ready to paste
+- **Files:** `lib/rules/`, `lib/stories/`, `lib/sms/`, `lib/weekly/`, `tests/{rules,stories,sms,weekly}/`, `.plans/p3-twilio-registration.md`
+- **Contract changes:**
+  - **`classify` is the real `Classifier` for ingest:** P2 can swap `classifyStub` for `classify` from `lib/rules/classify.ts`. A test checks it's assignable to `Classifier` and accepts P2's `Item`. An optional 4th argument, `{date, previous_date}`, drives `meeting_moved`. It reads `no_new_revenue_rate` from the untyped `taxRates`.
+  - Personnel and closed-session items always return `tier: 'timeline'` and `item_type: 'personnel'`, never `sms` (scraper spec §5.3).
+  - **The story job must write stories for every `needs_story` item, whatever its tier,** so personnel items still get one (D9).
+  - Uses the shared `BodyType` (`lib/contracts/bodyTypes.ts`) and `Stake` (`lib/stakes.ts`) for lead-story ordering.
+- **Checked:** `npm test` passes (46 files, 586 tests, including 83 new P3 tests). `npm run typecheck` is clean, and `eslint` is clean on the P3 folders. No live Gemini or Twilio calls were made; both are tested with fakes.
+- **Open issues / next:**
+  - **Next for P3:** wire these into routes and screens:
+    - routes: `api/weekly`, `api/items`, `api/alerts/subscribe` and `verify`, `api/reminders`, `api/twilio/inbound`, `api/cron/alerts`
+    - the story job that writes stories for `needs_story` items
+    - pages: `/weekly`, `/timeline`, `/items/[id]` and `/alerts` (opt-in, rules, why-this-text)
+    - en/es message keys for all of the above
+  - **P2:** ingest can import `classify` now. Pass the meeting's `{date, previous_date}` as the 4th argument so `meeting_moved` works.
+  - **P5 / schema:** the HCAD protest reminder has no item, so it's queued with `item_id = null`. Because `alerts_sent` treats nulls as equal, a user gets at most one protest reminder ever, not one per year. That's fine for the hackathon; a `year` column would fix it later.
+  - **P5:** reminder 7b needs the alerts job to run more than once a day. Vercel Hobby cron is daily, so trigger `/api/cron/alerts` from the GitHub Actions schedule too.
+  - **Twilio registration not submitted.** It needs an adult account owner plus the SMS wording in `.plans/p3-twilio-registration.md` §4 on P5's live privacy and terms pages. If it isn't approved by Thursday, fall back to a labeled "preview" of texts.
+  - **Stress test:** deferred for sohankamsala, who asked to start P3 work first. Run it at the next session.
+
+### 2026-10-19: Trimmed crowding on the prototype's Districts and Vote screens
+- **Who:** sohankamsala · prototype owner (part not yet confirmed)
+- **Branch:** main (uncommitted)
+- **What changed:** In the `web/` prototype, removed the description column from the Districts list and folded Vote's two info cards ("Bring a photo ID", "Register at school") into one line. This finishes the declutter pass whose home and timeline trims are already in `main`.
+- **Files:** `web/src/app/app/districts/page.tsx`, `web/src/app/app/vote/page.tsx`
+- **Contract changes:** None
+- **Checked:** `npm run lint` and `npx tsc --noEmit` pass. Checked both screens at 1440px in a local browser; 390px not checked.
+- **Open issues / next:**
+  - **Attribution leak:** commit `cfa43fe` ("Add ShowUp HTX web app prototype and design system") is on `origin/main` with a `Co-Authored-By` AI trailer. It was made before `INSTRUCTIONS.md` existed. Fixing it means rewriting published history, so it needs a team decision.
+  - On Vote, the eligibility timeline's "Today" and "Can register" labels overlap when registration opens the next day.
+  - The plan stress test hasn't been run for sohankamsala yet.
+
 ### 2026-10-19: Admin accounts, and a script for admins to set their own password
 - **Who:** PlaidMod · P5 Platform, Evidence and Pitch
 - **Branch:** main
