@@ -46,7 +46,6 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 - **Open issues / next:**
   - **Missing logos:** Port Houston (its site blocks downloads) and HCAD (no usable mark).
   - **Logo use:** logos are shown only to identify the body. If the team would rather not use agency marks, delete the entries in `lib/bodyLogos.ts` and the icons come back.
-  - **P2:** news stories still have no images. Saving each article's `og:image` in the news collector would let coverage show the outlet's photo with a link back.
 
 ### 2026-10-20: The prototype UI is now the app's UI (`/app`, `/start`)
 - **Who:** sohankamsala · P3 Weekly News and Alerts
