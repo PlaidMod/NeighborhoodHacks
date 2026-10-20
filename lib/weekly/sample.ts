@@ -1,6 +1,7 @@
 import { DateTime } from 'luxon'
 import { classify, type ClassifyBody } from '@/lib/rules/classify'
 import { templateStory } from '@/lib/stories/template'
+import type { Coverage } from '@/lib/perspectives/types'
 import type { StoryFacts } from '@/lib/stories/types'
 import type { WeeklyItem } from './build'
 
@@ -152,6 +153,55 @@ const SEEDS: Seed[] = [
   },
 ]
 
+/**
+ * Sample coverage. The spec forbids real outlet names with invented quotes, so these
+ * use obvious placeholder outlets and text (perspectives spec §7.2).
+ */
+function sampleCoverage(id: string, now: Date): Coverage | null {
+  const day = (d: number) => at(now, d, '09:00')
+  if (id === 'sample-hisd-consolidation') {
+    const a = { outlet: 'Example News Outlet A', url: 'https://example.org/news-a', published_at: day(-4) }
+    const b = { outlet: 'Example News Outlet B', url: 'https://example.org/news-b', published_at: day(-2) }
+    return {
+      state: 'ok',
+      outlet_count: 2,
+      viewpoint_count: 3,
+      one_sided: false,
+      groups: [
+        {
+          label_en: 'Parents at the affected campuses',
+          arguments: [{ ...a, article_id: 'a', summary_en: 'Parents say longer bus rides would be hard on younger students.', quote: 'Placeholder quote from a sample article.' }],
+        },
+        {
+          label_en: 'District administration',
+          arguments: [
+            { ...b, article_id: 'b', summary_en: 'District officials say the campuses are well under capacity.', quote: 'Placeholder quote from another sample article.' },
+          ],
+        },
+        {
+          label_en: 'Teachers at the campuses',
+          arguments: [{ ...a, article_id: 'a', summary_en: 'Teachers say they want details on staffing before the vote.', quote: 'Another placeholder quote.' }],
+        },
+      ],
+      sources: [
+        { outlet: b.outlet, headline: 'Sample headline about the campus plan', url: b.url, published_at: b.published_at },
+        { outlet: a.outlet, headline: 'Another sample headline', url: a.url, published_at: a.published_at },
+      ],
+    }
+  }
+  if (id === 'sample-council-drainage') {
+    return {
+      state: 'sources_only',
+      outlet_count: 1,
+      viewpoint_count: 0,
+      one_sided: false,
+      groups: [],
+      sources: [{ outlet: 'Example News Outlet C', headline: 'Sample headline about the drainage contract', url: 'https://example.org/news-c', published_at: day(-1) }],
+    }
+  }
+  return null
+}
+
 function at(now: Date, day: number, time: string) {
   const [h, m] = time.split(':').map(Number)
   return DateTime.fromJSDate(now)
@@ -226,6 +276,8 @@ export function sampleItems(now: Date = new Date()): (WeeklyItem & { facts: Stor
       source_url: facts.source_url,
       first_seen_at: at(now, Math.min(seed.day, 0) - 2, '09:00'),
       is_sample: true,
+      coverage: sampleCoverage(seed.id, now),
+      outlet_count: sampleCoverage(seed.id, now)?.outlet_count ?? 0,
       facts,
     }
   })

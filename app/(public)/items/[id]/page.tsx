@@ -2,6 +2,7 @@ import { ArrowLeft, Mic } from 'lucide-react'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { getFormatter, getLocale, getTranslations } from 'next-intl/server'
+import { Coverage } from '@/components/weekly/Coverage'
 import { NewsNav, SampleNotice, StorySource, withToken } from '@/components/weekly/NewsChrome'
 import { Button } from '@/components/ui/button'
 import { RULE_TEXT, type AlertRule } from '@/lib/rules/ruleText'
@@ -114,6 +115,7 @@ export default async function ItemPage({
       )}
 
       <StorySource source={item.story_source} url={item.source_url} className="mt-6" />
+      <Coverage coverage={item.coverage} className="mt-6" />
     </main>
   )
 }

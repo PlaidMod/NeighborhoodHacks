@@ -33,5 +33,22 @@ export default defineConfig([
       ],
     },
   },
+  {
+    // Perspectives spec §8: classify, stories and texts never see news coverage.
+    files: ['lib/rules/**', 'lib/stories/**', 'lib/sms/**'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['@/lib/news', '@/lib/news/**', '@/lib/perspectives', '@/lib/perspectives/**', '**/news/**', '**/perspectives/**'],
+              message: 'lib/rules, lib/stories and lib/sms must not import news or perspectives (perspectives spec §8).',
+            },
+          ],
+        },
+      ],
+    },
+  },
   globalIgnores(['.next/**', 'out/**', 'build/**', 'next-env.d.ts', 'web/**', 'node_modules/**', 'tmp/**']),
 ])

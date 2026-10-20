@@ -1,6 +1,7 @@
 import type { BodyType } from "@/lib/contracts/bodyTypes"
 import type { ItemType, RuleKey, Tier } from "@/lib/rules/classify"
 import type { Stake } from "@/lib/stakes"
+import type { Coverage } from "@/lib/perspectives/types"
 import type { Story } from "@/lib/stories/types"
 
 const DAY = 86_400_000
@@ -49,6 +50,10 @@ export type WeeklyItem = {
   first_seen_at?: string | null
   /** True for the labeled sample data shown before the database has items. */
   is_sample?: boolean
+  /** Distinct news outlets covering the item (item_perspectives.outlet_count). Last-place tie-breaker only. */
+  outlet_count?: number
+  /** "What news coverage says" (perspectives spec §7.5). */
+  coverage?: Coverage | null
 }
 
 export type Deadline = { kind: "registration" | "election" | "protest"; label: string; at: string; item_id?: string }
@@ -114,11 +119,17 @@ export function buildWeekly(input: {
   const lead = upcoming[0] ?? null
   const comingUp = upcoming
     .slice(1)
-    .sort((a, b) => ts(a.registration_closes_at) - ts(b.registration_closes_at) || ts(a.meeting_date) - ts(b.meeting_date))
+    // Coverage is only ever the last key, and the lead is already picked (perspectives spec §7.4).
+    .sort(
+      (a, b) =>
+        ts(a.registration_closes_at) - ts(b.registration_closes_at) ||
+        ts(a.meeting_date) - ts(b.meeting_date) ||
+        (b.outlet_count ?? 0) - (a.outlet_count ?? 0),
+    )
 
   const decided = live
     .filter((i) => i.status === "decided" || i.status === "awaiting_result")
-    .sort((a, b) => ts(b.meeting_date) - ts(a.meeting_date))
+    .sort((a, b) => ts(b.meeting_date) - ts(a.meeting_date) || (b.outlet_count ?? 0) - (a.outlet_count ?? 0))
     .map((i) => ({ ...i, outcomePending: i.status === "awaiting_result" }))
 
   const weekEnd = now.getTime() + 7 * DAY

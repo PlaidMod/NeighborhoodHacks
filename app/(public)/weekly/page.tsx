@@ -4,6 +4,7 @@ import { cookies } from 'next/headers'
 import Link from 'next/link'
 import { getFormatter, getLocale, getTranslations } from 'next-intl/server'
 import { BodyIcon } from '@/components/civic'
+import { Coverage } from '@/components/weekly/Coverage'
 import { NeedAddress, NewsNav, SampleNotice, StorySource, withToken } from '@/components/weekly/NewsChrome'
 import { Button } from '@/components/ui/button'
 import type { BodyType } from '@/lib/contracts/bodyTypes'
@@ -28,7 +29,13 @@ const TILES = [
 
 export default async function WeeklyPage({ searchParams }: { searchParams: Promise<{ t?: string }> }) {
   const { t: token } = await searchParams
-  const [t, tn, locale, format] = await Promise.all([getTranslations('Weekly'), getTranslations('News'), getLocale(), getFormatter()])
+  const [t, tn, tc, locale, format] = await Promise.all([
+    getTranslations('Weekly'),
+    getTranslations('News'),
+    getTranslations('Coverage'),
+    getLocale(),
+    getFormatter(),
+  ])
   const lang = locale === 'es' ? 'es' : 'en'
 
   const resolved = await resolveBodies(token)
@@ -116,6 +123,9 @@ export default async function WeeklyPage({ searchParams }: { searchParams: Promi
                       {tn('closes', { when: when(item.registration_closes_at) })}
                     </span>
                   )}
+                  {!!item.outlet_count && (
+                    <span className={cn('text-xs', light ? 'text-muted-foreground' : 'text-white/70')}>{tc('outlets', { count: item.outlet_count })}</span>
+                  )}
                 </div>
               </Link>
             )
@@ -140,6 +150,7 @@ export default async function WeeklyPage({ searchParams }: { searchParams: Promi
                       <p className="mt-1 text-sm text-muted-foreground">
                         {item.registration_closes_at ? tn('closes', { when: when(item.registration_closes_at) }) : tn('meeting', { when: when(item.meeting_date) })}
                       </p>
+                      <Coverage coverage={item.coverage} className="mt-2" />
                     </div>
                     <Button asChild variant="outline" size="sm" className="shrink-0 font-sans">
                       <Link href={`/speak-up/${item.item_id}`}>
@@ -180,6 +191,7 @@ export default async function WeeklyPage({ searchParams }: { searchParams: Promi
                           ) : null}
                         </p>
                         <StorySource source={item.story_source} url={item.source_url} className="mt-2" />
+                        <Coverage coverage={item.coverage} className="mt-3" />
                       </div>
                     </article>
                   )
@@ -244,7 +256,9 @@ export default async function WeeklyPage({ searchParams }: { searchParams: Promi
       </div>
 
       <footer className="mt-16 border-t border-border pt-6 text-sm text-muted-foreground">
-        <p className="max-w-3xl">{tn('howWritten')}</p>
+        <p className="max-w-3xl">
+          {tn('howWritten')} {tc('tieBreak')}
+        </p>
       </footer>
     </main>
   )

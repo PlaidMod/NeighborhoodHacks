@@ -3,6 +3,8 @@ import { db } from '@/lib/db'
 import { getOptionalEnv } from '@/lib/env'
 import type { ItemType, RuleKey, Tier } from '@/lib/rules/classify'
 import { StorySchema, type Story } from '@/lib/stories/types'
+import { loadPerspectives } from '@/lib/perspectives/job'
+import { toCoverage } from '@/lib/perspectives/types'
 import { verifyBodiesToken } from '@/lib/tokens'
 import type { WeeklyItem } from './build'
 import { SAMPLE_BODIES, sampleItems } from './sample'
@@ -133,7 +135,17 @@ export async function loadItems(
     .limit(500)
   if (error) throw error
   const byId = new Map(bodies.map((b) => [b.body_id, b]))
-  return ((data ?? []) as unknown as ItemRow[]).map((r) => toWeeklyItem(r, byId)).filter((i): i is WeeklyItem => !!i)
+  const items = ((data ?? []) as unknown as ItemRow[]).map((r) => toWeeklyItem(r, byId)).filter((i): i is WeeklyItem => !!i)
+  return withCoverage(items)
+}
+
+/** Adds "What news coverage says" from item_perspectives. No table yet means no coverage. */
+async function withCoverage(items: WeeklyItem[]): Promise<WeeklyItem[]> {
+  const rows = await loadPerspectives(items.map((i) => i.item_id))
+  return items.map((i) => {
+    const coverage = toCoverage(rows.get(i.item_id))
+    return { ...i, coverage, outlet_count: coverage.outlet_count }
+  })
 }
 
 /** One item for its story page, from the database or the sample set. */
@@ -147,5 +159,6 @@ export async function loadItem(id: string, now: Date = new Date()): Promise<Week
   const { data: body } = await db().from('bodies').select('id, name, type, sms_eligible').eq('id', row.body_id ?? '').maybeSingle()
   const bodies = new Map<string, WeeklyBody>()
   if (body) bodies.set(body.id, { body_id: body.id, body_name: body.name, body_type: body.type ?? 'other', sms_eligible: body.sms_eligible })
-  return toWeeklyItem(row, bodies)
+  const item = toWeeklyItem(row, bodies)
+  return item ? ((await withCoverage([item]))[0] ?? null) : null
 }

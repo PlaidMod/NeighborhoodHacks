@@ -289,5 +289,17 @@
     "whyUnknown": "No pudimos saber de qué regla vino este mensaje. Aquí están todas.",
     "whyItem": "Leer el punto de la agenda",
     "allRules": "Todas las reglas de los mensajes"
+  },
+  "Coverage": {
+    "toggle": "Qué dice la cobertura de noticias ({outlets, plural, one {# medio} other {# medios}}, {viewpoints, plural, one {# punto de vista} other {# puntos de vista}})",
+    "toggleSources": "Cobertura de noticias ({outlets, plural, one {# medio} other {# medios}})",
+    "none": "No encontramos cobertura de noticias para este punto.",
+    "sourcesOnly": "We found coverage but couldn't summarize it reliably. Read the articles:",
+    "oneSided": "The coverage we found mostly presents one view. Other views may exist. Check the agenda and public comments.",
+    "sources": "Sources",
+    "label": "Summaries written with AI from news coverage and checked by AI. Quotes are exact. Opinion pieces aren't included. We don't take sides.",
+    "englishOnly": "Esta sección solo está disponible en inglés.",
+    "outlets": "{count, plural, one {# medio de noticias} other {# medios de noticias}}",
+    "tieBreak": "Cuando dos noticias están empatadas, aparece primero la que cubren más medios de noticias."
   }
 }
