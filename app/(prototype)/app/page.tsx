@@ -252,7 +252,7 @@ function Countdown({ u }: { u?: Update }) {
       {u && (
         <Button asChild variant="brick" className="relative mt-4 w-full">
           <Link href={`/app/speak?item=${u.id}`}>
-            <Mic data-icon="inline-start" /> Prep my {u.comment?.minutes} minutes
+            <Mic data-icon="inline-start" /> {u.comment?.minutes ? `Prep my ${u.comment.minutes} minutes` : "Prepare my comment"}
           </Link>
         </Button>
       )}

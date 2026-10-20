@@ -133,12 +133,12 @@ function Story({ u, close }: { u: Update; close: () => void }) {
               <div>
                 <p className="font-bold">{t("canSpeak")}</p>
                 <p className="mt-1 text-sm text-white/70">
-                  {t("signupCloses", { when: fmtDateTime(u.comment.deadline), minutes: u.comment.minutes })}
+                  {u.comment.minutes !== null ? t("signupCloses", { when: fmtDateTime(u.comment.deadline), minutes: u.comment.minutes }) : t("signupClosesUnknown", { when: fmtDateTime(u.comment.deadline) })}
                 </p>
               </div>
             </div>
             <Button asChild variant="brick" className="mt-4 w-full" onClick={close}>
-              <Link href={`/app/speak?item=${u.id}`}>{t("draft", { minutes: u.comment.minutes })}</Link>
+              <Link href={`/app/speak?item=${u.id}`}>{u.comment.minutes !== null ? t("draft", { minutes: u.comment.minutes }) : t("draftUnknown")}</Link>
             </Button>
           </div>
         )}

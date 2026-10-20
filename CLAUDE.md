@@ -61,6 +61,8 @@ npm run admin -- set-password <email>       # choose your own /admin password (a
 - npm 11 holds back packages' install scripts until approved. Nothing in the app needs them so far.
 - `web/` is the original prototype, kept for reference, with its own `package.json` (`cd web && npm install && npm run dev`). The root's TypeScript, ESLint, vitest and Tailwind all ignore it. Its screens were moved to the root (see above), so change them there, not in `web/`.
 
+P4 now lives in the root app: `/app/speak`, `/speak-up/[itemId]`, `/api/coach`, `components/speak` and `lib/{speak,registration,coach}`. It uses the shared Gemini SDK and rate-limit database when configured, with local fallbacks. `npm test` also runs `npm run test:p4` (Node's built-in runner for the migrated pure-helper tests). See `docs/p4-status.md` for live verification and remaining evidence.
+
 ## Next.js caveat
 
 Next.js 16 has breaking changes compared with older versions: `middleware.ts` is now `proxy.ts`, `cookies()` and `headers()` must be awaited, and `next lint` is gone. Before writing Next-specific code, read the relevant guide in `node_modules/next/dist/docs/` and heed deprecation notices. `next dev` keeps a Next.js rules block in `AGENTS.md`; commit it rather than removing it.

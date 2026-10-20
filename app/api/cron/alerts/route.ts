@@ -7,6 +7,7 @@ import { twilioConfigured } from '@/lib/sms/subscriber'
 import { twilioClient, twilioConfigFromEnv } from '@/lib/sms/twilio'
 import { geminiStoryGenerator } from '@/lib/stories/gemini'
 import { runStoryJob, supabaseStoryStore } from '@/lib/stories/job'
+import { loadRegistrationWindows } from '@/lib/registration/server'
 
 // GET /api/cron/alerts (Technical Plan §11). Writes pending stories first, so texts can
 // use their headlines, then news coverage blocks (§9a), then queues and sends alerts. Without Twilio keys it queues but
@@ -41,6 +42,7 @@ export async function GET(req: Request) {
     store: supabaseAlertsStore,
     send: twilio ? async (to, body) => void (await twilio.sendSms(to, body)) : null,
     siteUrl: getOptionalEnv('SITE_URL') ?? new URL(req.url).origin,
+    windows: await loadRegistrationWindows(),
   })
   return Response.json({ stories, perspectives, alerts })
 }

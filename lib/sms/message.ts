@@ -43,8 +43,8 @@ export function deadlineText(d: DeadlineInput, lang: Lang): { text: string; late
       late,
       text:
         lang === "en"
-          ? "Registration to speak may already be closed; you can still send a written comment"
-          : "Es posible que la inscripción para hablar ya esté cerrada; aún puedes enviar un comentario por escrito",
+          ? "Registration to speak may already be closed; check the official rules for ways to comment"
+          : "Es posible que la inscripción para hablar ya esté cerrada; consulta las reglas oficiales para comentar",
     }
   }
   if (closes) {

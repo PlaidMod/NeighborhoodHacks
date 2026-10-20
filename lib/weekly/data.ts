@@ -8,6 +8,8 @@ import { toCoverage } from '@/lib/perspectives/types'
 import { verifyBodiesToken } from '@/lib/tokens'
 import type { WeeklyItem } from './build'
 import { SAMPLE_BODIES, sampleItems } from './sample'
+import { getRecipe } from '@/lib/registration/recipes'
+import { getWindow } from '@/lib/registration/deadlines'
 
 // Server-side data for P3's pages and APIs: the weekly page, item pages and the timeline.
 // Reads the database when it's configured; otherwise serves the labeled sample data.
@@ -83,6 +85,9 @@ type ItemRow = {
 function toWeeklyItem(row: ItemRow, bodies: Map<string, WeeklyBody>): WeeklyItem | null {
   if (!row.body_id || !row.meeting) return null
   const body = bodies.get(row.body_id)
+  const meetingType = row.meeting.type === 'special' ? 'special' : row.meeting.type === 'regular' ? 'regular' : null
+  const recipe = getRecipe(row.body_id, meetingType, row.meeting.date)
+  const window = recipe && row.status === 'upcoming' && row.meeting.status !== 'cancelled' ? getWindow(recipe, row.meeting.date, new Date()) : null
   return {
     item_id: row.id,
     body_id: row.body_id,
@@ -99,10 +104,9 @@ function toWeeklyItem(row: ItemRow, bodies: Map<string, WeeklyBody>): WeeklyItem
         : undefined,
     meeting_date: row.meeting.date,
     meeting_status: row.meeting.status === 'cancelled' ? 'cancelled' : 'scheduled',
-    meeting_type: row.meeting.type === 'special' ? 'special' : 'regular',
+    meeting_type: meetingType,
     agenda_number: row.agenda_number,
-    // P4's registration resolver fills this in once it exists (Technical Plan §13).
-    registration_closes_at: null,
+    registration_closes_at: window?.closesAt ?? null,
     story_en: parseStory(row.story_en),
     story_es: parseStory(row.story_es),
     story_source: row.story_source === 'ai' || row.story_source === 'template' ? row.story_source : null,

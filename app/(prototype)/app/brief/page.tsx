@@ -290,7 +290,7 @@ export default function Brief() {
               <Mic aria-hidden className="size-6 text-white/80" />
               <p className="mt-4 text-xs font-bold tracking-[0.14em] text-white/60 uppercase">{t("oneThing")}</p>
               <p className="mt-2 text-xl leading-snug font-extrabold tracking-tight">
-                {t("speakFor", { minutes: commentable[0].comment!.minutes, title: commentable[0].title })}
+                {commentable[0].comment!.minutes !== null ? t("speakFor", { minutes: commentable[0].comment!.minutes!, title: commentable[0].title }) : t("speakUnknown", { title: commentable[0].title })}
               </p>
               <Button asChild variant="white" className="mt-5 w-full">
                 <Link href={`/app/speak?item=${commentable[0].id}`}>

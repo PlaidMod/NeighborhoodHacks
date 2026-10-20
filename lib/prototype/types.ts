@@ -81,7 +81,8 @@ export interface Update {
   comment?: {
     deadline: string
     howTo: string
-    minutes: number
+    /** Null until an official allocation is verified; never substitute a rehearsal target. */
+    minutes: number | null
   }
   numbers?: { label: string; value: string }[]
   source: string
@@ -93,6 +94,9 @@ export interface Update {
   coverage?: Coverage | null
   /** Real items only: the meeting happened but the minutes aren't posted ("Outcome not posted yet"). */
   outcomePending?: boolean
+  /** Real meeting metadata for P4; unknown/special sessions require specific instructions. */
+  meetingType?: "regular" | "special" | null
+  agendaNumber?: string | null
 }
 
 export interface Jurisdiction {

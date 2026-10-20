@@ -4,6 +4,7 @@ import type { Deadline, Lang, WeeklyEdition, WeeklyItem } from "@/lib/weekly/bui
 import type { WeeklyBody } from "@/lib/weekly/data"
 import { STATIC_BODIES } from "./bodies"
 import type { Body, BodyKind, Persona, Tier, Topic, Update, UpdateType } from "./types"
+import { getRecipe } from '@/lib/registration/recipes'
 
 // Turns real data (the reader's bodies_token and P3's items, lib/weekly) into the shapes the
 // /app screens were built on (lib/prototype/types.ts), so each screen can switch from the
@@ -116,9 +117,11 @@ export function toUpdate(i: WeeklyItem, kind: BodyKind = "county", lang: Lang = 
     audiences: [],
     vote: i.outcome?.vote_result ? (lang === "es" ? VOTE_ES : VOTE)[i.outcome.vote_result] : undefined,
     outcomePending: i.status === "awaiting_result",
+    meetingType: i.meeting_type ?? null,
+    agendaNumber: i.agenda_number,
     coverage: i.coverage ?? null,
     comment: i.registration_closes_at
-      ? { deadline: i.registration_closes_at, howTo: lang === "es" ? "Consulta la agenda para inscribirte." : "See the agenda for how to sign up.", minutes: 3 }
+      ? { deadline: i.registration_closes_at, howTo: lang === "es" ? "Consulta la agenda para inscribirte." : "See the agenda for how to sign up.", minutes: getRecipe(i.body_id, i.meeting_type ?? null, i.meeting_date)?.minutes ?? null }
       : undefined,
     source: i.source_url,
     aiWritten: i.story_source === "ai",

@@ -33,6 +33,33 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-20: Validate configured P4 and prepare publication
+- **Who:** BluePhoenix79 · P4 Speak up
+- **Branch:** main
+- **What changed:** Validated the newly supplied local configuration without exposing values. Restored the tracked environment template after it was renamed. Final review fixed Council weekday applicability before offering methods, explicit channel changes now clear prior confirmation, and normal picker defaults exclude past/outcome-pending meetings. Kept explicit historical links available.
+- **Files:** P4 modules/screens/tests, root message and data bridges, `docs/p4-status.md`; original merge details below.
+- **Contract changes:** No additional shared contracts beyond the prior merge entry.
+- **Checked:** 643 Vitest + 69 P4 tests (712 total), lint, typecheck and production build pass. New regressions failed before fixes and pass afterward; independent re-review found no remaining issues in the fixes. Built browser confirms Tuesday Council methods remain available and Wednesday voting items show unknown registration guidance. Configured Gemini structured output and EN/ES coaching pass, including HTTP 200/no-store through the built API. Supabase tables and atomic counter RPC pass; reminders without verified subscription return 401.
+- **Open issues / next:** Civic data tables are empty; populate them through the ingestion workflow before claiming real agenda coverage. Twilio is unset; no SMS, registration or public comment was sent. Full provider golden/load testing and MUD rule verification remain open. Local environment values stay ignored. Commit/push authorized by the teammate after checks; recovery stash retained.
+
+### 2026-10-20: Merge upstream platform, scraper and news with P4
+- **Who:** BluePhoenix79 · P4 Speak up
+- **Branch:** main, pulled through `748dd41`
+- **What changed:** Preserved local work in a recovery stash, fast-forwarded upstream and resolved CLAUDE/handoff conflicts while retaining both histories. Migrated P4 to the root app, restored `web/` to the upstream reference, and connected shared SDK/model configuration, database rate counters, root locales/logos/body IDs, live item loading, P3 deep links, reminder requests and known bounds for the alerts cron. Unknown/special meetings stay conservative; late texts no longer promise unverified written alternatives.
+- **Files:** `app/(prototype)/app/speak`, `/speak-up/[itemId]`, `/api/coach`, `components/speak`, `lib/{coach,registration,speak}`, P3 data/screen bridges, root messages/tests/docs/tooling.
+- **Contract changes:** `Update` gains optional `meetingType` and `agendaNumber`; `comment.minutes` is nullable for unverified allocations. Dashboard/brief/story consumers handle unknown limits. No DB schema, bodies_token, classify or Meeting/Item changes.
+- **Checked:** 642 Vitest + 67 P4 tests (709 total), ESLint, typecheck and production build pass. An initial isolation-test timeout passed on rerun. Built app browser: four-step demo, Spanish toggle, draft reload persistence, no overflow at 390px, correct P3-item redirect. Built API returns 400 for malformed input and 403 cross-origin. No unresolved conflicts or whitespace errors.
+- **Open issues / next:** Add environment values at the root and restart. Live Gemini, real database quotas/reminders/SMS and real public-comment evidence remain unverified. MUD rules still need confirmation. Dependency install reported 9 high advisories in upstream dependencies; no unrequested dependency updates made. Recovery stash retained. Environment files untouched and ignored; nothing committed or pushed.
+
+### 2026-10-20: P4 verification and documentation audit
+- **Who:** BluePhoenix79 · P4 Speak up
+- **Branch:** main
+- **What changed:** Re-read repository instructions, handoffs, product/technical plans and P4 modules against acceptance requirements. Fixed corrupt saved browser IDs passing client validation but failing server UUIDv4 validation, with a regression observed failing before and passing after the fix. Corrected stale no-API guidance and documented expired research deadlines and incomplete acceptance criteria.
+- **Files:** `CLAUDE.md`, `web/README.md`, `.plans/p4-implementation.md`, `web/docs/p4-status.md`, `web/src/lib/speak/client.ts`, `web/tests/speak-client.test.mjs`
+- **Contract changes:** None.
+- **Checked:** Fresh 72/72 tests, ESLint and TypeScript pass. Production build fails fetching Overpass, Libre Franklin and Playfair Display from Google Fonts. Dev server reaches ready; browser navigation times out and direct localhost HTTP is socket-denied.
+- **Open issues / next:** Full P4 acceptance remains incomplete: MUD recipe verification, live provider golden evaluation, shared P3/P5 services and actual participation evidence. Subject shortening is deterministic; phone guidance is abbreviated. No live provider or interactive browser success claimed; no commit, push, registration or public comment submitted.
+
 ### 2026-10-20: `item_perspectives` table added; prototype-UI rule confirmed
 - **Who:** PlaidMod · P5 Platform
 - **Branch:** main
@@ -732,6 +759,15 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 - **Contract changes:** DB schema §16 gains `news_articles`, `news_article_items` (P2) and `item_perspectives` (P3), plus the existing D26 news tables. No news columns on `items`. The new env var `GEMINI_JUDGE_MODEL` affects P5. `Meeting`, `Item`, `bodies_token` and `classify()` are unchanged. The weekly sort order (§10) gains a last tie-break key, which affects P3.
 - **Checked:** Docs only; no code changed.
 - **Open issues / next:** TV station RSS feeds verified working on Oct 19 (KHOU, KPRC, ABC13, FOX 26). HPM, Community Impact and ABC13 block `Google-Extended` (Gemini) in robots.txt, and Click2Houston and FOX 26 block other AI crawlers. The owner chose the literal reading (scraper D36): obey only the `*` group or our own bot's group, so every outlet is fetched. P5 should prepare a pitch answer (scraper spec §12, item 22). Outlet terms of use are still unchecked, and Houston Landing still fails TLS. P5 needs to confirm the Gemini budget. P4's watchlist must find a real demo item with 2+ outlets covering it. Article storage is a copyright exposure the team accepted; recheck the outlets' terms.
+
+### 2026-10-18: P4 registration, coaching and rehearsal
+- **Who:** BluePhoenix79 · P4 Speak up
+- **Branch:** main
+- **What changed:** Replaced generated speeches with a bilingual understand → register → user-authored draft → rehearse flow. Added six source-checked recipe records, Chicago/DST/method deadlines, verified-only written alternatives, browser progress, registration confirmation, guardrails with undo and optional server-side coaching. Calendar and news-watchlist findings are documented.
+- **Files:** `web/src/app/app/speak/`, `web/src/app/api/coach/`, `web/src/components/speak/`, `web/src/lib/{registration,coach,speak}/`, `web/messages/`, `web/tests/`, `web/docs/p4-*.md`, `web/tsconfig.json`, `.plans/p4-implementation.md`, `CLAUDE.md`
+- **Contract changes:** No global data types, DB schema, Meeting/Item, bodies_token or classify changes. New P4-only registration and coach types; atomic RateLimitStore boundary awaits P5. Scope-local EN/ES messages await P5's global i18n provider.
+- **Checked:** 71 tests, lint and TypeScript passed. Independent review fixes cover picker/API eligibility, method-specific cutoffs, policy-criticism near-misses, shared speaking targets and selected-method opening state. Live browser/API checks were blocked by approval capacity/socket permissions; live Gemini has no configured key.
+- **Open issues / next:** See `web/docs/p4-status.md`. Teammate must verify MUD489's current participation rules and deliver a real comment; no submissions were made. P5/P3 must connect shared rate limits, real data, i18n and SMS reminders. Gemini uses native REST because SDK install approval failed. Original production-build limitations remain. No commit or push was attempted for P4.
 
 ### 2026-10-18: Plan revision 5: news "might come up" box (settled Iarush's way)
 - **Who:** PlaidMod · P5 Platform, Evidence and Pitch
