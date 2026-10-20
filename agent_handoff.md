@@ -33,6 +33,21 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-19: Address suggestions and a stand-in /api/lookup
+- **Who:** sohankamsala · P3 Weekly News and Alerts (filling a P1 gap)
+- **Branch:** main (local commit; not pushed)
+- **What changed:** The home address box failed for every address because P1's `/api/lookup` doesn't exist yet.
+  - **Dropdown:** the box now suggests streets as you type (ARIA combobox: arrow keys, Enter, Escape). Suggestions come from Photon (OpenStreetMap), limited to Harris County. Only the street words are sent; the house number stays in the browser.
+  - **Stand-in lookup:** `POST /api/lookup` follows `lib/contracts/lookup.ts`. It geocodes with the Census Geocoder and returns the bodies it can infer: city council, county, flood control, port, school board, college board and HCAD. It can't find MUDs, ESDs, METRO or HOAs. It returns `outside_harris` for other counties.
+  - **Temporary `/results`:** lists the bodies with links to `/weekly?t=` and `/alerts?t=`.
+  - Nothing about the address is stored or logged.
+- **Files:** `components/home/AddressForm.tsx`, `lib/lookup/` (`suggest.ts`, `census.ts`, `standIn.ts`), `app/api/address/suggest/route.ts`, `app/api/lookup/route.ts`, `app/(public)/results/page.tsx`, `messages/*.json` (`Home.suggestions*`, `Home.addNumber`, `Results`), `tests/lookup/`
+- **Contract changes:** None. The route matches P1's draft contract. **P1:** replace the body of `app/api/lookup/route.ts` and `lib/lookup/standIn.ts` with your lookup; the home page and stake picker won't need changes.
+- **Checked:** `npm test`, lint and typecheck pass. In the browser, typing "16915 Apple River" shows the right street, Enter goes to `/stake`, and the lookup returns the Cy-Fair bodies.
+- **Open issues / next:**
+  - Without `BODIES_TOKEN_SECRET`, the lookup returns an `unsigned-preview` token (never in production).
+  - Photon is a free public service with no SLA. If it's down, the dropdown stays empty and typing still works.
+
 ### 2026-10-19: Wider page layout on large screens
 - **Who:** sohankamsala · P3 Weekly News and Alerts
 - **Branch:** main (local commit; not pushed)

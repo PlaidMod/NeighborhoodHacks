@@ -36,7 +36,11 @@
       "flood_control": "Distrito de Control de Inundaciones",
       "mud": "Distrito de servicios (MUD)",
       "more": "Y otros que nunca has oído mencionar"
-    }
+    },
+    "suggestionsLabel": "Sugerencias de dirección",
+    "suggestionsCount": "{count, plural, one {# sugerencia disponible} other {# sugerencias disponibles}}. Usa las flechas arriba y abajo y Enter para elegir.",
+    "addNumber": "Agrega el número de tu casa al principio y luego elige Buscar mis gobiernos.",
+    "suggestionsHint": "Empieza a escribir y elige tu dirección de la lista."
   },
   "About": {
     "metaTitle": "Acerca de ShowUp HTX",
@@ -301,5 +305,18 @@
     "englishOnly": "Esta sección solo está disponible en inglés.",
     "outlets": "{count, plural, one {# medio de noticias} other {# medios de noticias}}",
     "tieBreak": "Cuando dos noticias están empatadas, aparece primero la que cubren más medios de noticias."
+  },
+  "Results": {
+    "metaTitle": "Tus gobiernos",
+    "title": "Tus gobiernos",
+    "lede": "Estos son los organismos que encontramos para tu dirección. Esta es una lista temporal hasta que esté lista la pantalla completa de resultados.",
+    "finding": "Buscando tus gobiernos…",
+    "empty": "Escribe tu dirección para ver tus gobiernos.",
+    "enterAddress": "Escribe tu dirección",
+    "tryAnother": "Probar otra dirección",
+    "weekly": "Ver las noticias de esta semana",
+    "alerts": "Recibir mensajes de texto",
+    "notGovernment": "No es un gobierno, pero te afecta",
+    "limits": "Esta vista previa encuentra tu condado, ciudad y distrito escolar. Los distritos de servicios públicos, los distritos de servicios de emergencia y los demás organismos necesitan la búsqueda completa."
   }
 }

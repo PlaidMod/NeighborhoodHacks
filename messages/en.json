@@ -36,7 +36,11 @@
       "flood_control": "Flood Control District",
       "mud": "Utility district (MUD)",
       "more": "And ones you've never heard of"
-    }
+    },
+    "suggestionsLabel": "Address suggestions",
+    "suggestionsCount": "{count, plural, one {# suggestion} other {# suggestions}} available. Use the up and down arrow keys, then Enter to choose.",
+    "addNumber": "Add your house number at the start, then choose Find my governments.",
+    "suggestionsHint": "Start typing and pick your address from the list."
   },
   "About": {
     "metaTitle": "About ShowUp HTX",
@@ -301,5 +305,18 @@
     "englishOnly": "This section is only available in English.",
     "outlets": "{count, plural, one {# news outlet} other {# news outlets}}",
     "tieBreak": "When two stories are otherwise tied, the one covered by more news outlets is listed first."
+  },
+  "Results": {
+    "metaTitle": "Your governments",
+    "title": "Your governments",
+    "lede": "These are the bodies we found for your address. This is a temporary list until the full results screen is ready.",
+    "finding": "Finding your governments…",
+    "empty": "Enter your address to see your governments.",
+    "enterAddress": "Enter your address",
+    "tryAnother": "Try another address",
+    "weekly": "See this week's news",
+    "alerts": "Get text alerts",
+    "notGovernment": "Not a government, but it affects you",
+    "limits": "This preview finds your county, city and school district. Utility districts, emergency services districts and the other bodies need the full lookup."
   }
 }
