@@ -182,5 +182,69 @@
     "signedInAs": "Signed in as {email}",
     "reviewLink": "Open the review queue",
     "signOut": "Sign out"
+  },
+  "News": {
+    "nav": "News sections",
+    "thisWeek": "This week",
+    "latest": "Latest",
+    "alerts": "Text alerts",
+    "sample": "Sample data. These aren't real decisions. Real agenda items appear once the database is connected.",
+    "aiLabel": "Written with AI from the official agenda — see source",
+    "source": "Official source",
+    "speakUp": "Speak up",
+    "urgent": "Urgent",
+    "closes": "Sign-up to speak closes {when}",
+    "meeting": "Meeting {when}",
+    "cancelled": "Meeting cancelled",
+    "outcomePending": "Outcome not posted yet",
+    "result": {
+      "passed": "Passed",
+      "failed": "Did not pass",
+      "no_action": "No action taken"
+    },
+    "neutral": "We summarize. We never recommend.",
+    "howWritten": "How stories are written: an AI model writes each story only from facts in the official agenda. Code checks every number, date and time against those facts and screens headlines for loaded words. If a story fails, we show a plain summary instead.",
+    "needAddressTitle": "Start with your address",
+    "needAddressBody": "This page shows the governments that cover your address. Look up your address first, then come back from your results.",
+    "needAddressButton": "Look up my address",
+    "badLink": "This link is broken or out of date. Look up your address again to get a fresh one."
+  },
+  "Weekly": {
+    "metaTitle": "This week",
+    "kicker": "Weekly brief",
+    "title": "Your local governments this week",
+    "range": "{from} – {to}",
+    "readMore": "Read more",
+    "readRespond": "Read and respond",
+    "comingUp": "Coming up: you can still act",
+    "decided": "Decided this week",
+    "cancelledMeetings": "Cancelled meetings",
+    "deadlines": "Deadlines this week",
+    "noDeadlines": "No sign-up deadlines in the next 7 days.",
+    "glance": "Your governments at a glance",
+    "upcomingCount": "{count, plural, =0 {Nothing coming up} one {# item coming up} other {# items coming up}}",
+    "empty": "Nothing is on the agenda for your governments between last week and the next two weeks.",
+    "forYou": "For you"
+  },
+  "Timeline": {
+    "metaTitle": "Latest",
+    "title": "Latest",
+    "lede": "Every agenda item from your governments, newest meeting first. Nothing here sends a text.",
+    "filtersLabel": "Show",
+    "filter": {
+      "all": "Everything",
+      "upcoming": "Coming up",
+      "decided": "Decided",
+      "urgent": "Urgent"
+    },
+    "empty": "Nothing matches this filter yet."
+  },
+  "Item": {
+    "metaTitle": "Agenda item",
+    "back": "Back to this week",
+    "agendaItem": "Agenda item {number}",
+    "notFound": "We couldn't find that agenda item.",
+    "whyTitle": "Why did I get this text?",
+    "whyLink": "See all texting rules"
   }
 }

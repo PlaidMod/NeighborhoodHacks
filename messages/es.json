@@ -182,5 +182,69 @@
     "signedInAs": "Sesión iniciada como {email}",
     "reviewLink": "Abrir la cola de revisión",
     "signOut": "Cerrar sesión"
+  },
+  "News": {
+    "nav": "Secciones de noticias",
+    "thisWeek": "Esta semana",
+    "latest": "Lo más reciente",
+    "alerts": "Mensajes de texto",
+    "sample": "Datos de ejemplo. No son decisiones reales. Los puntos reales de las agendas aparecerán cuando la base de datos esté conectada.",
+    "aiLabel": "Escrito con IA a partir de la agenda oficial — ver la fuente",
+    "source": "Fuente oficial",
+    "speakUp": "Participa",
+    "urgent": "Urgente",
+    "closes": "La inscripción para hablar cierra {when}",
+    "meeting": "Reunión {when}",
+    "cancelled": "Reunión cancelada",
+    "outcomePending": "Aún no se publica el resultado",
+    "result": {
+      "passed": "Aprobado",
+      "failed": "No aprobado",
+      "no_action": "Sin acción"
+    },
+    "neutral": "Resumimos. Nunca recomendamos.",
+    "howWritten": "Cómo se escriben las noticias: un modelo de IA escribe cada noticia solo con datos de la agenda oficial. El código revisa cada número, fecha y hora contra esos datos y revisa que los titulares no tengan palabras cargadas. Si una noticia no pasa la revisión, mostramos un resumen sencillo.",
+    "needAddressTitle": "Empieza con tu dirección",
+    "needAddressBody": "Esta página muestra los gobiernos de tu dirección. Primero busca tu dirección y luego regresa desde tus resultados.",
+    "needAddressButton": "Buscar mi dirección",
+    "badLink": "Este enlace no funciona o ya no está vigente. Busca tu dirección otra vez para obtener uno nuevo."
+  },
+  "Weekly": {
+    "metaTitle": "Esta semana",
+    "kicker": "Resumen semanal",
+    "title": "Tus gobiernos locales esta semana",
+    "range": "{from} – {to}",
+    "readMore": "Leer más",
+    "readRespond": "Leer y participar",
+    "comingUp": "Próximamente: todavía puedes actuar",
+    "decided": "Decidido esta semana",
+    "cancelledMeetings": "Reuniones canceladas",
+    "deadlines": "Fechas límite de esta semana",
+    "noDeadlines": "No hay fechas límite de inscripción en los próximos 7 días.",
+    "glance": "Tus gobiernos de un vistazo",
+    "upcomingCount": "{count, plural, =0 {Nada próximo} one {# punto próximo} other {# puntos próximos}}",
+    "empty": "No hay nada en la agenda de tus gobiernos entre la semana pasada y las próximas dos semanas.",
+    "forYou": "Para ti"
+  },
+  "Timeline": {
+    "metaTitle": "Lo más reciente",
+    "title": "Lo más reciente",
+    "lede": "Todos los puntos de agenda de tus gobiernos, empezando por la reunión más reciente. Nada aquí envía mensajes de texto.",
+    "filtersLabel": "Mostrar",
+    "filter": {
+      "all": "Todo",
+      "upcoming": "Próximamente",
+      "decided": "Decidido",
+      "urgent": "Urgente"
+    },
+    "empty": "Todavía no hay nada con este filtro."
+  },
+  "Item": {
+    "metaTitle": "Punto de agenda",
+    "back": "Volver a esta semana",
+    "agendaItem": "Punto de agenda {number}",
+    "notFound": "No encontramos ese punto de agenda.",
+    "whyTitle": "¿Por qué recibí este mensaje?",
+    "whyLink": "Ver todas las reglas de los mensajes"
   }
 }

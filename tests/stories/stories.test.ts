@@ -101,7 +101,7 @@ describe("template stories", () => {
 
   it("personnel items never name anyone and say the outcome isn't posted", () => {
     const s = templateStory(hisdPersonnel, "en")
-    expect(s.headline).toMatch(/outcome not posted yet/)
+    expect(s.headline).toMatch(/outcome not posted yet/i)
     expect(JSON.stringify(s)).toMatch(/An employee/)
   })
 })
@@ -140,7 +140,7 @@ describe("writeStories", () => {
     const gen: JsonGenerator = async () => ({ ...goodMudStory, headline: "MUD 489 to vote Oct. 31 on bonds today" })
     const r = await writeStories(mudBond, gen)
     expect(r.story_source).toBe("template")
-    expect(r.story_es.headline).toMatch(/MUD 489/)
+    expect(r.story_es.dek).toMatch(/MUD 489/)
   })
 
   it("falls back when the model errors or returns bad JSON", async () => {

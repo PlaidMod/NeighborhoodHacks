@@ -8,6 +8,11 @@ import type { Lang, Story, StoryFacts } from "./types"
  * passes the fact-check, and it carries no AI label.
  */
 
+/** Ends a sentence with one period, even when it already ends in "p.m." */
+function sentence(text: string) {
+  return /[.!?]$/.test(text) ? text : `${text}.`
+}
+
 function cut(text: string, max: number) {
   if (text.length <= max) return text
   const trimmed = text.slice(0, max).replace(/\s+\S*$/, "")
@@ -25,8 +30,8 @@ function weighInLine(f: StoryFacts, lang: Lang) {
   if (f.status !== "upcoming") return null
   if (closes) {
     return lang === "en"
-      ? `Sign-up to speak on this item closes ${fmtWeekdayDay(closes, lang)} at ${fmtTime(closes, lang)}. You can also send a written comment. Use the Speak up button for each step.`
-      : `La inscripción para hablar sobre este punto cierra el ${fmtWeekdayDay(closes, lang)} a las ${fmtTime(closes, lang)}. También puedes enviar un comentario por escrito. Usa el botón Speak up para cada paso.`
+      ? `${sentence(`Sign-up to speak on this item closes ${fmtWeekdayDay(closes, lang)} at ${fmtTime(closes, lang)}`)} You can also send a written comment. Use the Speak up button for each step.`
+      : `${sentence(`La inscripción para hablar sobre este punto cierra el ${fmtWeekdayDay(closes, lang)} a las ${fmtTime(closes, lang)}`)} También puedes enviar un comentario por escrito. Usa el botón Participa para cada paso.`
   }
   return lang === "en"
     ? "Check the official agenda for how to comment, or use the Speak up button."
@@ -51,37 +56,44 @@ function turnoutLine(f: StoryFacts, lang: Lang) {
 export function templateStory(f: StoryFacts, lang: Lang): Story {
   const body = f.body_short ?? f.body_name
   const day = fmtDay(f.meeting_date, lang)
-  const when = `${fmtWeekdayDay(f.meeting_date, lang)}, ${fmtTime(f.meeting_date, lang)}`
+  const when =
+    lang === "en"
+      ? `${fmtWeekdayDay(f.meeting_date, lang)}, at ${fmtTime(f.meeting_date, lang)}`
+      : `${fmtWeekdayDay(f.meeting_date, lang)} a las ${fmtTime(f.meeting_date, lang)}`
   const title = cut(f.title.replace(/\.$/, ""), 160)
-  const shortTitle = cut(f.title.replace(/\.$/, ""), 70)
+  const shortTitle = cut(f.title.replace(/\.$/, ""), 90)
   const cancelled = f.meeting_status === "cancelled"
 
+  // Agenda titles start with a verb ("Approve the…"), so the headline leads with the
+  // date or outcome and quotes the title as written instead of forcing it into a sentence.
+  const type = lang === "en" ? f.meeting_type : f.meeting_type === "regular" ? "ordinaria" : "especial"
   let headline: string
   let dek: string
   if (cancelled) {
-    headline = lang === "en" ? `${body} meeting set for ${day} is cancelled` : `Se canceló la reunión de ${body} del ${day}`
-    dek = lang === "en" ? `The agenda had included: ${shortTitle}.` : `La agenda incluía: ${shortTitle}.`
+    headline = lang === "en" ? `Meeting cancelled ${day}: ${shortTitle}` : `Reunión cancelada el ${day}: ${shortTitle}`
+    dek = lang === "en" ? `${body} cancelled its meeting set for ${day}.` : `${body} canceló su reunión del ${day}.`
   } else if (f.status === "upcoming") {
-    headline = lang === "en" ? `${body} to consider ${shortTitle} on ${day}` : `${body} considerará el ${day}: ${shortTitle}`
-    dek =
-      lang === "en"
-        ? `The item is on the agenda for the ${f.meeting_type} meeting on ${when}.`
-        : `El punto está en la agenda de la reunión ${f.meeting_type === "regular" ? "ordinaria" : "especial"} del ${when}.`
+    headline = lang === "en" ? `Vote ${day}: ${shortTitle}` : `Votación el ${day}: ${shortTitle}`
+    dek = sentence(
+      lang === "en" ? `${body} takes this up at its ${type} meeting ${when}` : `${body} lo tratará en su reunión ${type} del ${when}`,
+    )
   } else if (f.status === "awaiting_result") {
-    headline = lang === "en" ? `${body} met ${day}; outcome not posted yet` : `${body} se reunió el ${day}; aún no se publica el resultado`
+    headline = lang === "en" ? `Outcome not posted yet: ${shortTitle}` : `Aún no se publica el resultado: ${shortTitle}`
     dek =
       lang === "en"
-        ? `The official result for this item has not been posted yet. This brief will update when it is.`
-        : `El resultado oficial de este punto aún no se ha publicado. Este resumen se actualizará cuando se publique.`
+        ? `${body} met ${day}. The official result hasn't been posted yet, and this brief will update when it is.`
+        : `${body} se reunió el ${day}. El resultado oficial aún no se ha publicado; este resumen se actualizará cuando se publique.`
   } else {
     const v = f.outcome?.vote_result
-    const en = v === "passed" ? "approved" : v === "failed" ? "did not approve" : "took no action on"
-    const es = v === "passed" ? "aprobó" : v === "failed" ? "no aprobó" : "no tomó acción sobre"
-    headline = lang === "en" ? `${body} ${en}: ${shortTitle}` : `${body} ${es}: ${shortTitle}`
-    dek =
+    const en = v === "passed" ? "Passed" : v === "failed" ? "Did not pass" : "No action"
+    const es = v === "passed" ? "Aprobado" : v === "failed" ? "No aprobado" : "Sin acción"
+    headline = lang === "en" ? `${en} ${day}: ${shortTitle}` : `${es} el ${day}: ${shortTitle}`
+    const action = f.outcome?.action ? cut(f.outcome.action, 80) : null
+    dek = sentence(
       lang === "en"
-        ? `The vote happened at the ${f.meeting_type} meeting on ${day}${f.outcome?.action ? `. Recorded action: ${cut(f.outcome.action, 80)}` : ""}.`
-        : `La votación fue en la reunión del ${day}${f.outcome?.action ? `. Acción registrada: ${cut(f.outcome.action, 80)}` : ""}.`
+        ? `${body} voted at its ${type} meeting ${day}${action ? `. Recorded action: ${action}` : ""}`
+        : `${body} votó en su reunión ${type} del ${day}${action ? `. Acción registrada: ${action}` : ""}`,
+    )
   }
 
   const paragraphs = [

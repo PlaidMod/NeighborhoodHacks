@@ -44,6 +44,11 @@ export type WeeklyItem = {
   story_es?: Story | null
   story_source?: "ai" | "template" | null
   source_url: string
+  agenda_number?: string | null
+  meeting_type?: "regular" | "special" | null
+  first_seen_at?: string | null
+  /** True for the labeled sample data shown before the database has items. */
+  is_sample?: boolean
 }
 
 export type Deadline = { kind: "registration" | "election" | "protest"; label: string; at: string; item_id?: string }
