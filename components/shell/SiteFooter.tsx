@@ -10,7 +10,7 @@ export async function SiteFooter() {
   ]
   return (
     <footer className="mt-16 border-t border-line">
-      <div className="mx-auto max-w-5xl px-4 py-8 text-sm">
+      <div className="mx-auto max-w-7xl px-4 md:px-8 py-8 text-sm">
         <p className="font-semibold text-ink">{t('neutral')}</p>
         <nav aria-label={t('footerNavLabel')} className="mt-3">
           <ul className="flex flex-wrap gap-x-5 gap-y-2">

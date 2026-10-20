@@ -41,7 +41,7 @@ export default async function WeeklyPage({ searchParams }: { searchParams: Promi
   const resolved = await resolveBodies(token)
   if (!resolved.bodies) {
     return (
-      <main id="main" className="mx-auto max-w-5xl px-4">
+      <main id="main" className="mx-auto max-w-7xl px-4 md:px-8">
         <NeedAddress reason={resolved.reason} />
       </main>
     )
@@ -70,7 +70,7 @@ export default async function WeeklyPage({ searchParams }: { searchParams: Promi
   const nothing = !edition.lead && edition.decided.length === 0
 
   return (
-    <main id="main" className="mx-auto max-w-5xl px-4 pt-6 pb-16 font-news text-ink">
+    <main id="main" className="mx-auto max-w-7xl px-4 md:px-8 pt-6 pb-16 font-news text-ink">
       <NewsNav active="weekly" token={token} />
       {resolved.mode === 'sample' && <SampleNotice className="mt-4" />}
 

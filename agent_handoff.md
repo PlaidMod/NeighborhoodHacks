@@ -33,6 +33,15 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-19: Wider page layout on large screens
+- **Who:** sohankamsala · P3 Weekly News and Alerts
+- **Branch:** main (local commit; not pushed)
+- **What changed:** On a 1920px screen the site sat in a narrow 1024px column with wide empty margins. The header, footer, home page, `/weekly` and `/alerts` now use `max-w-7xl` (1280px) with `md:px-8`. At `xl`, the home headline and lede are larger so the hero fills the wider column. Reading pages (`/items/[id]`, `/timeline`) keep their narrow measure.
+- **Files:** `components/shell/SiteHeader.tsx`, `components/shell/SiteFooter.tsx`, `app/(public)/page.tsx` (P5's), `app/(public)/weekly/page.tsx`, `app/(public)/alerts/page.tsx`
+- **Contract changes:** None. **PlaidMod:** these are your shell and home files; change them back if you'd rather.
+- **Checked:** Screenshots at 1920, 1366 and 390px; phones are unchanged. `npm test`, lint and typecheck pass.
+- **Open issues / next:** None.
+
 ### 2026-10-19: P3 pages, APIs, alerts and news coverage perspectives
 - **Who:** sohankamsala · P3 Weekly News and Alerts
 - **Branch:** main (local commits; not pushed)

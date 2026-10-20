@@ -52,7 +52,7 @@ export default async function AlertsPage({ searchParams }: { searchParams: Promi
   ]
 
   return (
-    <main id="main" className="mx-auto max-w-5xl px-4 pt-6 pb-16">
+    <main id="main" className="mx-auto max-w-7xl px-4 md:px-8 pt-6 pb-16">
       <NewsNav active="alerts" token={token} />
       <div className="mt-8 grid gap-10 lg:grid-cols-[minmax(0,1fr)_360px]">
         <div className="min-w-0 space-y-10">
