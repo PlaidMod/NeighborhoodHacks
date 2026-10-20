@@ -33,6 +33,30 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-20: P3's app screens follow the plan, in English and Spanish
+- **Who:** sohankamsala · P3 Weekly News and Alerts
+- **Branch:** main (local commit; not pushed)
+- **What changed:** P3's `/app` screens (brief, timeline, alerts and the story sheet) now follow the plan and are translated.
+  - **`/app/brief`:** with real data, it uses `buildWeekly()` (plan §10): lead story, "Coming up", "Decided" with "Outcome not posted yet", a "Deadlines this week" sidebar and the template intro line. Decided stories carry the "What news coverage says" block (§9a). The demo keeps its own ordering.
+  - **Story sheet:** shows the coverage block, the Spanish story on Spanish pages, the AI label in the page's language, and "Outcome not posted yet".
+  - **`/app/timeline`:** the "Decided" tab includes items still waiting on minutes.
+  - **`/app/alerts`:** the phone preview now uses the real text code (`itemAlertText`, `reminderText`). The copy matches §11: quiet hours are 8 p.m.–8 a.m. Central with no exception, and STOP stops texts. Before, it said 9 p.m., "unless a vote happens that night" and "we delete your number within 24 hours", none of which the code does.
+  - **Time zone:** every date in the `/app` screens (`lib/prototype/format.ts`) is shown in America/Chicago, in the page's language.
+  - **Translation (tech plan §17):** P3's screens use new message namespaces `AppBrief`, `AppTimeline`, `AppStory`, `AppAlerts` and `AppLabels`, in en and es.
+  - **Text bug fixed:** Spanish texts ended times with "p.m.." (`lib/sms/message.ts`). There's a new regression test.
+- **Files:** `app/(prototype)/app/{brief,timeline,alerts}/`, `components/prototype/{story-sheet,civic}.tsx`, `lib/prototype/{live,liveData,profile,format,types}.ts`, `lib/sms/message.ts`, `messages/*.json`, `tests/prototype/live.test.ts`, `tests/sms/sms.test.ts`
+- **Contract changes:** The `lib/prototype/types.ts` `Update` type gains `coverage` and `outcomePending`. `LiveData` gains `weekly`. `TierPill` in `components/prototype/civic.tsx` is now translated.
+- **Checked:**
+  - `npm test` (636), lint and typecheck pass.
+  - In the browser, brief, timeline, alerts and the story sheet in en and es, demo and live: no console errors or missing messages.
+  - No horizontal scroll at 320–1920px (en) or at 320 and 390px (es).
+- **Open issues / next:**
+  - **P5:** the shell (sidebar, banner, search) and the sheet's "Close" label are still English (§17: P5's).
+  - **Demo data:** demo stories stay English, since the plan replaces mock data rather than translating it.
+  - **P3's earlier pages:** `/weekly`, `/timeline` and `/alerts` still exist alongside `/app/*`; see the entry above.
+  - **Twilio registration:** still not started. It needs an adult account owner.
+  - **P4:** `registration_closes_at` stays null until P4's resolver exists, so real items show no sign-up deadlines yet.
+
 ### 2026-10-20: Official logos for governments
 - **Who:** sohankamsala · P3 Weekly News and Alerts
 - **Branch:** main (local commit; not pushed)

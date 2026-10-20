@@ -1,6 +1,7 @@
 "use client"
 
 import { BellOff, Check, Smartphone, UserRoundCheck } from "lucide-react"
+import { useLocale, useTranslations } from "next-intl"
 import * as React from "react"
 import { toast } from "sonner"
 import { AlertSignup } from "@/components/alerts/AlertSignup"
@@ -8,7 +9,7 @@ import { Chip, Panel } from "@/components/prototype/civic"
 import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
 import { relevance } from "@/lib/prototype/updates"
-import { fmtDateTime } from "@/lib/prototype/format"
+import { itemAlertText, reminderText } from "@/lib/sms/message"
 import { useNow, useProfile } from "@/lib/prototype/profile"
 import { cn } from "@/lib/utils"
 
@@ -21,6 +22,8 @@ function formatPhone(v: string) {
 
 /** With a looked-up address, sign-up is P3's real flow (AlertSignup); the demo keeps a simulated form. */
 export function Alerts({ token, preview }: { token: string | null; preview: boolean }) {
+  const t = useTranslations("AppAlerts")
+  const lang = useLocale() === "es" ? "es" : "en"
   const { profile, patch, updates, bodies, source } = useProfile()
   const now = useNow()
   const minor = (profile.age ?? 18) < 18
@@ -37,14 +40,35 @@ export function Alerts({ token, preview }: { token: string | null; preview: bool
   const reminder = updates
     .filter((u) => u.comment && +new Date(u.comment.deadline) > now)
     .sort((a, b) => +new Date(a.comment!.deadline) - +new Date(b.comment!.deadline))[0]
+  // The preview is built by the same code that sends the texts (lib/sms/message.ts, plan §11).
+  // A placeholder short link; real texts carry the site's own link.
+  const link = (u: { id: string }) => `showup.example/s/${(updates.indexOf(u as (typeof updates)[number]) + 1).toString(36)}`
+  const itemText =
+    sample &&
+    itemAlertText(
+      {
+        body: sampleBody?.short ?? "",
+        headline: sample.title,
+        deadline: { meeting_at: sample.date, registration_closes_at: sample.comment?.deadline ?? null },
+        link: link(sample),
+      },
+      lang,
+    )
+  const reminderPreview =
+    reminder &&
+    reminderText(
+      "registration_closes",
+      { body: bodies.find((b) => b.id === reminder.bodyId)?.short ?? "", title: reminder.title, at: reminder.comment!.deadline, link: link(reminder) },
+      lang,
+    )
   const status = !sms ? "off" : minor && sms.parentConsent !== "granted" ? "pending" : "on"
 
   function submit(e: React.FormEvent) {
     e.preventDefault()
-    if (phone.replace(/\D/g, "").length !== 10) return setError("Enter a 10-digit US mobile number.")
-    if (minor && parent.replace(/\D/g, "").length !== 10) return setError("Enter a parent or guardian's number.")
-    if (minor && parent === phone) return setError("Your parent's number needs to be different from yours.")
-    if (!agree) return setError("Check the box to agree to receive texts.")
+    if (phone.replace(/\D/g, "").length !== 10) return setError(t("errors.phone"))
+    if (minor && parent.replace(/\D/g, "").length !== 10) return setError(t("errors.parent"))
+    if (minor && parent === phone) return setError(t("errors.same"))
+    if (!agree) return setError(t("errors.agree"))
     setError(null)
     patch({
       sms: {
@@ -55,18 +79,17 @@ export function Alerts({ token, preview }: { token: string | null; preview: bool
         parentConsent: minor ? "pending" : undefined,
       },
     })
-    toast.success(minor ? "We texted your parent to approve" : "Text alerts are on")
+    toast.success(minor ? t("toast.parentAsked") : t("toast.on"))
   }
 
   return (
     <div className="pt-4">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-[2.1rem] leading-tight font-extrabold tracking-[-0.03em]">Text alerts</h1>
-          <p className="mt-1 text-[0.95rem] text-muted-foreground">
-            A text only when something big is on the line. Usually 1–3 a month.
-          </p>
+          <h1 className="text-[2.1rem] leading-tight font-extrabold tracking-[-0.03em]">{t("title")}</h1>
+          <p className="mt-1 text-[0.95rem] text-muted-foreground">{t("lede")}</p>
         </div>
+        {source === "demo" && (
         <Chip
           tone={status === "on" ? "sage" : status === "pending" ? "sand" : "outline"}
           className="h-8 px-3.5 text-xs"
@@ -77,8 +100,9 @@ export function Alerts({ token, preview }: { token: string | null; preview: bool
               status === "on" ? "bg-sage" : status === "pending" ? "bg-sand-deep" : "bg-muted-foreground/40",
             )}
           />
-          {status === "on" ? "Alerts on" : status === "pending" ? "Waiting for parent approval" : "Alerts off"}
+          {status === "on" ? t("statusOn") : status === "pending" ? t("statusPending") : t("statusOff")}
         </Chip>
+        )}
       </div>
 
       <div className="mt-6 grid grid-cols-[minmax(0,1fr)] gap-4 xl:grid-cols-[minmax(0,1fr)_400px]">
@@ -92,7 +116,7 @@ export function Alerts({ token, preview }: { token: string | null; preview: bool
               <form onSubmit={submit} className="space-y-7">
                 <div>
                   <label htmlFor="phone" className="text-sm font-bold">
-                    Your mobile number
+                    {t("phone")}
                   </label>
                   <div className="mt-3 flex items-center gap-3 rounded-2xl bg-surface px-4 ring-1 ring-border focus-within:ring-2 focus-within:ring-denim">
                     <Smartphone className="size-4 text-muted-foreground" />
@@ -113,15 +137,15 @@ export function Alerts({ token, preview }: { token: string | null; preview: bool
 
                 <div className="divide-y divide-line rounded-2xl ring-1 ring-border">
                   <Toggle
-                    title="Urgent decisions"
-                    desc="Tax rate hikes, bond elections, school closures, and big votes on your block."
+                    title={t("urgentTitle")}
+                    desc={t("urgentDesc")}
                     checked={urgent}
                     onChange={setUrgent}
                     locked
                   />
                   <Toggle
-                    title="Speaker sign-up reminders"
-                    desc="The day before sign-up closes on something you saved or drafted a comment for."
+                    title={t("remindersTitle")}
+                    desc={t("remindersDesc")}
                     checked={reminders}
                     onChange={setReminders}
                   />
@@ -130,10 +154,10 @@ export function Alerts({ token, preview }: { token: string | null; preview: bool
                 {minor && (
                   <div className="rounded-3xl bg-denim-soft p-5">
                     <p className="flex items-center gap-2 font-bold text-denim-deep">
-                      <UserRoundCheck className="size-4" /> You're under 18, so a parent needs to say yes
+                      <UserRoundCheck aria-hidden className="size-4" /> {t("minorTitle")}
                     </p>
                     <p className="mt-1 text-sm text-denim-deep/80">
-                      We'll text them once to approve. We won't send them anything else.
+                      {t("minorDesc")}
                     </p>
                     <input
                       inputMode="tel"
@@ -142,13 +166,13 @@ export function Alerts({ token, preview }: { token: string | null; preview: bool
                         setParent(formatPhone(e.target.value))
                         setError(null)
                       }}
-                      placeholder="Parent or guardian's number"
-                      aria-label="Parent or guardian's number"
+                      placeholder={t("parentPhone")}
+                      aria-label={t("parentPhone")}
                       className="mt-4 h-12 w-full rounded-2xl bg-white px-4 font-semibold ring-1 ring-border outline-none focus:ring-2 focus:ring-denim"
                     />
                     {sms?.parentConsent === "pending" && (
                       <div className="mt-3 flex flex-wrap items-center gap-3 rounded-2xl bg-white p-3 text-sm">
-                        <span className="font-semibold">Approval pending for {sms.parentPhone}</span>
+                        <span className="font-semibold">{t("pending", { phone: sms.parentPhone ?? "" })}</span>
                         <Button
                           type="button"
                           size="sm"
@@ -156,10 +180,10 @@ export function Alerts({ token, preview }: { token: string | null; preview: bool
                           className="ml-auto"
                           onClick={() => {
                             patch({ sms: { ...sms, parentConsent: "granted" } })
-                            toast.success("Parent approved. Alerts are on.")
+                            toast.success(t("toast.approved"))
                           }}
                         >
-                          Simulate parent reply “YES”
+                          {t("simulate")}
                         </Button>
                       </div>
                   )}
@@ -177,14 +201,13 @@ export function Alerts({ token, preview }: { token: string | null; preview: bool
                   className="mt-0.5 size-4 accent-denim"
                 />
                 <span className="text-muted-foreground">
-                  I agree to receive automated texts from ShowUp HTX. Message and data rates may apply. Reply STOP
-                  to cancel or HELP for help.
+                  {t("agree")}
                 </span>
               </label>
 
               <div className="flex flex-wrap items-center gap-3">
                 <Button type="submit" size="lg">
-                  {sms ? "Save changes" : minor ? "Send approval request" : "Turn on alerts"}
+                  {sms ? t("save") : minor ? t("sendApproval") : t("turnOn")}
                 </Button>
                 {sms && (
                   <Button
@@ -193,10 +216,10 @@ export function Alerts({ token, preview }: { token: string | null; preview: bool
                     onClick={() => {
                       patch({ sms: undefined })
                       setAgree(false)
-                      toast("Text alerts are off")
+                      toast(t("toast.off"))
                     }}
                   >
-                    <BellOff data-icon="inline-start" /> Turn off
+                    <BellOff data-icon="inline-start" /> {t("turnOff")}
                   </Button>
                 )}
                 {error && <p className="text-sm font-semibold text-brick">{error}</p>}
@@ -206,9 +229,9 @@ export function Alerts({ token, preview }: { token: string | null; preview: bool
           )}
 
           <ul className="space-y-1.5 px-1 text-sm text-muted-foreground">
-            <li>We keep your phone number and districts, never your street address.</li>
-            <li>No texts between 9 PM and 8 AM unless a vote happens that night.</li>
-            <li>Reply STOP and we delete your number within 24 hours.</li>
+            <li>{t("keepNote")}</li>
+            <li>{t("quietNote")}</li>
+            <li>{t("stopNote")}</li>
           </ul>
         </div>
 
@@ -226,31 +249,17 @@ export function Alerts({ token, preview }: { token: string | null; preview: bool
                 <p className="mt-1 text-xs font-bold">ShowUp HTX</p>
               </div>
               <div className="space-y-3 p-4 text-[13px] leading-snug">
-                <p className="text-center text-[10px] font-semibold text-muted-foreground">Text message · Today</p>
-                {sample && (
-                  <Bubble>
-                    <b>{urgent ? "URGENT" : "Update"}</b> · {sampleBody?.short}: {sample.title}.{" "}
-                    {sample.comment
-                      ? `You can speak. Sign-up closes ${fmtDateTime(sample.comment.deadline)}.`
-                      : `${fmtDateTime(sample.date)}.`}{" "}
-                    <span className="text-denim underline">showup.htx/u/{sample.id.replace(/[^a-z0-9]/g, "").slice(-6)}</span>
-                  </Bubble>
-                )}
-                {reminders && reminder && (
-                  <Bubble>
-                    Reminder: sign-up to speak on “{reminder.title}” closes tomorrow. Your draft is saved.{" "}
-                    <span className="text-denim underline">showup.htx/speak</span>
-                  </Bubble>
-                )}
+                <p className="text-center text-[10px] font-semibold text-muted-foreground">{t("previewDay")}</p>
+                {itemText && urgent && <Bubble>{itemText}</Bubble>}
+                {reminders && reminderPreview && <Bubble>{reminderPreview}</Bubble>}
                 <div className="ml-auto w-fit max-w-[70%] rounded-[18px] rounded-br-md bg-denim px-3.5 py-2 text-white">
-                  thanks, signing up now
+                  {t("reply")}
                 </div>
-                <p className="text-center text-[10px] text-muted-foreground">Reply STOP to unsubscribe</p>
               </div>
             </div>
           </div>
           <p className="mx-auto mt-4 max-w-[360px] text-center text-xs text-muted-foreground">
-            Preview of the texts you'd get, using this week's real items from your districts.
+            {source === "demo" ? t("previewSample") : t("previewReal")}
           </p>
         </div>
       </div>
@@ -275,6 +284,7 @@ function Toggle({
   onChange: (b: boolean) => void
   locked?: boolean
 }) {
+  const t = useTranslations("AppAlerts")
   return (
     <div className="flex items-start gap-4 p-4">
       <div className="flex-1">
@@ -282,7 +292,7 @@ function Toggle({
           {title}
           {locked && (
             <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-muted-foreground">
-              <Check className="size-3" /> Always on
+              <Check aria-hidden className="size-3" /> {t("alwaysOn")}
             </span>
           )}
         </p>

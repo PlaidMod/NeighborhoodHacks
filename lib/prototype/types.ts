@@ -1,3 +1,5 @@
+import type { Coverage } from "@/lib/perspectives/types"
+
 export type Persona = "student" | "parent" | "renter" | "homeowner" | "voter"
 
 export type BodyKind =
@@ -87,6 +89,10 @@ export interface Update {
   aiWritten?: boolean
   /** Real items only: the item's own page. */
   itemPath?: string
+  /** Real items only: "What news coverage says" (perspectives spec §7). */
+  coverage?: Coverage | null
+  /** Real items only: the meeting happened but the minutes aren't posted ("Outcome not posted yet"). */
+  outcomePending?: boolean
 }
 
 export interface Jurisdiction {

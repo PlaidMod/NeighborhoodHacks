@@ -14,6 +14,7 @@ import {
   Waves,
   type LucideIcon,
 } from "lucide-react"
+import { useTranslations } from "next-intl"
 import type { BodyKind, Tier, UpdateType } from "@/lib/prototype/types"
 import { cn } from "@/lib/utils"
 
@@ -56,6 +57,7 @@ export const TYPE_ICON: Record<UpdateType, LucideIcon> = {
 }
 
 export function TierPill({ tier, className }: { tier: Tier; className?: string }) {
+  const t = useTranslations("AppLabels")
   if (tier === "timeline") return null
   return (
     <span
@@ -66,7 +68,7 @@ export function TierPill({ tier, className }: { tier: Tier; className?: string }
       )}
     >
       <span aria-hidden className={cn("size-1.5 rounded-full", tier === "urgent" ? "bg-brick" : "bg-denim")} />
-      {tier === "urgent" ? "Urgent" : "In your brief"}
+      {tier === "urgent" ? t("urgent") : t("inBrief")}
     </span>
   )
 }

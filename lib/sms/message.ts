@@ -53,6 +53,9 @@ export function deadlineText(d: DeadlineInput, lang: Lang): { text: string; late
   return { late, text: lang === "en" ? `Meeting ${when(d.meeting_at, lang)}` : `Reunión el ${when(d.meeting_at, lang)}` }
 }
 
+/** Ends a sentence once: Spanish times already end in "p.m.", so never add a second period. */
+const period = (s: string) => (s.endsWith(".") ? s : `${s}.`)
+
 function clip(text: string, max: number) {
   if (text.length <= max) return text
   return `${text.slice(0, Math.max(0, max - 1)).replace(/\s+\S*$/, "")}…`
@@ -63,7 +66,7 @@ export function itemAlertText(
   lang: Lang,
 ) {
   const { text: dl } = deadlineText(a.deadline, lang)
-  const tail = ` ${dl}. ${SPEAK[lang]}: ${a.link} ${STOP[lang]}`
+  const tail = ` ${period(dl)} ${SPEAK[lang]}: ${a.link} ${STOP[lang]}`
   const head = `${a.body}: `
   const room = MAX_SMS_CHARS - head.length - tail.length - 1
   const headline = clip(a.headline.replace(/\.$/, ""), room)
@@ -85,12 +88,12 @@ export function reminderText(
       es: `${a.body}: Hoy se abre la inscripción para hablar sobre "${t}" (${at}).`,
     },
     registration_closes: {
-      en: `${a.body}: Registration to speak on "${t}" closes ${at}.`,
-      es: `${a.body}: La inscripción para hablar sobre "${t}" cierra el ${at}.`,
+      en: period(`${a.body}: Registration to speak on "${t}" closes ${at}`),
+      es: period(`${a.body}: La inscripción para hablar sobre "${t}" cierra el ${at}`),
     },
     protest_deadline: {
-      en: `HCAD: Your deadline to protest your home's appraised value is ${at}.`,
-      es: `HCAD: Tu fecha límite para protestar el valor de tasación de tu casa es el ${at}.`,
+      en: period(`HCAD: Your deadline to protest your home's appraised value is ${at}`),
+      es: period(`HCAD: Tu fecha límite para protestar el valor de tasación de tu casa es el ${at}`),
     },
   }
   const link = rule === "protest_deadline" ? a.link : `${SPEAK[lang]}: ${a.link}`

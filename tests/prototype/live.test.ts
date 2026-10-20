@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { toBody, toLiveData, toUpdate } from '@/lib/prototype/live'
 import type { WeeklyItem } from '@/lib/weekly/build'
+import { buildWeekly } from '@/lib/weekly/build'
 import { SAMPLE_BODIES, sampleItems } from '@/lib/weekly/sample'
 
 const now = new Date('2026-10-19T17:00:00Z')
@@ -58,12 +59,34 @@ describe('toUpdate', () => {
 describe('toLiveData', () => {
   it("turns P3's sample items into the screens' updates, dropping cancelled meetings and unknown bodies", () => {
     const items = sampleItems(now)
-    const live = toLiveData('sample', bodies, [...items, { ...items[0]!, item_id: 'x', body_id: 'not_mine' }], ['renter'])
+    const all = [...items, { ...items[0]!, item_id: 'x', body_id: 'not_mine' }]
+    const edition = buildWeekly({ items: all, bodies, stakes: ['renter'], now, lang: 'en' })
+    const live = toLiveData('sample', bodies, all, ['renter'], edition)
     expect(live.mode).toBe('sample')
     expect(live.personas).toEqual(['renter'])
     expect(live.bodies.map((b) => b.id)).toEqual(bodies.map((b) => b.body_id))
     const ids = new Set(live.bodies.map((b) => b.id))
     expect(live.updates.every((u) => ids.has(u.bodyId))).toBe(true)
     expect(live.updates.length).toBe(items.filter((i) => i.meeting_status !== 'cancelled').length)
+  })
+  it("keeps buildWeekly's order for the brief and only the reader's items", () => {
+    const items = sampleItems(now)
+    const all = [...items, { ...items[0]!, item_id: 'x', body_id: 'not_mine', tier: 'sms' as const }]
+    const edition = buildWeekly({ items: all, bodies, stakes: [], now, lang: 'en' })
+    const live = toLiveData('sample', bodies, all, [], edition)
+    const ids = [live.weekly.leadId, ...live.weekly.comingUpIds, ...live.weekly.decidedIds]
+    expect(ids).not.toContain('x')
+    expect(live.weekly.leadId).toBe(edition.lead?.body_id === 'not_mine' ? null : edition.lead?.item_id ?? null)
+    expect(live.weekly.comingUpIds).toEqual(edition.comingUp.filter((i) => i.body_id !== 'not_mine').map((i) => i.item_id))
+    expect(live.weekly.intro).toBe(edition.intro)
+  })
+  it('uses the Spanish story and marks pending outcomes', () => {
+    const items = sampleItems(now)
+    const edition = buildWeekly({ items, bodies, stakes: [], now, lang: 'es' })
+    const live = toLiveData('sample', bodies, items, [], edition, 'es')
+    const withStory = items.find((i) => i.story_es)!
+    expect(live.updates.find((u) => u.id === withStory.item_id)!.title).toBe(withStory.story_es!.headline)
+    const pending = items.find((i) => i.status === 'awaiting_result')
+    if (pending) expect(live.updates.find((u) => u.id === pending.item_id)!.outcomePending).toBe(true)
   })
 })

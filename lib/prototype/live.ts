@@ -1,6 +1,6 @@
 import type { BodyType } from "@/lib/contracts/bodyTypes"
 import type { Stake } from "@/lib/stakes"
-import type { WeeklyItem } from "@/lib/weekly/build"
+import type { Deadline, Lang, WeeklyEdition, WeeklyItem } from "@/lib/weekly/build"
 import type { WeeklyBody } from "@/lib/weekly/data"
 import { STATIC_BODIES } from "./bodies"
 import type { Body, BodyKind, Persona, Tier, Topic, Update, UpdateType } from "./types"
@@ -16,6 +16,14 @@ export type LiveData = {
   bodies: Body[]
   updates: Update[]
   personas: Persona[]
+  /** The weekly brief in the plan's order (§10), as update IDs. Built by buildWeekly(). */
+  weekly: {
+    intro: string
+    leadId: string | null
+    comingUpIds: string[]
+    decidedIds: string[]
+    deadlines: Deadline[]
+  }
 }
 
 const KIND: Partial<Record<BodyType, BodyKind>> = {
@@ -63,6 +71,7 @@ const ITEM_TOPIC: Partial<Record<WeeklyItem["item_type"], Topic>> = {
 const TIER: Record<WeeklyItem["tier"], Tier> = { sms: "urgent", weekly: "digest", timeline: "timeline" }
 
 const VOTE: Record<string, string> = { passed: "Passed", failed: "Failed", no_action: "No action taken" }
+const VOTE_ES: Record<string, string> = { passed: "Aprobado", failed: "Rechazado", no_action: "Sin acción" }
 
 export function toBody(b: WeeklyBody): Body {
   const kind = KIND[b.body_type as BodyType] ?? "county"
@@ -89,8 +98,8 @@ function updateType(i: WeeklyItem): UpdateType {
   return "agenda"
 }
 
-export function toUpdate(i: WeeklyItem, kind: BodyKind = "county"): Update {
-  const story = i.story_en ?? null
+export function toUpdate(i: WeeklyItem, kind: BodyKind = "county", lang: Lang = "en"): Update {
+  const story = (lang === "es" ? i.story_es : i.story_en) ?? i.story_en ?? null
   return {
     id: i.item_id,
     bodyId: i.body_id,
@@ -103,11 +112,13 @@ export function toUpdate(i: WeeklyItem, kind: BodyKind = "county"): Update {
     summary: story?.dek ?? "",
     detail: story?.body_paragraphs,
     // The story's renter line is its "why it matters"; without a story there's nothing to say yet.
-    why: { default: story?.renter_line ?? "The agenda item is linked below." },
+    why: { default: story?.renter_line ?? (lang === "es" ? "El punto de la agenda está enlazado abajo." : "The agenda item is linked below.") },
     audiences: [],
-    vote: i.outcome?.vote_result ? VOTE[i.outcome.vote_result] : undefined,
+    vote: i.outcome?.vote_result ? (lang === "es" ? VOTE_ES : VOTE)[i.outcome.vote_result] : undefined,
+    outcomePending: i.status === "awaiting_result",
+    coverage: i.coverage ?? null,
     comment: i.registration_closes_at
-      ? { deadline: i.registration_closes_at, howTo: "See the agenda for how to sign up.", minutes: 3 }
+      ? { deadline: i.registration_closes_at, howTo: lang === "es" ? "Consulta la agenda para inscribirte." : "See the agenda for how to sign up.", minutes: 3 }
       : undefined,
     source: i.source_url,
     aiWritten: i.story_source === "ai",
@@ -117,16 +128,31 @@ export function toUpdate(i: WeeklyItem, kind: BodyKind = "county"): Update {
 
 const PERSONAS: Record<Stake, Persona> = { student: "student", parent: "parent", renter: "renter", homeowner: "homeowner" }
 
-export function toLiveData(mode: LiveData["mode"], bodies: WeeklyBody[], items: WeeklyItem[], stakes: Stake[]): LiveData {
+export function toLiveData(
+  mode: LiveData["mode"],
+  bodies: WeeklyBody[],
+  items: WeeklyItem[],
+  stakes: Stake[],
+  edition: WeeklyEdition,
+  lang: Lang = "en",
+): LiveData {
   const mapped = bodies.map(toBody)
   const kinds = new Map(mapped.map((b) => [b.id, b.kind]))
+  const mine = (i: WeeklyItem) => kinds.has(i.body_id)
   return {
     mode,
     bodies: mapped,
     updates: items
-      .filter((i) => kinds.has(i.body_id) && i.meeting_status !== "cancelled")
-      .map((i) => toUpdate(i, kinds.get(i.body_id)))
+      .filter((i) => mine(i) && i.meeting_status !== "cancelled")
+      .map((i) => toUpdate(i, kinds.get(i.body_id), lang))
       .sort((a, b) => +new Date(b.posted) - +new Date(a.posted)),
     personas: stakes.map((s) => PERSONAS[s]),
+    weekly: {
+      intro: edition.intro,
+      leadId: edition.lead && mine(edition.lead) ? edition.lead.item_id : null,
+      comingUpIds: edition.comingUp.filter(mine).map((i) => i.item_id),
+      decidedIds: edition.decided.filter(mine).map((i) => i.item_id),
+      deadlines: edition.deadlines,
+    },
   }
 }

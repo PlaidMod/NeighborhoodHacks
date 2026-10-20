@@ -1,5 +1,7 @@
 import 'server-only'
 import { cookies } from 'next/headers'
+import { getLocale } from 'next-intl/server'
+import { buildWeekly } from '@/lib/weekly/build'
 import { STAKES_COOKIE, parseStakes } from '@/lib/stakes'
 import { loadItems, resolveBodies } from '@/lib/weekly/data'
 import { toLiveData, type LiveData } from './live'
@@ -17,5 +19,9 @@ export async function loadLiveData(now: Date = new Date()): Promise<LiveData | n
   if (!resolved.bodies) return null
   // The timeline looks further back and ahead than the weekly brief (plan §10).
   const items = await loadItems(resolved.mode, resolved.bodies, { now, fromDays: 30, toDays: 60 })
-  return toLiveData(resolved.mode, resolved.bodies, items, parseStakes(jar.get(STAKES_COOKIE)?.value))
+  const stakes = parseStakes(jar.get(STAKES_COOKIE)?.value)
+  const lang = (await getLocale()) === 'es' ? 'es' : 'en'
+  // The brief's sections and order come from P3's buildWeekly (plan §10), which applies its own 7-back/14-ahead window.
+  const edition = buildWeekly({ items, bodies: resolved.bodies, stakes, now, lang })
+  return toLiveData(resolved.mode, resolved.bodies, items, stakes, edition, lang)
 }

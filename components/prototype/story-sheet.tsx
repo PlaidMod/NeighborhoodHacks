@@ -1,6 +1,7 @@
 "use client"
 
 import { CalendarDays, ExternalLink, Megaphone, Share2 } from "lucide-react"
+import { useLocale, useTranslations } from "next-intl"
 import Link from "next/link"
 import * as React from "react"
 import { toast } from "sonner"
@@ -10,7 +11,8 @@ import { Sheet, SheetContent, SheetDescription, SheetTitle } from "@/components/
 import { getBody } from "@/lib/prototype/bodies"
 import type { Update } from "@/lib/prototype/types"
 import { whyFor } from "@/lib/prototype/updates"
-import { TOPIC_LABEL, TYPE_LABEL, daysFromNow, fmtDateTime, relDay } from "@/lib/prototype/format"
+import { Coverage } from "@/components/weekly/Coverage"
+import { daysFromNow, fmtDateTime, relDay } from "@/lib/prototype/format"
 import { useProfile } from "@/lib/prototype/profile"
 import { AI_LABEL } from "@/lib/stories/types"
 
@@ -41,6 +43,9 @@ export function StoryProvider({ children }: { children: React.ReactNode }) {
 }
 
 function Story({ u, close }: { u: Update; close: () => void }) {
+  const t = useTranslations("AppStory")
+  const tl = useTranslations("AppLabels")
+  const lang = useLocale() === "es" ? "es" : "en"
   const { profile, bodies, source } = useProfile()
   const body = bodies.find((b) => b.id === u.bodyId) ?? getBody(u.bodyId)!
   const Icon = TYPE_ICON[u.type]
@@ -58,10 +63,10 @@ function Story({ u, close }: { u: Update; close: () => void }) {
         </div>
         <div className="mt-6 flex flex-wrap items-center gap-2">
           <Chip tone="outline">
-            <Icon className="size-3" /> {TYPE_LABEL[u.type]}
+            <Icon aria-hidden className="size-3" /> {tl(`type.${u.type}`)}
           </Chip>
           <TierPill tier={u.tier} />
-          <Chip tone="sand">{TOPIC_LABEL[u.topic]}</Chip>
+          <Chip tone="sand">{tl(`topic.${u.topic}`)}</Chip>
         </div>
         <SheetTitle className="mt-4 font-headline text-[2rem] leading-[1.1] font-black text-ink">
           {u.title}
@@ -70,7 +75,7 @@ function Story({ u, close }: { u: Update; close: () => void }) {
           {u.summary}
         </SheetDescription>
         <p className="mt-4 inline-flex items-center gap-2 text-sm font-semibold">
-          <CalendarDays className="size-4 text-denim" />
+          <CalendarDays aria-hidden className="size-4 text-denim" />
           {fmtDateTime(u.date)}
           {Math.abs(daysFromNow(u.date)) < 7 && <span className="text-muted-foreground">· {relDay(u.date)}</span>}
         </p>
@@ -78,7 +83,7 @@ function Story({ u, close }: { u: Update; close: () => void }) {
 
       <div className="space-y-4 p-4 md:p-6">
         <div className="rounded-3xl bg-denim p-5 text-white">
-          <p className="text-xs font-bold tracking-wider text-white/60 uppercase">Why it matters to you</p>
+          <p className="text-xs font-bold tracking-wider text-white/60 uppercase">{t("why")}</p>
           <p className="mt-2 font-headline text-xl leading-snug font-bold italic">{whyFor(u, profile.personas)}</p>
         </div>
 
@@ -95,8 +100,15 @@ function Story({ u, close }: { u: Update; close: () => void }) {
 
         {u.vote && (
           <div className="flex items-center justify-between rounded-2xl bg-white p-4">
-            <p className="text-sm font-semibold">Result</p>
+            <p className="text-sm font-semibold">{t("result")}</p>
             <Chip tone="sage">{u.vote}</Chip>
+          </div>
+        )}
+
+        {u.outcomePending && (
+          <div className="flex items-center justify-between rounded-2xl bg-white p-4">
+            <p className="text-sm font-semibold">{t("result")}</p>
+            <Chip tone="sand">{tl("outcomePending")}</Chip>
           </div>
         )}
 
@@ -108,19 +120,25 @@ function Story({ u, close }: { u: Update; close: () => void }) {
           </div>
         )}
 
+        {u.coverage !== undefined && (
+          <div className="rounded-3xl bg-white p-5">
+            <Coverage coverage={u.coverage} />
+          </div>
+        )}
+
         {u.comment && !past && (
           <div className="rounded-3xl bg-ink p-5 font-sans text-white">
             <div className="flex items-start gap-3">
               <Megaphone className="mt-0.5 size-5 shrink-0 text-brick-soft" />
               <div>
-                <p className="font-bold">You can speak on this</p>
+                <p className="font-bold">{t("canSpeak")}</p>
                 <p className="mt-1 text-sm text-white/70">
-                  Sign-up closes {fmtDateTime(u.comment.deadline)}. {u.comment.minutes} minutes per speaker.
+                  {t("signupCloses", { when: fmtDateTime(u.comment.deadline), minutes: u.comment.minutes })}
                 </p>
               </div>
             </div>
             <Button asChild variant="brick" className="mt-4 w-full" onClick={close}>
-              <Link href={`/app/speak?item=${u.id}`}>Draft my {u.comment.minutes}-minute comment</Link>
+              <Link href={`/app/speak?item=${u.id}`}>{t("draft", { minutes: u.comment.minutes })}</Link>
             </Button>
           </div>
         )}
@@ -128,30 +146,26 @@ function Story({ u, close }: { u: Update; close: () => void }) {
         <div className="flex gap-2 font-sans">
           <Button asChild variant="outline" className="flex-1">
             <a href={u.source} target="_blank" rel="noreferrer">
-              Official source <ExternalLink data-icon="inline-end" />
+              {t("source")} <ExternalLink data-icon="inline-end" />
             </a>
           </Button>
           <Button
             variant="outline"
             onClick={() => {
               navigator.clipboard?.writeText(`${u.title}: ${u.summary}`)
-              toast.success("Copied a summary to share")
+              toast.success(t("copied"))
             }}
           >
-            <Share2 /> Share
+            <Share2 /> {t("share")}
           </Button>
         </div>
         {u.itemPath && (
           <Button asChild variant="ghost" className="w-full font-sans">
-            <Link href={u.itemPath}>Full story and news coverage</Link>
+            <Link href={u.itemPath}>{t("fullStory")}</Link>
           </Button>
         )}
         <p className="px-1 text-xs text-muted-foreground">
-          {u.aiWritten
-            ? AI_LABEL.en
-            : source === "db"
-              ? "From the official agenda. Always check it before a meeting."
-              : "Sample data. Always check the official agenda before a meeting."}
+          {u.aiWritten ? AI_LABEL[lang] : source === "db" ? t("footReal") : t("footSample")}
         </p>
       </div>
     </article>

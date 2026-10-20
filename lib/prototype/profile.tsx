@@ -28,6 +28,8 @@ interface Ctx {
   isDemo: boolean
   /** Where bodies and updates come from: the demo, P3's sample items, or the database. */
   source: "demo" | LiveData["mode"]
+  /** The brief in the plan's order (§10) when real data is shown; null for the demo. */
+  weekly: LiveData["weekly"] | null
   profile: Profile
   jurisdiction: Jurisdiction
   bodies: Body[]
@@ -73,6 +75,7 @@ export function ProfileProvider({ children, live = null }: { children: React.Rea
       ready,
       isDemo: !live && (!stored || !!stored.demo),
       source: live ? live.mode : "demo",
+      weekly: live ? live.weekly : null,
       profile,
       jurisdiction,
       bodies: live ? live.bodies : bodiesFor(jurisdiction),

@@ -64,6 +64,12 @@ describe("quiet hours (8 a.m.–8 p.m. Central)", () => {
 describe("message text", () => {
   const deadline = { meeting_at: "2026-10-22T17:00:00-05:00", registration_closes_at: "2026-10-21T12:00:00-05:00" }
 
+  it("never ends a Spanish time with two periods", () => {
+    const t = itemAlertText({ body: "HISD", headline: "Votación", deadline, link: "https://showup.example/s/abc" }, "es")
+    const r = reminderText("registration_closes", { body: "HISD", title: "Votación", at: deadline.registration_closes_at, link: "https://showup.example/s/abc" }, "es")
+    for (const text of [t, r]) expect(text).not.toMatch(/\.\./)
+  })
+
   it("follows the plan's format and fits two segments", () => {
     const t = itemAlertText(
       { body: "HISD board", headline: "Board to vote on closing 9 campuses", deadline, link: "https://showup.example/s/abc" },

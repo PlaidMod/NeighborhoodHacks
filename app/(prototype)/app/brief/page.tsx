@@ -1,15 +1,17 @@
 "use client"
 
 import { ArrowRight, ChevronRight, Clock, Mic } from "lucide-react"
+import { useTranslations } from "next-intl"
 import Link from "next/link"
 import * as React from "react"
 import { Chip, KIND_STYLE, LogoTile } from "@/components/prototype/civic"
 import { useStory } from "@/components/prototype/story-sheet"
 import { Button } from "@/components/ui/button"
+import { Coverage } from "@/components/weekly/Coverage"
 import type { Update } from "@/lib/prototype/types"
 import { relevance, whyFor } from "@/lib/prototype/updates"
-import { PERSONAS, daysFromNow, fmtDate, fmtTime, monthDay } from "@/lib/prototype/format"
-import { useMarkDone, useProfile } from "@/lib/prototype/profile"
+import { daysFromNow, fmtDate, fmtDateTime, fmtTime, monthDay } from "@/lib/prototype/format"
+import { useMarkDone, useNow, useProfile } from "@/lib/prototype/profile"
 import { cn } from "@/lib/utils"
 
 /** Tile styles for the bento grid, from the sports-page reference. */
@@ -21,41 +23,60 @@ const TILES = [
   { cls: "bg-denim-soft text-ink", btn: "text-denim", light: true },
 ]
 
+/** Demo ordering only. Real data uses P3's buildWeekly order (plan §10), passed in as `weekly`. */
 function score(u: Update, personas: Parameters<typeof relevance>[1]) {
   const tier = u.tier === "urgent" ? 30 : u.tier === "digest" ? 15 : 0
   return tier + relevance(u, personas) * 10 - Math.abs(daysFromNow(u.date))
 }
 
 export default function Brief() {
-  const { updates, bodies, profile, jurisdiction } = useProfile()
+  const t = useTranslations("AppBrief")
+  const tl = useTranslations("AppLabels")
+  const { updates, bodies, profile, jurisdiction, weekly } = useProfile()
   const openStory = useStory()
   const markDone = useMarkDone()
+  const now = useNow()
   React.useEffect(() => {
-    const t = setTimeout(() => markDone("brief"), 2500)
-    return () => clearTimeout(t)
+    const timer = setTimeout(() => markDone("brief"), 2500)
+    return () => clearTimeout(timer)
   }, [markDone])
 
-  const inRange = updates.filter((u) => {
-    const d = daysFromNow(u.date)
-    return d >= -8 && d <= 12
-  })
-  const top = [...inRange]
-    .filter((u) => u.tier !== "timeline")
-    .sort((a, b) => score(b, profile.personas) - score(a, profile.personas))
-    .slice(0, 5)
-  const decided = updates
-    .filter((u) => u.type === "decision" && daysFromNow(u.date) >= -8 && daysFromNow(u.date) <= 0)
-    .filter((u) => !top.includes(u))
-  const calendar = updates
-    .filter((u) => daysFromNow(u.date) >= 0 && daysFromNow(u.date) <= 10 && u.type !== "decision")
-    .sort((a, b) => +new Date(a.date) - +new Date(b.date))
-  const commentable = calendar.filter((u) => u.comment)
+  const byId = new Map(updates.map((u) => [u.id, u]))
+  const pick = (ids: string[]) => ids.map((id) => byId.get(id)).filter((u): u is Update => !!u)
+
+  let top: Update[]
+  let decided: Update[]
+  let calendar: Update[]
+  if (weekly) {
+    // Lead story first, then "Coming up: you can still act" (plan §10).
+    const comingUp = pick([...(weekly.leadId ? [weekly.leadId] : []), ...weekly.comingUpIds])
+    top = comingUp.slice(0, 5)
+    decided = pick(weekly.decidedIds)
+    calendar = [...comingUp].sort((a, b) => +new Date(a.date) - +new Date(b.date))
+  } else {
+    const inRange = updates.filter((u) => {
+      const d = daysFromNow(u.date)
+      return d >= -8 && d <= 12
+    })
+    top = [...inRange]
+      .filter((u) => u.tier !== "timeline")
+      .sort((a, b) => score(b, profile.personas) - score(a, profile.personas))
+      .slice(0, 5)
+    decided = updates
+      .filter((u) => u.type === "decision" && daysFromNow(u.date) >= -8 && daysFromNow(u.date) <= 0)
+      .filter((u) => !top.includes(u))
+    calendar = updates
+      .filter((u) => daysFromNow(u.date) >= 0 && daysFromNow(u.date) <= 10 && u.type !== "decision")
+      .sort((a, b) => +new Date(a.date) - +new Date(b.date))
+  }
+  const commentable = calendar.filter((u) => u.comment && +new Date(u.comment.deadline) > now)
 
   const start = new Date()
   start.setDate(start.getDate() - start.getDay())
   const end = new Date(start)
   end.setDate(start.getDate() + 6)
-  const who = profile.personas.map((p) => PERSONAS.find((x) => x.id === p)?.label.toLowerCase()).join(" and ")
+  const who = profile.personas.map((p) => tl(`persona.${p}`)).join(` ${t("and")} `)
+  const minutes = Math.max(2, Math.round((top.length + decided.length) * 0.8))
   // The MUD facts below are demo numbers: only the demo utility district carries them.
   const mud = bodies.find((b) => b.kind === "mud" && b.lastTurnout)
 
@@ -64,28 +85,44 @@ export default function Brief() {
       {/* Masthead */}
       <header className="border-b border-border pb-6">
         <div className="flex flex-wrap items-center gap-2 text-xs font-bold text-muted-foreground">
-          <Chip tone="brick">Weekly brief</Chip>
+          <Chip tone="brick">{t("chip")}</Chip>
           <span>
             {fmtDate(start.toISOString())} – {fmtDate(end.toISOString())}
           </span>
-          <span className="size-1 rounded-full bg-muted-foreground/40" />
+          <span aria-hidden className="size-1 rounded-full bg-muted-foreground/40" />
           <span className="inline-flex items-center gap-1">
-            <Clock className="size-3.5" /> 4 min read
+            <Clock aria-hidden className="size-3.5" /> {t("minRead", { count: minutes })}
           </span>
         </div>
         <h1 className="mt-4 font-headline text-[2.6rem] leading-[1.02] font-black md:text-[3.6rem]">
-          Your week in {jurisdiction.area}
+          {t("title", { area: jurisdiction.area })}
         </h1>
         <p className="mt-3 max-w-2xl text-[1.02rem] text-muted-foreground">
-          {bodies.length} governments, {decided.length + top.filter((u) => u.type === "decision").length}{" "}
-          decisions, and {commentable.length} chances to speak up. Written for a {who || "resident"}.
+          {weekly
+            ? weekly.intro
+            : t("lede", {
+                bodies: bodies.length,
+                decisions: decided.length + top.filter((u) => u.type === "decision").length,
+                chances: commentable.length,
+                who: who || t("resident"),
+              })}
         </p>
       </header>
+
+      {top.length === 0 && (
+        <div className="mt-8 rounded-[28px] bg-white p-8 font-sans">
+          <p className="text-lg font-bold">{t("empty")}</p>
+          <p className="mt-1 text-sm text-muted-foreground">{t("emptyHint")}</p>
+          <Button asChild variant="outline" className="mt-4">
+            <Link href="/app/timeline">{t("openTimeline")}</Link>
+          </Button>
+        </div>
+      )}
 
       {/* Bento */}
       <section className="mt-8 grid auto-rows-[minmax(220px,auto)] gap-4 sm:grid-cols-2 xl:auto-rows-[240px] xl:grid-cols-4">
         {top.map((u, i) => {
-          const t = TILES[i]
+          const tile = TILES[i]!
           const b = bodies.find((x) => x.id === u.bodyId)!
           const Icon = KIND_STYLE[b.kind].icon
           return (
@@ -95,29 +132,34 @@ export default function Brief() {
               onClick={() => openStory(u)}
               className={cn(
                 "group relative flex flex-col justify-between gap-6 overflow-hidden rounded-[28px] p-6 text-left transition-transform motion-safe:hover:-translate-y-0.5",
-                t.cls,
+                tile.cls,
               )}
             >
               <Icon
+                aria-hidden
                 className={cn(
                   "absolute -right-8 -bottom-8 size-44 transition-transform duration-300 motion-safe:group-hover:scale-110 motion-safe:group-hover:-rotate-6",
-                  t.light ? "text-ink/[0.06]" : "text-white/[0.08]",
+                  tile.light ? "text-ink/[0.06]" : "text-white/[0.08]",
                 )}
                 strokeWidth={1.1}
               />
               <div className="relative">
-                <p className={cn("flex items-center gap-2 text-xs font-bold", t.light ? "text-muted-foreground" : "text-white/70")}>
+                <p className={cn("flex items-center gap-2 text-xs font-bold", tile.light ? "text-muted-foreground" : "text-white/70")}>
                   <LogoTile id={b.id} className="size-7 rounded-lg ring-0" />
                   {b.short}
                   {u.tier === "urgent" && (
-                    <span className={cn("whitespace-nowrap", t.light ? "text-brick" : "text-white")}>● Urgent</span>
+                    <span className={cn("whitespace-nowrap", tile.light ? "text-brick" : "text-white")}>● {tl("urgent")}</span>
                   )}
                 </p>
                 <p
                   className={cn(
                     "mt-2 font-headline leading-[1.1] font-bold",
                     // Real headlines run long: clamp so the tile's button always shows (the full title is its aria-label).
-                    t.big ? "line-clamp-3 max-w-[24ch] xl:line-clamp-2 text-[1.5rem] xl:text-[1.75rem]" : i === 1 || i === 2 ? "line-clamp-[9] text-[1.3rem]" : "line-clamp-3 text-[1.3rem]",
+                    tile.big
+                      ? "line-clamp-3 max-w-[24ch] text-[1.5rem] xl:line-clamp-2 xl:text-[1.75rem]"
+                      : i === 1 || i === 2
+                        ? "line-clamp-[9] text-[1.3rem]"
+                        : "line-clamp-3 text-[1.3rem]",
                   )}
                 >
                   {u.title}
@@ -126,64 +168,73 @@ export default function Brief() {
               <span
                 className={cn(
                   "relative inline-flex h-8 w-fit shrink-0 items-center gap-1 rounded-full bg-white px-3.5 text-xs font-bold shadow-sm",
-                  t.btn,
+                  tile.btn,
                 )}
               >
-                {u.comment && daysFromNow(u.date) >= 0 ? "Read and respond" : "Read more"}
-                <ChevronRight className="size-3.5 transition-transform motion-safe:group-hover:translate-x-0.5" />
+                {u.comment && daysFromNow(u.date) >= 0 ? t("readRespond") : t("readMore")}
+                <ChevronRight aria-hidden className="size-3.5 transition-transform motion-safe:group-hover:translate-x-0.5" />
               </span>
             </button>
           )
         })}
       </section>
 
-      <div className="mt-12 grid gap-10 lg:grid-cols-[1fr_340px]">
+      <div className="mt-12 grid grid-cols-[minmax(0,1fr)] gap-10 lg:grid-cols-[minmax(0,1fr)_340px]">
         {/* Decided */}
         <section>
           <h2 className="flex items-center gap-3 text-xs font-bold tracking-[0.14em] text-muted-foreground uppercase">
-            Also decided this week <span className="h-px flex-1 bg-border" />
+            {t("alsoDecided")} <span aria-hidden className="h-px flex-1 bg-border" />
           </h2>
+          {decided.length === 0 && <p className="mt-4 text-sm text-muted-foreground">{t("noneDecided")}</p>}
           <div className="mt-2 divide-y divide-border">
             {decided.map((u) => {
               const b = bodies.find((x) => x.id === u.bodyId)!
               return (
-                <article key={u.id} className="group grid gap-2 py-6 sm:grid-cols-[140px_1fr]">
+                <article key={u.id} className="group grid gap-2 py-6 sm:grid-cols-[140px_minmax(0,1fr)]">
                   <div>
                     <p className="text-xs font-bold text-denim">{b.short}</p>
                     <p className="text-xs text-muted-foreground">{fmtDate(u.date, { weekday: "long" })}</p>
                   </div>
                   <div>
                     <button onClick={() => openStory(u)} className="text-left">
-                      <h3 className="font-headline text-[1.4rem] leading-snug font-bold group-hover:text-denim">
-                        {u.title}
-                      </h3>
+                      <h3 className="font-headline text-[1.4rem] leading-snug font-bold group-hover:text-denim">{u.title}</h3>
                     </button>
-                    <p className="mt-2 leading-relaxed text-muted-foreground">{u.summary}</p>
+                    {u.summary && <p className="mt-2 leading-relaxed text-muted-foreground">{u.summary}</p>}
                     <p className="mt-3 rounded-2xl bg-white px-4 py-3 text-sm">
-                      <b>For you:</b> {whyFor(u, profile.personas)}
+                      <b>{t("forYou")}</b> {whyFor(u, profile.personas)}
                     </p>
-                    {u.vote && <Chip tone="sage" className="mt-3">{u.vote}</Chip>}
+                    {u.vote && (
+                      <Chip tone="sage" className="mt-3">
+                        {u.vote}
+                      </Chip>
+                    )}
+                    {u.outcomePending && (
+                      <Chip tone="sand" className="mt-3">
+                        {tl("outcomePending")}
+                      </Chip>
+                    )}
+                    {u.coverage !== undefined && <Coverage coverage={u.coverage} className="mt-4" />}
                   </div>
                 </article>
               )
             })}
           </div>
 
-          {mud && (
+          {!weekly && mud && (
             <div className="mt-6 rounded-[28px] bg-white p-6 md:p-8">
-              <p className="text-xs font-bold tracking-[0.14em] text-muted-foreground uppercase">By the numbers</p>
+              <p className="text-xs font-bold tracking-[0.14em] text-muted-foreground uppercase">{t("byNumbers")}</p>
               <div className="mt-5 grid gap-6 sm:grid-cols-3">
                 <div>
                   <p className="font-headline text-4xl font-black text-brick">{mud.lastTurnout?.votes}</p>
-                  <p className="mt-1 text-sm text-muted-foreground">votes in the last {mud.short} election</p>
+                  <p className="mt-1 text-sm text-muted-foreground">{t("votesLast", { name: mud.short })}</p>
                 </div>
                 <div>
                   <p className="font-headline text-4xl font-black">$38.5M</p>
-                  <p className="mt-1 text-sm text-muted-foreground">in {mud.short} bonds on your ballot</p>
+                  <p className="mt-1 text-sm text-muted-foreground">{t("bondsBallot", { name: mud.short })}</p>
                 </div>
                 <div>
                   <p className="font-headline text-4xl font-black">14 mi</p>
-                  <p className="mt-1 text-sm text-muted-foreground">from the district to where its board meets</p>
+                  <p className="mt-1 text-sm text-muted-foreground">{t("distance")}</p>
                 </div>
               </div>
             </div>
@@ -192,42 +243,58 @@ export default function Brief() {
 
         {/* Calendar rail */}
         <aside className="space-y-4 lg:sticky lg:top-4 lg:self-start">
-          <div className="rounded-[28px] bg-white p-6">
-            <h2 className="font-headline text-xl font-bold">On the calendar</h2>
-            <ul className="mt-4 space-y-4">
-              {calendar.slice(0, 7).map((u) => {
-                const { month, day } = monthDay(u.date)
-                const b = bodies.find((x) => x.id === u.bodyId)!
-                return (
-                  <li key={u.id}>
-                    <button onClick={() => openStory(u)} className="group flex w-full gap-3 text-left">
-                      <span className="w-10 shrink-0 text-center leading-none">
-                        <span className="block text-[10px] font-bold tracking-wider text-muted-foreground">{month}</span>
-                        <span className="block text-xl font-extrabold">{day}</span>
-                      </span>
-                      <span className="min-w-0 border-l border-border pl-3">
-                        <span className="line-clamp-2 text-sm font-bold group-hover:text-denim">{u.title}</span>
-                        <span className="text-xs text-muted-foreground">
-                          {b.short} · {fmtTime(u.date)}
-                        </span>
-                      </span>
-                    </button>
+          {weekly && weekly.deadlines.length > 0 && (
+            <div className="rounded-[28px] bg-white p-6">
+              <h2 className="font-headline text-xl font-bold">{t("deadlines")}</h2>
+              <ul className="mt-4 space-y-3 text-sm">
+                {weekly.deadlines.map((d) => (
+                  <li key={`${d.kind}-${d.at}-${d.item_id ?? ""}`} className="border-l-2 border-brick pl-3">
+                    <p className="font-bold">{fmtDateTime(d.at)}</p>
+                    <p className="text-muted-foreground">{d.label}</p>
                   </li>
-                )
-              })}
-            </ul>
-          </div>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {calendar.length > 0 && (
+            <div className="rounded-[28px] bg-white p-6">
+              <h2 className="font-headline text-xl font-bold">{t("calendar")}</h2>
+              <ul className="mt-4 space-y-4">
+                {calendar.slice(0, 7).map((u) => {
+                  const { month, day } = monthDay(u.date)
+                  const b = bodies.find((x) => x.id === u.bodyId)!
+                  return (
+                    <li key={u.id}>
+                      <button onClick={() => openStory(u)} className="group flex w-full gap-3 text-left">
+                        <span className="w-10 shrink-0 text-center leading-none">
+                          <span className="block text-[10px] font-bold tracking-wider text-muted-foreground">{month}</span>
+                          <span className="block text-xl font-extrabold">{day}</span>
+                        </span>
+                        <span className="min-w-0 border-l border-border pl-3">
+                          <span className="line-clamp-2 text-sm font-bold group-hover:text-denim">{u.title}</span>
+                          <span className="text-xs text-muted-foreground">
+                            {b.short} · {fmtTime(u.date)}
+                          </span>
+                        </span>
+                      </button>
+                    </li>
+                  )
+                })}
+              </ul>
+            </div>
+          )}
 
           {commentable[0] && (
             <div className="rounded-[28px] bg-brick p-6 font-sans text-white">
-              <Mic className="size-6 text-white/80" />
-              <p className="mt-4 text-xs font-bold tracking-[0.14em] text-white/60 uppercase">One thing you can do</p>
+              <Mic aria-hidden className="size-6 text-white/80" />
+              <p className="mt-4 text-xs font-bold tracking-[0.14em] text-white/60 uppercase">{t("oneThing")}</p>
               <p className="mt-2 text-xl leading-snug font-extrabold tracking-tight">
-                Speak for 2 minutes on “{commentable[0].title}”
+                {t("speakFor", { minutes: commentable[0].comment!.minutes, title: commentable[0].title })}
               </p>
               <Button asChild variant="white" className="mt-5 w-full">
                 <Link href={`/app/speak?item=${commentable[0].id}`}>
-                  Draft my comment <ArrowRight data-icon="inline-end" />
+                  {t("draft")} <ArrowRight data-icon="inline-end" />
                 </Link>
               </Button>
             </div>
