@@ -3,7 +3,7 @@
 import { ArrowRight, ChevronRight, Clock, Mic } from "lucide-react"
 import Link from "next/link"
 import * as React from "react"
-import { Chip, KIND_STYLE } from "@/components/prototype/civic"
+import { Chip, KIND_STYLE, LogoTile } from "@/components/prototype/civic"
 import { useStory } from "@/components/prototype/story-sheet"
 import { Button } from "@/components/ui/button"
 import type { Update } from "@/lib/prototype/types"
@@ -106,16 +106,18 @@ export default function Brief() {
                 strokeWidth={1.1}
               />
               <div className="relative">
-                <p className={cn("text-xs font-bold", t.light ? "text-muted-foreground" : "text-white/70")}>
+                <p className={cn("flex items-center gap-2 text-xs font-bold", t.light ? "text-muted-foreground" : "text-white/70")}>
+                  <LogoTile id={b.id} className="size-7 rounded-lg ring-0" />
                   {b.short}
                   {u.tier === "urgent" && (
-                    <span className={cn("ml-2", t.light ? "text-brick" : "text-white")}>● Urgent</span>
+                    <span className={cn("whitespace-nowrap", t.light ? "text-brick" : "text-white")}>● Urgent</span>
                   )}
                 </p>
                 <p
                   className={cn(
                     "mt-2 font-headline leading-[1.1] font-bold",
-                    t.big ? "max-w-[24ch] text-[1.5rem] xl:text-[1.75rem]" : "text-[1.3rem]",
+                    // Real headlines run long: clamp so the tile's button always shows (the full title is its aria-label).
+                    t.big ? "line-clamp-3 max-w-[24ch] xl:line-clamp-2 text-[1.5rem] xl:text-[1.75rem]" : i === 1 || i === 2 ? "line-clamp-[9] text-[1.3rem]" : "line-clamp-3 text-[1.3rem]",
                   )}
                 >
                   {u.title}
@@ -123,7 +125,7 @@ export default function Brief() {
               </div>
               <span
                 className={cn(
-                  "relative inline-flex h-8 w-fit items-center gap-1 rounded-full bg-white px-3.5 text-xs font-bold shadow-sm",
+                  "relative inline-flex h-8 w-fit shrink-0 items-center gap-1 rounded-full bg-white px-3.5 text-xs font-bold shadow-sm",
                   t.btn,
                 )}
               >

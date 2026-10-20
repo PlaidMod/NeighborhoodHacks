@@ -252,7 +252,7 @@ function SearchDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (o:
               }}
               className="gap-3 rounded-xl"
             >
-              <BodyIcon kind={b.kind} className="size-8 rounded-xl" />
+              <BodyIcon kind={b.kind} id={b.id} className="size-8 rounded-xl" />
               {b.name}
             </CommandItem>
           ))}

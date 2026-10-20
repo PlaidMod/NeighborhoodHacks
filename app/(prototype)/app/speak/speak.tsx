@@ -138,7 +138,7 @@ export function Speak() {
                       on && "bg-denim text-white hover:bg-denim",
                     )}
                   >
-                    <BodyIcon kind={b.kind} className={cn("size-9 rounded-xl", on && "bg-white/15 text-white")} />
+                    <BodyIcon kind={b.kind} id={b.id} className={cn("size-9 rounded-xl", on && "bg-white/15 text-white")} />
                     <span className="min-w-0">
                       <span className="line-clamp-2 text-sm font-bold">{u.title}</span>
                       <span className={cn("text-xs", on ? "text-white/70" : "text-muted-foreground")}>
@@ -299,7 +299,7 @@ function Understand({ u }: { u: Update }) {
   return (
     <div className="rise">
       <div className="flex items-center gap-3">
-        <BodyIcon kind={b.kind} />
+        <BodyIcon kind={b.kind} id={b.id} />
         <div>
           <p className="text-sm font-bold">{b.name}</p>
           <p className="text-xs text-muted-foreground">{fmtDateTime(u.date)}</p>

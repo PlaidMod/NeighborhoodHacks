@@ -20,7 +20,9 @@ import { cn } from "@/lib/utils"
 // The pieces the /app screens need that are keyed by the prototype's sample-data types
 // (lib/prototype/types.ts). Everything else comes from the shared components/civic.tsx.
 // As a screen moves to real data, switch it to the shared BodyIcon (keyed by BodyType) and TierPill.
-export { ArrowCircle, Chip, Logo, Panel, SectionTitle } from "@/components/civic"
+import { LogoTile } from "@/components/civic"
+import { bodyLogo } from "@/lib/bodyLogos"
+export { ArrowCircle, Chip, Logo, LogoTile, Panel, SectionTitle } from "@/components/civic"
 
 export const KIND_STYLE: Record<BodyKind, { icon: LucideIcon; tile: string; dot: string }> = {
   mud: { icon: Droplets, tile: "bg-brick-soft text-brick-deep", dot: "bg-brick" },
@@ -32,8 +34,9 @@ export const KIND_STYLE: Record<BodyKind, { icon: LucideIcon; tile: string; dot:
   college: { icon: BookOpen, tile: "bg-plum-soft text-plum-deep", dot: "bg-plum" },
 }
 
-/** Decorative: the body's name is always shown beside it. */
-export function BodyIcon({ kind, className }: { kind: BodyKind; className?: string }) {
+/** The body's official logo when we have one (pass `id`), otherwise its kind's icon. Decorative: the name is shown beside it. */
+export function BodyIcon({ kind, id, className }: { kind: BodyKind; id?: string; className?: string }) {
+  if (id && bodyLogo(id)) return <LogoTile id={id} className={className} />
   const s = KIND_STYLE[kind]
   const Icon = s.icon
   return (

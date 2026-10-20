@@ -50,7 +50,7 @@ function Story({ u, close }: { u: Update; close: () => void }) {
     <article className="font-news">
       <header className="bg-white px-6 pt-8 pb-6 md:px-8">
         <div className="flex items-center gap-3">
-          <BodyIcon kind={body.kind} />
+          <BodyIcon kind={body.kind} id={body.id} />
           <div className="min-w-0">
             <p className="truncate text-sm font-bold">{body.name}</p>
             <p className="text-xs text-muted-foreground">{body.yourSeat ?? body.seats}</p>

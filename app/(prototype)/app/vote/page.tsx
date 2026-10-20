@@ -153,7 +153,7 @@ export default function VotePage() {
                   onClick={() => openStory(u)}
                   className="group flex w-full items-start gap-4 rounded-3xl bg-surface p-5 text-left transition-colors hover:bg-muted"
                 >
-                  <BodyIcon kind={b.kind} />
+                  <BodyIcon kind={b.kind} id={b.id} />
                   <span className="min-w-0">
                     <span className="block font-bold group-hover:text-denim">{u.title}</span>
                     <span className="mt-1 line-clamp-2 block text-sm text-muted-foreground">{u.summary}</span>

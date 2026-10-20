@@ -15,9 +15,11 @@ import {
   Waves,
   type LucideIcon,
 } from "lucide-react"
+import Image from "next/image"
 import Link from "next/link"
 import { useTranslations } from "next-intl"
 import { APP_NAME } from "@/lib/brand"
+import { bodyLogo } from "@/lib/bodyLogos"
 import type { BodyType } from "@/lib/contracts/bodyTypes"
 import { cn } from "@/lib/utils"
 
@@ -57,8 +59,23 @@ export const BODY_STYLE: Record<BodyType, { icon: LucideIcon; tile: string }> = 
   other: { icon: Building, tile: "bg-muted text-muted-foreground" },
 }
 
-/** A 40px tile with the body's icon. DESIGN.md: every body listed gets one. Decorative: the name is shown beside it. */
-export function BodyIcon({ type, className }: { type: BodyType; className?: string }) {
+/** The body's official logo on a white tile (lib/bodyLogos.ts). Decorative: the name is shown beside it. */
+export function LogoTile({ id, className }: { id: string; className?: string }) {
+  const logo = bodyLogo(id)
+  if (!logo) return null
+  return (
+    <span aria-hidden className={cn("grid size-10 shrink-0 place-items-center overflow-hidden rounded-2xl bg-white ring-1 ring-border", className)}>
+      <Image src={logo.src} alt="" width={64} height={64} unoptimized className={cn("size-full object-contain", logo.wide ? "p-0.5" : "p-1")} />
+    </span>
+  )
+}
+
+/**
+ * A 40px tile for a body: its official logo when we have one (pass `id`), otherwise its type's icon.
+ * DESIGN.md: every body listed gets one. Decorative: the name is shown beside it.
+ */
+export function BodyIcon({ type, id, className }: { type: BodyType; id?: string; className?: string }) {
+  if (id && bodyLogo(id)) return <LogoTile id={id} className={className} />
   const style = BODY_STYLE[type] ?? BODY_STYLE.other
   const Icon = style.icon
   return (

@@ -74,7 +74,7 @@ export default async function TimelinePage({ searchParams }: { searchParams: Pro
         <ul className="mt-6 divide-y divide-border">
           {items.map((item) => (
             <li key={item.item_id} className="flex gap-4 py-4">
-              <BodyIcon type={typeOf.get(item.body_id) ?? 'other'} className="mt-1" />
+              <BodyIcon type={typeOf.get(item.body_id) ?? 'other'} id={item.body_id} className="mt-1" />
               <div className="min-w-0 flex-1">
                 <p className="text-xs font-semibold text-muted-foreground">
                   {item.body_name} · {day(item.meeting_date)}

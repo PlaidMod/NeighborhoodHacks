@@ -33,6 +33,21 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-20: Official logos for governments
+- **Who:** sohankamsala · P3 Weekly News and Alerts
+- **Branch:** main (local commit; not pushed)
+- **What changed:** The app showed only generic icons, so it looked made up even where the data is real. Each body now shows its official logo or seal wherever it appears: home page stack, `/results`, `/weekly`, `/timeline`, the `/app` sidebar, dashboard, districts, body pages, brief tiles, story sheet, speak and vote.
+  - **Bodies with logos:** HISD, Cy-Fair ISD, City of Houston (seal), Harris County, Flood Control, HCC, Lone Star, Harris Health, MUD 489 and CenterPoint. Bodies without one keep their icon tile.
+  - **Source:** each file was downloaded once from the body's own website and is served from `public/logos/`, so readers' browsers never contact those sites. `lib/bodyLogos.ts` lists the source of each file.
+  - Brief tiles now clamp long headlines so the button always shows; real headlines are longer than the demo ones.
+- **Files:** `public/logos/`, `lib/bodyLogos.ts`, `components/civic.tsx` (new `LogoTile`; `BodyIcon` takes an optional `id`), `components/prototype/civic.tsx`, `components/home/GovernmentStack.tsx` (P5's), `app/(prototype)/**`, `app/(public)/{results,weekly,timeline}/page.tsx`
+- **Contract changes:** None. `BodyIcon`'s new `id` prop is optional.
+- **Checked:** `npm test`, lint and typecheck pass. A browser sweep of 9 pages, in demo and live mode at 320–1920px, found no broken images, console errors or horizontal scroll.
+- **Open issues / next:**
+  - **Missing logos:** Port Houston (its site blocks downloads) and HCAD (no usable mark).
+  - **Logo use:** logos are shown only to identify the body. If the team would rather not use agency marks, delete the entries in `lib/bodyLogos.ts` and the icons come back.
+  - **P2:** news stories still have no images. Saving each article's `og:image` in the news collector would let coverage show the outlet's photo with a link back.
+
 ### 2026-10-20: The prototype UI is now the app's UI (`/app`, `/start`)
 - **Who:** sohankamsala · P3 Weekly News and Alerts
 - **Branch:** main (local commit; not pushed)

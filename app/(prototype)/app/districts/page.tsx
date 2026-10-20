@@ -43,7 +43,7 @@ export default function Districts() {
             >
               <div className="flex min-w-0 items-center gap-4">
                 <span className="relative">
-                  <BodyIcon kind={b.kind} className="size-12" />
+                  <BodyIcon kind={b.kind} id={b.id} className="size-12" />
                   <span className="absolute -top-1.5 -left-1.5 grid size-5 place-items-center rounded-full bg-ink text-[10px] font-bold text-white">
                     {i + 1}
                   </span>

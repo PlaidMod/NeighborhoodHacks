@@ -257,7 +257,7 @@ export function Onboarding() {
                     className="rise flex items-start gap-4 rounded-3xl bg-white p-4 ring-1 ring-border"
                     style={{ animationDelay: `${i * 90}ms` }}
                   >
-                    <BodyIcon kind={b.kind} />
+                    <BodyIcon kind={b.kind} id={b.id} />
                     <div className="min-w-0 flex-1">
                       <div className="flex flex-wrap items-center gap-x-2">
                         <p className="font-bold">{b.name}</p>

@@ -243,7 +243,7 @@ export default async function WeeklyPage({ searchParams }: { searchParams: Promi
             <ul className="mt-4 space-y-3">
               {edition.bodiesAtAGlance.map((b) => (
                 <li key={b.body_id} className="flex items-center gap-3">
-                  <BodyIcon type={typeOf.get(b.body_id) ?? 'other'} className="size-9 rounded-xl" />
+                  <BodyIcon type={typeOf.get(b.body_id) ?? 'other'} id={b.body_id} className="size-9 rounded-xl" />
                   <div className="min-w-0 font-sans">
                     <p className="truncate text-sm font-bold">{b.body_name}</p>
                     <p className="text-xs text-muted-foreground">{t('upcomingCount', { count: b.upcoming })}</p>

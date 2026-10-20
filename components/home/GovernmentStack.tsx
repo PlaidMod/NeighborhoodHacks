@@ -4,7 +4,14 @@ import type { BodyType } from '@/lib/contracts/bodyTypes'
 
 // The home page's one visual idea: a single address sits under a stack of governments.
 // Decorative only (aria-hidden): the headline and the form carry the meaning.
-const LAYERS: BodyType[] = ['city_council', 'school_board', 'commissioners_court', 'flood_control', 'mud']
+// Real logos for the Houston examples (lib/bodyLogos.ts); the MUD stays generic.
+const LAYERS: { type: BodyType; id?: string }[] = [
+  { type: 'city_council', id: 'houston_city_council' },
+  { type: 'school_board', id: 'hisd_board' },
+  { type: 'commissioners_court', id: 'commissioners_court' },
+  { type: 'flood_control', id: 'flood_control' },
+  { type: 'mud' },
+]
 
 export async function GovernmentStack() {
   const t = await getTranslations('Home.stack')
@@ -12,13 +19,13 @@ export async function GovernmentStack() {
   return (
     <div aria-hidden className="mx-auto w-full max-w-sm select-none">
       <ol className="space-y-2.5">
-        {LAYERS.map((type, i) => (
+        {LAYERS.map(({ type, id }, i) => (
           <li
             key={type}
             className={`${slip} flex items-center gap-3 bg-white p-3 pr-5`}
             style={{ marginLeft: `${i * 6}%`, animationDelay: `${i * 70}ms` }}
           >
-            <BodyIcon type={type} />
+            <BodyIcon type={type} id={id} />
             <span className="font-bold text-ink">{t(type)}</span>
           </li>
         ))}

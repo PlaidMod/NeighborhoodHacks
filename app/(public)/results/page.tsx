@@ -60,7 +60,7 @@ export default function ResultsPage() {
             <ul className="mt-8 grid gap-3">
               {rows(state.data.bodies).map((b) => (
                 <li key={b.id} className="flex items-center gap-4 rounded-[24px] bg-white p-4 ring-1 ring-border">
-                  <BodyIcon type={b.type} />
+                  <BodyIcon type={b.type} id={b.id} />
                   <span className="font-bold text-ink">{b.name}</span>
                 </li>
               ))}
@@ -71,7 +71,7 @@ export default function ResultsPage() {
                 <ul className="mt-3 grid gap-3">
                   {rows(state.data.not_government).map((b) => (
                     <li key={b.id} className="flex items-center gap-4 rounded-[24px] bg-white p-4 ring-1 ring-border">
-                      <BodyIcon type={b.type} />
+                      <BodyIcon type={b.type} id={b.id} />
                       <span className="font-bold text-ink">{b.name}</span>
                     </li>
                   ))}

@@ -146,7 +146,7 @@ export default function Timeline() {
           <ul className="mt-4 space-y-3">
             {bodies.map((b) => (
               <li key={b.id} className="flex items-center gap-3">
-                <BodyIcon kind={b.kind} className="size-9 rounded-xl" />
+                <BodyIcon kind={b.kind} id={b.id} className="size-9 rounded-xl" />
                 <Link href={`/app/districts/${b.id}`} className="min-w-0 flex-1 hover:text-denim">
                   <p className="truncate text-sm font-bold">{b.short}</p>
                   <p className="truncate text-xs text-muted-foreground">{b.yourSeat ?? b.seats}</p>
@@ -221,7 +221,7 @@ function FeedRow({
   const future = daysFromNow(u.date) >= 0
   return (
     <li className="group flex gap-4 py-4">
-      <BodyIcon kind={b.kind} className="mt-1" />
+      <BodyIcon kind={b.kind} id={b.id} className="mt-1" />
       <div className="min-w-0 flex-1">
         <p className="flex items-center gap-2 text-xs font-semibold text-muted-foreground">
           {b.short}

@@ -3,7 +3,7 @@
 import { ArrowLeft, CalendarDays, Check, ExternalLink, MapPin, Megaphone, Users } from "lucide-react"
 import Link from "next/link"
 import { useParams } from "next/navigation"
-import { Chip, KIND_STYLE, Panel, SectionTitle, TYPE_ICON } from "@/components/prototype/civic"
+import { Chip, KIND_STYLE, LogoTile, Panel, SectionTitle, TYPE_ICON } from "@/components/prototype/civic"
 import { useStory } from "@/components/prototype/story-sheet"
 import { Button } from "@/components/ui/button"
 import { KIND_LABEL, getBody } from "@/lib/prototype/bodies"
@@ -57,6 +57,7 @@ export default function BodyPage() {
         )}
       >
         <Icon className="absolute -right-10 -bottom-12 size-72 text-white/[0.06]" strokeWidth={1} />
+        <LogoTile id={b.id} className="relative mb-5 size-16 rounded-[20px] ring-0" />
         <div className="relative flex flex-wrap gap-2">
           <Chip className="bg-white/15 text-white">{KIND_LABEL[b.kind]}</Chip>
           {b.yourSeat && (
