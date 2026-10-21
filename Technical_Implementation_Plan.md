@@ -1,6 +1,6 @@
 # Technical Implementation Plan
 
-**Revision 5, Oct 19, 2026**
+**Revision 5, Oct 19, 2026** (updated Oct 20, 2026: the AI provider is now OpenRouter, in §1, §14, §19, §21 and §22)
 
 Revision 5 adds news coverage perspectives (see *Project_Plan.md*, "What changed in revision 5", and the full spec in `.plans/news-coverage-perspectives-spec.md`). The sections changed here are §1, §2, §6 (news), the new §9a, §10 (sort order), §16, §19, §20, §21 and §22.
 
@@ -20,14 +20,14 @@ This file covers how each part is built. *Project_Plan.md* covers what the produ
 
 - **App:** Next.js (App Router, TypeScript), deployed on Vercel.
 - **Database:** Supabase Postgres with the `postgis` and `pg_trgm` extensions.
-- **AI:** Gemini API via the official Google Gen AI SDK. Server-side only. Used for:
+- **AI:** Google's Gemini models through OpenRouter (`lib/openrouter.ts`), with structured JSON output. Server-side only. The team chose OpenRouter on Oct 20, 2026, in place of the Gemini API via the Google Gen AI SDK. That direct path stays only until `OPENROUTER_API_KEY` is set. Used for:
   - agenda extraction (P2)
   - news article → agenda item matching (P2)
   - weekly story writing (P3)
   - news coverage viewpoint extraction and the separate judge pass (P3)
   - Speak up explanation and coaching (P4)
 
-  Use a paid-tier key. Confirm the model name, pricing and data-use terms on Day 1; free-tier terms may allow Google to use submitted content.
+  Models come from the `GEMINI_*_MODEL` env vars: `gemini-3.8-flash` by default, and `gemini-4-argon` for P2's retry (scraper spec D17). Each model must be on OpenRouter's model list with structured output. Use paid models, not `:free` ones, and check the OpenRouter account's data-use settings, since some providers may keep or train on what's sent.
 - **SMS:** Twilio Programmable Messaging, plus Twilio Verify for phone confirmation.
 - **i18n:** next-intl, with `messages/en.json` and `messages/es.json`.
 - **Timezone:** all deadlines and meeting times are computed and displayed in `America/Chicago`.
@@ -458,7 +458,7 @@ The client removes every `guardrail_hits` quote from the draft and shows its rea
 - 20 calls per hour per anonymous browser ID and per hashed IP (`rate_limits` table, fixed window).
 - 15-second Gemini timeout.
 
-**Privacy:** drafts are never written to the database or logs. The privacy policy says drafts are sent to Google (Gemini) for processing.
+**Privacy:** drafts are never written to the database or logs. The privacy policy says drafts are sent to OpenRouter, which passes them to Google's Gemini model for processing.
 
 ## 15. Tax receipt (P1)
 
@@ -543,7 +543,7 @@ The client removes every `guardrail_hits` quote from the draft and shows its rea
 - Service-role key is server-only; RLS is enabled everywhere with no anon policies.
 - No addresses or drafts in the database or logs. `bodies_token` contains body IDs only.
 - Phone numbers only after Twilio Verify. STOP handling is on.
-- Gemini paid tier; Twilio and Google are named as processors in the privacy policy.
+- Paid AI models only (no `:free` OpenRouter models). OpenRouter, Google and Twilio are named as processors in the privacy policy.
 - Admin routes are behind the Supabase Auth allowlist. Cron routes require `CRON_SECRET`.
 - Rate limits on `/api/coach` and `/api/lookup`.
 - News article text (`news_articles.text`) is never returned by a public route. It's deleted 90 days after fetch. The privacy page says the app stores the text of public news articles to summarize them and shows only short quotes with links.
@@ -575,7 +575,9 @@ The client removes every `guardrail_hits` quote from the draft and shows its rea
 
 ## 21. Environment variables (P5)
 
-`SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `GEMINI_API_KEY`, `GEMINI_EXTRACT_MODEL`, `GEMINI_EXTRACT_FALLBACK_MODEL`, `GEMINI_JUDGE_MODEL`, `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_MESSAGING_SERVICE_SID`, `TWILIO_VERIFY_SID`, `BODIES_TOKEN_SECRET`, `CRON_SECRET`, `ADMIN_EMAILS`, `DEMO_MODE`
+`SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `OPENROUTER_API_KEY`, `GEMINI_EXTRACT_MODEL`, `GEMINI_EXTRACT_FALLBACK_MODEL`, `GEMINI_JUDGE_MODEL`, `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_MESSAGING_SERVICE_SID`, `TWILIO_VERIFY_SID`, `BODIES_TOKEN_SECRET`, `CRON_SECRET`, `ADMIN_EMAILS`, `DEMO_MODE`
+
+`GEMINI_API_KEY` is used only until `OPENROUTER_API_KEY` is set (§1).
 
 ## 22. Day 1 checks (blockers to clear first)
 
@@ -588,13 +590,13 @@ The client removes every `guardrail_hits` quote from the draft and shows its rea
 | Which HCAD bulk file has jurisdiction codes; file size | P1 |
 | Boundary sources for ESD, METRO, regional water and voting precinct | P1 |
 | Two demo addresses picked; their bodies checked against HCAD records | P1 |
-| Gemini model name, pricing, paid-tier data terms | P5 |
+| OpenRouter model names, pricing and data-use settings | P5 |
 | Vercel plan cron frequency and function duration limits | P5 |
 | Privacy and terms pages live (needed for Twilio registration) | P5 |
 | Twilio registration started | P3 |
 | Meeting calendars checked for the six demo bodies; best meeting for the real public comment flagged to the team, especially if it falls on Day 2 or 3 | P4 |
 | News watchlist: skim Community Impact, Houston Public Media, Houston Chronicle and Houston Landing for upcoming fights at the demo bodies (team use only). Also pick the demo item for the coverage block: real, upcoming, covered by 2+ outlets with no paywall | P4 |
 | News outlets for the coverage block: feed URLs (including KHOU, KPRC, ABC13 and FOX 26), robots.txt and terms of use checked; any outlet that forbids automated access is disabled. Can run on the day P2 starts Step 11b. | P2 |
-| Gemini budget covers the news calls (up to 5 match calls per ingest run, plus 2 calls per item for P3's perspectives) | P5 |
+| OpenRouter budget covers the news calls (up to 5 match calls per ingest run, plus 2 calls per item for P3's perspectives) | P5 |
 | Shared schema, types and token format agreed by all five | Everyone |
 | Where the prototype in `web/` and these plans disagree (tier names, user types, Fort Bend coverage, body list, routes; see `CLAUDE.md`) | Everyone |

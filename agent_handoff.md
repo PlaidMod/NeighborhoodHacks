@@ -33,6 +33,20 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-20: Tech plan now names OpenRouter as the AI provider
+- **Who:** PlaidMod · P5 Platform
+- **Branch:** main
+- **What changed:** At PlaidMod's request, `Technical_Implementation_Plan.md` now says AI calls use Google's Gemini models through OpenRouter. The revision line lists the sections changed. This closes the "Tech plan §1" open item in the entry below.
+  - **§1:** names the provider and the default models (`gemini-3.8-flash`, and `gemini-4-argon` for D17), and says to use paid models and check OpenRouter's data-use settings.
+  - **§14:** the privacy line says drafts go to OpenRouter, then Google.
+  - **§19:** paid models only; OpenRouter, Google and Twilio are named as processors.
+  - **§21:** the env var list has `OPENROUTER_API_KEY`, and `GEMINI_API_KEY` is marked temporary.
+  - **§22:** the model, pricing and budget checks name OpenRouter.
+- **Files:** `Technical_Implementation_Plan.md`
+- **Contract changes:** None.
+- **Checked:** Docs only; no code changed.
+- **Open issues / next:** None from this change.
+
 ### 2026-10-20: OpenRouter confirmed as the AI provider; coach IP limit and privacy page fixed
 - **Who:** PlaidMod · P5 Platform
 - **Branch:** main
