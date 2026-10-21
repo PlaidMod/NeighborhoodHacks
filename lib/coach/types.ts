@@ -38,6 +38,8 @@ export interface CoachItem {
   source: string
   bodyName: string
   minutes: number
+  /** False or absent means minutes is only a rehearsal target. */
+  minutesVerified?: boolean
   isSample?: boolean
 }
 export type ProviderCall = (input: CoachInput, item: CoachItem, signal: AbortSignal) => Promise<unknown>

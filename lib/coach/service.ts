@@ -22,6 +22,21 @@ function localExplanation(input: CoachInput, item: CoachItem): ExplainPayload {
   }
 }
 
+function timingFeedback(input: CoachInput, item: CoachItem): CoachPayload['feedback'][number] {
+  const seconds = estimateSeconds(input.draft ?? "")
+  const minutes = Number.isFinite(item.minutes) && item.minutes > 0 ? item.minutes : 2
+  const verified = item.minutesVerified === true
+  const above = seconds > minutes * 60
+  const note = input.lang === 'es'
+    ? `${seconds} segundos estimados a 130 palabras por minuto. ${verified
+      ? `Límite verificado de ${minutes} minutos; confirma el aviso actual de la reunión.`
+      : `El objetivo de práctica de ${minutes} minutos es una suposición; confirma el límite real en el aviso de la reunión.`}${above ? (verified ? ' Supera ese límite.' : ' Supera ese objetivo de práctica.') : ''}`
+    : `${seconds} estimated seconds at 130 words per minute. ${verified
+      ? `Compared with the verified ${minutes}-minute limit; check the current meeting notice.`
+      : `The ${minutes}-minute practice target is an assumption; confirm the actual limit in the meeting notice.`}${above ? (verified ? ' Above that limit.' : ' Above that practice target.') : ''}`
+  return { area: 'timing', note }
+}
+
 function localCoaching(input: CoachInput, item: CoachItem): CoachPayload {
   const es = input.lang === "es"
   const draft = input.draft ?? ""
@@ -36,9 +51,7 @@ function localCoaching(input: CoachInput, item: CoachItem): CoachPayload {
       { area: "item_reference", note: item.isSample === false
         ? (es ? `Verifica tu referencia al punto «${item.title}» en el aviso oficial.` : `Check your reference to “${item.title}” in the official notice.`)
         : es ? `Verifica la referencia al tema de muestra «${item.title}» en la fuente; no se ha comprobado el orden del día actual.` : `Check your reference to the sample item “${item.title}” against the source; the current agenda has not been verified.` },
-      { area: "timing", note: es
-        ? `${seconds} segundos estimados a 130 palabras por minuto. ${seconds > item.minutes * 60 ? "Supera el tiempo de muestra; revisa qué ideas puedes recortar." : "Confirma el límite real en el aviso de la reunión."}`
-        : `${seconds} estimated seconds at 130 words per minute. ${seconds > item.minutes * 60 ? "Above the sample time allowance; review which points you can shorten." : "Confirm the actual time limit in the meeting notice."}` },
+      timingFeedback(input, item),
     ],
     cut_suggestions: [],
     guardrail_hits: detectGuardrails(draft, input.lang),
@@ -65,6 +78,7 @@ export async function runCoach(input: CoachInput, item: CoachItem, options: { pr
     const deterministic = detectGuardrails(input.draft ?? "", input.lang)
     return {
       provider: "gemini", ...valid,
+      feedback: [...valid.feedback.filter(value => value.area !== 'timing'), timingFeedback(input, item)],
       guardrail_hits: [...deterministic, ...valid.guardrail_hits.filter(hit => !deterministic.some(existing => existing.quote === hit.quote && existing.category === hit.category))],
       estimated_seconds: estimateSeconds(input.draft ?? ""),
     }

@@ -1,5 +1,13 @@
 # P4 delivery and root integration
 
+## October 21 recheck
+
+Pulled through `79f4f91`. Current results and remaining work are in [readiness](readiness.md); use [the step-by-step testing checklist](testing-checklist.md) for P4 acceptance and the surrounding app journey. Earlier empty-civic-table and missing-ingestion notes below are historical: this database now has 646 agenda items and 142,406 HCAD parcels. All 858 automated tests, lint, typecheck and production build pass in this checkout after the live-check timing fix.
+
+The shared provider now prefers **OpenRouter**. The follow-up live check confirms the local key works with both `gemini-3.8-flash` and `gemini-4-argon`. Five synthetic drafts per language reached the real coach provider; review found a timing claim defect, now fixed with deterministic bilingual feedback and preserved limit-verification metadata. Three new regressions bring the passing automated total to **858**. The old Gemini-only configuration instructions below are historical. Twilio remains absent; no SMS or public comment was sent. Spanish real-item registration safety, draft reload and practice rendering passed at 390px. Meeting-specific acceptance and genuine participation evidence remain open; see [project pace](project-pace.md).
+
+## Earlier integration record
+
 Pulled through `748dd41` on October 20 and integrated local P4 into the root app. The original `web/` is restored to its upstream reference state. The recovery stash `Preserve local P4 work before root-app integration` is retained. Local credential values remain outside Git; the tracked environment template was restored after it had been renamed.
 
 ## Connected

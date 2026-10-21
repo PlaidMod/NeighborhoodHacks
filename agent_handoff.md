@@ -33,6 +33,26 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-21: Verify OpenRouter, correct coach timing claims and assess deadline pace
+- **Who:** BluePhoenix79 · P4 / release verification
+- **Branch:** main, based on `79f4f91`
+- **What changed:** Tested both configured models and the real coach route through OpenRouter. Live review caught a practice target being described as an official limit and incorrect generated duration prose. Preserved limit verification in the API/model context and made bilingual timing feedback deterministic. Added regression tests, the live results report and a dated owner-by-owner pace assessment; refreshed readiness and the testing guide. User requested commit/push of this work.
+- **Files:** `app/api/coach/route.ts`, `lib/coach/{types,shared,service}.ts`, `tests/{coach/integration.test.ts,p4/coach.test.mjs}`, `docs/{openrouter-verification,project-pace,readiness,p4-status,testing-checklist}.md`, `agent_handoff.md`
+- **Contract changes:** Internal `CoachItem.minutesVerified` is optional; unknown official minutes are null in provider context, with a separate practice target. Public response schema and database contracts are unchanged.
+- **Checked:** Three new timing regressions and the strengthened integration assertion failed before the fix and pass afterward. Fresh full suite: 786 Vitest + 72 P4 (858), lint, typecheck and production build pass; initial full run hit the existing ESLint isolation timeout, then passed on rerun. Independent review found no blocking issue. Both `gemini-3.8-flash` and `gemini-4-argon` return structured JSON via OpenRouter. Ten post-fix EN/ES coach cases all return provider feedback with correct timing/practice labels, exact quotes and no-store; 5.9–12.5s, no local fallback. Twenty coach calls total across before/after checks may exhaust the local shared hourly allowance. No key values printed or edited; no SMS, quiz answers, registrations/comments, ingest or admin mutations submitted.
+- **Open issues / next:** Core software works, but planned evidence/demo acceptance is behind: 636 of 646 items need stories, zero coverage/demo-cache rows, tax rates empty and one quiz response of unknown provenance. P4 must verify a current real participation route (Oct 22 HISD hearing is not confirmed open public comment), finish meeting-specific checks and retain real participation evidence. Other owners: stories/coverage, tax data, consenting SMS acceptance, demo/video/submission. Official Devpost deadline is Oct 24 00:00 CDT, after Friday night; older CST label is inaccurate. Legacy address storage and shell translation remain open. Plan stress test remains pending under the existing P4 implementation-spec exception.
+
+
+### 2026-10-21: Pull current lookup and ingest work; refresh P4 test guide
+- **Who:** BluePhoenix79 · P4 / integration verification
+- **Branch:** main, fast-forwarded from `1e46631` to `79f4f91`
+- **What changed:** Read the lookup, ingest, review and provider handoffs. Preserved the local October 20 audit in a recovery stash, resolved its handoff-only conflict, and replaced outdated readiness claims with current evidence. Added a full testing checklist with P4 steps, EN/ES coaching cases, public addresses and expected results; refreshed P4 status.
+- **Files:** `docs/testing-checklist.md`, `docs/readiness.md`, `docs/p4-status.md`, `agent_handoff.md`
+- **Contract changes:** None; no product code or environment changes.
+- **Checked:** 786 Vitest + 69 P4 tests (855), lint, typecheck and production build pass. First test run hit the existing ESLint isolation timeout; full rerun passed. Live reads: 11 bodies, 7 sources, 6 meetings, 646 items, 142,406 parcels; tax_rates and demo_cache empty. City Hall and Bridgeland HS return HCAD matches; TSU returns Census fallback. Built cron routes reject with 401, review redirects to login, and coach rejects malformed/cross-origin input with 400/403 and no-store. Spanish 390px City Hall results and real P4 flow have no horizontal overflow; Wednesday Council registration stays unknown, synthetic draft restores, practice renders, and the real-item redirect works. No quiz/provider/SMS/admin/ingest or official participation actions performed; lookup uses normal quota bookkeeping.
+- **Open issues / next:** OpenRouter and Twilio remain absent in this local env despite P5's owner/deployment setup; privately obtain current config. Finish live EN/ES evaluation and authentic participation. Legacy `/start` still persists the address, shell text remains partly English, and the root palette swapper is absent. Production promotion and tax/demo data remain owner work; see readiness. No commit or push.
+
+
 ### 2026-10-21: Lookup fix, parts 2–3: HCAD data for 10 ZIPs loaded; shared addresses resolved
 - **Who:** PlaidMod · P5 Platform (P1's lookup data and RPC, decided by PlaidMod)
 - **Branch:** main
@@ -150,6 +170,15 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 - **Open issues / next:**
   - About 540 items still need stories. At 10 per run that takes many runs, and roughly $4–5 of the $10 cap. Raise the key's limit on OpenRouter if agenda reading and coverage also need room.
   - P3: putting upcoming meetings first in the story queue is still open (see the P2 Phase 2 part 1 entry).
+
+### 2026-10-20: Pull OpenRouter changes and audit remaining readiness
+- **Who:** BluePhoenix79 · P4 / integration audit
+- **Branch:** main, clean fast-forward through `1e46631`
+- **What changed:** Read the new provider/privacy/IP-limit handoffs and checked the root app against live table counts and actual routes. Added `docs/readiness.md` with prioritized owners, evidence needed and the legacy `/start` address-storage mismatch. No product-code or credential changes.
+- **Files:** `docs/readiness.md`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** 650 Vitest + 69 P4 tests (719), lint, typecheck and production build pass. Initial isolation-test timeout passed on the next full run. Built privacy/terms/Speak pages return 200; Spanish privacy text includes OpenRouter and coach cookie. Alerts cron rejects unauthorized requests (401); ingest and review routes return 404. Supabase reads succeed; ten civic/demo tables checked are empty.
+- **Open issues / next:** Priorities: persisted ingestion and seeded data; real P1 lookup/quiz/tax receipt; OpenRouter key and live model checks; Twilio or explicit preview; review route; wired demo replay; evidence. Local provider remains Gemini-direct because the OpenRouter key is absent. `/start` still persists the address despite privacy copy. Deployment settings were not independently checked. No messages, submissions, writes to civic data, commit or push performed.
 
 ### 2026-10-20: P2 Phase 2, part 3: review queue, 3-hourly schedule, pitch line for D37
 - **Who:** PlaidMod · P5 Platform, for P2

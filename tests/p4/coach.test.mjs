@@ -73,6 +73,27 @@ test('provider failures, malformed payloads and deadlines safely fall back to lo
  for(const provider of [async()=>{throw Error('failure')},async()=>({...clean,replacement:'new speech'}),async()=>new Promise(()=>{})]) {const r=await runCoach(input,item,{provider,timeoutMs:10});assert.equal(r.provider,'local');assert.equal(r.guardrail_hits.length,1);}
 });
 test('valid provider output merges deterministic guardrails and recalculates timing',async()=>{const r=await runCoach({mode:'coach',item_id:item.id,lang:'en',draft:'You are an idiot.'},item,{provider:async()=>clean});assert.equal(r.provider,'gemini');assert.equal(r.guardrail_hits.length,1);assert.equal(r.estimated_seconds,2);});
+
+for (const lang of ['en', 'es']) test(`timing feedback uses counted words and labels unknown limits as practice (${lang})`, async () => {
+ const draft = Array(130).fill(lang === 'es' ? 'palabra' : 'word').join(' ');
+ const payload = {...clean, feedback:[...clean.feedback,{area:'timing',note:'You have an official 2-minute limit and this is 9 seconds.'}]};
+ for (const provider of [undefined, async()=>payload]) {
+  const result = await runCoach({mode:'coach',item_id:item.id,lang,draft},{...item,minutesVerified:false},{provider});
+  const timing = result.feedback.filter(value=>value.area==='timing');
+  assert.equal(timing.length,1);
+  assert.match(timing[0].note,/60/);
+  assert.match(timing[0].note,lang==='es' ? /práctica/ : /practice/);
+  assert.doesNotMatch(timing[0].note,/official 2-minute|9 seconds/);
+ }
+});
+
+test('a verified speaking limit stays distinct from an assumed practice target', async () => {
+ const result = await runCoach({mode:'coach',item_id:item.id,lang:'en',draft:Array(260).fill('word').join(' ')},{...item,minutes:1,minutesVerified:true});
+ const timing = result.feedback.find(value=>value.area==='timing').note;
+ assert.match(timing,/120 estimated seconds/);
+ assert.match(timing,/verified 1-minute/);
+ assert.doesNotMatch(timing,/practice target/);
+});
 test('fixed window enforces both browser and IP and expires on hour boundary',()=>{const s=new MemoryRateLimitStore();for(let i=0;i<20;i++) assert.equal(s.consume(['browser:a','ip:a'],0).allowed,true);assert.equal(s.consume(['browser:b','ip:a'],1).allowed,false);assert.equal(s.consume(['browser:a','ip:b'],1).allowed,false);assert.equal(s.consume(['browser:a','ip:a'],3600000).allowed,true);});
 const request=(body,headers={})=>new Request('https://app.example/api/coach',{method:'POST',headers:{origin:'https://app.example','content-type':'application/json',...headers},body:typeof body==='string'?body:JSON.stringify(body)});
 const base={mode:'coach',item_id:item.id,lang:'en',draft:'My comment.'};

@@ -23,10 +23,11 @@ export const POST = createCoachHandler({
     if (/^[0-9a-f-]{36}$/i.test(id) || id.startsWith('sample-')) {
       const item = await loadItem(id)
       if (!item || item.status === 'decided' || item.meeting_status === 'cancelled') return null
+      const target = speakingTarget(getRecipe(item.body_id, item.meeting_type, item.meeting_date))
       return {
         id: item.item_id, title: item.title, summary: item.title, why: '', audiences: [],
         source: item.source_url, bodyName: item.body_name, isSample: !!item.is_sample,
-        minutes: speakingTarget(getRecipe(item.body_id, item.meeting_type, item.meeting_date)).minutes,
+        minutes: target.minutes, minutesVerified: target.verified,
       }
     }
     const jurisdiction = Object.hasOwn(ZIPS, zip) ? ZIPS[zip] : undefined
@@ -34,8 +35,9 @@ export const POST = createCoachHandler({
     const item = updatesFor(jurisdiction).find(update => update.id === id && isSpeakItem(update))
     if (!item) return null
     const body = bodiesFor(jurisdiction).find(body => body.id === item.bodyId)
+    const target = speakingTarget(getRecipe(item.bodyId, undefined, item.date))
     return { id: item.id, title: item.title, summary: item.summary, why: item.why.default,
       audiences: item.audiences, source: item.source, bodyName: body?.name ?? item.bodyId,
-      minutes: speakingTarget(getRecipe(item.bodyId, undefined, item.date)).minutes, isSample: true }
+      minutes: target.minutes, minutesVerified: target.verified, isSample: true }
   },
 })

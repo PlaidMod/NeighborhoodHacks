@@ -54,6 +54,10 @@ it('coaching uses shared SDK configuration, keeps explanation requests draft-fre
   expect(options.model).toBeUndefined()
   expect(options.contents).not.toContain('private draft')
   expect(options.system).toContain('never ghostwrite')
+  const context = JSON.parse(options.contents as string).item
+  expect(context.minutes).toBeNull()
+  expect(context.practiceMinutes).toBe(2)
+  expect(options.system).toContain('practice target')
 })
 
 it('distributed increments enforce both quotas and database failures fail closed', async () => {
