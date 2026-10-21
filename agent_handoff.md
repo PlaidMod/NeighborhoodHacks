@@ -33,6 +33,43 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-20: P2 Phase 2, part 1: agendas are saved to Supabase
+- **Who:** PlaidMod · P5 Platform, building P2's Phase 2 at the owner's request (Iarush asked for help)
+- **Branch:** main
+- **What changed:**
+  - **The robots.txt problem.** It wasn't specific to Gemini: our own bot downloads every page, and the model only reads what we pass it. The `*` group blocks every bot on City Council's PrimeGov site and on Lone Star's PDFs. Owner decision D37 (in `.plans/scraper-progress.md`): keep fetching these government records politely. News still follows D36.
+  - **New ingest pipeline** (spec P2-B): `lib/ingest/run.ts`, with the store in `store.ts`, `supabaseStore.ts` and `memoryStore.ts` (tests). It upserts meetings and items, classifies with P3's `classify()`, sets review status, marks removed items, moves upcoming → awaiting_result, applies outcomes and stores documents. A second identical run writes nothing.
+  - **Seeding:** `lib/ingest/bodies.ts` and `seed.ts` insert 10 body rows (insert-only) and mirror `data/sources.yaml` into `sources`.
+  - **CLI:** `npm run ingest`.
+  - **Adapter list:** `ADAPTERS` moved from `scripts/scrape.ts` to `lib/ingest/adapters.ts`.
+  - **Adapters:** `llmExtract.ts` and `primegov.ts` accept `max_llm_docs`.
+  - **Live backfill:** 646 items across 6 sources; per-source counts are in the progress log.
+  - **Fixes to other parts' readers, which capped or dropped rows once real data arrived** (new `lib/paging.ts`):
+    - P3's `loadItems` (`lib/weekly/data.ts`) took 500 unordered rows, so City Council and HISD vanished behind 493 Commissioners Court items. It now pages through all rows.
+    - P3's `loadPerspectives` now asks for IDs in batches.
+    - P4's `loadRegistrationWindows` now pages.
+- **Files:**
+  - `lib/ingest/{run,store,supabaseStore,memoryStore,bodies,seed,adapters}.ts`
+  - `lib/paging.ts`, `scripts/ingest.ts`, `scripts/scrape.ts`, `lib/adapters/{llmExtract,primegov}.ts`
+  - `lib/weekly/data.ts`, `lib/perspectives/job.ts`, `lib/registration/server.ts`
+  - `package.json`, `CLAUDE.md`, `.plans/scraper-progress.md`
+  - tests: `tests/unit/ingest-{run,scheduled,bodies}.test.ts`, `tests/platform/paging.test.ts`, plus new cases in the llmExtract and primegov tests
+- **Contract changes:**
+  - **For P1:** `bodies` now has rows for `houston_city_council`, `commissioners_court`, `flood_control`, `port_houston`, `hisd_board`, `cfisd_board`, `hcc_board`, `lone_star_board`, `hcmud_489` and `hcad`. They're inserted only when missing and never overwritten, so fill in the other columns freely, but don't rename the IDs.
+  - **`sources`:** the table mirrors the YAML, and `sources.last_checked` now means "last rotation run".
+  - **`items`:** the meeting columns and `review_status` follow spec P2-B.
+- **Checked:**
+  - New tests failed first, then passed. Breaking the retry rule on purpose made its test fail.
+  - `npm test`: 709 Vitest + 69 P4 pass. Typecheck, lint and build pass.
+  - Live, against Supabase: each source run twice, and the second run wrote nothing. SQL found 0 duplicate items or meetings and no names in redacted titles.
+  - On production, the lookup for 901 Bagby St returned real bodies. `/api/weekly` showed no upcoming items because of the 500-row cap. Run locally with the fix, it gives a City Council lead story plus 6 coming up.
+- **Open issues / next:**
+  - Part 2: the `/api/cron/ingest` route and scheduler. Part 3: the review page, the GitHub workflow and the D37 pitch line.
+  - **P3:** the story job takes the oldest meeting first, 10 per run, and every flagged item gets a story, so 493 past Commissioners Court items sit in front of upcoming ones. Consider putting upcoming meetings first.
+  - BoardBook pages hash differently on every fetch, so each run stores 2 new document rows.
+  - `gemini-4-argon` returns 404 on Vertex (fine once the OpenRouter key is set). The backfill used `gemini-3.1-pro-preview` as the fallback.
+  - **Iarush:** pull before editing `lib/adapters/llmExtract.ts`, `lib/adapters/primegov.ts`, `scripts/scrape.ts` or `lib/ingest/`.
+
 ### 2026-10-20: Tech plan now names OpenRouter as the AI provider
 - **Who:** PlaidMod · P5 Platform
 - **Branch:** main

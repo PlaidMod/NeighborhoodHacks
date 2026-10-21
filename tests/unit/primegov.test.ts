@@ -200,6 +200,17 @@ describe('adapter run (offline)', () => {
     expect(r.warnings).toEqual(['llm_unavailable: no OPENROUTER_API_KEY or GEMINI_API_KEY is set; agenda items were not extracted']);
     expect(urls.some((u) => u.includes('CompiledDocument'))).toBe(false);
   });
+  it('max_llm_docs: extracts at most that many agendas, still emits every meeting, and defers the rest', async () => {
+    const { http, urls } = fakeHttp();
+    const { client, calls } = fakeLlm([output]);
+    const capped: SourceConfig = { ...source, config: { ...source.config, max_llm_docs: 1 } };
+    const past = { from: day('2026-09-28').toJSDate(), to: day('2026-10-15').endOf('day').toJSDate() };
+    const r = await createPrimeGovAdapter({ http, now: () => NOW, llm: client, models: MODELS, pdfText }).run(capped, { kind: 'rotation' }, past);
+    expect(r.meetings.map((m) => m.external_id)).toEqual(['716', '735', '718']);
+    expect(calls).toHaveLength(1);
+    expect(urls.filter((u) => u.includes('CompiledDocument'))).toHaveLength(1);
+    expect(r.warnings.filter((w) => /^deferred: 2 agenda documents for the next run/.test(w))).toHaveLength(1);
+  });
   it('past window: archived meetings filtered by committee and window', async () => {
     const { http } = fakeHttp();
     const r = await createPrimeGovAdapter({ http, now: () => NOW, llm: null }).run(source, { kind: 'rotation' }, {

@@ -279,6 +279,14 @@ describe('adapter run (offline)', () => {
     expect(calls).toHaveLength(0);
     expect(r.meetings).toEqual([]);
   });
+  it('max_llm_docs: reads at most that many new agendas and defers the rest to the next run', async () => {
+    const { client, calls } = fakeLlm({ flash: [read(`${MUD.dir}/gemini_output.json`)] });
+    const wide = { from: DateTime.fromISO('2026-01-01', { zone: ZONE }).toJSDate(), to: window.to };
+    const capped: SourceConfig = { ...source, config: { ...source.config, max_llm_docs: 1 } };
+    const r = await createLlmExtractAdapter({ http, now, llm: client, models: MODELS, pdfText }).run(capped, { kind: 'rotation' }, wide);
+    expect(calls.filter((c) => c.model === 'flash')).toHaveLength(1);
+    expect(r.warnings.filter((w) => /^deferred: \d+ agenda documents? for the next run/.test(w))).toHaveLength(1);
+  });
   it('no key: meeting from the link, no items, one llm_unavailable warning', async () => {
     const r = await createLlmExtractAdapter({ http, now, llm: null, models: MODELS, pdfText }).run(source, { kind: 'rotation' }, window);
     expect(r.meetings.map((m) => m.date)).toEqual(['2026-10-19T11:00:00-05:00']);

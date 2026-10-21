@@ -53,6 +53,7 @@ npm test                                    # vitest; unit tests can't reach the
 npx vitest run tests/platform/tokens.test.ts   # run one test file
 npm run test:live                           # tests/live/: real sites and Gemini (vitest.live.config.ts)
 npm run scrape -- --source <id>             # P2 scraper; sources in data/sources.yaml, output in tmp/scrape
+npm run ingest -- --source <id>             # P2: save a source's agendas to Supabase (also --seed, --scheduled, --dry-run)
 npm run news -- --out tmp/news              # P2 news collector (add --articles to fetch article text)
 npm run admin -- set-password <email>       # choose your own /admin password (accounts: npm run admin -- create-all)
 ```

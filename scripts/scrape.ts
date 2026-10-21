@@ -7,18 +7,10 @@ import { join } from 'node:path';
 import { parseArgs } from 'node:util';
 import { config as loadEnv } from 'dotenv';
 import { DateTime } from 'luxon';
-import { AdapterResultSchema, ItemSchema, MeetingSchema, type Adapter, type AdapterKind, type RunMode } from '@/lib/adapters/types';
+import { AdapterResultSchema, ItemSchema, MeetingSchema, type AdapterKind, type RunMode } from '@/lib/adapters/types';
+import { loadAdapter } from '@/lib/ingest/adapters';
 import { getSource } from '@/lib/ingest/registry';
 import { ZONE, nearTermWindow, resultsWindow, rotationWindow } from '@/lib/ingest/normalize';
-
-// Adapters register here as each step lands (Steps 2, 4, 7, 8, 9).
-const ADAPTERS: Partial<Record<AdapterKind, () => Promise<Adapter>>> = {
-  legistar: async () => (await import('@/lib/adapters/legistar')).legistarAdapter,
-  boardbook: async () => (await import('@/lib/adapters/boardbook')).boardbookAdapter,
-  llm_extract: async () => (await import('@/lib/adapters/llmExtract')).llmExtractAdapter,
-  primegov: async () => (await import('@/lib/adapters/primegov')).primeGovAdapter,
-  manual: async () => (await import('@/lib/adapters/manual')).manualAdapter,
-};
 
 /** tests/golden/<folder>/ for --record. */
 const GOLDEN_DIR: Record<AdapterKind, string> = {
@@ -92,9 +84,7 @@ async function main() {
     fail(`scrape: ${(e as Error).message}`);
   }
   const source = getSource(args.source);
-  const load = ADAPTERS[source.adapter];
-  if (!load) fail(`scrape: adapter "${source.adapter}" is not implemented yet`);
-  const adapter = await load();
+  const adapter = await loadAdapter(source.adapter);
   const maxDays = typeof source.config.results_max_days === 'number' ? source.config.results_max_days : 45;
   const window = windowFor(args.mode, args.from, args.to, maxDays);
 

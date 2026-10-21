@@ -200,3 +200,45 @@ Spec §12 items 1–22 still apply as written, with these updates from the build
 10. **CFISD:** the live BoardBook smoke is still owed (run after 05:00 Central). §12.9 (record Oct 19 results) is still open.
 11. **Lone Star:** `minutes_index_url` is `TODO` (minutes are at `https://www.lonestar.edu/board-minutes.htm`).
 12. **Root package (P5):** root `package.json` holds only P2 deps; merge into the Next.js `package.json`. Use `paths` only (TypeScript 6 rejects `baseUrl`).
+
+## Decision D37 (Oct 20, owner): government agenda portals are fetched even where robots.txt says no
+
+- **Live check (Oct 20), `User-agent: *` group** (no robots.txt names our bot or any group we fall under besides `*`):
+  - `houstontx.primegov.com` (City Council API and agenda PDFs): `Disallow: /`
+  - `www.lonestar.edu`: `Disallow: *.pdf` (every board agenda PDF)
+  - `*.legistar1.com` (Legistar's PDF host): `Disallow: /`. We only link to these PDFs; the adapter reads `webapi.legistar.com`, which has no robots.txt.
+  - Allowed: `webapi.legistar.com`, `meetings.boardbook.org`, `hcmud489.com`.
+  - The City Secretary's agenda page (`houstontx.gov/citysec/agenda.html`) only redirects to PrimeGov, so there's no other copy.
+- **Not the issue:** robots.txt groups for AI crawlers (`Google-Extended`, `GPTBot` and others). Our own bot downloads every page; the model only reads text and PDF bytes we pass it, and never fetches a URL.
+- **Decision (PlaidMod):** these are public government records, so keep fetching them. The agenda adapters don't check robots.txt.
+- **Polite limits stay:** the named User-Agent, at least 500 ms per host, no BoardBook requests 00:00–05:00 Central, a few scheduled runs a day, and unchanged PDFs are never sent to the AI again.
+- **News is unchanged:** article fetching still obeys robots.txt (D36).
+- **Out of date:** spec §0 item 3 ("respect robots.txt") and the §12.22 pitch answer ("we follow each site's general robots rules") now hold for news only. A replacement pitch line is in `agent_handoff.md`, waiting for the owner's approval. The spec itself isn't edited.
+
+## Phase 2: platform integration (built by P5's agent at the owner's request, Oct 20)
+
+- **P2-A:** no migration needed; the columns were already in `20261019055407_agendas.sql`. `news_articles` / `news_article_items` are deferred.
+- **P2-B: DONE.**
+  - `lib/ingest/run.ts` (`runIngest`) runs one source and upserts what changed. The store interface is in `store.ts`, `supabaseStore.ts` is the database version and `memoryStore.ts` is for tests.
+  - Seeding: `bodies.ts` (10 tracked bodies, insert-only) and `seed.ts` (sources mirrored from the YAML).
+  - `adapters.ts` (`loadAdapter`) replaces the `ADAPTERS` map that was in `scripts/scrape.ts`.
+  - CLI: `npm run ingest -- --source <id>` (also `--seed`, `--scheduled`, `--dry-run`).
+- **DEVIATION:** a failed AI extraction used to block its PDF for good, because the PDF's hash was recorded before the AI call. Fixed in `run.ts`: hashes go back to the adapter only for URLs with live stored items.
+- **DEVIATION:** `sources.last_checked` is set only by rotation runs, so "oldest last_checked" keeps choosing the next source to rotate. The near-term sweep would otherwise touch every source on every call.
+- **DEVIATION:** a `ResultUpdate` with `quote_verified = false` is skipped and counted, because no review row exists for outcomes yet.
+- **DEVIATION:** a decided item is never moved back by a refetch that has no outcome.
+- **New:** `max_llm_docs` in `llmExtract.ts` and `primegov.ts` caps the AI documents read per run. The rest get a `deferred:` warning and are picked up on the next run.
+- **Live backfill (Oct 20, 9 PM Central), each source run twice; the second run wrote nothing:**
+
+  | Source | Meeting | Items |
+  |---|---|---|
+  | hisd_board | Oct 22 | 10, 5 redacted |
+  | hc_commissioners_court | Oct 15, meeting 1244 | 493 |
+  | cfisd_board | Oct 19 | 19 |
+  | hcmud_489 | Oct 19 | 38 (AI) |
+  | houston_city_council | 719, Oct 21 | 42 (AI) |
+  | lone_star_board | Oct 1 | 44 (AI, 148 s for the 8 MB PDF) |
+
+  SQL: 0 duplicate items or meetings, no source errors, and no names in the redacted titles.
+- **Models on Vertex:** `gemini-4-argon` returns 404 there, so the backfill used `GEMINI_EXTRACT_FALLBACK_MODEL=gemini-3.1-pro-preview`. Once `OPENROUTER_API_KEY` is set, the `gemini-4-argon` default works. A failed fallback call keeps the first attempt's items.
+- **Known:** BoardBook HTML pages hash differently on every fetch, so each run stores 2 new document rows (about 300 KB).

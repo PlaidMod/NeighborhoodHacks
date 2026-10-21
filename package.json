@@ -17,6 +17,7 @@
     "test:watch": "vitest",
     "test:live": "vitest run --config vitest.live.config.ts",
     "scrape": "tsx scripts/scrape.ts",
+    "ingest": "tsx scripts/ingest.ts",
     "news": "tsx scripts/news.ts",
     "admin": "tsx scripts/admin-account.ts"
   },

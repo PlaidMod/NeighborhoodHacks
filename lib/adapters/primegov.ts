@@ -191,6 +191,10 @@ export function createPrimeGovAdapter(deps: PrimeGovDeps = {}): Adapter {
       if (!llm && selected.some((m) => pickAgendaDocument(m.documentList ?? [], cfg.document_template))) {
         result.warnings.push('llm_unavailable: no OPENROUTER_API_KEY or GEMINI_API_KEY is set; agenda items were not extracted');
       }
+      // Phase 2: the scheduled ingest caps AI reads per run (time budget). Meetings still come from the list.
+      const cap = typeof cfg.max_llm_docs === 'number' && cfg.max_llm_docs > 0 ? cfg.max_llm_docs : Infinity;
+      let extracted = 0;
+      let deferred = 0;
       for (const pg of selected) {
         const { meeting, agenda } = mapMeeting(pg, cfg, bodyId);
         result.meetings.push(meeting);
@@ -199,6 +203,10 @@ export function createPrimeGovAdapter(deps: PrimeGovDeps = {}): Adapter {
           continue;
         }
         if (!llm) continue;
+        if (extracted >= cap) {
+          deferred++;
+          continue;
+        }
         const url = meeting.agenda_url;
         let bytes: Uint8Array;
         try {
@@ -209,6 +217,7 @@ export function createPrimeGovAdapter(deps: PrimeGovDeps = {}): Adapter {
         }
         const hash = documentContentHash(bytes);
         if (prev?.documentHashes[url] === hash) continue; // D11: unchanged PDF, items already stored
+        extracted++;
         const text = await pdfText(bytes);
         const doc: AdapterDocument = { url, fetched_at: stamp(), content_hash: hash, raw: text.text, kind: 'pdf_text' };
         result.documents.push(doc);
@@ -227,6 +236,7 @@ export function createPrimeGovAdapter(deps: PrimeGovDeps = {}): Adapter {
         result.warnings.push(...out.warnings);
         result.items.push(...out.items);
       }
+      if (deferred) result.warnings.push(`deferred: ${deferred} agenda document${deferred === 1 ? '' : 's'} for the next run (max_llm_docs ${cap})`);
       return result;
     },
   };

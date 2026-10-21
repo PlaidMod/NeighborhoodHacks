@@ -364,7 +364,15 @@ export function createLlmExtractAdapter(deps: LlmExtractDeps = {}): Adapter {
       if (!llm && found.docs.length) {
         result.warnings.push('llm_unavailable: no OPENROUTER_API_KEY or GEMINI_API_KEY is set; agenda items were not extracted');
       }
-      for (const doc of found.docs) {
+      // Phase 2: the scheduled ingest caps AI reads per run (time budget); the rest wait for the next run.
+      const cap = typeof cfg.max_llm_docs === 'number' && cfg.max_llm_docs > 0 ? cfg.max_llm_docs : Infinity;
+      let extracted = 0;
+      for (const [index, doc] of found.docs.entries()) {
+        if (llm && extracted >= cap) {
+          const n = found.docs.length - index;
+          result.warnings.push(`deferred: ${n} agenda document${n === 1 ? '' : 's'} for the next run (max_llm_docs ${cap})`);
+          break;
+        }
         let fetched: Awaited<ReturnType<typeof fetchText>>;
         try {
           fetched = await fetchText(doc);
@@ -377,6 +385,7 @@ export function createLlmExtractAdapter(deps: LlmExtractDeps = {}): Adapter {
           result.meetings.push(meetingFromLink(source.id, bodyId, doc, cfg.default_time));
           continue;
         }
+        extracted++;
         const out = await extractDocument({
           source_id: source.id,
           body_id: bodyId,

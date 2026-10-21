@@ -10,6 +10,7 @@ import type { WeeklyItem } from './build'
 import { SAMPLE_BODIES, sampleItems } from './sample'
 import { getRecipe } from '@/lib/registration/recipes'
 import { getWindow } from '@/lib/registration/deadlines'
+import { fetchAllPages } from '@/lib/paging'
 
 // Server-side data for P3's pages and APIs: the weekly page, item pages and the timeline.
 // Reads the database when it's configured; otherwise serves the labeled sample data.
@@ -126,20 +127,24 @@ export async function loadItems(
   if (!bodies.length) return []
   const from = new Date(now.getTime() - (opts.fromDays ?? 7) * DAY).toISOString()
   const to = new Date(now.getTime() + (opts.toDays ?? 14) * DAY).toISOString()
-  const { data, error } = await db()
-    .from('items')
-    .select(ITEM_COLUMNS)
-    .in(
-      'body_id',
-      bodies.map((b) => b.body_id),
-    )
-    .is('removed_at', null)
-    .gte('meeting.date', from)
-    .lte('meeting.date', to)
-    .limit(500)
-  if (error) throw error
+  // Every matching row, page by page: one Commissioners Court meeting can have 500+ items,
+  // and a single capped query would silently drop other bodies' items.
+  const data = await fetchAllPages((start, end) =>
+    db()
+      .from('items')
+      .select(ITEM_COLUMNS)
+      .in(
+        'body_id',
+        bodies.map((b) => b.body_id),
+      )
+      .is('removed_at', null)
+      .gte('meeting.date', from)
+      .lte('meeting.date', to)
+      .order('id')
+      .range(start, end),
+  )
   const byId = new Map(bodies.map((b) => [b.body_id, b]))
-  const items = ((data ?? []) as unknown as ItemRow[]).map((r) => toWeeklyItem(r, byId)).filter((i): i is WeeklyItem => !!i)
+  const items = (data as unknown as ItemRow[]).map((r) => toWeeklyItem(r, byId)).filter((i): i is WeeklyItem => !!i)
   return withCoverage(items)
 }
 

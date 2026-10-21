@@ -2,6 +2,7 @@ import type { SupabaseClient } from '@supabase/supabase-js'
 import { db } from '@/lib/db'
 import { generateJson, geminiModel } from '@/lib/gemini'
 import { getOptionalEnv } from '@/lib/env'
+import { chunked } from '@/lib/paging'
 import { applyJudge, articlesHash, finalize, sourcesOf, usableArticles, withoutRemoved } from './build'
 import { checkExtraction } from './checks'
 import { EXTRACT_SYSTEM, JUDGE_SYSTEM, extractPrompt, judgePrompt } from './prompt'
@@ -173,7 +174,12 @@ export const supabasePerspectivesStore: PerspectivesStore = {
 /** Coverage rows for a set of items, for the weekly page. Missing table (P2 not migrated yet) means no coverage. */
 export async function loadPerspectives(itemIds: string[]): Promise<Map<string, PerspectiveRow>> {
   if (!itemIds.length) return new Map()
-  const { data, error } = await untyped().from('item_perspectives').select('*').in('item_id', itemIds)
-  if (error) return new Map()
-  return new Map(((data ?? []) as PerspectiveRow[]).map((r) => [r.item_id, r]))
+  // The IDs go in the URL, so ask in batches; one huge list would fail and drop all coverage.
+  const out = new Map<string, PerspectiveRow>()
+  for (const ids of chunked(itemIds, 150)) {
+    const { data, error } = await untyped().from('item_perspectives').select('*').in('item_id', ids)
+    if (error) continue
+    for (const r of (data ?? []) as PerspectiveRow[]) out.set(r.item_id, r)
+  }
+  return out
 }
