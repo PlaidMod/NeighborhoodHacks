@@ -16,7 +16,12 @@ export function hcadJurisdictionName(code: string): string | null {
   return NAMES[code] ?? null
 }
 
-const ACRONYMS = new Set(['ISD', 'MUD', 'WCID', 'FWSD', 'UD', 'PUD', 'TIRZ', 'ESD', 'MMD', 'LID', 'HCAD'])
+const ACRONYMS = new Set(['ISD', 'MUD', 'WCID', 'FWSD', 'UD', 'PUD', 'TIRZ', 'ESD', 'MMD', 'LID', 'HCAD', 'ID', 'OST', 'NE', 'NW', 'SE', 'SW'])
+// HCAD's own abbreviations, spelled out (only unambiguous ones).
+const SPELLED_OUT: Record<string, string> = {
+  DIST: 'DISTRICT', MGMT: 'MANAGEMENT', DNTWN: 'DOWNTOWN', GRTR: 'GREATER', NRTHSD: 'NORTHSIDE',
+  CNTRY: 'COUNTRY', CRK: 'CREEK', FRWY: 'FREEWAY', DRNG: 'DRAINAGE', JR: 'JUNIOR',
+}
 const SMALL = new Set(['OF', 'AND', 'THE', 'FOR'])
 
 function titleWords(text: string): string {
@@ -39,6 +44,9 @@ export function displayHcadName(name: string): string {
     .replace(/^HC\b/, 'HARRIS COUNTY')
     .replace(/\bEMERG(?:ENCY)?\s+S(?:E)?RV(?:ICES?)?\s+DIST(?:RICT)?\b/, 'EMERGENCY SERVICES DISTRICT')
     .replace(/\b0+(\d+)\b/g, '$1')
+    .split(' ')
+    .map((word) => SPELLED_OUT[word] ?? word)
+    .join(' ')
   return titleWords(text)
 }
 
@@ -56,12 +64,9 @@ export function typeFromHcadName(name: string): BodyType {
   return 'other'
 }
 
-export function uncoveredFromHcadCode(code: string): LookupUncovered {
+/** null when HCAD's public list has no name for the code: a bare number tells a reader nothing. */
+export function uncoveredFromHcadCode(code: string): LookupUncovered | null {
   const name = hcadJurisdictionName(code)
-  return {
-    key: `hcad:${code}`,
-    name: name ? displayHcadName(name) : `HCAD tax code ${code}`,
-    type: name ? typeFromHcadName(name) : 'other',
-    source_kind: 'hcad',
-  }
+  if (!name) return null
+  return { key: `hcad:${code}`, name: displayHcadName(name), type: typeFromHcadName(name), source_kind: 'hcad' }
 }

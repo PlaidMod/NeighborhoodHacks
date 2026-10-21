@@ -26,7 +26,9 @@ npm run load:hcad -- --input tmp/scratch/hcad/<slice> --source-year 2026 --sourc
 npm run load:hcad -- --input tmp/scratch/hcad/<slice> --source-year 2026 --source-url https://hcad.org/pdata/pdata-property-downloads.html --apply
 ```
 
-The load refuses ambiguous normalized addresses, parcels without jurisdictions, or unknown jurisdiction codes. Add an unknown code only after its HCAD jurisdiction name and canonical body have been source-checked and added to `data/hcad-jurisdiction-map.yaml` and `data/bodies.yaml`.
+The load keeps shared street addresses and codes with no curated body, and skips parcels with no tax codes (see above). To track a new government, source-check its HCAD jurisdiction name and canonical body, add them to `data/hcad-jurisdiction-map.yaml` and `data/bodies.yaml`, and run the two seed scripts; no reload is needed.
+
+**Shared street addresses.** `lookup_hcad_parcel` returns one account for each different set of tax codes at an address (migration `20261021050753`). The lookup confirms the address when every account has the same *tracked* codes (often only commercial units pay a management district), and lists only the untracked governments every account shares. When tracked codes differ, it uses the Census answer. Codes with no name in HCAD's public list aren't shown.
 
 ## Boundaries
 
@@ -44,4 +46,11 @@ Use `--layer School` for school districts and `--layer College` for college dist
 
 ## Apply prerequisites
 
-P5 must apply `20261021040012_p1_lookup_support.sql` (applied Oct 21, 2026), seed the canonical body catalog, and provide the Supabase service key in the ignored `.env.local`. Then seed mappings and apply reviewed staging data. Live lookup remains unverified until P1 selects two demo addresses/ZIPs, loads the corresponding data, and checks the full returned body set against official parcel records.
+Done on Oct 21, 2026:
+- Migrations `20261021040012_p1_lookup_support.sql` and `20261021050753_hcad_lookup_code_sets.sql` are applied.
+- The body catalog (11 rows) and the jurisdiction map (9 codes) are seeded.
+- HCAD 2026 parcels for ZIPs 77002, 77003, 77004, 77006, 77007, 77008, 77019, 77021, 77098 and 77433 are loaded: 142,406 parcels and 1,285,421 tax-code rows, via the workflow above.
+
+Addresses elsewhere in Harris County use the Census fallback until their ZIP is loaded. To add ZIPs, run the workflow with the full list; reloading is safe.
+
+Boundaries (the GIS layers) are not loaded. The Census point and HCAD codes cover the lookup without them.

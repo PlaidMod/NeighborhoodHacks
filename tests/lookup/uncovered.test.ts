@@ -15,6 +15,10 @@ describe('HCAD jurisdiction names', () => {
     expect(displayHcadName('HC EMERG SRV DIST 009')).toBe('Harris County Emergency Services District 9')
     expect(displayHcadName('HC MUD 489')).toBe('Harris County MUD 489')
     expect(displayHcadName('HC WCID 133')).toBe('Harris County WCID 133')
+    expect(displayHcadName('HOUSTON DNTWN MGMT DIST')).toBe('Houston Downtown Management District')
+    expect(displayHcadName('GREATER SE MGMT DIST')).toBe('Greater SE Management District')
+    expect(displayHcadName('HC ID 014')).toBe('Harris County ID 14')
+    expect(displayHcadName('OST ALMEDA 7 (NON-TAXING)')).toBe('OST Almeda 7 (non-taxing)')
   })
 
   it('types each kind of district for the "Who governs you?" quiz', () => {
@@ -29,8 +33,8 @@ describe('HCAD jurisdiction names', () => {
     expect(typeFromHcadName('HARRIS COUNTY DEPARTMENT OF EDUCATION')).toBe('other')
   })
 
-  it('builds an "uncovered" entry from a code, falling back to the bare code when HCAD has no name for it', () => {
+  it('builds an "uncovered" entry from a code, and none when HCAD has no official name for it', () => {
     expect(uncoveredFromHcadCode('633')).toEqual({ key: 'hcad:633', name: 'Harris County Emergency Services District 9', type: 'esd', source_kind: 'hcad' })
-    expect(uncoveredFromHcadCode('000')).toEqual({ key: 'hcad:000', name: 'HCAD tax code 000', type: 'other', source_kind: 'hcad' })
+    expect(uncoveredFromHcadCode('000')).toBeNull()
   })
 })

@@ -33,6 +33,44 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-21: Lookup fix, parts 2–3: HCAD data for 10 ZIPs loaded; shared addresses resolved
+- **Who:** PlaidMod · P5 Platform (P1's lookup data and RPC, decided by PlaidMod)
+- **Branch:** main
+- **What changed:**
+  - **HCAD data without a laptop download.** New workflow `.github/workflows/hcad-slice.yml` (run by hand). GitHub's runner downloads HCAD's 2026 property files, keeps only the chosen ZIPs and the allowed columns (account, street address, legal description, tax codes; no owner, mail or value fields), dry-runs the loader, and uploads a 4.2 MB private artifact kept for 3 days. Run 39546716606 produced it. I loaded it from this computer with `npm run load:hcad -- --apply`.
+  - **Loaded:** 142,406 parcels and 1,285,421 tax-code rows for ZIPs 77002, 77003, 77004, 77006, 77007, 77008, 77019, 77021, 77098 and 77433. The database is 159 MB of 500.
+    - 1,853 accounts had no tax codes and were skipped.
+    - 1 malformed row in HCAD's countywide file was skipped (`ff75cbc`).
+    - Also seeded: P1's body catalog (11 rows; same IDs and texting flags as before, P1's names) and the jurisdiction map (9 codes). All 646 agenda items are unchanged.
+  - **Loader and staging:** parcel points are optional (the lookup uses the Census point). `load:hcad` now keeps shared addresses and unmapped codes and skips parcels with no codes (`planHcadLoad`).
+  - **Shared street addresses (condos, and one street address in two ZIPs):**
+    - New migration `20261021050753_hcad_lookup_code_sets.sql`, applied. `lookup_hcad_parcel` returns one account per different tax-code set at an address, instead of the first 2 accounts. Before this, 219 addresses could get the wrong answer.
+    - The route confirms an address when all its accounts share the same *tracked* codes, and lists only the untracked governments every account shares. When tracked codes differ it uses the Census answer instead of returning "not found".
+    - Result: 3,750 of 3,799 shared addresses are confirmed; 49 use the Census answer.
+  - **Names:**
+    - Codes with no name in HCAD's public list are no longer shown. Ten such codes appear in these ZIPs; "HCAD tax code 888" told readers nothing.
+    - HCAD abbreviations are spelled out ("Houston Downtown Management District").
+- **Files:** `.github/workflows/hcad-slice.yml`, `scripts/{stage-hcad,load-hcad}.ts`, `lib/lookup/{hcadStaging,hcadSource,uncovered}.ts`, `app/api/lookup/route.ts`, `supabase/migrations/20261021050753_hcad_lookup_code_sets.sql`, `docs/p1-data-loading.md`, `tests/lookup/{hcadStaging,uncovered}.test.ts`, `tests/api/lookup-route.test.ts`
+- **Contract changes (P1):**
+  - `lookup_hcad_parcel` keeps its signature and columns, but its rows now mean "one per tax-code set", with no row limit. `lib/database.types.ts` is unchanged.
+  - `uncoveredFromHcadCode` returns `null` for unnamed codes.
+  - The route reads the whole `jurisdiction_map` up front.
+  - P1's shared-address test now expects the Census answer, not a 404.
+- **Checked:**
+  - New tests failed first, then passed. `npm test`: 786 Vitest + 69 P4 pass. Typecheck, lint and build pass.
+  - Built app against the real database:
+    - 901 Bagby St (City Hall, 77002) is confirmed by HCAD, with 7 tracked governments plus the Hospital District, Department of Education and Downtown Management District.
+    - 10707 Mason Rd (Bridgeland HS, 77433) is confirmed with CFISD, Lone Star and MUD 489, plus WCID 157, WCID 159 and ESD 9.
+    - 3100 Cleburne St (TSU, 77004) has no exact HCAD street match, so it uses the Census answer.
+    - Pasadena City Hall is outside the loaded ZIPs, so it uses the Census answer.
+  - In the browser at 390 px: `/results` shows "Address match verified" for every body with no sideways scroll, and `/app` shows real City Council and HISD items with no "Sample data".
+  - The Supabase security check shows nothing new.
+- **Open issues / next:**
+  - Production is still pinned to `showup-kljzsrb88` and needs promoting to a build with these changes.
+  - Other ZIPs: rerun the workflow with the full list.
+  - Boundaries (GIS) aren't loaded and aren't needed for the lookup.
+  - ESDs, WCIDs and the countywide Hospital District and Department of Education are listed but not tracked.
+
 ### 2026-10-21: Lookup fix, part 1: never fails on governments we don't track; Census fallback
 - **Who:** PlaidMod · P5 Platform (changes to P1's lookup, decided by PlaidMod)
 - **Branch:** main

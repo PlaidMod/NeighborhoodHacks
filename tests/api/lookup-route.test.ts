@@ -195,14 +195,50 @@ describe('POST /api/lookup', () => {
     expect(serialized).not.toContain('123 Main St')
   })
 
-  it('rejects parcels at one address whose tax codes differ, rather than choosing the first result', async () => {
-    mocks.censusResult = matchedCensus()
+  it('uses the Census answer when parcels at one address have different tax codes, rather than choosing one', async () => {
+    mocks.censusResult = matchedCensus({ place: 'Houston city', schoolDistrict: 'Houston Independent School District' })
     mocks.geocodeCensus.mockResolvedValueOnce(mocks.censusResult as never)
+    mocks.parcelRows = [parcel(), parcel({ account: 'SECOND-PRIVATE-ACCOUNT', jurisdiction_codes: ['001'] })]
+    mocks.tableRows = { jurisdiction_map: [{ hcad_code: '189', body_id: 'hcmud_489' }], bodies: [...catalog, ...countywideCatalog], tax_rates: [], ballot_offices: [] }
+    const response = await POST(request())
+    expect(mocks.rpcRows).toHaveBeenCalledWith('lookup_hcad_parcel', { p_site_address_norm: '123 MAIN ST' })
+    expect(response.status).toBe(200)
+    const body = await response.json()
+    expect(body.match).toBe('census')
+    expect(body.bodies.map((b: { id: string }) => b.id)).not.toContain('hcmud_489')
+    expect(body.bodies.every((b: { verified: boolean }) => !b.verified)).toBe(true)
+  })
+
+  it('confirms a shared address whose accounts differ only in untracked codes, listing just the codes they all share', async () => {
+    setupMatchedLookup()
+    mocks.geocodeCensus.mockResolvedValueOnce(mocks.censusResult as never)
+    // A building where only the commercial units pay a management district (944).
+    mocks.parcelRows = [
+      parcel({ jurisdiction_codes: ['189', '633', '944'] }),
+      parcel({ account: 'SECOND-PRIVATE-ACCOUNT', jurisdiction_codes: ['189', '633'] }),
+    ]
+    const response = await POST(request())
+    expect(response.status).toBe(200)
+    const body = await response.json()
+    expect(body.match).toBe('hcad')
+    expect(body.bodies.map((b: { id: string }) => b.id)).toContain('hcmud_489')
+    expect(body.uncovered.map((u: { key: string }) => u.key)).toEqual(['hcad:633'])
+  })
+
+  it('leaves out tax codes that have no official name in HCAD\'s list', async () => {
+    setupMatchedLookup()
+    mocks.geocodeCensus.mockResolvedValueOnce(mocks.censusResult as never)
+    mocks.parcelRows = [parcel({ jurisdiction_codes: ['189', '633', '000'] })]
+    const response = await POST(request())
+    expect(response.status).toBe(200)
+    expect((await response.json()).uncovered.map((u: { key: string }) => u.key)).toEqual(['hcad:633'])
+  })
+
+  it('returns not found when parcels at one address disagree and the Census has no match either', async () => {
+    mocks.geocodeCensus.mockResolvedValueOnce(null as never)
     mocks.parcelRows = [parcel(), parcel({ account: 'SECOND-PRIVATE-ACCOUNT', jurisdiction_codes: ['001'] })]
     const response = await POST(request())
     expect(response.status).toBe(404)
-    expect(mocks.rpcRows).toHaveBeenCalledWith('lookup_hcad_parcel', expect.any(Object))
-    expect(mocks.rpcRows).toHaveBeenCalledWith('lookup_hcad_parcel', { p_site_address_norm: '123 MAIN ST' })
     expect(mocks.signBodiesToken).not.toHaveBeenCalled()
   })
 

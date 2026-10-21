@@ -59,19 +59,31 @@ async function matchCensus(addresses: readonly string[]): Promise<{ match: Censu
   return null
 }
 
-const codeSet = (row: ParcelRow) => [...new Set(row.jurisdiction_codes ?? [])].sort().join(',')
+/**
+ * Condos and townhomes share one street address across several accounts, and lookup_hcad_parcel
+ * returns one account for each different set of tax codes there. The address is confirmed when
+ * every account has the same tracked codes (only commercial units pay a management district, for
+ * example); the untracked governments listed are the ones every account shares. When tracked codes
+ * differ (or one street address exists in two ZIP codes) nothing is confirmed, and the lookup uses
+ * the Census answer instead of guessing.
+ */
+function resolveSharedAddress(rows: readonly ParcelRow[], trackedCodes: ReadonlySet<string>): ParcelRow | null {
+  const codesOf = (row: ParcelRow) => [...new Set(row.jurisdiction_codes ?? [])]
+  const tracked = (row: ParcelRow) => codesOf(row).filter((code) => trackedCodes.has(code)).sort().join(',')
+  const first = rows[0]
+  if (!first) return null
+  if (rows.some((row) => tracked(row) !== tracked(first))) return null
+  const shared = rows.slice(1).reduce((codes, row) => codes.filter((code) => codesOf(row).includes(code)), codesOf(first))
+  return { ...first, jurisdiction_codes: shared }
+}
 
-async function matchParcel(addresses: readonly string[]): Promise<ParcelRow | null> {
+async function matchParcel(addresses: readonly string[], trackedCodes: ReadonlySet<string>): Promise<ParcelRow | null> {
   for (const address of addresses) {
     const normalized = normalizeHcadAddress(address)
     if (!normalized) continue
     const found = await rpcRows<ParcelRow>('lookup_hcad_parcel', { p_site_address_norm: normalized })
-    // Condos and townhomes share one street address across several accounts. Their governments are
-    // the same when their tax codes are, so any one of them answers the question.
-    if (found.length > 1 && found.some((row) => codeSet(row) !== codeSet(found[0]!))) {
-      throw new LookupFailure('not_found', 'We could not match that address to one parcel.')
-    }
-    if (found[0]) return found[0]
+    const resolved = resolveSharedAddress(found, trackedCodes)
+    if (resolved) return resolved
   }
   return null
 }
@@ -125,7 +137,9 @@ async function buildPayload(address: string): Promise<LookupPayload> {
     censusResult ? { censusMatchedAddress: censusResult.match.matchedAddress, censusQueryAddress: censusResult.candidate } : null,
     addressCandidates,
   )
-  const parcel = await matchParcel(parcelCandidates)
+  // The whole map is small (one row per tracked HCAD code); shared addresses are checked against it.
+  const mappings = await selectRows<{ hcad_code: string; body_id: string }>('jurisdiction_map', 'hcad_code,body_id', (query) => query)
+  const parcel = await matchParcel(parcelCandidates, new Set(mappings.map((row) => row.hcad_code)))
   if (!parcel && !census) {
     // A Census outage is different from a genuine no-match; don't mislabel it as an invalid address.
     if (censusUnavailable) throw new LookupFailure('server_error', 'The address service is temporarily unavailable. Try again.')
@@ -144,9 +158,6 @@ async function buildPayload(address: string): Promise<LookupPayload> {
     ? await rpcRows<{ body_id: string }>('lookup_boundary_bodies', { p_longitude: longitude, p_latitude: latitude })
     : []
   const codes = parcel ? [...new Set(parcel.jurisdiction_codes ?? [])].sort() : []
-  const mappings = codes.length
-    ? await selectRows<{ hcad_code: string; body_id: string }>('jurisdiction_map', 'hcad_code,body_id', (query) => query.in('hcad_code', codes))
-    : []
   const bodyForCode = new Map(mappings.filter((row) => codes.includes(row.hcad_code)).map((row) => [row.hcad_code, row.body_id]))
   // HCAD appraises property countywide and is not normally a parcel tax code.
   const hcadIds = parcel ? [...new Set(['hcad', ...bodyForCode.values()])] : []
@@ -185,10 +196,14 @@ async function buildPayload(address: string): Promise<LookupPayload> {
   const uncovered: LookupPayload['uncovered'] = []
   for (const code of codes) {
     const bodyId = bodyForCode.get(code)
-    if (!bodyId || !catalogIds.has(bodyId)) uncovered.push(uncoveredFromHcadCode(code))
+    const entry = !bodyId || !catalogIds.has(bodyId) ? uncoveredFromHcadCode(code) : null
+    if (entry) uncovered.push(entry)
   }
   if (match === 'census') {
-    for (const code of COUNTYWIDE_UNCOVERED_CODES) uncovered.push({ ...uncoveredFromHcadCode(code), source_kind: 'census' })
+    for (const code of COUNTYWIDE_UNCOVERED_CODES) {
+      const entry = uncoveredFromHcadCode(code)
+      if (entry) uncovered.push({ ...entry, source_kind: 'census' })
+    }
   }
   const knownTypes = new Set([
     ...uncovered.map((item) => item.type),
