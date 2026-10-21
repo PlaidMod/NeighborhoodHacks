@@ -4,7 +4,7 @@ import { createReadStream, createWriteStream, existsSync, mkdirSync, realpathSyn
 import { createInterface } from 'node:readline'
 import { finished } from 'node:stream/promises'
 import { join, relative, resolve } from 'node:path'
-import { csvCell, hcadAccountFromRaw, hcadHeader, hcadJurisdictionFromRaw, parseHcadTsvRow } from '../lib/lookup/hcadSource'
+import { csvCell, hcadAccountFromRaw, hcadHeader, hcadJurisdictionFromRaw, parseHcadTsvRowLoose } from '../lib/lookup/hcadSource'
 
 config({ path: '.env.local', quiet: true })
 const repo = process.cwd()
@@ -22,13 +22,20 @@ async function hashFile(path: string) {
   return hash.digest('hex')
 }
 
+// Rows HCAD's export couldn't align, per file (reported, never fatal).
+const malformed: Record<string, { padded: number; skipped: number }> = {}
+
 async function* tsv(path: string, required: readonly string[], label: string) {
   const lines = createInterface({ input: createReadStream(path, { encoding: 'utf8' }), crlfDelay: Infinity })
   let header: string[] | null = null
+  const counts = (malformed[label] = { padded: 0, skipped: 0 })
   for await (const line of lines) {
     if (!header) { header = hcadHeader(line, required, label); continue }
     if (!line.trim()) continue
-    yield parseHcadTsvRow(line, header, label)
+    const parsed = parseHcadTsvRowLoose(line, header)
+    if (parsed.status === 'skipped') { counts.skipped++; continue }
+    if (parsed.status === 'padded') counts.padded++
+    yield parsed.row
   }
   if (!header) throw new Error(`${label} is empty.`)
 }
@@ -111,6 +118,9 @@ async function main() {
   checksum.update(centroidsText)
   console.log(`Staged ${parcelCount} accounts and ${jurisdictionCount} jurisdiction rows from HCAD year ${year}; ${pointByAccount.size} parcel centroids; ${noJurisdictions} accounts without jurisdiction rows.`)
   console.log(`Source files SHA-256: ${checksum.digest('hex')}. No owner, mail, valuation, or exemption fields were written.`)
+  for (const [label, counts] of Object.entries(malformed)) {
+    if (counts.padded || counts.skipped) console.log(`Note: ${label} had ${counts.padded} short rows (padded) and ${counts.skipped} long rows (skipped) out of line with its header.`)
+  }
   // load:hcad leaves these out, so the lookup uses the Census answer for them.
   if (noJurisdictions) console.log(`Note: ${noJurisdictions} accounts have no tax jurisdiction rows; load:hcad will skip them.`)
   console.log(`Review staged output, then run npm run load:hcad -- --input ${relative(repo, output)} --source-year ${year} --source-url https://hcad.org/pdata/pdata-property-downloads.html`)

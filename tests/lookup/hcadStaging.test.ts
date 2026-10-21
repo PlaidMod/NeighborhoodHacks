@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { parseHcadStaging, planHcadLoad } from '@/lib/lookup/hcadStaging'
-import { csvCell, hcadAccountFromRaw, hcadHeader, hcadJurisdictionFromRaw, parseHcadTsvRow } from '@/lib/lookup/hcadSource'
+import { csvCell, hcadAccountFromRaw, hcadHeader, hcadJurisdictionFromRaw, parseHcadTsvRow, parseHcadTsvRowLoose } from '@/lib/lookup/hcadSource'
 
 const parcels = (rows: string[]) => [
   'account,site_address_norm,legal_description,longitude,latitude',
@@ -74,6 +74,19 @@ describe('HCAD source field conversion', () => {
       account: '1000000000001', site_address_norm: '123 MAIN ST', legal_description: 'LOT 1\nBLOCK 2', zip: '77004',
     })
     expect(hcadAccountFromRaw({ acct: '1000000000001', site_addr_1: '123 Main Street', site_addr_2: 'Houston', site_addr_3: '77433' }, new Set(['77004']))).toBeNull()
+  })
+
+  it('tolerates malformed rows in the big HCAD export: pads short rows, skips long ones, never throws', () => {
+    const header = ['acct', 'site_addr_1', 'site_addr_2', 'site_addr_3', 'lgl_1']
+    expect(parseHcadTsvRowLoose('1000000000001\t123 Main St\tHouston\t77004\tLOT 1', header)).toEqual({
+      status: 'ok',
+      row: { acct: '1000000000001', site_addr_1: '123 Main St', site_addr_2: 'Houston', site_addr_3: '77004', lgl_1: 'LOT 1' },
+    })
+    expect(parseHcadTsvRowLoose('1000000000002\t9 Elm St\tHouston\t77004', header)).toEqual({
+      status: 'padded',
+      row: { acct: '1000000000002', site_addr_1: '9 Elm St', site_addr_2: 'Houston', site_addr_3: '77004', lgl_1: '' },
+    })
+    expect(parseHcadTsvRowLoose('1000000000003\t1 A St\tHouston\t77004\tLOT\textra', header)).toEqual({ status: 'skipped', row: null })
   })
 
   it('requires HCAD header fields, parses tab fields without logging, and filters jurisdiction rows by account', () => {

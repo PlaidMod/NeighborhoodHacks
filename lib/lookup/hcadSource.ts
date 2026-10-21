@@ -31,6 +31,21 @@ export function parseHcadTsvRow(line: string, header: readonly string[], label: 
   return Object.fromEntries(header.map((name, index) => [name, cells[index]!.trim()]))
 }
 
+/**
+ * The countywide HCAD export has a few rows whose tab count doesn't match the header (stray tabs or
+ * line breaks inside a field). A short row keeps its leading fields (account and site address come
+ * first) and gets empty trailing fields; a long row can't be aligned, so it's skipped.
+ */
+export function parseHcadTsvRowLoose(
+  line: string,
+  header: readonly string[],
+): { status: 'ok' | 'padded'; row: Record<string, string> } | { status: 'skipped'; row: null } {
+  const cells = line.replace(/\r$/, '').split('\t')
+  if (cells.length > header.length) return { status: 'skipped', row: null }
+  const row = Object.fromEntries(header.map((name, index) => [name, (cells[index] ?? '').trim()]))
+  return { status: cells.length === header.length ? 'ok' : 'padded', row }
+}
+
 export function hcadHeader(line: string, required: readonly string[], label: string) {
   const header = line.replace(/^\uFEFF/, '').replace(/\r$/, '').split('\t').map((cell) => cell.trim().toLowerCase())
   if (new Set(header).size !== header.length || required.some((column) => !header.includes(column))) {
