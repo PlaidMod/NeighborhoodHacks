@@ -33,6 +33,46 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-21: Review of P1's new lookup: problems not in P1's notes
+- **Who:** PlaidMod · P5 Platform (review of `e26b379`, `app/api/lookup/route.ts` and `lib/lookup/`)
+- **Branch:** main
+- **What changed:** Docs only. These problems are on top of the open items P1 already listed (credentials, data loading, demo addresses, the unmapped-code decision). PlaidMod asked P5 to fix them next, one milestone at a time.
+- **Files:** `agent_handoff.md`
+- **Contract changes:** None yet.
+- **Checked:** Static review. HCAD's official code list was checked at `public.hcad.org/resources/jurlist.asp` on Oct 21. A local run against the real database returned 500 for 901 Bagby St (no HCAD data loaded).
+- **Open issues / next, most severe first:**
+  1. **Every real address fails.** Codes 043 (HARRIS COUNTY HOSPITAL DISTRICT) and 044 (HARRIS COUNTY DEPARTMENT OF EDUCATION) are countywide, so they should appear on every parcel (worth confirming against one real record). Neither is in `data/hcad-jurisdiction-map.yaml`, and any unmapped code throws "Some local taxing jurisdictions are not configured yet".
+  2. **Unincorporated addresses fail.** They carry an ESD code (for example 633 = ESD 9, 640 = ESD 14), none is mapped, and the catalog has no ESD bodies. MUD 489 is unincorporated, so the demo MUD address would fail.
+  3. **Anywhere outside Houston, HISD and CFISD fails with a 500 "Try again later".** Unmapped ISD and city codes cause it, and so do Census hints such as `katy_isd_board` or `pasadena_city_council` that aren't in the 11-entry catalog. Retrying can't help, and the classmate survey would hit this for most other addresses.
+  4. **Only addresses whose HCAD data is loaded work.** P1 plans to load only the demo ZIP codes (the 500 MB limit), and there's no fallback. The previous Census-only lookup worked countywide.
+  5. **Condos and townhomes fail.** Unit numbers are stripped, so several accounts share one key, and two or more matches throw "could not match that address to one parcel". These accounts normally have the same tax codes.
+  6. **CenterPoint appears twice** once the catalog is seeded: it's hard-coded in the route and also read from `bodies` (`category: not_government`), giving duplicate cards and React keys.
+  7. **The real reason never reaches the screen.** `components/flow/LookupProvider.tsx` (P5) keeps only the error code, so coverage gaps show as a generic server error.
+  - P1's route tests mock a database in which every code is mapped, so none of these show up in the tests.
+
+### 2026-10-21: P1's lookup migration applied; database types regenerated
+- **Who:** PlaidMod · P5 Platform
+- **Branch:** main
+- **What changed:**
+  - Applied P1's `p1_lookup_support` migration to Supabase. It recorded as version `20261021040012`, so I renamed the file from `20261020160000_p1_lookup_support.sql` to match. P1's entries that use the old name are out of date.
+  - The migration adds `tax_rates.last_vote_date` and the service-role-only functions `load_hcad_batch`, `replace_hcad_boundary_layer`, `lookup_hcad_parcel`, `lookup_boundary_bodies` and `lookup_hoa_candidates`.
+  - `lib/database.types.ts` now has the new column and functions, matching Supabase's generated types.
+  - `docs/p1-data-loading.md` names the new file.
+- **Files:** `supabase/migrations/20261021040012_p1_lookup_support.sql` (renamed), `lib/database.types.ts`, `docs/p1-data-loading.md`
+- **Contract changes:** As in P1's entries: the new `tax_rates` column and the five functions. No new tables.
+- **Checked:**
+  - The migration applied cleanly. Its tables and columns were checked against `core.sql` first.
+  - SQL: 0 tables without RLS, 0 policies. All five functions are `security invoker`, `anon` and `authenticated` can't execute them, and `service_role` can.
+  - The security advisor shows nothing new (only the expected "RLS enabled, no policy" notices and the leaked-password setting).
+  - `npm test`: 772 Vitest + 69 P4 pass. Typecheck and lint pass.
+- **Open issues / next:**
+  - **Production is pinned to `showup-kljzsrb88`** (a Vercel rollback after `3fc2599`). P1's new lookup still returns 500 for every address, because the HCAD parcels, `jurisdiction_map` and boundaries are empty. Promote a newer deploy only once the lookup works against the real database.
+  - **For P1:**
+    - run `npm run seed:bodies` and the HCAD / boundary loaders (`docs/p1-data-loading.md`)
+    - pick the two demo addresses
+    - get the team's decision on unmapped HCAD codes (fail closed vs. "other taxing unit")
+  - P1 needs a copy of `.env.local`; ask PlaidMod privately.
+
 ### 2026-10-21: OpenRouter key is live; the Gemini key is gone
 - **Who:** PlaidMod · P5 Platform
 - **Branch:** main

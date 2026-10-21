@@ -38,4 +38,4 @@ Use `--layer School` for school districts and `--layer College` for college dist
 
 ## Apply prerequisites
 
-P5 must apply `20261020160000_p1_lookup_support.sql`, seed the canonical body catalog, and provide the Supabase service key in the ignored `.env.local`. Then seed mappings and apply reviewed staging data. Live lookup remains unverified until P1 selects two demo addresses/ZIPs, loads the corresponding data, and checks the full returned body set against official parcel records.
+P5 must apply `20261021040012_p1_lookup_support.sql` (applied Oct 21, 2026), seed the canonical body catalog, and provide the Supabase service key in the ignored `.env.local`. Then seed mappings and apply reviewed staging data. Live lookup remains unverified until P1 selects two demo addresses/ZIPs, loads the corresponding data, and checks the full returned body set against official parcel records.

@@ -1124,6 +1124,7 @@ export type Database = {
         Row: {
           adopted_rate: number | null
           body_id: string
+          last_vote_date: string | null
           no_new_revenue_rate: number | null
           source_url: string | null
           voter_approval_rate: number | null
@@ -1132,6 +1133,7 @@ export type Database = {
         Insert: {
           adopted_rate?: number | null
           body_id: string
+          last_vote_date?: string | null
           no_new_revenue_rate?: number | null
           source_url?: string | null
           voter_approval_rate?: number | null
@@ -1140,6 +1142,7 @@ export type Database = {
         Update: {
           adopted_rate?: number | null
           body_id?: string
+          last_vote_date?: string | null
           no_new_revenue_rate?: number | null
           source_url?: string | null
           voter_approval_rate?: number | null
@@ -1228,6 +1231,41 @@ export type Database = {
     Functions: {
       increment_rate_limit: {
         Args: { p_key: string; p_window_start: string }
+        Returns: number
+      }
+      load_hcad_batch: {
+        Args: { p_jurisdictions: Json; p_parcels: Json }
+        Returns: undefined
+      }
+      lookup_boundary_bodies: {
+        Args: { p_latitude: number; p_longitude: number }
+        Returns: {
+          body_id: string
+        }[]
+      }
+      lookup_hcad_parcel: {
+        Args: { p_site_address_norm: string }
+        Returns: {
+          account: string
+          jurisdiction_codes: string[]
+          latitude: number
+          legal_description: string
+          longitude: number
+        }[]
+      }
+      lookup_hoa_candidates: {
+        Args: { p_subdivision: string }
+        Returns: {
+          hoa_body_id: string
+          master_hoa_body_id: string
+          match_score: number
+          source_url: string
+          subdivision_name: string
+          verified: boolean
+        }[]
+      }
+      replace_hcad_boundary_layer: {
+        Args: { p_body_ids: string[]; p_boundaries: Json }
         Returns: number
       }
     }
