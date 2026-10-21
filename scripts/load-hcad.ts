@@ -5,7 +5,7 @@ import { join, relative, resolve } from 'node:path'
 import { parse } from 'yaml'
 import { z } from 'zod'
 import { rawDb } from '../lib/db/raw'
-import { parseHcadStaging } from '../lib/lookup/hcadStaging'
+import { parseHcadStaging, planHcadLoad } from '../lib/lookup/hcadStaging'
 
 config({ path: '.env.local', quiet: true })
 
@@ -38,15 +38,15 @@ async function main() {
   if (relative(root, resolvedDir).startsWith('..')) throw new Error('Input directory must be inside tmp/scratch/hcad/.')
   const parcelFile = stagedFile(join(resolvedDir, 'parcels.csv'))
   const jurisdictionFile = stagedFile(join(resolvedDir, 'jurisdictions.csv'))
-  const stage = parseHcadStaging(parcelFile.contents, jurisdictionFile.contents, mappedCodes)
-  const unaccountedJurisdictionRows = stage.parcels.filter((parcel) => parcel.jurisdiction_codes.length === 0).length
-  const parcelCount = stage.parcels.length
-  if (!parcelCount) throw new Error('No parcel rows were staged.')
+  // Shared addresses (condos) and unmapped codes are expected: the lookup accepts matching shared
+  // addresses and lists unmapped codes by HCAD's name. Parcels with no codes at all are left out.
+  const plan = planHcadLoad(parseHcadStaging(parcelFile.contents, jurisdictionFile.contents, mappedCodes))
+  const parcelCount = plan.parcels.length
+  if (!parcelCount) throw new Error('No parcel rows with tax codes were staged.')
 
   const checksum = createHash('sha256').update(parcelFile.contents).update(jurisdictionFile.contents).digest('hex')
-  console.log(`HCAD stage validated: ${parcelCount} parcels, ${stage.unmappedCodes.length} unmapped codes, ${stage.ambiguousAddressCount} ambiguous normalized addresses, ${unaccountedJurisdictionRows} parcels without jurisdictions.`)
+  console.log(`HCAD stage validated: ${parcelCount} parcels to load, ${plan.skippedWithoutCodes} skipped without tax codes, ${plan.sharedAddressCount} shared street addresses, ${plan.unmappedCodes.length} codes the lookup will list as not covered.`)
   console.log(`Source year: ${year}; files SHA-256: ${checksum}`)
-  if (stage.ambiguousAddressCount || unaccountedJurisdictionRows) throw new Error('Resolve ambiguous addresses and missing jurisdiction rows before loading.')
   if (!process.argv.includes('--apply')) {
     console.log('Dry run only. Use --apply after reviewing the source slice and its code mappings.')
     return
@@ -54,10 +54,9 @@ async function main() {
   if (!source || new URL(source).protocol !== 'https:' || !['hcad.org', 'public.hcad.org'].includes(new URL(source).hostname)) {
     throw new Error('Applying requires --source-url using HTTPS on an official HCAD hostname.')
   }
-  if (stage.unmappedCodes.length) throw new Error('The selected HCAD data contains unmapped codes. Add verified body records and mappings before applying.')
 
   for (let start = 0; start < parcelCount; start += 250) {
-    const parcels = stage.parcels.slice(start, start + 250)
+    const parcels = plan.parcels.slice(start, start + 250)
     const jurisdictions = parcels.flatMap((parcel) => parcel.jurisdiction_codes.map((hcad_code) => ({ account: parcel.account, hcad_code })))
     const { error } = await rawDb().rpc('load_hcad_batch', { p_parcels: parcels, p_jurisdictions: jurisdictions })
     if (error) throw new Error(`HCAD batch ${Math.floor(start / 250) + 1} failed; no row contents were logged.`)

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { parseHcadStaging } from '@/lib/lookup/hcadStaging'
+import { parseHcadStaging, planHcadLoad } from '@/lib/lookup/hcadStaging'
 import { csvCell, hcadAccountFromRaw, hcadHeader, hcadJurisdictionFromRaw, parseHcadTsvRow } from '@/lib/lookup/hcadSource'
 
 const parcels = (rows: string[]) => [
@@ -34,6 +34,23 @@ describe('parseHcadStaging', () => {
     )
     expect(result.ambiguousAddressCount).toBe(1)
     expect(result.unmappedCodes).toEqual(['999'])
+  })
+
+  it('plans a load that keeps shared addresses and unmapped codes, and skips parcels with no tax codes', () => {
+    const stage = parseHcadStaging(
+      parcels([
+        '1000000000001,123 Main St,,,',
+        '1000000000002,123 Main Street,,,',
+        '1000000000003,9 Elm St,,,',
+      ]),
+      jurisdictions(['1000000000001,189', '1000000000001,043', '1000000000002,189', '1000000000002,043']),
+      new Set(['189']),
+    )
+    const plan = planHcadLoad(stage)
+    expect(plan.parcels.map((p) => p.account)).toEqual(['1000000000001', '1000000000002'])
+    expect(plan.skippedWithoutCodes).toBe(1)
+    expect(plan.sharedAddressCount).toBe(1)
+    expect(plan.unmappedCodes).toEqual(['043'])
   })
 
   it.each([

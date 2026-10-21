@@ -1,6 +1,6 @@
 import { config } from 'dotenv'
 import { createHash } from 'node:crypto'
-import { createReadStream, createWriteStream, mkdirSync, realpathSync, readFileSync, statSync } from 'node:fs'
+import { createReadStream, createWriteStream, existsSync, mkdirSync, realpathSync, readFileSync, statSync } from 'node:fs'
 import { createInterface } from 'node:readline'
 import { finished } from 'node:stream/promises'
 import { join, relative, resolve } from 'node:path'
@@ -51,9 +51,12 @@ async function main() {
   if (!zips.size) throw new Error('Provide one or more five-digit ZIP codes.')
   const accountFile = join(source, 'real_acct.txt')
   const jurisdictionFile = join(source, 'jur_value.txt')
+  // Parcel points are optional: the lookup locates addresses with the Census point and uses a
+  // parcel point only when the Census can't, so the GIS export (ogr2ogr) can be skipped.
   const centroidFile = join(source, 'parcel-centroids.geojson')
-  if (statSync(centroidFile).size > 30 * 1024 * 1024) throw new Error('Filtered parcel-centroid GeoJSON exceeds the 30 MB staging limit.')
-  const centroidsText = readFileSync(centroidFile, 'utf8')
+  const hasCentroids = existsSync(centroidFile)
+  if (hasCentroids && statSync(centroidFile).size > 30 * 1024 * 1024) throw new Error('Filtered parcel-centroid GeoJSON exceeds the 30 MB staging limit.')
+  const centroidsText = hasCentroids ? readFileSync(centroidFile, 'utf8') : '{"type":"FeatureCollection","features":[]}'
   const centroids = JSON.parse(centroidsText) as { type?: string; features?: Array<{ properties?: Record<string, unknown>; geometry?: { type?: string; coordinates?: unknown } }> }
   if (centroids.type !== 'FeatureCollection' || !Array.isArray(centroids.features)) throw new Error('GIS centroid input is not a GeoJSON FeatureCollection.')
   const pointByAccount = new Map<string, [number, number]>()
@@ -108,7 +111,8 @@ async function main() {
   checksum.update(centroidsText)
   console.log(`Staged ${parcelCount} accounts and ${jurisdictionCount} jurisdiction rows from HCAD year ${year}; ${pointByAccount.size} parcel centroids; ${noJurisdictions} accounts without jurisdiction rows.`)
   console.log(`Source files SHA-256: ${checksum.digest('hex')}. No owner, mail, valuation, or exemption fields were written.`)
-  if (noJurisdictions) throw new Error('Staging files were written, but accounts without tax jurisdictions must be resolved before loading.')
+  // load:hcad leaves these out, so the lookup uses the Census answer for them.
+  if (noJurisdictions) console.log(`Note: ${noJurisdictions} accounts have no tax jurisdiction rows; load:hcad will skip them.`)
   console.log(`Review staged output, then run npm run load:hcad -- --input ${relative(repo, output)} --source-year ${year} --source-url https://hcad.org/pdata/pdata-property-downloads.html`)
 }
 

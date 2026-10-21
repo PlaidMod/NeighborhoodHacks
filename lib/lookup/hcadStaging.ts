@@ -111,3 +111,24 @@ export function parseHcadStaging(parcelCsv: string, jurisdictionCsv: string, map
   const unmappedCodes = [...new Set(parsed.flatMap((parcel) => parcel.jurisdiction_codes).filter((code) => !mappedCodes.has(code)))].sort()
   return { parcels: parsed, ambiguousAddressCount, unmappedCodes }
 }
+
+export type HcadLoadPlan = {
+  parcels: HcadParcelStage[]
+  /** Parcels with no tax codes at all; left out so the lookup uses the Census answer for them. */
+  skippedWithoutCodes: number
+  /** Street addresses shared by several accounts (condos); the lookup accepts them when their codes match. */
+  sharedAddressCount: number
+  /** Codes with no curated body; the lookup lists them by HCAD's official name. */
+  unmappedCodes: string[]
+}
+
+/** What to load from a validated stage. Shared addresses and unmapped codes no longer block a load. */
+export function planHcadLoad(stage: HcadStageResult): HcadLoadPlan {
+  const parcels = stage.parcels.filter((parcel) => parcel.jurisdiction_codes.length > 0)
+  return {
+    parcels,
+    skippedWithoutCodes: stage.parcels.length - parcels.length,
+    sharedAddressCount: stage.ambiguousAddressCount,
+    unmappedCodes: stage.unmappedCodes,
+  }
+}

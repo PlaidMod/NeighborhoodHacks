@@ -4,6 +4,12 @@ The loaders are dry-run-first and only accept working files under the ignored `t
 
 ## HCAD parcels
 
+**Quickest path (no large files on a laptop):** run the **HCAD lookup slice** workflow (`.github/workflows/hcad-slice.yml`) from the Actions tab, or with `gh workflow run hcad-slice.yml -f year=2026 -f zips=77002,77004`. GitHub's runner downloads `Real_acct_owner.zip` and `Real_jur_exempt.zip`, stages only the chosen ZIP codes, dry-runs the loader, and uploads the small slice as a 3-day private artifact. Download it into `tmp/scratch/hcad/` (`gh run download <run id> -D tmp/scratch/hcad/slice-2026`), then run `npm run load:hcad -- --input tmp/scratch/hcad/slice-2026 --source-year 2026 --source-url https://hcad.org/pdata/pdata-property-downloads.html --apply`.
+
+Parcel points are optional: without `parcel-centroids.geojson`, staging writes empty coordinates and the lookup uses the Census point. The loader keeps street addresses shared by several accounts (condos; the lookup accepts them when their tax codes match) and codes with no curated body (the lookup lists them by HCAD's official name, from `data/hcad-jurisdictions.json`). It skips parcels with no tax codes.
+
+The manual steps below still work if you have the files locally.
+
 Use the official [HCAD property downloads](https://hcad.org/pdata/pdata-property-downloads.html), [import instructions](https://hcad.org/hcad-online-services/pdata/pdata-help/), and [codebook](https://hcad.org/assets/uploads/pdf/pdataCodebook.pdf). HCAD describes its property data as text files for import into user databases. The codebook identifies `real_acct.txt` fields `acct`, `site_addr_1`, `site_addr_2`, `site_addr_3`, and `lgl_1`–`lgl_4`; jurisdiction membership comes from `jur_value.txt` (`acct`, `tax_district`). Keep the original raw files outside the repo. Convert only the selected demo ZIP slice into the two normalized CSVs. Assemble the address from the site-address fields and legal-description lines; normalize the address with `normalizeHcadAddress` conventions. Derive an approximate point from the HCAD parcel geometry by joining GIS `HCAD_NUM` to the parcel account, and keep only the point. The demo ZIPs and addresses are not selected yet, so no extracts are staged.
 
 Convert the countywide tab-delimited PDATA tables to a ZIP-limited, privacy-filtered stage with the streaming converter. The official import guide says the text files include headers. Export only centroid points from the HCAD `Parcels` GIS layer (not owner/mail fields) and reproject during export:
