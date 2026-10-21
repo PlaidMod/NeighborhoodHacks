@@ -46,6 +46,8 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
   - The new test failed with the old 404, then passed.
   - Shared addresses: 6,571 confirmed and 95 use the Census answer (up from 49, as more ZIPs share street addresses).
   - Live, before the fix: 40 random new addresses gave 34 HCAD-confirmed, 1 Census and 5 with the 404 above. Big campuses and malls (TMC, Galleria, Willowbrook) aren't filed in HCAD under their public street address, so they use the Census answer.
+  - Live, after the fix: 40 random loaded addresses gave 37 HCAD-confirmed, 1 Census and 2 "not found". The 2 were sent as "<street>, Houston, TX" with no ZIP, so the Census couldn't place them, and they sit at addresses whose accounts disagree on tracked codes. With a real city and ZIP they get the Census answer.
+  - Offline, 2,000 stored addresses all survive the lookup's normalization unchanged. 95 addresses (5,077 parcels, 1.65%) have accounts that disagree on tracked codes; the largest has 1,194 accounts.
 - **Open issues / next:** More ZIPs need space first: drop unneeded rows or rebuild the index while there's room.
 
 ### 2026-10-21: Lookup fix, part 4: live site switched to the fixed build
