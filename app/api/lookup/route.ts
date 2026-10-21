@@ -152,8 +152,8 @@ async function buildPayload(address: string): Promise<LookupPayload> {
   const longitude = census?.coordinates?.longitude ?? parcel?.longitude ?? null
   const latitude = census?.coordinates?.latitude ?? parcel?.latitude ?? null
   const hasPoint = longitude !== null && latitude !== null && Number.isFinite(longitude) && Number.isFinite(latitude)
-  if (parcel && !hasPoint) throw new LookupFailure('not_found', 'We could not resolve a location for that parcel.')
-
+  // The point is only for the boundary check. An HCAD match without one (the Census can't place a
+  // new street, and no parcel points are loaded) still answers from its tax codes (tech plan §5).
   const gisRows = hasPoint
     ? await rpcRows<{ body_id: string }>('lookup_boundary_bodies', { p_longitude: longitude, p_latitude: latitude })
     : []

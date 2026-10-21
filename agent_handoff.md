@@ -33,6 +33,21 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-21: HCAD data for 14 more ZIPs; HCAD matches no longer need a map point
+- **Who:** PlaidMod · P5 Platform (P1's lookup data and route)
+- **Branch:** main
+- **What changed:**
+  - **More ZIPs.** Ran the HCAD slice workflow (run 39686003192) for 77009, 77011, 77018, 77023, 77025, 77027, 77030, 77054, 77056 and 77096 (City of Houston, HISD), plus 77065, 77070, 77095 and 77429 (Cypress-Fairbanks). Loaded 164,767 parcels; 1,379 with no tax codes were skipped. That makes 307,173 parcels in 24 ZIPs. The local slice is deleted.
+  - **Space.** The database is at 371 MB of the 500 MB free-plan limit, so don't load many more ZIPs. The tax-code index is 155 MB, bigger than its table, because later loads insert between existing accounts.
+  - **Route fix.** An HCAD match with no map point used to return 404 "We could not resolve a location for that parcel." That happened whenever the Census couldn't place the address, because the slice loads no parcel points. Tech plan §5 step 4 says "not found" is only for when neither source matches, so the route now answers from the tax codes and skips only the boundary check (no boundaries are loaded anyway).
+- **Files:** `app/api/lookup/route.ts`, `tests/api/lookup-route.test.ts`, `docs/p1-data-loading.md`
+- **Contract changes (P1):** P1's test "rejects a parcel without any valid Census or HCAD coordinates" is replaced by "confirms an HCAD match the Census cannot place". The response shape is unchanged.
+- **Checked:**
+  - The new test failed with the old 404, then passed.
+  - Shared addresses: 6,571 confirmed and 95 use the Census answer (up from 49, as more ZIPs share street addresses).
+  - Live, before the fix: 40 random new addresses gave 34 HCAD-confirmed, 1 Census and 5 with the 404 above. Big campuses and malls (TMC, Galleria, Willowbrook) aren't filed in HCAD under their public street address, so they use the Census answer.
+- **Open issues / next:** More ZIPs need space first: drop unneeded rows or rebuild the index while there's room.
+
 ### 2026-10-21: Lookup fix, part 4: live site switched to the fixed build
 - **Who:** PlaidMod · P5 Platform
 - **Branch:** main

@@ -6,7 +6,7 @@ The loaders are dry-run-first and only accept working files under the ignored `t
 
 **Quickest path (no large files on a laptop):** run the **HCAD lookup slice** workflow (`.github/workflows/hcad-slice.yml`) from the Actions tab, or with `gh workflow run hcad-slice.yml -f year=2026 -f zips=77002,77004`. GitHub's runner downloads `Real_acct_owner.zip` and `Real_jur_exempt.zip`, stages only the chosen ZIP codes, dry-runs the loader, and uploads the small slice as a 3-day private artifact. Download it into `tmp/scratch/hcad/` (`gh run download <run id> -D tmp/scratch/hcad/slice-2026`), then run `npm run load:hcad -- --input tmp/scratch/hcad/slice-2026 --source-year 2026 --source-url https://hcad.org/pdata/pdata-property-downloads.html --apply`.
 
-Parcel points are optional: without `parcel-centroids.geojson`, staging writes empty coordinates and the lookup uses the Census point. The loader keeps street addresses shared by several accounts (condos; the lookup accepts them when their tax codes match) and codes with no curated body (the lookup lists them by HCAD's official name, from `data/hcad-jurisdictions.json`). It skips parcels with no tax codes.
+Parcel points are optional: without `parcel-centroids.geojson`, staging writes empty coordinates and the lookup uses the Census point. When the Census can't place an address that HCAD has (often a new street), the lookup still answers from the tax codes and skips only the boundary check. The loader keeps street addresses shared by several accounts (condos; the lookup accepts them when their tax codes match) and codes with no curated body (the lookup lists them by HCAD's official name, from `data/hcad-jurisdictions.json`). It skips parcels with no tax codes.
 
 The manual steps below still work if you have the files locally.
 
@@ -49,8 +49,11 @@ Use `--layer School` for school districts and `--layer College` for college dist
 Done on Oct 21, 2026:
 - Migrations `20261021040012_p1_lookup_support.sql` and `20261021050753_hcad_lookup_code_sets.sql` are applied.
 - The body catalog (11 rows) and the jurisdiction map (9 codes) are seeded.
-- HCAD 2026 parcels for ZIPs 77002, 77003, 77004, 77006, 77007, 77008, 77019, 77021, 77098 and 77433 are loaded: 142,406 parcels and 1,285,421 tax-code rows, via the workflow above.
+- HCAD 2026 parcels for 24 ZIPs are loaded through the workflow above: 307,173 parcels and 2,760,722 tax-code rows.
+  - First run: 77002, 77003, 77004, 77006, 77007, 77008, 77019, 77021, 77098 and 77433 (142,406 parcels).
+  - Second run (39686003192): 77009, 77011, 77018, 77023, 77025, 77027, 77030, 77054, 77056, 77096, 77065, 77070, 77095 and 77429 (164,767 parcels).
+  - The database is at 371 MB of the 500 MB free-plan limit, so there's little room for more ZIPs. The tax-code index (155 MB) is larger than its table because later loads insert between existing accounts; rebuilding it would save space but needs about 100 MB free while it runs.
 
-Addresses elsewhere in Harris County use the Census fallback until their ZIP is loaded. To add ZIPs, run the workflow with the full list; reloading is safe.
+Addresses elsewhere in Harris County use the Census fallback until their ZIP is loaded. To add ZIPs, run the workflow with just the new ZIPs: the loader updates by account and keeps what's already loaded. Reloading is safe.
 
 Boundaries (the GIS layers) are not loaded. The Census point and HCAD codes cover the lookup without them.

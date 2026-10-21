@@ -378,14 +378,20 @@ describe('POST /api/lookup', () => {
     expect(mocks.rpcRows).toHaveBeenCalledTimes(1)
   })
 
-  it('rejects a parcel without any valid Census or HCAD coordinates', async () => {
-    mocks.censusResult = matchedCensus({ coordinates: null })
-    mocks.geocodeCensus.mockResolvedValueOnce(mocks.censusResult as never)
+  // Tech plan §5 step 4: "not found" only when neither source matches. Parcel points are optional
+  // (the HCAD slice workflow loads none), so a new street the Census hasn't mapped yet still gets
+  // its HCAD answer; only the boundary check, which needs a point, is skipped.
+  it('confirms an HCAD match the Census cannot place, skipping only the boundary check', async () => {
+    mocks.geocodeCensus.mockResolvedValueOnce(null as never)
     mocks.parcelRows = [parcel({ longitude: null, latitude: null })]
+    mocks.tableRows = { jurisdiction_map: [{ hcad_code: '189', body_id: 'hcmud_489' }], bodies: catalog, tax_rates: [], ballot_offices: [] }
     const response = await POST(request())
-    expect(response.status).toBe(404)
-    expect(mocks.rpcRows).toHaveBeenCalledTimes(1)
-    expect(mocks.signBodiesToken).not.toHaveBeenCalled()
+    expect(response.status).toBe(200)
+    const payload = await response.json()
+    expect(payload.match).toBe('hcad')
+    expect(payload.bodies.map((body: { id: string }) => body.id)).toEqual(expect.arrayContaining(['hcad', 'hcmud_489']))
+    expect(mocks.rpcRows).not.toHaveBeenCalledWith('lookup_boundary_bodies', expect.anything())
+    expect(mocks.signBodiesToken).toHaveBeenCalled()
   })
 
   it('uses the final-payload cache wrapper without exposing the raw address in its key', async () => {
