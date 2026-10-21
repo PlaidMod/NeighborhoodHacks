@@ -33,10 +33,31 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-21: Lookup fix, part 1: never fails on governments we don't track; Census fallback
+- **Who:** PlaidMod · P5 Platform (changes to P1's lookup, decided by PlaidMod)
+- **Branch:** main
+- **What changed:** Fixes problems 1 and 3–7 from the review entry below.
+  - **Unknown governments:** HCAD codes with no curated body (043 Hospital District, 044 Department of Education, ESDs, other ISDs and cities) and Census places or districts outside the catalog no longer fail the lookup. They're listed in a new `uncovered` array by official name, typed for the quiz, and are never put in the token.
+    - Names come from HCAD's public list, in `data/hcad-jurisdictions.json` (708 codes, names only; regenerate with `npx tsx scripts/fetch-hcad-jurisdictions.ts`).
+    - The helpers are in `lib/lookup/uncovered.ts`.
+  - **No HCAD parcel loaded:** the lookup falls back to the Census answer (city, school district, college district, and the countywide governments), sets `match: 'census'`, and puts every listed body in the token so the dashboard works. `/results` labels these "From the Census, not yet confirmed" and explains why.
+  - **Several accounts at one address** (condos) are accepted when their tax codes match.
+  - CenterPoint is listed once.
+  - **The quiz:** `/api/quiz` also counts `uncovered_types`, which `BodyQuiz` now sends.
+- **Files:** `app/api/lookup/route.ts`, `lib/contracts/lookup.ts`, `lib/lookup/uncovered.ts`, `data/hcad-jurisdictions.json`, `scripts/fetch-hcad-jurisdictions.ts`, `app/(public)/results/page.tsx`, `app/api/quiz/route.ts`, `components/flow/BodyQuiz.tsx`, `messages/{en,es}.json` (`Results`), `tests/api/{lookup,quiz}-route.test.ts`, `tests/lookup/uncovered.test.ts`, `tests/platform/lookupState.test.ts`
+- **Contract changes:** `LookupResponse` gains `match: 'hcad' | 'census'` and `uncovered: LookupUncovered[]`. P1's tests that encoded fail-closed behavior now encode PlaidMod's decisions (list instead of fail; Census fallback).
+- **Checked:**
+  - The new tests failed first, then passed. `npm test`: 781 Vitest + 69 P4 pass. Typecheck, lint and build pass.
+  - The built app against the real database (no HCAD data loaded yet):
+    - 901 Bagby St gives `match: census` with 7 bodies, plus the Hospital District and Department of Education as uncovered.
+    - Pasadena City Hall gives the countywide bodies, with Pasadena City Council and Pasadena ISD listed as uncovered.
+  - In the browser, `/results` (Spanish, 390 px) shows the Census note, the "other governments" list and one CenterPoint, with no sideways scroll. The quiz wasn't submitted, to keep test rows out of `quiz_responses`.
+- **Open issues / next:** Part 2 loads HCAD data for 10 ZIPs (77002, 77003, 77004, 77006, 77007, 77008, 77019, 77021, 77098, 77433) through a GitHub Actions run, so the big files never touch a laptop. `load:hcad` still refuses unknown codes and needs the same change. Production stays pinned to `showup-kljzsrb88` until the lookup is verified with real data.
+
 ### 2026-10-21: Review of P1's new lookup: problems not in P1's notes
 - **Who:** PlaidMod · P5 Platform (review of `e26b379`, `app/api/lookup/route.ts` and `lib/lookup/`)
 - **Branch:** main
-- **What changed:** Docs only. These problems are on top of the open items P1 already listed (credentials, data loading, demo addresses, the unmapped-code decision). PlaidMod asked P5 to fix them next, one milestone at a time.
+- **What changed:** Docs only. These problems are on top of the open items P1 already listed (credentials, data loading, demo addresses, the unmapped-code decision). PlaidMod (P5) is fixing these next, so P1 doesn't need to.
 - **Files:** `agent_handoff.md`
 - **Contract changes:** None yet.
 - **Checked:** Static review. HCAD's official code list was checked at `public.hcad.org/resources/jurlist.asp` on Oct 21. A local run against the real database returned 500 for 901 Bagby St (no HCAD data loaded).

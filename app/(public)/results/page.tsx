@@ -47,23 +47,45 @@ export default function ResultsPage() {
         {state.status === 'done' && (
           <>
             <p className="mt-3 text-lg text-muted-foreground">{t('lede')}</p>
+            {state.data.match === 'census' && (
+              <p className="mt-4 rounded-2xl bg-surface p-4 text-sm text-ink">{t('censusNote')}</p>
+            )}
             <section className="mt-8" aria-labelledby="matched-bodies">
               <h2 id="matched-bodies" className="text-lg font-extrabold text-ink">{t('bodies')}</h2>
               <ul className="mt-3 grid gap-3">
-                {state.data.bodies.map((b) => (
-                  <li key={b.id} className="flex items-center gap-4 rounded-[24px] bg-white p-4 ring-1 ring-border">
-                    <BodyIcon type={b.type ?? 'other'} id={b.id} />
-                    <div className="min-w-0 flex-1">
-                      <p className="font-bold text-ink">{b.name}</p>
-                      <p className={`mt-1 text-xs ${b.verified ? 'text-emerald-700' : 'text-amber-800'}`}>
-                        {b.verified ? t('verified') : t('unverified')}
-                      </p>
-                    </div>
-                    {b.verified && <Link href={`/bodies/${encodeURIComponent(b.id)}?t=${encodeURIComponent(state.data.bodies_token)}`} className="text-sm font-bold text-primary underline underline-offset-4">{t('details')}</Link>}
-                  </li>
-                ))}
+                {state.data.bodies.map((b) => {
+                  // With the Census fallback, every listed body is in the token, so its details page works.
+                  const inToken = b.verified || state.data.match === 'census'
+                  return (
+                    <li key={b.id} className="flex items-center gap-4 rounded-[24px] bg-white p-4 ring-1 ring-border">
+                      <BodyIcon type={b.type ?? 'other'} id={b.id} />
+                      <div className="min-w-0 flex-1">
+                        <p className="font-bold text-ink">{b.name}</p>
+                        <p className={`mt-1 text-xs ${b.verified ? 'text-emerald-700' : 'text-amber-800'}`}>
+                          {b.verified ? t('verified') : state.data.match === 'census' ? t('fromCensus') : t('unverified')}
+                        </p>
+                      </div>
+                      {inToken && <Link href={`/bodies/${encodeURIComponent(b.id)}?t=${encodeURIComponent(state.data.bodies_token)}`} className="text-sm font-bold text-primary underline underline-offset-4">{t('details')}</Link>}
+                    </li>
+                  )
+                })}
               </ul>
             </section>
+
+            {(state.data.uncovered ?? []).length > 0 && (
+              <section className="mt-8" aria-labelledby="uncovered-bodies">
+                <h2 id="uncovered-bodies" className="text-lg font-extrabold text-ink">{t('uncovered')}</h2>
+                <p className="mt-1 text-sm text-muted-foreground">{t('uncoveredNote')}</p>
+                <ul className="mt-3 grid gap-3">
+                  {state.data.uncovered.map((u) => (
+                    <li key={u.key} className="flex items-center gap-4 rounded-[24px] bg-white p-4 ring-1 ring-border">
+                      <BodyIcon type={u.type} id={u.key} />
+                      <span className="font-bold text-ink">{u.name}</span>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            )}
 
             {state.data.ballot.length > 0 && (
               <section className="mt-8" aria-labelledby="ballot-items">

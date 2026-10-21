@@ -17,6 +17,8 @@ export async function POST(request: Request) {
     bodies_token?: unknown
     selected_types?: unknown
     unsure?: unknown
+    /** Types of the governments the lookup listed but doesn't track (LookupResponse.uncovered). */
+    uncovered_types?: unknown
   } | null
   if (
     !Array.isArray(input?.selected_types) ||
@@ -43,7 +45,10 @@ export async function POST(request: Request) {
 
     const { data, error } = await db().from('bodies').select('id,type').in('id', ids)
     if (error) return failures.unavailable()
-    const actualTypes = [...new Set((data ?? []).map((row) => row.type).filter(isQuizBodyType))]
+    // Untracked governments (an ESD, another city's council) have no catalog row, so they can't be in
+    // the signed token. The lookup sends their types alongside it; only valid quiz types count.
+    const uncoveredTypes = Array.isArray(input.uncovered_types) ? input.uncovered_types.filter(isQuizBodyType) : []
+    const actualTypes = [...new Set([...(data ?? []).map((row) => row.type).filter(isQuizBodyType), ...uncoveredTypes])]
     const selected = input.selected_types as QuizBodyType[]
     const score = scoreBodyQuiz(selected, actualTypes, input.unsure === true)
 

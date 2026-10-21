@@ -42,7 +42,12 @@ export function BodyQuiz() {
       const response = await fetch('/api/quiz', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ bodies_token: lookupData.bodies_token, selected_types: selected, unsure }),
+        body: JSON.stringify({
+          bodies_token: lookupData.bodies_token,
+          selected_types: selected,
+          unsure,
+          uncovered_types: (lookupData.uncovered ?? []).map((item) => item.type),
+        }),
       })
       const payload = await response.json()
       if (!response.ok) throw new Error('quiz request failed')

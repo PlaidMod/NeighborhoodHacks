@@ -43,10 +43,28 @@ export type LookupHoa = {
   status: 'needs_confirmation'
 }
 
+/** A government on this address that ShowUp doesn't track yet, listed by its official name. Never in bodies_token. */
+export type LookupUncovered = {
+  /** Stable list key, e.g. "hcad:043" or "census:katy_isd_board". */
+  key: string
+  name: string
+  /** Best-fit type, so the "Who governs you?" quiz still counts it ("other" when unsure). */
+  type: BodyType
+  source_kind: 'hcad' | 'census'
+}
+
 export type LookupResponse = {
   /** Signed list of body IDs (lib/tokens.ts). No address or coordinates. */
   bodies_token: string
+  /**
+   * "hcad": the address matched an HCAD parcel, and bodies are confirmed from its tax codes.
+   * "census": no HCAD parcel is loaded for this address, so bodies come from the Census answer
+   * and aren't confirmed (MUDs and other districts can't be known this way).
+   */
+  match: 'hcad' | 'census'
   bodies: LookupBody[]
+  /** Governments on this address that ShowUp doesn't track yet. */
+  uncovered: LookupUncovered[]
   ballot: LookupBallotOffice[]
   not_government: LookupBody[]
   regional: LookupBody[]

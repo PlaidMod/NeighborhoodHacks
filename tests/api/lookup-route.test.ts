@@ -118,6 +118,18 @@ const catalog = [
   { id: 'houston_city_council', name: 'Houston City Council', type: 'city_council', category: 'tracked', elected_or_appointed: null, description_en: null, meeting_info_url: null, impact_rank: 3, operator_name: null },
 ]
 
+const countywideCatalog = ['commissioners_court', 'flood_control', 'port_houston', 'hisd_board', 'hcc_board'].map((id, i) => ({
+  id,
+  name: id,
+  type: { commissioners_court: 'commissioners_court', flood_control: 'flood_control', port_houston: 'port', hisd_board: 'school_board', hcc_board: 'college_board' }[id]!,
+  category: 'tracked',
+  elected_or_appointed: null,
+  description_en: null,
+  meeting_info_url: null,
+  impact_rank: 10 + i,
+  operator_name: null,
+}))
+
 function setupMatchedLookup() {
   mocks.censusResult = matchedCensus()
   mocks.parcelRows = [parcel()]
@@ -183,15 +195,24 @@ describe('POST /api/lookup', () => {
     expect(serialized).not.toContain('123 Main St')
   })
 
-  it('rejects ambiguous parcel matches rather than choosing the first result', async () => {
+  it('rejects parcels at one address whose tax codes differ, rather than choosing the first result', async () => {
     mocks.censusResult = matchedCensus()
     mocks.geocodeCensus.mockResolvedValueOnce(mocks.censusResult as never)
-    mocks.parcelRows = [parcel(), parcel({ account: 'SECOND-PRIVATE-ACCOUNT' })]
+    mocks.parcelRows = [parcel(), parcel({ account: 'SECOND-PRIVATE-ACCOUNT', jurisdiction_codes: ['001'] })]
     const response = await POST(request())
     expect(response.status).toBe(404)
     expect(mocks.rpcRows).toHaveBeenCalledWith('lookup_hcad_parcel', expect.any(Object))
     expect(mocks.rpcRows).toHaveBeenCalledWith('lookup_hcad_parcel', { p_site_address_norm: '123 MAIN ST' })
     expect(mocks.signBodiesToken).not.toHaveBeenCalled()
+  })
+
+  it('accepts several parcels at one address (condos, townhomes) when their tax codes match', async () => {
+    setupMatchedLookup()
+    mocks.geocodeCensus.mockResolvedValueOnce(mocks.censusResult as never)
+    mocks.parcelRows = [parcel(), parcel({ account: 'SECOND-PRIVATE-ACCOUNT', jurisdiction_codes: ['189'] })]
+    const response = await POST(request())
+    expect(response.status).toBe(200)
+    expect((await response.json()).match).toBe('hcad')
   })
 
   it('does not query HCAD with a street suggestion unrelated to the Census-matched candidate', async () => {
@@ -205,7 +226,7 @@ describe('POST /api/lookup', () => {
       .mockResolvedValueOnce(matchedCensus({ matchedAddress: '123 MAIN ST, HOUSTON, TX, 77004' }) as never)
     mocks.parcelRows = [parcel()]
     mocks.gisRows = [{ body_id: 'houston_city_council' }]
-    mocks.tableRows = { jurisdiction_map: [{ body_id: 'hcmud_489' }], bodies: catalog, tax_rates: [], ballot_offices: [] }
+    mocks.tableRows = { jurisdiction_map: [{ hcad_code: '189', body_id: 'hcmud_489' }], bodies: catalog, tax_rates: [], ballot_offices: [] }
     await POST(request())
     const parcelArgs = mocks.rpcRows.mock.calls
       .filter(([name]) => name === 'lookup_hcad_parcel')
@@ -214,28 +235,75 @@ describe('POST /api/lookup', () => {
     expect(parcelArgs.every((args) => !args.p_site_address_norm.includes('UNRELATED'))).toBe(true)
   })
 
-  it('returns not found for zero parcel matches', async () => {
-    mocks.censusResult = matchedCensus()
+  it('falls back to the Census answer when no HCAD parcel is loaded for the address', async () => {
+    mocks.censusResult = matchedCensus({ place: 'Houston city', schoolDistrict: 'Houston Independent School District' })
     mocks.geocodeCensus.mockResolvedValueOnce(mocks.censusResult as never)
+    mocks.tableRows = { jurisdiction_map: [], bodies: [...catalog, ...countywideCatalog], tax_rates: [], ballot_offices: [] }
+    const response = await POST(request())
+    expect(response.status).toBe(200)
+    const body = await response.json()
+    expect(body.match).toBe('census')
+    const ids = body.bodies.map((b: { id: string }) => b.id).sort()
+    expect(ids).toEqual(['commissioners_court', 'flood_control', 'hcad', 'hcc_board', 'hisd_board', 'houston_city_council', 'port_houston'])
+    expect(body.bodies.every((b: { verified: boolean; source_kind: string }) => !b.verified && b.source_kind === 'census')).toBe(true)
+    // The dashboard still works: every listed body goes into the token.
+    expect([...(mocks.signBodiesToken.mock.calls[0] as unknown as [string[]])[0]].sort()).toEqual(ids)
+    // The countywide Hospital District and Department of Education are listed, not tracked.
+    expect(body.uncovered.map((u: { key: string; type: string }) => [u.key, u.type])).toEqual([['hcad:043', 'other'], ['hcad:044', 'other']])
+  })
+
+  it('returns not found when neither the Census nor HCAD knows the address', async () => {
+    mocks.geocodeCensus.mockResolvedValueOnce(null as never)
     const response = await POST(request())
     expect(response.status).toBe(404)
     expect(mocks.rpcRows).toHaveBeenCalledWith('lookup_hcad_parcel', expect.any(Object))
+    expect(mocks.signBodiesToken).not.toHaveBeenCalled()
   })
 
-  it('fails closed when an HCAD jurisdiction code is unmapped or its body is missing', async () => {
+  it('lists unmapped HCAD codes and mapped codes without a catalog body as uncovered, instead of failing', async () => {
     setupMatchedLookup()
     mocks.geocodeCensus.mockResolvedValueOnce(mocks.censusResult as never)
-    mocks.parcelRows = [parcel({ jurisdiction_codes: ['189', '999'] })]
+    mocks.parcelRows = [parcel({ jurisdiction_codes: ['189', '043', '633'] })]
     const unmapped = await POST(request())
-    expect(unmapped.status).toBe(500)
-    expect(mocks.signBodiesToken).not.toHaveBeenCalled()
+    expect(unmapped.status).toBe(200)
+    const body = await unmapped.json()
+    expect(body.match).toBe('hcad')
+    expect(body.bodies.map((b: { id: string }) => b.id)).toContain('hcmud_489')
+    expect(body.uncovered).toEqual([
+      { key: 'hcad:043', name: 'Harris County Hospital District', type: 'other', source_kind: 'hcad' },
+      { key: 'hcad:633', name: 'Harris County Emergency Services District 9', type: 'esd', source_kind: 'hcad' },
+    ])
+    expect(mocks.signBodiesToken).toHaveBeenCalledWith(['hcad', 'hcmud_489', 'houston_city_council'])
 
     setupMatchedLookup()
-    mocks.tableRows.bodies = catalog.filter((body) => body.id !== 'hcmud_489')
+    mocks.signBodiesToken.mockClear()
+    mocks.tableRows.bodies = catalog.filter((b) => b.id !== 'hcmud_489')
     mocks.geocodeCensus.mockResolvedValueOnce(mocks.censusResult as never)
     const missingBody = await POST(request())
-    expect(missingBody.status).toBe(500)
-    expect(mocks.signBodiesToken).not.toHaveBeenCalled()
+    expect(missingBody.status).toBe(200)
+    expect((await missingBody.json()).uncovered).toEqual([{ key: 'hcad:189', name: 'Harris County MUD 489', type: 'mud', source_kind: 'hcad' }])
+    expect(mocks.signBodiesToken).toHaveBeenCalledWith(['hcad', 'houston_city_council'])
+  })
+
+  it('lists a Census city or school district outside the catalog as uncovered, instead of a 500', async () => {
+    setupMatchedLookup()
+    mocks.censusResult = matchedCensus({ place: 'Pasadena city', schoolDistrict: 'Pasadena Independent School District' })
+    mocks.geocodeCensus.mockResolvedValueOnce(mocks.censusResult as never)
+    const response = await POST(request())
+    expect(response.status).toBe(200)
+    const body = await response.json()
+    expect(body.uncovered.map((u: { key: string; type: string; source_kind: string }) => [u.key, u.type, u.source_kind])).toEqual([
+      ['census:pasadena_city_council', 'city_council', 'census'],
+      ['census:pasadena_isd_board', 'school_board', 'census'],
+    ])
+  })
+
+  it('lists CenterPoint once even when the catalog also has it', async () => {
+    setupMatchedLookup()
+    mocks.tableRows.bodies = [...catalog, { id: 'centerpoint', name: 'CenterPoint Energy', type: 'other', category: 'not_government', elected_or_appointed: null, description_en: null, meeting_info_url: null, impact_rank: 99, operator_name: null }]
+    mocks.geocodeCensus.mockResolvedValueOnce(mocks.censusResult as never)
+    const body = await (await POST(request())).json()
+    expect(body.not_government.filter((b: { id: string }) => b.id === 'centerpoint')).toHaveLength(1)
   })
 
   it('returns a generic server error on PostGIS RPC or body-catalog failure without signing a token', async () => {
@@ -261,7 +329,7 @@ describe('POST /api/lookup', () => {
     mocks.geocodeCensus.mockRejectedValueOnce(new mocks.CensusUnavailableError())
     mocks.parcelRows = [parcel()]
     mocks.gisRows = [{ body_id: 'houston_city_council' }]
-    mocks.tableRows = { jurisdiction_map: [{ body_id: 'hcmud_489' }], bodies: catalog, tax_rates: [], ballot_offices: [] }
+    mocks.tableRows = { jurisdiction_map: [{ hcad_code: '189', body_id: 'hcmud_489' }], bodies: catalog, tax_rates: [], ballot_offices: [] }
     const fallback = await POST(request())
     expect(fallback.status).toBe(200)
     expect(mocks.rpcRows).toHaveBeenCalledWith('lookup_boundary_bodies', { p_longitude: -95.37, p_latitude: 29.73 })

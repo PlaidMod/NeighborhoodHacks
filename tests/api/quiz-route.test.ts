@@ -45,6 +45,14 @@ describe('POST /api/quiz', () => {
     expect(state.saved).toEqual([{ selected_types: ['hoa', 'school_board'], actual_types: ['school_board'] }])
   })
 
+  it('also counts the types of governments the lookup listed but does not track, ignoring invalid values', async () => {
+    const token = signBodiesToken(['hisd_board'], secret)
+    const response = await post({ bodies_token: token, selected_types: ['school_board'], uncovered_types: ['esd', 'mud', 'esd', 'not_a_type', 7] })
+    expect(response.status).toBe(200)
+    expect(await response.json()).toMatchObject({ actual_types: ['school_board', 'esd', 'mud'], missed_types: ['esd', 'mud'] })
+    expect(state.saved).toEqual([{ selected_types: ['school_board'], actual_types: ['school_board', 'esd', 'mud'] }])
+  })
+
   it('skips writes in demo mode and accepts an explicit unsure answer', async () => {
     vi.stubEnv('DEMO_MODE', 'true')
     const token = signBodiesToken(['hisd_board'], secret)

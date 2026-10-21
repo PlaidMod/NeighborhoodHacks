@@ -9,6 +9,7 @@ import { normalizeHcadAddress, parcelAddressCandidates } from '@/lib/lookup/norm
 import { mergeLookupBodies, type BodyCatalogRow, type TaxRateRow } from '@/lib/lookup/merge'
 import { subdivisionFromLegalDescription } from '@/lib/lookup/hoa'
 import { bodiesFromCensus } from '@/lib/lookup/standIn'
+import { COUNTYWIDE_UNCOVERED_CODES, uncoveredFromHcadCode } from '@/lib/lookup/uncovered'
 import { RATE_LIMITS, checkRateLimit, clientIp, hashIp } from '@/lib/rateLimit'
 import { signBodiesToken } from '@/lib/tokens'
 
@@ -58,16 +59,27 @@ async function matchCensus(addresses: readonly string[]): Promise<{ match: Censu
   return null
 }
 
+const codeSet = (row: ParcelRow) => [...new Set(row.jurisdiction_codes ?? [])].sort().join(',')
+
 async function matchParcel(addresses: readonly string[]): Promise<ParcelRow | null> {
   for (const address of addresses) {
     const normalized = normalizeHcadAddress(address)
     if (!normalized) continue
     const found = await rpcRows<ParcelRow>('lookup_hcad_parcel', { p_site_address_norm: normalized })
-    if (found.length > 1) throw new LookupFailure('not_found', 'We could not match that address to one parcel.')
+    // Condos and townhomes share one street address across several accounts. Their governments are
+    // the same when their tax codes are, so any one of them answers the question.
+    if (found.length > 1 && found.some((row) => codeSet(row) !== codeSet(found[0]!))) {
+      throw new LookupFailure('not_found', 'We could not match that address to one parcel.')
+    }
     if (found[0]) return found[0]
   }
   return null
 }
+
+/** Every Harris County address is in these (the Census fallback lists them without an HCAD record). */
+const COUNTYWIDE_BODY_IDS = ['commissioners_court', 'flood_control', 'port_houston', 'hcad']
+
+const CATALOG_COLUMNS = 'id,name,type,category,elected_or_appointed,description_en,meeting_info_url,impact_rank,operator_name'
 
 function ancillaryBody(body: {
   id: string
@@ -119,41 +131,36 @@ async function buildPayload(address: string): Promise<LookupPayload> {
     if (censusUnavailable) throw new LookupFailure('server_error', 'The address service is temporarily unavailable. Try again.')
     throw new LookupFailure('not_found', 'We could not find that address in Harris County.')
   }
-  if (!parcel) throw new LookupFailure('not_found', 'We could not match that address to a Harris County parcel.')
+  // Without a loaded HCAD parcel, the Census answer (city, school and college district, and the
+  // countywide governments) stands in. Those bodies are labeled as not confirmed.
+  const match: LookupPayload['match'] = parcel ? 'hcad' : 'census'
 
-  const longitude = census?.coordinates?.longitude ?? parcel.longitude
-  const latitude = census?.coordinates?.latitude ?? parcel.latitude
-  if (longitude === null || latitude === null || !Number.isFinite(longitude) || !Number.isFinite(latitude)) {
-    throw new LookupFailure('not_found', 'We could not resolve a location for that parcel.')
-  }
+  const longitude = census?.coordinates?.longitude ?? parcel?.longitude ?? null
+  const latitude = census?.coordinates?.latitude ?? parcel?.latitude ?? null
+  const hasPoint = longitude !== null && latitude !== null && Number.isFinite(longitude) && Number.isFinite(latitude)
+  if (parcel && !hasPoint) throw new LookupFailure('not_found', 'We could not resolve a location for that parcel.')
 
-  const gisRows = await rpcRows<{ body_id: string }>('lookup_boundary_bodies', {
-    p_longitude: longitude,
-    p_latitude: latitude,
-  })
-  const codes = [...new Set(parcel.jurisdiction_codes ?? [])]
+  const gisRows = hasPoint
+    ? await rpcRows<{ body_id: string }>('lookup_boundary_bodies', { p_longitude: longitude, p_latitude: latitude })
+    : []
+  const codes = parcel ? [...new Set(parcel.jurisdiction_codes ?? [])].sort() : []
   const mappings = codes.length
-    ? await selectRows<{ body_id: string }>('jurisdiction_map', 'body_id', (query) => query.in('hcad_code', codes))
+    ? await selectRows<{ hcad_code: string; body_id: string }>('jurisdiction_map', 'hcad_code,body_id', (query) => query.in('hcad_code', codes))
     : []
-  if (codes.length && mappings.length !== codes.length) {
-    throw new LookupFailure('server_error', 'Some local taxing jurisdictions are not configured yet. Try again later.')
-  }
+  const bodyForCode = new Map(mappings.filter((row) => codes.includes(row.hcad_code)).map((row) => [row.hcad_code, row.body_id]))
   // HCAD appraises property countywide and is not normally a parcel tax code.
-  const hcadIds = [...new Set(['hcad', ...mappings.map((row) => row.body_id)])]
+  const hcadIds = parcel ? [...new Set(['hcad', ...bodyForCode.values()])] : []
   const gisIds = [...new Set(gisRows.map((row) => row.body_id))]
-  const censusIds = census
-    ? bodiesFromCensus(census)
-        .filter((body) => body.type === 'city_council' || body.type === 'school_board' || body.type === 'college_board')
-        .map((body) => body.id)
+  const censusBodies = census
+    ? bodiesFromCensus(census).filter(
+        (body) => match === 'census' || body.type === 'city_council' || body.type === 'school_board' || body.type === 'college_board',
+      )
     : []
+  const censusIds = [...new Set([...censusBodies.map((body) => body.id), ...(match === 'census' ? COUNTYWIDE_BODY_IDS : [])])]
   const resolvedIds = [...new Set([...hcadIds, ...gisIds, ...censusIds])]
   const [catalog, rates, ballotRows, regionalRows, notGovernmentRows] = await Promise.all([
     resolvedIds.length
-      ? selectRows<BodyCatalogRow>(
-          'bodies',
-          'id,name,type,category,elected_or_appointed,description_en,meeting_info_url,impact_rank,operator_name',
-          (query) => query.in('id', resolvedIds),
-        )
+      ? selectRows<BodyCatalogRow>('bodies', CATALOG_COLUMNS, (query) => query.in('id', resolvedIds))
       : Promise.resolve([] as BodyCatalogRow[]),
     resolvedIds.length
       ? selectRows<TaxRateRow>(
@@ -169,28 +176,45 @@ async function buildPayload(address: string): Promise<LookupPayload> {
           (query) => query.in('body_id', resolvedIds).order('next_election_date'),
         )
       : Promise.resolve([] as BallotRow[]),
-    selectRows<BodyCatalogRow>(
-      'bodies',
-      'id,name,type,category,elected_or_appointed,description_en,meeting_info_url,impact_rank,operator_name',
-      (query) => query.eq('category', 'regional_coming_soon').order('impact_rank'),
-    ),
-    selectRows<BodyCatalogRow>(
-      'bodies',
-      'id,name,type,category,elected_or_appointed,description_en,meeting_info_url,impact_rank,operator_name',
-      (query) => query.eq('category', 'not_government').order('impact_rank'),
-    ),
+    selectRows<BodyCatalogRow>('bodies', CATALOG_COLUMNS, (query) => query.eq('category', 'regional_coming_soon').order('impact_rank')),
+    selectRows<BodyCatalogRow>('bodies', CATALOG_COLUMNS, (query) => query.eq('category', 'not_government').order('impact_rank')),
   ])
-
   const catalogIds = new Set(catalog.map((body) => body.id))
-  if (resolvedIds.some((id) => !catalogIds.has(id))) {
-    throw new LookupFailure('server_error', 'Some local governing bodies are not configured yet. Try again later.')
+
+  // Governments we don't track yet are listed by their official name instead of failing the lookup.
+  const uncovered: LookupPayload['uncovered'] = []
+  for (const code of codes) {
+    const bodyId = bodyForCode.get(code)
+    if (!bodyId || !catalogIds.has(bodyId)) uncovered.push(uncoveredFromHcadCode(code))
+  }
+  if (match === 'census') {
+    for (const code of COUNTYWIDE_UNCOVERED_CODES) uncovered.push({ ...uncoveredFromHcadCode(code), source_kind: 'census' })
+  }
+  const knownTypes = new Set([
+    ...uncovered.map((item) => item.type),
+    ...catalog.filter((body) => hcadIds.includes(body.id)).map((body) => body.type),
+  ])
+  for (const body of censusBodies) {
+    if (catalogIds.has(body.id)) continue
+    // With an HCAD record, its own code for this kind of body wins over the Census hint.
+    if (match === 'hcad' && knownTypes.has(body.type)) continue
+    uncovered.push({ key: `census:${body.id}`, name: body.name, type: body.type ?? 'other', source_kind: 'census' })
   }
 
-  const bodies = mergeLookupBodies({ catalog, hcadIds, gisIds, censusIds, rates })
-  const verifiedIds = bodies.filter((body) => body.verified).map((body) => body.id)
-  if (!verifiedIds.length) throw new LookupFailure('not_found', 'We could not verify local governing bodies for that address yet.')
+  const bodies = mergeLookupBodies({
+    catalog,
+    hcadIds: hcadIds.filter((id) => catalogIds.has(id)),
+    gisIds,
+    censusIds: censusIds.filter((id) => catalogIds.has(id)),
+    rates,
+  })
+  if (!bodies.length) throw new LookupFailure('not_found', 'We could not find local governments for that address yet.')
+  // With HCAD, only confirmed bodies go into the token. With the Census fallback, every listed body
+  // does, so the dashboard and weekly news still work; the page labels them as not confirmed.
+  const tokenIds = match === 'hcad' ? bodies.filter((body) => body.verified).map((body) => body.id) : bodies.map((body) => body.id)
+  if (!tokenIds.length) throw new LookupFailure('not_found', 'We could not verify local governing bodies for that address yet.')
 
-  const subdivision = subdivisionFromLegalDescription(parcel.legal_description)
+  const subdivision = subdivisionFromLegalDescription(parcel?.legal_description ?? null)
   let hoa: LookupPayload['hoa'] = null
   if (subdivision) {
     const candidates = await rpcRows<HoaCandidate>('lookup_hoa_candidates', { p_subdivision: subdivision })
@@ -208,28 +232,33 @@ async function buildPayload(address: string): Promise<LookupPayload> {
     }
   }
 
-  const centerpoint = ancillaryBody({ id: 'centerpoint', name: 'CenterPoint Energy', type: 'other', category: 'not_government' })
-  const notGovernment = [
-    centerpoint,
-    ...notGovernmentRows.map((body) => ancillaryBody({
+  // The catalog's own row wins; the built-in CenterPoint entry only covers an unseeded catalog.
+  const notGovernment: LookupBody[] = []
+  const addNotGovernment = (body: LookupBody) => {
+    if (!notGovernment.some((item) => item.id === body.id)) notGovernment.push(body)
+  }
+  for (const body of notGovernmentRows) {
+    addNotGovernment(ancillaryBody({
       id: body.id,
       name: body.name,
       type: body.type === 'other' ? 'other' : null,
       category: 'not_government',
       description: body.description_en,
       meetingInfoUrl: body.meeting_info_url,
-    })),
-  ]
+    }))
+  }
+  addNotGovernment(ancillaryBody({ id: 'centerpoint', name: 'CenterPoint Energy', type: 'other', category: 'not_government' }))
   for (const body of catalog) {
     if (!body.operator_name) continue
     const id = `operator_${body.operator_name.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '').slice(0, 40)}`
-    if (notGovernment.some((item) => item.id === id)) continue
-    notGovernment.push(ancillaryBody({ id, name: body.operator_name, type: 'other', category: 'not_government' }))
+    addNotGovernment(ancillaryBody({ id, name: body.operator_name, type: 'other', category: 'not_government' }))
   }
 
   return {
+    match,
     bodies,
-    ballot: ballotRows.filter((office) => office.body_id && verifiedIds.includes(office.body_id)),
+    uncovered,
+    ballot: ballotRows.filter((office) => office.body_id && tokenIds.includes(office.body_id)),
     not_government: notGovernment,
     regional: regionalRows.map((body) => ancillaryBody({
       id: body.id,
@@ -265,11 +294,13 @@ export async function POST(req: Request) {
       cacheKey,
       () => buildPayload(checked.value),
     )
-    const ids = payload.bodies.filter((body) => body.verified).map((body) => body.id)
+    // Older cached payloads have no `match` field; treat them as HCAD matches.
+    const match = payload.match ?? 'hcad'
+    const ids = match === 'hcad' ? payload.bodies.filter((body) => body.verified).map((body) => body.id) : payload.bodies.map((body) => body.id)
     const token = signBodiesToken(ids)
-    const response: LookupResponse = { bodies_token: token, ...payload }
+    const response: LookupResponse = { bodies_token: token, ...payload, match, uncovered: payload.uncovered ?? [] }
     return Response.json(response, {
-      headers: { 'Cache-Control': 'no-store', 'X-Lookup': 'census+hcad+gis' },
+      headers: { 'Cache-Control': 'no-store', 'X-Lookup': match },
     })
   } catch (cause) {
     if (cause instanceof LookupFailure) return error(cause.code, cause.message)

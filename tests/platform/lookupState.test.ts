@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import type { LookupResponse } from '@/lib/contracts/lookup'
 import { INITIAL_LOOKUP_STATE, lookupReducer } from '@/lib/flow/lookupState'
 
-const DATA: LookupResponse = { bodies_token: 't', bodies: [], ballot: [], not_government: [], regional: [], hoa: null }
+const DATA: LookupResponse = { bodies_token: 't', match: 'hcad', bodies: [], uncovered: [], ballot: [], not_government: [], regional: [], hoa: null }
 
 describe('lookupReducer', () => {
   it('idle → loading → done', () => {
