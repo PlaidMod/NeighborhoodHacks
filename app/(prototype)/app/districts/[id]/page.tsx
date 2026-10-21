@@ -72,7 +72,7 @@ export default function BodyPage() {
         <p className="relative mt-3 max-w-2xl text-[1.05rem] text-white/75">{b.tagline}</p>
         <div className="relative mt-8 grid max-w-3xl gap-3 sm:grid-cols-3">
           <Fact label="Members" value={b.seats} />
-          <Fact label="Tax on a $300K home" value={b.taxRate ? `${money(b.taxRate * 3000)}/yr` : "No separate tax"} />
+          <Fact label="Tax estimate on a $250K home" value={b.taxRate ? `${money(b.taxRate * 2500)}/yr` : "Rate not loaded"} />
           <Fact label="Next on the calendar" value={upcoming[0] ? relDay(upcoming[0].date) : "Nothing posted"} />
         </div>
       </section>

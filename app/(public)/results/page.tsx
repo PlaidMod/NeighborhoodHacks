@@ -4,19 +4,9 @@ import { Loader2 } from 'lucide-react'
 import Link from 'next/link'
 import { useTranslations } from 'next-intl'
 import { BodyIcon } from '@/components/civic'
+import { BodyQuiz } from '@/components/flow/BodyQuiz'
 import { useLookup } from '@/components/flow/LookupProvider'
 import { Button } from '@/components/ui/button'
-import type { BodyType } from '@/lib/contracts/bodyTypes'
-
-// TEMPORARY results screen. P1 owns /results (the "Who governs you?" question, the four
-// result sections, body pages). This lists what the stand-in lookup found so the flow
-// from the address box through the stake picker doesn't end in a 404 and the P3 pages can
-// be reached with the reader's governments. P1 replaces this file.
-
-type Row = { id: string; name: string; type: BodyType }
-
-const rows = (list: unknown[]): Row[] =>
-  list.filter((b): b is Row => typeof b === 'object' && b !== null && typeof (b as Row).id === 'string' && typeof (b as Row).name === 'string')
 
 export default function ResultsPage() {
   const t = useTranslations('Results')
@@ -57,21 +47,67 @@ export default function ResultsPage() {
         {state.status === 'done' && (
           <>
             <p className="mt-3 text-lg text-muted-foreground">{t('lede')}</p>
-            <ul className="mt-8 grid gap-3">
-              {rows(state.data.bodies).map((b) => (
-                <li key={b.id} className="flex items-center gap-4 rounded-[24px] bg-white p-4 ring-1 ring-border">
-                  <BodyIcon type={b.type} id={b.id} />
-                  <span className="font-bold text-ink">{b.name}</span>
-                </li>
-              ))}
-            </ul>
-            {rows(state.data.not_government).length > 0 && (
+            <section className="mt-8" aria-labelledby="matched-bodies">
+              <h2 id="matched-bodies" className="text-lg font-extrabold text-ink">{t('bodies')}</h2>
+              <ul className="mt-3 grid gap-3">
+                {state.data.bodies.map((b) => (
+                  <li key={b.id} className="flex items-center gap-4 rounded-[24px] bg-white p-4 ring-1 ring-border">
+                    <BodyIcon type={b.type ?? 'other'} id={b.id} />
+                    <div className="min-w-0 flex-1">
+                      <p className="font-bold text-ink">{b.name}</p>
+                      <p className={`mt-1 text-xs ${b.verified ? 'text-emerald-700' : 'text-amber-800'}`}>
+                        {b.verified ? t('verified') : t('unverified')}
+                      </p>
+                    </div>
+                    {b.verified && <Link href={`/bodies/${encodeURIComponent(b.id)}?t=${encodeURIComponent(state.data.bodies_token)}`} className="text-sm font-bold text-primary underline underline-offset-4">{t('details')}</Link>}
+                  </li>
+                ))}
+              </ul>
+            </section>
+
+            {state.data.ballot.length > 0 && (
+              <section className="mt-8" aria-labelledby="ballot-items">
+                <h2 id="ballot-items" className="text-lg font-extrabold text-ink">{t('ballot')}</h2>
+                <ul className="mt-3 grid gap-3">
+                  {state.data.ballot.map((item) => (
+                    <li key={item.id} className="rounded-2xl bg-white p-4 ring-1 ring-border">
+                      <p className="font-bold text-ink">{item.office_name ?? t('unknownOffice')}</p>
+                      <p className="mt-1 text-sm text-muted-foreground">{item.body_id ? state.data.bodies.find((b) => b.id === item.body_id)?.name : null}</p>
+                      {item.source_url && <a className="mt-2 inline-block text-sm font-semibold text-primary underline" href={item.source_url} target="_blank" rel="noreferrer">{t('officialSource')}</a>}
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            )}
+
+            {state.data.regional.length > 0 && (
+              <section className="mt-8" aria-labelledby="regional-bodies">
+                <h2 id="regional-bodies" className="text-lg font-extrabold text-ink">{t('regional')}</h2>
+                <ul className="mt-3 grid gap-3">
+                  {state.data.regional.map((b) => (
+                    <li key={b.id} className="flex items-center gap-4 rounded-[24px] bg-white p-4 ring-1 ring-border">
+                      <BodyIcon type={b.type ?? 'other'} id={b.id} /><span className="font-bold text-ink">{b.name}</span>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            )}
+
+            {state.data.hoa && (
+              <section className="mt-8 rounded-[24px] bg-surface p-5" aria-labelledby="hoa-candidate">
+                <h2 id="hoa-candidate" className="font-extrabold text-ink">{t('hoa')}</h2>
+                <p className="mt-2 text-sm text-muted-foreground">{state.data.hoa.subdivision_name}: {state.data.hoa.association_verified ? t('hoaCandidateVerified') : t('hoaNeedsConfirmation')}</p>
+                {state.data.hoa.source_url && <a className="mt-2 inline-block text-sm font-semibold text-primary underline" href={state.data.hoa.source_url} target="_blank" rel="noreferrer">{t('officialSource')}</a>}
+              </section>
+            )}
+
+            {state.data.not_government.length > 0 && (
               <>
                 <h2 className="mt-8 text-sm font-bold text-muted-foreground">{t('notGovernment')}</h2>
                 <ul className="mt-3 grid gap-3">
-                  {rows(state.data.not_government).map((b) => (
+                  {state.data.not_government.map((b) => (
                     <li key={b.id} className="flex items-center gap-4 rounded-[24px] bg-white p-4 ring-1 ring-border">
-                      <BodyIcon type={b.type} id={b.id} />
+                      <BodyIcon type={b.type ?? 'other'} id={b.id} />
                       <span className="font-bold text-ink">{b.name}</span>
                     </li>
                   ))}
@@ -79,6 +115,7 @@ export default function ResultsPage() {
               </>
             )}
             <p className="mt-6 text-sm text-muted-foreground">{t('limits')}</p>
+            <BodyQuiz />
             <div className="mt-8 flex flex-wrap gap-3">
               <Button asChild size="lg">
                 {/* /app/use remembers the bodies_token (body IDs only) so the dashboard shows these governments.
@@ -90,6 +127,9 @@ export default function ResultsPage() {
               </Button>
               <Button asChild size="lg" variant="outline">
                 <Link href={`/alerts?t=${encodeURIComponent(state.data.bodies_token)}`}>{t('alerts')}</Link>
+              </Button>
+              <Button asChild size="lg" variant="outline">
+                <Link href={`/tax-receipt?t=${encodeURIComponent(state.data.bodies_token)}`}>{t('taxReceipt')}</Link>
               </Button>
             </div>
           </>

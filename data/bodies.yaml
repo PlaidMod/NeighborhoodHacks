@@ -1,0 +1,132 @@
+# Canonical bodies referenced by data/sources.yaml and the P1 lookup contract.
+# No sample tax rates, election results, or address-specific data belong here.
+- id: commissioners_court
+  name: Harris County Commissioners Court
+  type: commissioners_court
+  category: tracked
+  elected_or_appointed: Elected county judge and four commissioners
+  impact_rank: 10
+  sms_eligible: true
+  tax_set_by_body_id: commissioners_court
+  description_en: Governs Harris County services, budgets, roads, courts, and public safety.
+  description_es: Gobierna los servicios, presupuestos, caminos, tribunales y seguridad pública del Condado de Harris.
+  meeting_info_url: https://www.harriscountytx.gov/Government/Court-Agenda
+  source_url: https://www.harriscountytx.gov/Government/Court-Agenda
+- id: flood_control
+  name: Harris County Flood Control District
+  type: flood_control
+  category: tracked
+  elected_or_appointed: Governed by Harris County Commissioners Court
+  impact_rank: 20
+  sms_eligible: true
+  tax_set_by_body_id: commissioners_court
+  description_en: Plans and maintains flood damage reduction projects across Harris County.
+  description_es: Planifica y mantiene proyectos para reducir daños por inundaciones en el Condado de Harris.
+  meeting_info_url: https://www.hcfcd.org/About/Leadership/Commissioners-Court
+  source_url: https://www.hcfcd.org/About/Leadership/Commissioners-Court
+- id: port_houston
+  name: Port of Houston Authority
+  type: port
+  category: tracked
+  elected_or_appointed: Governed by a board appointed by public officials
+  impact_rank: 30
+  sms_eligible: false
+  tax_set_by_body_id: commissioners_court
+  description_en: Oversees public port facilities and supports regional maritime commerce.
+  description_es: Supervisa instalaciones portuarias públicas y apoya el comercio marítimo regional.
+  meeting_info_url: https://porthouston.com/about/leadership/commissioners-court/
+  source_url: https://porthouston.com/about/leadership/commissioners-court/
+- id: houston_city_council
+  name: Houston City Council
+  type: city_council
+  category: tracked
+  elected_or_appointed: Mayor and council members elected by Houston voters
+  impact_rank: 40
+  sms_eligible: true
+  tax_set_by_body_id: houston_city_council
+  description_en: Sets city policy and budgets for services such as streets, public safety, water, and parks.
+  description_es: Establece políticas y presupuestos municipales para calles, seguridad pública, agua y parques.
+  meeting_info_url: https://www.houstontx.gov/citysec/meetings.html
+  source_url: https://www.houstontx.gov/citysec/meetings.html
+- id: hisd_board
+  name: HISD Board of Managers
+  type: school_board
+  category: tracked
+  elected_or_appointed: Appointed managers govern the district while the state intervention is active
+  impact_rank: 50
+  sms_eligible: true
+  tax_set_by_body_id: hisd_board
+  description_en: Governs Houston ISD schools, policies, and district budget.
+  description_es: Gobierna las escuelas, políticas y presupuesto del Distrito Escolar Independiente de Houston.
+  meeting_info_url: https://www.houstonisd.org/board
+  source_url: https://www.houstonisd.org/board
+- id: cfisd_board
+  name: Cypress-Fairbanks ISD Board of Trustees
+  type: school_board
+  category: tracked
+  elected_or_appointed: Trustees elected by voters in the district
+  impact_rank: 60
+  sms_eligible: true
+  tax_set_by_body_id: cfisd_board
+  description_en: Governs Cypress-Fairbanks ISD schools, policies, and district budget.
+  description_es: Gobierna las escuelas, políticas y presupuesto del Distrito Escolar Independiente de Cypress-Fairbanks.
+  meeting_info_url: https://www.cfisd.net/board
+  source_url: https://www.cfisd.net/board
+- id: hcc_board
+  name: Houston City College Board of Trustees
+  type: college_board
+  category: tracked
+  elected_or_appointed: Trustees elected from single-member districts
+  impact_rank: 70
+  sms_eligible: true
+  tax_set_by_body_id: hcc_board
+  description_en: Governs Houston City College programs, policies, and budget.
+  description_es: Gobierna los programas, políticas y presupuesto de Houston City College.
+  meeting_info_url: https://www.hccs.edu/about-hcc/board-of-trustees/
+  source_url: https://www.hccs.edu/about-hcc/board-of-trustees/
+- id: lone_star_board
+  name: Lone Star College Board of Trustees
+  type: college_board
+  category: tracked
+  elected_or_appointed: Trustees elected from single-member districts
+  impact_rank: 80
+  sms_eligible: true
+  tax_set_by_body_id: lone_star_board
+  description_en: Governs Lone Star College campuses, programs, and budget.
+  description_es: Gobierna los campus, programas y presupuesto de Lone Star College.
+  meeting_info_url: https://www.lonestar.edu/board-agendas
+  source_url: https://www.lonestar.edu/board-agendas
+- id: hcmud_489
+  name: Harris County Municipal Utility District No. 489
+  type: mud
+  category: tracked
+  elected_or_appointed: Board selection details are not loaded; see the district's official notices
+  impact_rank: 90
+  sms_eligible: true
+  tax_set_by_body_id: hcmud_489
+  description_en: Provides utility services within its district; exact service and tax details depend on the parcel.
+  description_es: Proporciona servicios públicos dentro de su distrito; los servicios e impuestos dependen de la parcela.
+  meeting_info_url: https://hcmud489.com/board-meetings/
+  source_url: https://hcmud489.com/board-meetings/
+- id: hcad
+  name: Harris Central Appraisal District
+  type: hcad
+  category: tracked
+  elected_or_appointed: Appraisal district governed under Texas law
+  impact_rank: 100
+  sms_eligible: false
+  description_en: Appraises property for local taxing units; it does not set their tax rates.
+  description_es: Valora propiedades para las entidades tributarias locales; no establece sus tasas.
+  meeting_info_url: https://hcad.org/about-hcad/board-of-directors/
+  source_url: https://hcad.org/about-hcad/board-of-directors/
+- id: centerpoint
+  name: CenterPoint Energy
+  type: other
+  category: not_government
+  elected_or_appointed: Investor-owned utility, not a government
+  impact_rank: 10
+  sms_eligible: false
+  description_en: Electric and gas utility provider; included for service information, not as a government.
+  description_es: Proveedor de servicios eléctricos y de gas; se incluye por información de servicio, no como gobierno.
+  meeting_info_url: https://www.centerpointenergy.com/en-us/corporate/about-us
+  source_url: https://www.centerpointenergy.com/en-us/corporate/about-us

@@ -1,0 +1,322 @@
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+
+const mocks = vi.hoisted(() => {
+  class CensusUnavailableError extends Error {}
+  return {
+    CensusUnavailableError,
+    addressResult: { ok: true, value: '123 Main St, Houston, TX 77004' } as { ok: boolean; value?: string },
+    censusResult: null as unknown,
+    parcelRows: [] as unknown[],
+    gisRows: [] as unknown[],
+    hoaRows: [] as unknown[],
+    tableRows: {} as Record<string, unknown[]>,
+    rpcFailure: null as string | null,
+    selectFailure: null as string | null,
+    demoPayload: null as unknown,
+    calls: [] as Array<{ kind: string; name: string; args?: unknown }>,
+    validateAddress: vi.fn(() => ({ ok: true, value: '123 Main St, Houston, TX 77004' })),
+    geocodeCensus: vi.fn(async () => null as unknown),
+    fetchStreets: vi.fn(async () => []),
+    rpcRows: vi.fn(async (name: string, args: unknown) => {
+      mocks.calls.push({ kind: 'rpc', name, args })
+      if (mocks.rpcFailure === name) throw new Error('database failure')
+      if (name === 'lookup_hcad_parcel') return mocks.parcelRows
+      if (name === 'lookup_boundary_bodies') return mocks.gisRows
+      if (name === 'lookup_hoa_candidates') return mocks.hoaRows
+      return []
+    }),
+    selectRows: vi.fn(async (table: string, _columns: string, filter: (query: {
+      in: (column: string, values: readonly unknown[]) => unknown
+      eq: (column: string, value: unknown) => unknown
+      order: (column: string, options?: unknown) => unknown
+    }) => unknown) => {
+      mocks.calls.push({ kind: 'select', name: table })
+      if (mocks.selectFailure === table) throw new Error('database failure')
+      const query = {
+        in: (_column: string, _values: readonly unknown[]) => query,
+        eq: (_column: string, _value: unknown) => query,
+        order: (_column: string, _options?: unknown) => query,
+      }
+      filter(query)
+      return mocks.tableRows[table] ?? []
+    }),
+    demoCached: vi.fn(async (_key: string, compute: () => Promise<unknown>) => mocks.isDemoMode() ? mocks.demoPayload : compute()),
+    getEnv: vi.fn((key: string) => {
+      const value = process.env[key]
+      if (!value) throw new Error(`Missing ${key}`)
+      return value
+    }),
+    getOptionalEnv: vi.fn((key: string) => process.env[key] || undefined),
+    isDemoMode: vi.fn(() => false),
+    isDemoRecord: vi.fn(() => false),
+    checkRateLimit: vi.fn(async () => ({ allowed: true, remaining: 119, resetAt: new Date() })),
+    signBodiesToken: vi.fn(() => 'signed-body-token'),
+  }
+})
+
+vi.mock('@/lib/address', () => ({
+  validateAddress: mocks.validateAddress,
+  normalizeAddressInput: (value: string) => value.trim().replace(/\s+/g, ' '),
+}))
+vi.mock('@/lib/lookup/census', () => ({
+  CensusUnavailableError: mocks.CensusUnavailableError,
+  geocodeCensus: mocks.geocodeCensus,
+}))
+vi.mock('@/lib/lookup/suggest', () => ({
+  fetchStreets: mocks.fetchStreets,
+  formatAddress: (street: { street: string; city: string; postcode: string }, number?: string) => `${number ? `${number} ` : ''}${street.street}, ${street.city}, TX ${street.postcode}`,
+  splitAddressInput: (address: string) => {
+    const match = address.match(/^(\d+)\s+(.+)$/)
+    return { number: match?.[1] ?? null, street: match?.[2] ?? address }
+  },
+}))
+vi.mock('@/lib/db/raw', () => ({ rpcRows: mocks.rpcRows, selectRows: mocks.selectRows }))
+vi.mock('@/lib/demo', () => ({ demoCached: mocks.demoCached, lookupDemoKey: () => 'lookup:hashed' }))
+vi.mock('@/lib/env', () => ({
+  getEnv: mocks.getEnv,
+  getOptionalEnv: mocks.getOptionalEnv,
+  isDemoMode: mocks.isDemoMode,
+  isDemoRecord: mocks.isDemoRecord,
+}))
+vi.mock('@/lib/rateLimit', () => ({
+  RATE_LIMITS: { lookupPerIp: { limit: 120, windowSeconds: 3600 } },
+  checkRateLimit: mocks.checkRateLimit,
+  clientIp: () => '127.0.0.1',
+  hashIp: () => 'hashed-ip',
+}))
+vi.mock('@/lib/tokens', () => ({ signBodiesToken: mocks.signBodiesToken }))
+
+import { POST } from '@/app/api/lookup/route'
+
+const request = (address = '123 Main St, Houston, TX 77004') => new Request('http://localhost/api/lookup', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ address }),
+})
+
+const matchedCensus = (overrides: Record<string, unknown> = {}) => ({
+  matchedAddress: '123 MAIN ST, HOUSTON, TX, 77004',
+  countyFips: '48201',
+  place: null,
+  schoolDistrict: null,
+  coordinates: { longitude: -95.36, latitude: 29.72 },
+  ...overrides,
+})
+
+const parcel = (overrides: Record<string, unknown> = {}) => ({
+  account: 'PRIVATE-ACCOUNT',
+  legal_description: 'PRIVATE LEGAL DESCRIPTION',
+  longitude: -95.37,
+  latitude: 29.73,
+  jurisdiction_codes: ['189'],
+  ...overrides,
+})
+
+const catalog = [
+  { id: 'hcad', name: 'Harris Central Appraisal District', type: 'hcad', category: 'tracked', elected_or_appointed: null, description_en: null, meeting_info_url: null, impact_rank: 1, operator_name: null },
+  { id: 'hcmud_489', name: 'Harris County MUD 489', type: 'mud', category: 'tracked', elected_or_appointed: null, description_en: null, meeting_info_url: null, impact_rank: 2, operator_name: null },
+  { id: 'houston_city_council', name: 'Houston City Council', type: 'city_council', category: 'tracked', elected_or_appointed: null, description_en: null, meeting_info_url: null, impact_rank: 3, operator_name: null },
+]
+
+function setupMatchedLookup() {
+  mocks.censusResult = matchedCensus()
+  mocks.parcelRows = [parcel()]
+  mocks.gisRows = [{ body_id: 'houston_city_council' }]
+  mocks.tableRows = {
+    jurisdiction_map: [{ hcad_code: '189', body_id: 'hcmud_489' }],
+    bodies: catalog,
+    tax_rates: [],
+    ballot_offices: [],
+  }
+}
+
+describe('POST /api/lookup', () => {
+  beforeEach(() => {
+    vi.unstubAllEnvs()
+    mocks.addressResult = { ok: true, value: '123 Main St, Houston, TX 77004' }
+    mocks.censusResult = null
+    mocks.parcelRows = []
+    mocks.gisRows = []
+    mocks.hoaRows = []
+    mocks.tableRows = {}
+    mocks.rpcFailure = null
+    mocks.selectFailure = null
+    mocks.calls = []
+    mocks.demoPayload = null
+    vi.clearAllMocks()
+    mocks.isDemoMode.mockReturnValue(false)
+    mocks.isDemoRecord.mockReturnValue(false)
+    vi.stubEnv('VERCEL_ENV', 'development')
+  })
+
+  it('rejects invalid addresses before calling Census or HCAD', async () => {
+    mocks.validateAddress.mockReturnValueOnce({ ok: false, code: 'invalid_address' } as never)
+    const response = await POST(request(''))
+    expect(response.status).toBe(400)
+    expect(mocks.geocodeCensus).not.toHaveBeenCalled()
+    expect(mocks.rpcRows).not.toHaveBeenCalled()
+  })
+
+  it('rejects non-Harris Census matches before querying HCAD', async () => {
+    mocks.censusResult = matchedCensus({ countyFips: '48157' })
+    mocks.geocodeCensus.mockResolvedValueOnce(mocks.censusResult as never)
+    const response = await POST(request())
+    expect(response.status).toBe(422)
+    expect(mocks.rpcRows).not.toHaveBeenCalled()
+  })
+
+  it('merges HCAD/GIS evidence, adds countywide HCAD, and signs verified IDs only', async () => {
+    setupMatchedLookup()
+    mocks.geocodeCensus.mockResolvedValueOnce(mocks.censusResult as never)
+    const response = await POST(request())
+    const body = await response.json()
+    expect(response.status).toBe(200)
+    expect(body.bodies.map((item: { id: string; verified: boolean }) => [item.id, item.verified])).toEqual([
+      ['hcad', true], ['hcmud_489', true], ['houston_city_council', true],
+    ])
+    expect(body.bodies_token).toBe('signed-body-token')
+    expect(mocks.signBodiesToken).toHaveBeenCalledWith(['hcad', 'hcmud_489', 'houston_city_council'])
+    const serialized = JSON.stringify(body)
+    expect(serialized).not.toContain('PRIVATE-ACCOUNT')
+    expect(serialized).not.toContain('PRIVATE LEGAL DESCRIPTION')
+    expect(serialized).not.toContain('-95.36')
+    expect(serialized).not.toContain('123 Main St')
+  })
+
+  it('rejects ambiguous parcel matches rather than choosing the first result', async () => {
+    mocks.censusResult = matchedCensus()
+    mocks.geocodeCensus.mockResolvedValueOnce(mocks.censusResult as never)
+    mocks.parcelRows = [parcel(), parcel({ account: 'SECOND-PRIVATE-ACCOUNT' })]
+    const response = await POST(request())
+    expect(response.status).toBe(404)
+    expect(mocks.rpcRows).toHaveBeenCalledWith('lookup_hcad_parcel', expect.any(Object))
+    expect(mocks.rpcRows).toHaveBeenCalledWith('lookup_hcad_parcel', { p_site_address_norm: '123 MAIN ST' })
+    expect(mocks.signBodiesToken).not.toHaveBeenCalled()
+  })
+
+  it('does not query HCAD with a street suggestion unrelated to the Census-matched candidate', async () => {
+    mocks.validateAddress.mockReturnValueOnce({ ok: true, value: '123 Main St' })
+    mocks.fetchStreets.mockResolvedValueOnce([
+      { street: 'Unrelated Road', city: 'Houston', postcode: '77004' },
+      { street: 'Main Street', city: 'Houston', postcode: '77004' },
+    ] as never)
+    mocks.geocodeCensus
+      .mockResolvedValueOnce(null as never)
+      .mockResolvedValueOnce(matchedCensus({ matchedAddress: '123 MAIN ST, HOUSTON, TX, 77004' }) as never)
+    mocks.parcelRows = [parcel()]
+    mocks.gisRows = [{ body_id: 'houston_city_council' }]
+    mocks.tableRows = { jurisdiction_map: [{ body_id: 'hcmud_489' }], bodies: catalog, tax_rates: [], ballot_offices: [] }
+    await POST(request())
+    const parcelArgs = mocks.rpcRows.mock.calls
+      .filter(([name]) => name === 'lookup_hcad_parcel')
+      .map(([, args]) => args as { p_site_address_norm: string })
+    expect(parcelArgs.length).toBeGreaterThan(0)
+    expect(parcelArgs.every((args) => !args.p_site_address_norm.includes('UNRELATED'))).toBe(true)
+  })
+
+  it('returns not found for zero parcel matches', async () => {
+    mocks.censusResult = matchedCensus()
+    mocks.geocodeCensus.mockResolvedValueOnce(mocks.censusResult as never)
+    const response = await POST(request())
+    expect(response.status).toBe(404)
+    expect(mocks.rpcRows).toHaveBeenCalledWith('lookup_hcad_parcel', expect.any(Object))
+  })
+
+  it('fails closed when an HCAD jurisdiction code is unmapped or its body is missing', async () => {
+    setupMatchedLookup()
+    mocks.geocodeCensus.mockResolvedValueOnce(mocks.censusResult as never)
+    mocks.parcelRows = [parcel({ jurisdiction_codes: ['189', '999'] })]
+    const unmapped = await POST(request())
+    expect(unmapped.status).toBe(500)
+    expect(mocks.signBodiesToken).not.toHaveBeenCalled()
+
+    setupMatchedLookup()
+    mocks.tableRows.bodies = catalog.filter((body) => body.id !== 'hcmud_489')
+    mocks.geocodeCensus.mockResolvedValueOnce(mocks.censusResult as never)
+    const missingBody = await POST(request())
+    expect(missingBody.status).toBe(500)
+    expect(mocks.signBodiesToken).not.toHaveBeenCalled()
+  })
+
+  it('returns a generic server error on PostGIS RPC or body-catalog failure without signing a token', async () => {
+    setupMatchedLookup()
+    mocks.rpcFailure = 'lookup_boundary_bodies'
+    mocks.geocodeCensus.mockResolvedValueOnce(mocks.censusResult as never)
+    const boundaryFailure = await POST(request())
+    expect(boundaryFailure.status).toBe(500)
+    expect(await boundaryFailure.text()).not.toContain('database failure')
+    expect(mocks.signBodiesToken).not.toHaveBeenCalled()
+
+    setupMatchedLookup()
+    mocks.rpcFailure = null
+    mocks.selectFailure = 'bodies'
+    mocks.geocodeCensus.mockResolvedValueOnce(mocks.censusResult as never)
+    const catalogFailure = await POST(request())
+    expect(catalogFailure.status).toBe(500)
+    expect(await catalogFailure.text()).not.toContain('database failure')
+    expect(mocks.signBodiesToken).not.toHaveBeenCalled()
+  })
+
+  it('uses an HCAD centroid when Census is unavailable and returns a server error when neither source resolves', async () => {
+    mocks.geocodeCensus.mockRejectedValueOnce(new mocks.CensusUnavailableError())
+    mocks.parcelRows = [parcel()]
+    mocks.gisRows = [{ body_id: 'houston_city_council' }]
+    mocks.tableRows = { jurisdiction_map: [{ body_id: 'hcmud_489' }], bodies: catalog, tax_rates: [], ballot_offices: [] }
+    const fallback = await POST(request())
+    expect(fallback.status).toBe(200)
+    expect(mocks.rpcRows).toHaveBeenCalledWith('lookup_boundary_bodies', { p_longitude: -95.37, p_latitude: 29.73 })
+
+    mocks.rpcRows.mockClear()
+    mocks.parcelRows = []
+    mocks.geocodeCensus.mockRejectedValueOnce(new mocks.CensusUnavailableError())
+    const unavailable = await POST(request())
+    expect(unavailable.status).toBe(500)
+    expect(mocks.rpcRows).toHaveBeenCalledTimes(1)
+  })
+
+  it('rejects a parcel without any valid Census or HCAD coordinates', async () => {
+    mocks.censusResult = matchedCensus({ coordinates: null })
+    mocks.geocodeCensus.mockResolvedValueOnce(mocks.censusResult as never)
+    mocks.parcelRows = [parcel({ longitude: null, latitude: null })]
+    const response = await POST(request())
+    expect(response.status).toBe(404)
+    expect(mocks.rpcRows).toHaveBeenCalledTimes(1)
+    expect(mocks.signBodiesToken).not.toHaveBeenCalled()
+  })
+
+  it('uses the final-payload cache wrapper without exposing the raw address in its key', async () => {
+    setupMatchedLookup()
+    mocks.geocodeCensus.mockResolvedValueOnce(mocks.censusResult as never)
+    await POST(request())
+    expect(mocks.demoCached).toHaveBeenCalledWith('lookup:hashed', expect.any(Function))
+  })
+
+  it('serves a demo-cache hit without calling Census or leaking the raw address into the cache key', async () => {
+    vi.stubEnv('IP_HASH_SECRET', 'local-secret-for-demo-cache')
+    mocks.isDemoMode.mockReturnValue(true)
+    mocks.demoPayload = {
+      bodies: [{ id: 'hcad', verified: true }], ballot: [], not_government: [], regional: [], hoa: null,
+    }
+    const response = await POST(request())
+    expect(response.status).toBe(200)
+    const [cacheKey] = mocks.demoCached.mock.calls[0]!
+    expect(cacheKey).toMatch(/^lookup:/)
+    expect(cacheKey).not.toContain('123 Main St')
+    expect(mocks.geocodeCensus).not.toHaveBeenCalled()
+  })
+
+  it('fails closed in production without lookup secrets and rate limits configured requests', async () => {
+    vi.stubEnv('VERCEL_ENV', 'production')
+    const missingSecrets = await POST(request())
+    expect(missingSecrets.status).toBe(500)
+    expect(mocks.geocodeCensus).not.toHaveBeenCalled()
+
+    vi.stubEnv('VERCEL_ENV', 'development')
+    vi.stubEnv('IP_HASH_SECRET', 'test-ip-hash-secret')
+    vi.stubEnv('SUPABASE_SERVICE_ROLE_KEY', 'test-service-key')
+    mocks.checkRateLimit.mockResolvedValueOnce({ allowed: false, remaining: 0, resetAt: new Date() })
+    const limited = await POST(request())
+    expect(limited.status).toBe(429)
+    expect(mocks.geocodeCensus).not.toHaveBeenCalled()
+  })
+})

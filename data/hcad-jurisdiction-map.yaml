@@ -1,0 +1,33 @@
+# Only verified code-to-body mappings belong here. Unknown codes remain unresolved;
+# do not collapse different authorities into a synthetic generic body.
+source_url: https://public.hcad.org/resources/jurlist.asp
+codebook_url: https://hcad.org/assets/uploads/pdf/pdataCodebook.pdf
+verified_on: '2026-10-20'
+mappings:
+  - code: '001'
+    source_name: HOUSTON ISD
+    body_id: hisd_board
+  - code: '004'
+    source_name: CYPRESS-FAIRBANKS ISD
+    body_id: cfisd_board
+  - code: '040'
+    source_name: HARRIS COUNTY
+    body_id: commissioners_court
+  - code: '041'
+    source_name: HARRIS COUNTY FLOOD CONTROL DISTRICT
+    body_id: flood_control
+  - code: '042'
+    source_name: HARRIS COUNTY PORT OF HOUSTON AUTHORITY
+    body_id: port_houston
+  - code: '045'
+    source_name: LONE STAR COLLEGE SYSTEM DISTRICT
+    body_id: lone_star_board
+  - code: '048'
+    source_name: HOUSTON CITY COLLEGE
+    body_id: hcc_board
+  - code: '061'
+    source_name: HOUSTON, CITY OF
+    body_id: houston_city_council
+  - code: '189'
+    source_name: HC MUD 489
+    body_id: hcmud_489

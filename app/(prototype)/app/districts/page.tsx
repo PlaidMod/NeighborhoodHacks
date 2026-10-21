@@ -59,8 +59,8 @@ export default function Districts() {
               <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm">
                 {b.taxRate && (
                   <div>
-                    <p className="text-[11px] font-semibold text-muted-foreground">On a $300K home</p>
-                    <p className="font-extrabold tabular">{money(b.taxRate * 3000)}/yr</p>
+                    <p className="text-[11px] font-semibold text-muted-foreground">On a $250K home</p>
+                    <p className="font-extrabold tabular">{money(b.taxRate * 2500)}/yr</p>
                   </div>
                 )}
                 {next && (

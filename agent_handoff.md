@@ -109,6 +109,68 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
   - BoardBook pages hash differently on every fetch, so each run stores 2 new document rows.
   - `gemini-4-argon` returns 404 on Vertex (fine once the OpenRouter key is set). The backfill used `gemini-3.1-pro-preview` as the fallback.
   - **Iarush:** pull before editing `lib/adapters/llmExtract.ts`, `lib/adapters/primegov.ts`, `scripts/scrape.ts` or `lib/ingest/`.
+### 2026-10-20: Prepare P1 lookup implementation for P5 setup
+- **Who:** Marie Gary Blueberry · P1 Lookup and Results
+- **Branch:** main
+- **What changed:** Prepared the P1 lookup and results implementation, source-backed jurisdiction loaders, route-level tests, and body, quiz, and tax-receipt flows for handoff to P5. P5 Supabase credentials, migration application, and source-data loading are still needed to continue live verification.
+- **Files:** P1 lookup routes, contracts, data loaders, migration, results/body/quiz/tax-receipt UI and tests; `agent_handoff.md`.
+- **Contract changes:** See the P1 implementation entry below; P5 must apply the migration and regenerate database types.
+- **Checked:** `npm test` (701 Vitest + 69 P4 tests), `npm run typecheck`, `npm run lint`, and `git diff --check` passed. Live Supabase lookup is unverified because no local credentials are configured.
+- **Open issues / next:** P5 to provide Supabase credentials, apply the P1 migration, and coordinate source data loading; then run live lookup and browser checks.
+
+### 2026-10-20: Close P1 lookup test and data-loader blockers
+- **Who:** Marie Gary Blueberry · P1 Lookup and Results
+- **Branch:** main
+- **What changed:** Added route-level `/api/lookup` tests, HCAD real-property TSV-to-sanitized staging, dry-run/apply HCAD and City/School/College boundary loaders, a source-backed map for nine HCAD codes, and source-loading instructions. Lookup now fails closed for unmapped HCAD codes or missing catalog bodies; boundary replacement is atomic per full mapped layer and validates the manifest/vintage/source URL.
+- **Files:** `app/api/lookup/route.ts`, `lib/lookup/{hcadSource,hcadStaging,boundaryStaging}.ts`, `scripts/{stage-hcad,load-hcad,load-boundaries,seed-hcad-jurisdictions}.ts`, `data/{hcad-jurisdiction-map,boundary-sources}.yaml`, P1 migration, `docs/p1-data-loading.md`, route and staging tests, `package.json`.
+- **Contract changes:** P1 migration adds `load_hcad_batch` and atomic `replace_hcad_boundary_layer` RPCs. P5 must apply it and regenerate `database.types.ts`; permissions remain service-role-only.
+- **Checked:** `npm test` (701 Vitest + 69 P4 tests), `npm run typecheck`, `npm run lint`, jurisdiction/body seed checks, and `git diff --check` passed. Synthetic HCAD TSV+GeoJSON successfully ran through staging and HCAD loader dry run; fixture stayed under ignored scratch. Local HTTP smoke checks returned 200 for `/`, `/start`, `/results`, and `/app/districts`. No real HCAD data or live lookup was run.
+- **Open issues / next:** `.env.local` and Supabase credentials are absent, so migration, seeds, live lookup, and PostGIS loader RPCs remain unapplied/unverified. P1 still needs the two demo ZIPs/addresses and must verify all their codes; only nine HCAD codes are mapped. HCAD City/School/College layers do not cover Houston council districts, ESD/METRO/precinct, or regional water bodies. The plan's generic “other taxing unit” mapping conflicts with safe fail-closed code handling and needs a team choice. Visual browser testing still needs an approved Chrome session.
+
+### 2026-10-20: Implement P1 lookup, results, quiz, and tax surfaces
+- **Who:** Marie Gary Blueberry · P1 Lookup and Results
+- **Branch:** main
+- **What changed:** Replaced Census-only lookup with Census/HCAD/GIS merge logic, including countywide HCAD, signed body-ID access, HOA candidate review states, quiz scoring/write route, sourced tax receipt and body detail pages. Updated assigned prototype district/vote screens and added a dry-run-first canonical body catalog seed.
+- **Files:** `app/api/lookup`, `app/api/quiz`, `app/api/tax-receipt`, `app/api/bodies`, public results/body/receipt pages, `lib/lookup`, `lib/quiz.ts`, `lib/taxReceipt.ts`, `data/bodies.yaml`, `scripts/seed-bodies.ts`, P1 support migration, EN/ES messages and tests.
+- **Contract changes:** Added `tax_rates.last_vote_date` and service-role-only HCAD, boundary, and HOA lookup RPCs. P5 must apply the migration and regenerate `database.types.ts`.
+- **Checked:** `npm test` (676 Vitest + 69 P4 tests), `npm run typecheck`, `npm run lint`, `git diff --check`, and `npm run seed:bodies -- --check` passed. `npm run build` is blocked because Google Fonts requests fail in this environment.
+- **Open issues / next:** No live Supabase env or migration run; canonical seed was not applied. HCAD/boundary loaders, verified jurisdiction map, address selection, GIS coverage, demo cache/data, and live/PostgREST/browser checks remain. Do not claim end-to-end acceptance until sourced data is loaded and both demo addresses are verified.
+
+### 2026-10-20: Review P1 baseline against implementation plans
+- **Who:** Marie Gary Blueberry · P1 Lookup and Results
+- **Branch:** main
+- **What changed:** Reviewed current P1 code against the product/technical plans and `tmp/scratch/ishaan_implementation_plan.md`; application code and plan files unchanged. Current lookup remains Census-only; HCAD/GIS resolution, quiz submission/scoring, HOA, tax receipt and public body APIs/pages are pending.
+- **Files:** `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** Static inspection of lookup, contracts, tokens, demo helpers, core migration, prototype data bridge and Districts/Vote screens. Targeted Vitest command did not run: no root `node_modules` or local Vitest; stopped the pending `npx` invocation without test output. No live data or browser verification.
+- **Open issues / next:** Missing live tax/turnout fields currently produce false “No separate tax”/appointed-board claims. Vote filters prototype `-mud-` IDs, excluding canonical `hcmud_489`, then claims no measures. Lookup does not use demo cache. Coordinate `last_vote_date`, spatial/HOA query support and the missing P2 news read route; await the other session's implementation details for focused review. Demo addresses and 20-address evidence remain unverified in this review.
+
+### 2026-10-20: Add ignored P1 implementation plan
+- **Who:** Marie Gary Blueberry · P1 Lookup and Results
+- **Branch:** main (`1e46631`)
+- **What changed:** Added the decision-ready P1 implementation plan in the existing ignored scratch area. It clarifies P1/P5 database responsibilities, data flow, demo-first sequence, the editable $250K reference value, and acceptance checks.
+- **Files:** `tmp/scratch/ishaan_implementation_plan.md`, `agent_handoff.md`
+- **Contract changes:** None; planning document only.
+- **Checked:** `tmp/` ignore rule and current P1 routes/contracts inspected; documentation only.
+- **Open issues / next:** Q10 adult account owner remains pending and does not block P1. The demo addresses still need to be selected and verified during implementation.
+
+### 2026-10-20: Stress test answers: Marie Gary Blueberry (P1)
+- **Who:** Marie Gary Blueberry · P1 Lookup and Results
+- **Branch:** main (`1e46631`)
+- **What changed:** Recorded the teammate's plan stress-test answers. Q1 P1; Q2–Q9 yes; Q10 adult account owner still pending; Q11–Q16 yes (P2 spec and manual-entry fallback as stated); Q17 dropped because its Monday date passed; Q18 yes; Q19 yes to Twilio API with labeled preview fallback; Q20 yes to Wed evening survey only after live lookup, aim 15/minimum 10 by Thu noon; Q21 willing to register for Oct 27 City Council, not speak.
+- **Files:** `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** Compared against the answers received in chat and `plan_stress_test.md`; docs only.
+- **Open issues / next:** Q10 remains pending and does not block P1. Survey waits for real Census + HCAD lookup. City Council evidence should say "registered," not "spoke."
+
+### 2026-10-20: Pull latest main and remove local review note
+- **Who:** Marie Gary Blueberry · P1 Lookup and Results
+- **Branch:** main (`1e46631`)
+- **What changed:** Removed the earlier local P1 review entry at the teammate's request, then fast-forwarded from `origin/main`. The pulled update routes shared AI calls through OpenRouter when configured and retains direct Gemini fallback.
+- **Files:** upstream changes to `.env.example`, `CLAUDE.md`, `Technical_Implementation_Plan.md`, `agent_handoff.md`, shared AI adapters/routes, messages, and tests.
+- **Contract changes:** Provider configuration adds `OPENROUTER_API_KEY`; Gemini model environment variables stay in use.
+- **Checked:** `git pull --ff-only origin main` succeeded, updating `7ca1b60` to `1e46631`; branch matched `origin/main` immediately after pull.
+- **Open issues / next:** The worktree now contains only this required handoff note. Refresh the P1 plan against the updated code and plan; OpenRouter availability depends on configuration.
 
 ### 2026-10-20: Tech plan now names OpenRouter as the AI provider
 - **Who:** PlaidMod · P5 Platform

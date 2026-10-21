@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { ELECTION } from "@/lib/prototype/updates"
 import { daysFromNow, fmtDate } from "@/lib/prototype/format"
 import { useMarkDone, useProfile } from "@/lib/prototype/profile"
+import { localBallotUpdates } from "@/lib/prototype/vote"
 import { cn } from "@/lib/utils"
 
 /** The next uniform election after November: first Saturday in May. */
@@ -46,7 +47,7 @@ export default function VotePage() {
     profile.birthdate ? check(new Date(profile.birthdate + "T12:00:00")) : null,
   )
 
-  const ballot = updates.filter((u) => u.type === "election" && u.bodyId.includes("-mud-"))
+  const ballot = localBallotUpdates(updates, bodies)
   const harris = jurisdiction.county === "harris"
 
   function submit(e: React.FormEvent) {
@@ -140,8 +141,7 @@ export default function VotePage() {
         <SectionTitle>Local items on your ballot</SectionTitle>
         {ballot.length === 0 && (
           <p className="rounded-3xl bg-surface p-5 text-sm text-muted-foreground">
-            None of your local districts has a bond or measure on this ballot. You'll still vote on state and
-            county races, including judges and the county's own propositions.
+            No verified local ballot items are listed yet. Check your full ballot on the county elections site.
           </p>
         )}
         <ul className="grid gap-3 md:grid-cols-2">

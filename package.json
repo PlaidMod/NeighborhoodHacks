@@ -19,7 +19,12 @@
     "scrape": "tsx scripts/scrape.ts",
     "ingest": "tsx scripts/ingest.ts",
     "news": "tsx scripts/news.ts",
-    "admin": "tsx scripts/admin-account.ts"
+    "admin": "tsx scripts/admin-account.ts",
+    "seed:bodies": "node --import tsx scripts/seed-bodies.ts",
+    "seed:hcad-jurisdictions": "node --import tsx scripts/seed-hcad-jurisdictions.ts",
+    "load:hcad": "node --import tsx scripts/load-hcad.ts",
+    "stage:hcad": "node --import tsx scripts/stage-hcad.ts",
+    "load:boundaries": "node --import tsx scripts/load-boundaries.ts"
   },
   "dependencies": {
     "@google/genai": "^2.30.0",

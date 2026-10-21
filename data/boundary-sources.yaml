@@ -1,0 +1,19 @@
+# HCAD documents source layers, attributes, release cadence and source CRS.
+# Loads contain only code-mapped City/School/College boundaries, not parcel or owner data.
+- id: hcad-city-school-boundaries
+  source_url: https://hcad.org/pdata/pdata-gis-downloads.html
+  dictionary_url: https://hcad.org/assets/uploads/pdf/resources/2026/GIS-ReadMeV2-2.pdf
+  verified_on: '2026-10-20'
+  release_updated: '2026-10-05'
+  source_crs: EPSG:2278
+  output_crs: EPSG:4326
+  layers:
+    - name: City
+      allowed_body_types: [city_council]
+      source_code_field: Code
+    - name: School
+      allowed_body_types: [school_board]
+      source_code_field: Code
+    - name: College
+      allowed_body_types: [college_board]
+      source_code_field: Code

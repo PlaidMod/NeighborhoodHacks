@@ -101,6 +101,7 @@ describe('Census', () => {
       countyFips: '48201',
       place: 'Houston city',
       schoolDistrict: 'Houston Independent School District',
+      coordinates: { longitude: -95.36265853559, latitude: 29.724639066855 },
     })
     // Cypress is unincorporated: no city.
     expect(parseCensus(fixture('census-cypress.json'))).toMatchObject({ place: null, schoolDistrict: 'Cypress-Fairbanks Independent School District' })
@@ -109,6 +110,19 @@ describe('Census', () => {
     expect(parseCensus({ result: { addressMatches: [] } })).toBeNull()
     const down = (async () => new Response('x', { status: 500 })) as unknown as typeof fetch
     await expect(geocodeCensus('1 Main St', { fetchImpl: down })).rejects.toBeInstanceOf(CensusUnavailableError)
+  })
+  it('does not turn missing, null, or out-of-range coordinates into a valid point', () => {
+    const base = fixture('census-houston.json')
+    const withCoordinates = (coordinates: unknown) => ({
+      ...base,
+      result: {
+        ...base.result,
+        addressMatches: [{ ...base.result.addressMatches[0], coordinates }],
+      },
+    })
+    expect(parseCensus(withCoordinates({ x: null, y: null }))?.coordinates).toBeNull()
+    expect(parseCensus(withCoordinates({ x: 181, y: 95 }))?.coordinates).toBeNull()
+    expect(parseCensus(withCoordinates(undefined))?.coordinates).toBeNull()
   })
 })
 
