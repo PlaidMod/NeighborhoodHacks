@@ -33,6 +33,27 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-20: P2 Phase 2, part 2: scheduled ingest route
+- **Who:** PlaidMod · P5 Platform, for P2
+- **Branch:** main
+- **What changed:**
+  - **New route `GET`/`POST /api/cron/ingest`** (spec P2-C). It runs `runScheduled` (`lib/ingest/scheduled.ts`) within 270 s:
+    1. seed
+    2. near-term sweep of every source (BoardBook skipped 00:00–05:00 Central; AI sources read at most 1 new document)
+    3. rotation of the oldest-checked source
+    4. results for up to 3 past meetings
+    5. more rotation while time remains, at most one AI source per call
+  - **Query options:** `?source=<id>&mode=rotation|near_term|results&meetings=a,b` runs one source.
+  - **Auth and output:** it requires `CRON_SECRET` and returns counts and flags only. Vercel's daily cron already points here (`vercel.json`).
+  - **Bundling:** `next.config.ts` ships `data/sources.yaml` and `data/manual/` with the route. Ignore comments on the two run-time file reads (`lib/adapters/manual.ts`, `lib/ingest/registry.ts`) stop Turbopack tracing the whole project: 681 traced files down to 151.
+- **Files:** `app/api/cron/ingest/route.ts`, `next.config.ts`, `lib/adapters/manual.ts`, `lib/ingest/registry.ts`, `tests/unit/ingest-route.test.ts`
+- **Contract changes:** None. The route path matches `vercel.json`.
+- **Checked:**
+  - The route tests failed first, then passed.
+  - `npm test`: 715 Vitest + 69 P4 pass. Typecheck, lint and build pass, and the build shows no tracing warnings.
+  - Part 1 is live: for 901 Bagby St, `/api/weekly` returns a City Council lead plus 6 coming up, with PrimeGov source links.
+- **Open issues / next:** Part 3: the review page and the GitHub workflow.
+
 ### 2026-10-20: P2 Phase 2, part 1: agendas are saved to Supabase
 - **Who:** PlaidMod · P5 Platform, building P2's Phase 2 at the owner's request (Iarush asked for help)
 - **Branch:** main

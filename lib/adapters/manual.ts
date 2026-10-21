@@ -179,7 +179,8 @@ export function createManualAdapter(deps: ManualDeps = {}): Adapter {
       const cfg = ManualConfigSchema.parse(source.config);
       const cwd = deps.cwd ?? process.cwd();
       const now = (deps.now ?? (() => new Date()))();
-      for (const abs of listManualFiles(join(cwd, cfg.dir))) {
+      // The ignore comment stops the bundler tracing the whole project; next.config.ts ships data/manual.
+      for (const abs of listManualFiles(join(/*turbopackIgnore: true*/ cwd, cfg.dir))) {
         const file = toPosix(relative(cwd, abs));
         const text = readFileSync(abs, 'utf8');
         let parsed: ParsedManual;

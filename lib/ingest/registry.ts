@@ -65,7 +65,8 @@ export function parseSources(yamlText: string): SourceConfig[] {
 }
 
 export function loadSources(path = 'data/sources.yaml'): SourceConfig[] {
-  return parseSources(readFileSync(path, 'utf8'));
+  // The ignore comment stops the bundler tracing the whole project; next.config.ts ships the file.
+  return parseSources(readFileSync(/*turbopackIgnore: true*/ path, 'utf8'));
 }
 
 export function getSource(id: string, path?: string): SourceConfig {
