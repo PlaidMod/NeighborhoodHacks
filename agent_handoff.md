@@ -33,6 +33,25 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-21: OpenRouter key is live; the Gemini key is gone
+- **Who:** PlaidMod · P5 Platform
+- **Branch:** main
+- **What changed:**
+  - **`OPENROUTER_API_KEY`:** set in the owner's `.env.local` and on Vercel (production and preview, stored as sensitive).
+  - **Removed:** `GEMINI_API_KEY` and `GOOGLE_GENAI_USE_VERTEXAI`, from both.
+  - **Live site:** redeployed. Every AI call (P2 extraction and news links, P3 stories and coverage, P4 coach) now goes through OpenRouter.
+  - **Repo:** `.env.example` marks the Gemini-direct lines "not used"; `CLAUDE.md` says the key is set; `scripts/gemini-smoke.ts` now reports "OpenRouter" when that key is set.
+- **Files:** `.env.example`, `CLAUDE.md`, `scripts/gemini-smoke.ts`
+- **Contract changes:** None. Teammates' local `.env.local` copies need the new key; ask PlaidMod for it privately. Leave the Gemini lines blank.
+- **Checked:**
+  - The key is valid and on a paid plan, with a $10 spending cap.
+  - With the Gemini key hidden from the process, these calls all worked: `generateJson` with `gemini-3.8-flash` and with `gemini-4-argon` (D17's fallback, which Vertex doesn't serve), and P2's `geminiFromEnv()` client.
+  - After the redeploy, `/api/coach` answered from the AI (`provider: gemini`), and `/api/cron/stories` wrote 10 stories (9 AI, 1 template, 0 failed).
+  - Cost so far: $0.08, about 0.8¢ a story.
+- **Open issues / next:**
+  - About 540 items still need stories. At 10 per run that takes many runs, and roughly $4–5 of the $10 cap. Raise the key's limit on OpenRouter if agenda reading and coverage also need room.
+  - P3: putting upcoming meetings first in the story queue is still open (see the P2 Phase 2 part 1 entry).
+
 ### 2026-10-20: P2 Phase 2, part 3: review queue, 3-hourly schedule, pitch line for D37
 - **Who:** PlaidMod · P5 Platform, for P2
 - **Branch:** main

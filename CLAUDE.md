@@ -21,7 +21,7 @@ ShowUp HTX: a 5-person high school team's entry for Neighborhood Hacks 2026. A u
 - **Hosting and data:**
   - **Vercel:** project `showup-htx` on the `majority-illusion` team. Production is https://showup-htx-six.vercel.app. Pushes to `main` deploy, but deploys of teammates' commits wait for the owner's approval, because the repo is private.
   - **Supabase:** project `showup-htx` (ID `elsvhqqwdxwsuvkbchdq`). Environment values live in `.env.local` (see `.env.example`) and in Vercel. Never commit them.
-  - **AI:** the team moved every model call to OpenRouter on Oct 20, 2026 (`lib/openrouter.ts`, used by `lib/gemini.ts` and `lib/adapters/gemini.ts`). That replaces the tech plan's Gemini-direct setup (§1). Until `OPENROUTER_API_KEY` is set, calls still go straight to Gemini. Model names stay in the `GEMINI_*_MODEL` variables, and each one must be on OpenRouter's model list with structured output.
+  - **AI:** the team moved every model call to OpenRouter on Oct 20, 2026 (`lib/openrouter.ts`, used by `lib/gemini.ts` and `lib/adapters/gemini.ts`). That replaces the tech plan's Gemini-direct setup (§1). `OPENROUTER_API_KEY` is set in `.env.local` and Vercel (Oct 21), and the Gemini key was removed from both; the code still falls back to `GEMINI_API_KEY` only if the OpenRouter key is missing. Model names stay in the `GEMINI_*_MODEL` variables, and each one must be on OpenRouter's model list with structured output.
 
 ## Binding rules
 
