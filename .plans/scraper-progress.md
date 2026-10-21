@@ -242,3 +242,18 @@ Spec §12 items 1–22 still apply as written, with these updates from the build
   SQL: 0 duplicate items or meetings, no source errors, and no names in the redacted titles.
 - **Models on Vertex:** `gemini-4-argon` returns 404 there, so the backfill used `GEMINI_EXTRACT_FALLBACK_MODEL=gemini-3.1-pro-preview`. Once `OPENROUTER_API_KEY` is set, the `gemini-4-argon` default works. A failed fallback call keeps the first attempt's items.
 - **Known:** BoardBook HTML pages hash differently on every fetch, so each run stores 2 new document rows (about 300 KB).
+- **P2-C: DONE.** `app/api/cron/ingest/route.ts` (GET and POST, `CRON_SECRET`, `maxDuration = 300`) runs `lib/ingest/scheduled.ts`:
+  1. seed
+  2. near-term sweep of every source (BoardBook skipped 00:00–05:00 Central; AI sources start only with at least 150 s left)
+  3. rotation of the oldest-checked source
+  4. results for up to 3 past meetings
+  5. more rotation while the 270 s budget lasts, at most one AI source per call
+  - `?source=<id>&mode=&meetings=` runs one source.
+  - No news stage: `lib/ingest` may not import `lib/news` (D32), and it isn't needed for the demo.
+  - First full production call (Oct 20): 15 runs in 16 s, all ok.
+- **DEVIATION:** the spec rotates one source per call. With only a daily Vercel cron plus a 3-hourly GitHub run, that would reach each source once every day or two, so rotation continues while time remains.
+- **P2-D: DONE.** `.github/workflows/ingest.yml` runs at minute 15 every 3 hours (UTC), plus `workflow_dispatch`, using the existing `CRON_SECRET` secret and `APP_URL` variable. The daily Vercel cron stays.
+- **DEVIATION:** every 3 hours instead of every 30 minutes, given "a few runs a day" (D37) and Actions minutes on a private repo. Disable it after Oct 23.
+- **P2-E: MINIMAL.** `/admin/review` lists pending items with the quote, an unverified-quote banner and the source link. Approve and Reject (reject also sets tier `timeline`) go through `lib/review.ts`, and every action calls `requireAdmin()`. A source health panel sits on top. **Not built:** Edit, the notices panel and quote highlighting in the stored PDF text.
+- **P2-H: DONE** as the health panel. Fix: the manual source no longer raises `no_meetings_*`, because it's empty by design (D18).
+- **Not built:** P2-C2 (the news read route), P2-F's database-level golden tests (the memory-store tests in `tests/unit/ingest-run.test.ts` stand in, including the supplemental-item and results-age cases), P2-G ("Run now" button), and the `news_articles` migration.

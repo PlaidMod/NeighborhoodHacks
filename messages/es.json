@@ -186,7 +186,27 @@
     },
     "signedInAs": "Sesión iniciada como {email}",
     "reviewLink": "Abrir la cola de revisión",
-    "signOut": "Cerrar sesión"
+    "signOut": "Cerrar sesión",
+    "review": {
+      "title": "Cola de revisión",
+      "intro": "Aquí esperan los puntos de agenda que leyó la IA y que podrían enviar un mensaje de texto, y los puntos cuya cita no se pudo comprobar con la agenda. Aprobar permite que el próximo envío de alertas los mande. Rechazar los deja solo en la cronología.",
+      "back": "Volver a la administración del equipo",
+      "healthTitle": "Estado de las fuentes",
+      "healthy": "La última ejecución de cada fuente salió bien.",
+      "flags": "Avisos: {flags}",
+      "error": "Último error: {error}",
+      "queueTitle": "Esperando revisión ({count})",
+      "empty": "No hay nada esperando revisión.",
+      "meeting": "Reunión: {date}",
+      "section": "Sección: {section}",
+      "tier": "Nivel: {tier}. Regla: {rule}.",
+      "noRule": "ninguna",
+      "unverified": "Agenda escaneada: no se pudo comprobar esta cita con el texto. Lee la agenda oficial antes de aprobar.",
+      "quote": "Cita de la agenda",
+      "source": "Abrir la agenda oficial",
+      "approve": "Aprobar",
+      "reject": "Rechazar"
+    }
   },
   "News": {
     "nav": "Secciones de noticias",

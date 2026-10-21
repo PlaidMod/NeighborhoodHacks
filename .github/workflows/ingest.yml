@@ -1,0 +1,44 @@
+# Scheduled agenda ingest (agent-scraper-spec §9 P2-D). Calls /api/cron/ingest every 3 hours,
+# on top of Vercel's daily cron (vercel.json). Uses the repo secret CRON_SECRET and the repo
+# variable APP_URL. Turn it off after the hackathon (Oct 23, 2026): disable the workflow in the
+# Actions tab, or delete the schedule block.
+name: Ingest agendas
+
+on:
+  schedule:
+    - cron: '15 */3 * * *' # UTC
+  workflow_dispatch:
+    inputs:
+      source:
+        description: One source id from data/sources.yaml (blank runs the full schedule)
+        required: false
+        default: ''
+      mode:
+        description: rotation, near_term or results (only with a source)
+        required: false
+        default: ''
+
+permissions: {}
+
+concurrency:
+  group: ingest
+  cancel-in-progress: false
+
+jobs:
+  ingest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - name: Call the ingest route
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+          APP_URL: ${{ vars.APP_URL }}
+          SOURCE: ${{ inputs.source }}
+          MODE: ${{ inputs.mode }}
+        run: |
+          query=""
+          if [ -n "$SOURCE" ]; then
+            query="?source=${SOURCE}"
+            if [ -n "$MODE" ]; then query="${query}&mode=${MODE}"; fi
+          fi
+          curl -fsS --max-time 310 -H "Authorization: Bearer ${CRON_SECRET}" "${APP_URL}/api/cron/ingest${query}"

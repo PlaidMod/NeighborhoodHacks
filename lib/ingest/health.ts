@@ -133,7 +133,8 @@ export function health(result: HealthRun, history: HealthHistory, sourceConfig: 
   // fetch_failed
   if (result.fetch_error || warnings.some((w) => /fetch failed/i.test(w))) flags.push('fetch_failed');
 
-  if (agenda || result.fetch_error) {
+  // The manual source is empty unless the team hand-enters an agenda (D18), so a gap there is normal.
+  if ((agenda || result.fetch_error) && sourceConfig.adapter !== 'manual') {
     // no_meetings_{n}d: newest known meeting older than expected_max_gap_days and nothing in the future.
     const gap = cfgNum(sourceConfig, 'expected_max_gap_days', DEFAULT_MAX_GAP_DAYS);
     const all = [...history.meetings, ...(agenda?.meetings ?? [])].filter((m) => m.status !== 'cancelled');

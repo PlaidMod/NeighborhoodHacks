@@ -33,6 +33,25 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-20: P2 Phase 2, part 3: review queue, 3-hourly schedule, pitch line for D37
+- **Who:** PlaidMod · P5 Platform, for P2
+- **Branch:** main
+- **What changed:**
+  - **`/admin/review`** (spec P2-E, minimal): pending items with the quote, a "scanned, quote unverified" banner, the official source link, and Approve and Reject. Reject also sets tier `timeline`. A source health panel sits on top. Logic lives in `lib/review.ts`, and every action calls `requireAdmin()` and updates only rows that are still pending.
+  - **`.github/workflows/ingest.yml`:** calls `/api/cron/ingest` every 3 hours, plus a manual run with an optional source and mode.
+  - **Health fix:** `health()` no longer flags the manual source for having no meetings.
+- **Files:** `app/admin/review/{page,actions}.tsx|ts`, `lib/review.ts`, `messages/{en,es}.json` (`Admin.review`), `lib/ingest/health.ts`, `.github/workflows/ingest.yml`, `.plans/scraper-progress.md`, `tests/platform/review.test.ts`, `tests/unit/health.test.ts`
+- **Contract changes:** None.
+- **Checked:**
+  - The new tests failed first, then passed.
+  - `npm test`: 721 Vitest + 69 P4 pass. Typecheck, lint and build pass, with no tracing warnings.
+  - In the browser, `/admin/review` redirects to the login page when signed out (307). Signed in, it shows the health panel and an empty queue (no item needs review right now) in Spanish, with no sideways scroll at 390 px.
+  - Approve and Reject weren't clicked against live data: the database edit that would have created a test item was blocked, so they're covered by unit tests only.
+- **Open issues / next:**
+  - **The owner should approve this replacement for the pitch answer in spec §12.22:** "For news sites we follow each site's robots.txt, name our bot, show only short quotes with links, and never get around paywalls. Government agendas are public records, so we fetch them even where a portal's robots.txt asks general crawlers to stay out (Houston's PrimeGov portal, Lone Star College's PDFs). We name our bot, wait between requests, check a few times a day, and link every item to the official source."
+  - Disable the GitHub schedule after Oct 23.
+  - **Not built:** review Edit and notices, the "Run now" button, the news read route, and the `news_articles` migration.
+
 ### 2026-10-20: P2 Phase 2, part 2: scheduled ingest route
 - **Who:** PlaidMod · P5 Platform, for P2
 - **Branch:** main

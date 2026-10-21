@@ -81,6 +81,10 @@ describe('no_meetings_{n}d', () => {
   it('fires with the configured gap when nothing is known at all', () => {
     expect(run({ meetings: [], items: [] }).flags).toEqual(['no_meetings_21d']);
   });
+  it('never fires for the manual source, which is empty by design (D18)', () => {
+    const manual: SourceConfig = { id: 'manual', adapter: 'manual', config: { dir: 'data/manual' } };
+    expect(run({ meetings: [], items: [] }, EMPTY_HISTORY, manual).flags).toEqual([]);
+  });
 });
 
 describe('required_field_empty', () => {

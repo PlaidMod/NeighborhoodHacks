@@ -186,7 +186,27 @@
     },
     "signedInAs": "Signed in as {email}",
     "reviewLink": "Open the review queue",
-    "signOut": "Sign out"
+    "signOut": "Sign out",
+    "review": {
+      "title": "Review queue",
+      "intro": "Agenda items the AI read that could send a text, and items whose quote couldn't be checked against the agenda, wait here. Approve lets the next text-alert run send them. Reject keeps them on the timeline only.",
+      "back": "Back to team admin",
+      "healthTitle": "Source health",
+      "healthy": "Every source's last run was healthy.",
+      "flags": "Flags: {flags}",
+      "error": "Last error: {error}",
+      "queueTitle": "Waiting for review ({count})",
+      "empty": "Nothing is waiting for review.",
+      "meeting": "Meeting: {date}",
+      "section": "Section: {section}",
+      "tier": "Tier: {tier}. Rule: {rule}.",
+      "noRule": "none",
+      "unverified": "Scanned agenda: this quote couldn't be checked against the text. Read the official agenda before you approve.",
+      "quote": "Quote from the agenda",
+      "source": "Open the official agenda",
+      "approve": "Approve",
+      "reject": "Reject"
+    }
   },
   "News": {
     "nav": "News sections",
