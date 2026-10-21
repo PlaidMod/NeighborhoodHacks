@@ -33,6 +33,20 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-21: Lookup fix, part 4: live site switched to the fixed build
+- **Who:** PlaidMod · P5 Platform
+- **Branch:** main
+- **What changed:** PlaidMod promoted `showup-fqf2bmerz` (commit `79f4f91`) to production. The rollback pin to `showup-kljzsrb88` from the entries below no longer applies. No code changed.
+- **Files:** `agent_handoff.md`
+- **Contract changes:** None
+- **Checked (on https://showup-htx-six.vercel.app):**
+  - `/api/lookup`: 901 Bagby St and 10707 Mason Rd give `match: hcad` with the same governments as the local test. Pasadena City Hall gives `match: census` and lists Pasadena City Council and Pasadena ISD as not tracked.
+  - At 390 px: `/results` shows "Address match verified" with no sideways scroll. "Open your dashboard" turns `/app` to real data with no "Sample data". The downtown address shows 7 governments and 52 things this week.
+- **Open issues / next:**
+  - The Cypress-area address shows 0 things this week. Its bodies have no upcoming meetings in the database yet (latest: CFISD and MUD 489 Oct 19, Commissioners Court Oct 15, Lone Star Oct 1). The 3-hourly ingest runs are succeeding, so they should appear once the agendas are posted (P2).
+  - Opening `/app` directly, without the dashboard link, still shows the demo. That's by design.
+  - Promoting a build ends the rollback, so pushes to `main` go live on their own again (Vercel's "Undo a rollback" docs). Teammates' commits still wait for the owner's approval.
+
 ### 2026-10-21: Verify OpenRouter, correct coach timing claims and assess deadline pace
 - **Who:** BluePhoenix79 · P4 / release verification
 - **Branch:** main, based on `79f4f91`
@@ -51,7 +65,6 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 - **Contract changes:** None; no product code or environment changes.
 - **Checked:** 786 Vitest + 69 P4 tests (855), lint, typecheck and production build pass. First test run hit the existing ESLint isolation timeout; full rerun passed. Live reads: 11 bodies, 7 sources, 6 meetings, 646 items, 142,406 parcels; tax_rates and demo_cache empty. City Hall and Bridgeland HS return HCAD matches; TSU returns Census fallback. Built cron routes reject with 401, review redirects to login, and coach rejects malformed/cross-origin input with 400/403 and no-store. Spanish 390px City Hall results and real P4 flow have no horizontal overflow; Wednesday Council registration stays unknown, synthetic draft restores, practice renders, and the real-item redirect works. No quiz/provider/SMS/admin/ingest or official participation actions performed; lookup uses normal quota bookkeeping.
 - **Open issues / next:** OpenRouter and Twilio remain absent in this local env despite P5's owner/deployment setup; privately obtain current config. Finish live EN/ES evaluation and authentic participation. Legacy `/start` still persists the address, shell text remains partly English, and the root palette swapper is absent. Production promotion and tax/demo data remain owner work; see readiness. No commit or push.
-
 
 ### 2026-10-21: Lookup fix, parts 2–3: HCAD data for 10 ZIPs loaded; shared addresses resolved
 - **Who:** PlaidMod · P5 Platform (P1's lookup data and RPC, decided by PlaidMod)
