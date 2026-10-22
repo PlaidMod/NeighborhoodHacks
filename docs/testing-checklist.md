@@ -135,9 +135,10 @@ curl.exe -I http://localhost:3000/admin/review
 
 Expected: cron requests return **401**; signed-out review access redirects to login. None should be a 404. Do not add a real cron secret just to test rejection: authenticated cron calls can write data or send messages.
 
-## 8. Reminders, SMS and admin: coordinate with P3/P5
+## 8. Reminders, alerts and admin: coordinate with P3/P5
 
 - On a real UUID item, selecting the local reminder preference must not claim a server request was saved. Click the separate save button; signed-out/unverified users should be directed to opt in. A sample reminder is not a delivery test.
+- **Browser notifications (Oct 22):** after a lookup, open `/app/alerts`, check the consent box and choose **Turn on notifications**. Expect the browser's permission prompt, then the "Notifications are on" panel and a ShowUp HTX confirmation notification within seconds. Choose **Turn off notifications** and expect the form again. On iPhone, add the site to the Home Screen first, open it from there and look up the address again. Real alerts come from the daily job only when an upcoming item is in the alert tier, and only between 8 a.m. and 8 p.m. Central.
 - Actual SMS acceptance needs configured Twilio, a consenting test phone, any required parent consent, completed verification and one controlled send. P3/P5 should check receipt, STOP/unsubscribe, quiet hours and delivery logs. Do not mark this passed based on the preview. This audit sent no texts.
 - Signed-in admins should see the review queue and source material. Approve/reject only a disposable fixture agreed with P2/P5; these buttons modify shared data. Verify pending-only review behavior and that unapproved items remain ineligible for urgent SMS.
 - P2/P5 can test ingestion with `npm run ingest -- --source <source-id> --dry-run` after choosing a configured source. It can fetch websites and incur provider cost, though it does not write the ingest results. Live ingest, seed commands and scheduled jobs change the shared database; do not run them casually as a P4 smoke test.

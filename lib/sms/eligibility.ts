@@ -28,3 +28,13 @@ export function textBlock(user: AlertUser): TextBlock | null {
 export function canText(user: AlertUser) {
   return textBlock(user) === null
 }
+
+/** Browser notifications: a subscription, and for under-18 users a parent's OK, as with texts. */
+export function canPush(user: AlertUser) {
+  return !!user.push && (!user.is_minor || user.parent_consent)
+}
+
+/** Can any alert reach this user, by text or browser notification? */
+export function canAlert(user: AlertUser) {
+  return canText(user) || canPush(user)
+}

@@ -1,3 +1,4 @@
+import type { PushTarget } from "@/lib/push/subscription"
 import type { AlertRule } from "@/lib/rules/ruleText"
 import type { Stake } from "@/lib/stakes"
 
@@ -13,6 +14,8 @@ export type AlertUser = {
   is_minor: boolean
   parent_consent: boolean
   sms_opted_out: boolean
+  /** The browser's push subscription, for readers who turned on browser notifications. */
+  push?: PushTarget | null
 }
 
 /** One row of `alert_queue`. `item_id` is null for alerts with no agenda item (the HCAD protest reminder). */

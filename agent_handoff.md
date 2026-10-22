@@ -33,6 +33,29 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-22: Alerts go out as browser notifications (Twilio dropped)
+- **Who:** PlaidMod · helping P3 News and Alerts
+- **Branch:** main
+- **What changed:** Twilio requires the account owner's ID verification, which the team declined, and carrier registration takes days. Alerts now also go out as Web Push browser notifications: the same rules, quiet hours, once-only sending, reminders 7a/7b and protest reminder. The app signs them with its own keys, so no outside account is needed. The texting code is unchanged and off; text sign-up still shows a labeled preview.
+  - **Sign-up:** a new "Browser notifications" panel sits above "Text messages" on `/app/alerts` and `/alerts` (`components/alerts/PushSignup.tsx`). It uses the same consent and under-18 parent rule as texts. `POST /api/alerts/push` saves the subscription with the reader's governments, sets `showup_sub` and sends a confirmation. `DELETE` deletes the row.
+  - **Sending:** `runAlertsJob` takes an optional `push` sender, and `/api/cron/alerts` passes it when the `VAPID_*` keys are set. Expired subscriptions (404/410) are deleted. Only Google, Mozilla, Apple and Microsoft push hosts are accepted.
+  - **iPhone:** `app/manifest.ts`, Home Screen icons and `public/sw.js` (shows notifications only, no caching).
+  - **Copy:** "Text alerts" became "Alerts" in the nav, page titles, why-page and links (EN/ES). The privacy and terms pages name the push services. Both pages' effective date is now Oct 22.
+- **Files:** `lib/push/*`, `lib/sms/{job,schedule,eligibility,message,subscribers,types,http}.ts`, `app/api/alerts/push/route.ts`, `app/api/cron/alerts/route.ts`, `components/alerts/PushSignup.tsx`, both alerts pages, `components/prototype/app-shell.tsx`, `app/manifest.ts`, `app/apple-icon.png`, `public/{sw.js,icons/}`, `next.config.ts` (sw.js headers), `messages/*.json`, `lib/env.ts`, `.env.example`, `supabase/migrations/20261022201640_push_alerts.sql` (applied), `lib/database.types.ts`, `package.json` (`web-push`), tests in `tests/push/`, `tests/sms/`, `tests/api/push-route.test.ts`. Docs: both plan files, `.plans/p3-twilio-registration.md`, `CLAUDE.md`, `docs/{readiness,project-pace,testing-checklist}.md`.
+- **Contract changes:** DB schema: `users` gains `push_endpoint` (unique), `push_p256dh` and `push_auth`, all set or all null (§16). `AlertUser` gains an optional `push`. `AlertsJobResult` gains `removed`. `reminderText` output is unchanged, now built from the shared `reminderSentence`.
+- **Checked:**
+  - Tests: `npm test` passes (815 Vitest + 72 P4 tests). Typecheck, lint and `npm run build` are clean. New tests were watched failing first.
+  - Local built app in Chromium, City Hall lookup: turning notifications on returned 200, and the confirmation arrived through Google's push service and was shown by the service worker. The database got 1 row with no phone, following 7 governments. Turning off removed the row, its governments and the cookie, and the tables are back to 0.
+  - The alerts store's reads work on the real schema.
+  - `/alerts` in Spanish at 390px has no sideways scroll.
+  - Supabase security advisors show nothing new.
+- **Open issues / next:**
+  - **Vercel:** the three `VAPID_*` keys are in `.env.local` only. Until they're added to Vercel (production and preview, the same pair), the live page shows the notifications preview.
+  - No upcoming item is in the alert tier today, so the daily job (16:00 UTC) has nothing to send. A real alert, beyond the confirmation, hasn't been seen yet.
+  - Not tested on a real iPhone or in Safari.
+  - **For P4:** Speak up's labels still say "SMS reminder" (`speak.saveReminder`, `speak.reminderNote`). Reminders now also reach notification subscribers through `showup_sub`; consider "reminder."
+  - The `/alerts/why` route and `?why=` links keep their names; only the visible wording changed.
+
 ### 2026-10-21: HCAD data for 6 more ZIPs (30 in all)
 - **Who:** PlaidMod · P5 Platform (P1's lookup data)
 - **Branch:** main

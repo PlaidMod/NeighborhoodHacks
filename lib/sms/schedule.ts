@@ -1,6 +1,6 @@
 import { DateTime } from "luxon"
 import type { RuleKey, Tier } from "@/lib/rules/classify"
-import { canText } from "./eligibility"
+import { canAlert } from "./eligibility"
 import { inSendingHours, nextSendTime } from "./quietHours"
 import { alertKey, type AlertUser, type QueuedAlert } from "./types"
 
@@ -19,8 +19,8 @@ export type ItemForAlerts = {
 }
 
 /**
- * Rule-based alerts for one item, to everyone who follows its body and can be
- * texted. Called after ingest classifies an item, and again when a reviewer
+ * Rule-based alerts for one item, to everyone who follows its body and can get
+ * alerts (text or browser notification). Called after ingest classifies an item, and again when a reviewer
  * approves it.
  */
 export function enqueueItemAlerts(item: ItemForAlerts, followers: AlertUser[], now: Date): QueuedAlert[] {
@@ -28,7 +28,7 @@ export function enqueueItemAlerts(item: ItemForAlerts, followers: AlertUser[], n
   if (item.review_status === "pending" || item.review_status === "rejected") return []
   const at = nextSendTime(now).toISOString()
   return followers
-    .filter(canText)
+    .filter(canAlert)
     .map((u) => ({ user_id: u.id, item_id: item.item_id, rule: item.rule_fired!, scheduled_for: at }))
 }
 
@@ -56,7 +56,7 @@ export function buildTimeBasedAlerts(input: {
   for (const r of reminders) {
     const u = users[r.user_id]
     const w = windows[r.item_id]
-    if (!u || !w || !canText(u)) continue
+    if (!u || !w || !canAlert(u)) continue
 
     // 7a: registration opens today (Central), and hasn't closed.
     if (w.opens_at) {
@@ -91,7 +91,7 @@ export function buildTimeBasedAlerts(input: {
     if (sendDay === today) {
       const at = nextSendTime(now).toISOString()
       for (const u of Object.values(users)) {
-        if (u.stakes.includes("homeowner") && canText(u)) {
+        if (u.stakes.includes("homeowner") && canAlert(u)) {
           // alert_queue.item_id references items, and there's no item for this, so it's null.
           out.push({ user_id: u.id, item_id: null, rule: "protest_deadline", scheduled_for: at })
         }

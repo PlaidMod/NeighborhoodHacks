@@ -27,6 +27,10 @@ export type EnvName =
   | 'COACH_TRUSTED_IP_HEADER'
   | 'DEMO_RECORD'
   | 'SUPABASE_DB_URL'
+  // Browser notifications (P3, Oct 22): Web Push keys, plus an https: or mailto: contact
+  | 'VAPID_PUBLIC_KEY'
+  | 'VAPID_PRIVATE_KEY'
+  | 'VAPID_SUBJECT'
   // Set by Vercel: 'production', 'preview' or 'development'
   | 'VERCEL_ENV'
 

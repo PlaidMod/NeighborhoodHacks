@@ -60,7 +60,7 @@
     "privacy": {
       "metaTitle": "Privacy policy",
       "title": "Privacy policy",
-      "effective": "Effective October 20, 2026",
+      "effective": "Effective October 22, 2026",
       "intro": "ShowUp HTX helps you find your local governments and speak up. We collect as little as we can. Here is what we keep and why.",
       "address": {
         "title": "Your address",
@@ -68,7 +68,7 @@
       },
       "cookies": {
         "title": "No accounts, a few cookies",
-        "body": "You don't need an account. We set a few small cookies: your language (NEXT_LOCALE), the roles you picked, like student or renter (showup_stakes), the IDs of your governments, so the app can show their updates (showup_bodies), and a random browser ID (showup_coach_id) that limits how often the AI coach can run. If you sign up for text alerts, one more cookie (showup_sub) remembers that you signed up. It doesn't hold your phone number. Team admins also get a sign-in cookie."
+        "body": "You don't need an account. We set a few small cookies: your language (NEXT_LOCALE), the roles you picked, like student or renter (showup_stakes), the IDs of your governments, so the app can show their updates (showup_bodies), and a random browser ID (showup_coach_id) that limits how often the AI coach can run. If you sign up for alerts, one more cookie (showup_sub) remembers that you signed up. It doesn't hold your phone number. Team admins also get a sign-in cookie."
       },
       "rateLimits": {
         "title": "Limits on use",
@@ -83,8 +83,8 @@
         "body": "Speak up drafts are never stored on our servers. Your progress stays in your own browser. To give you feedback, we send your draft to OpenRouter, which passes it to an AI model from Google (Gemini) that processes it for us."
       },
       "alerts": {
-        "title": "Text alerts",
-        "body": "Text alerts are optional. If you sign up, we store your phone number after you verify it, and Twilio sends the texts for us. The program is called \"ShowUp HTX alerts.\" Message frequency varies. Msg & data rates may apply. Reply STOP to stop or HELP for help. If you're under 18, a parent must agree before we text you."
+        "title": "Alerts",
+        "body": "Alerts are optional. If you turn on browser notifications, we store your browser's push subscription (a web address and keys from your browser's push service, run by Google, Mozilla, Apple or Microsoft depending on your browser), the governments you follow and your language. That push service delivers the notifications for us. Turn them off on the Alerts page and we delete it. If you sign up for text alerts, we store your phone number after you verify it, and Twilio sends the texts for us. The program is called \"ShowUp HTX alerts.\" Message frequency varies. Msg & data rates may apply. Reply STOP to stop or HELP for help. If you're under 18, a parent must agree before we text you or send you notifications."
       },
       "sharing": {
         "title": "No sharing for marketing",
@@ -92,7 +92,7 @@
       },
       "processors": {
         "title": "Services that handle data for us",
-        "body": "Supabase (our database), Vercel (hosts the website), the U.S. Census Bureau (finds where your address is), Photon and OpenStreetMap (suggest street names as you type), OpenRouter and Google (AI models, for summaries and comment feedback) and Twilio (text messages)."
+        "body": "Supabase (our database), Vercel (hosts the website), the U.S. Census Bureau (finds where your address is), Photon and OpenStreetMap (suggest street names as you type), OpenRouter and Google (AI models, for summaries and comment feedback), your browser's push service from Google, Mozilla, Apple or Microsoft (browser notifications) and Twilio (text messages)."
       },
       "news": {
         "title": "News links",
@@ -100,7 +100,7 @@
       }
     },
     "terms": {
-      "effective": "Effective October 19, 2026",
+      "effective": "Effective October 22, 2026",
       "metaTitle": "Terms of use",
       "title": "Terms of use",
       "intro": "By using ShowUp HTX, you agree to these terms.",
@@ -121,8 +121,8 @@
         "body": "Don't use ShowUp HTX for threats or harassment, or to share other people's private information."
       },
       "alerts": {
-        "title": "Text alerts",
-        "body": "\"ShowUp HTX alerts\" sends texts about decisions by the governments you follow. Message frequency varies. Msg & data rates may apply. Reply STOP to stop or HELP for help. Carriers are not liable for delayed or undelivered messages."
+        "title": "Alerts",
+        "body": "\"ShowUp HTX alerts\" sends browser notifications and texts about decisions by the governments you follow. Turn off notifications on the Alerts page or in your browser settings. For texts: message frequency varies. Msg & data rates may apply. Reply STOP to stop or HELP for help. Carriers are not liable for delayed or undelivered messages."
       },
       "asIs": {
         "title": "A student project",
@@ -212,7 +212,7 @@
     "nav": "News sections",
     "thisWeek": "This week",
     "latest": "Latest",
-    "alerts": "Text alerts",
+    "alerts": "Alerts",
     "sample": "Sample data. These aren't real decisions. Real agenda items appear once the database is connected.",
     "aiLabel": "Written with AI from the official agenda — see source",
     "source": "Official source",
@@ -269,13 +269,13 @@
     "back": "Back to this week",
     "agendaItem": "Agenda item {number}",
     "notFound": "We couldn't find that agenda item.",
-    "whyTitle": "Why did I get this text?",
+    "whyTitle": "Why did I get this alert?",
     "whyLink": "See all texting rules"
   },
   "Alerts": {
-    "metaTitle": "Text alerts",
-    "title": "Get a text when it counts",
-    "lede": "We text only when a government that covers your address is about to vote on something big. Usually 1–3 texts a month.",
+    "metaTitle": "Alerts",
+    "title": "Get an alert when it counts",
+    "lede": "We alert you only when a government that covers your address is about to vote on something big. Usually 1–3 alerts a month.",
     "phoneLabel": "Mobile number",
     "phonePlaceholder": "(713) 555-0142",
     "consent": "I agree to receive automated text messages from ShowUp HTX about upcoming votes by the local governments that cover my address, plus sign-up reminders I ask for. Usually 1–3 messages a month. Message and data rates may apply. Reply HELP for help or STOP to opt out at any time. Consent is not a condition of any purchase.",
@@ -291,7 +291,7 @@
     "doneBody": "We'll text you when one of your governments is about to vote on something big. Reply STOP anytime to stop.",
     "previewTitle": "Texting isn't switched on yet",
     "previewBody": "This is a preview. No text was sent and your number wasn't saved. Here's what the texts will look like.",
-    "needLookup": "Look up your address first, so we know which governments to watch. Then open Text alerts from your results.",
+    "needLookup": "Look up your address first, so we know which governments to watch. Then open Alerts from your results.",
     "errors": {
       "invalid_phone": "Enter a 10-digit US mobile number.",
       "consent": "Check the box to agree to receive texts.",
@@ -301,19 +301,50 @@
       "no_bodies": "Look up your address first, then come back.",
       "generic": "Something went wrong. Try again in a minute."
     },
-    "rulesTitle": "When we text",
+    "rulesTitle": "When we send alerts",
     "rulesLede": "Only when an item is binding, affects money, schools or property, and hasn't been voted on yet:",
     "remindersTitle": "Reminders you ask for",
-    "quiet": "Texts go out only between 8 a.m. and 8 p.m. Central.",
+    "quiet": "Alerts go out only between 8 a.m. and 8 p.m. Central.",
     "privacyTitle": "What we keep",
-    "privacy": "Your phone number, the governments you follow, and your language. Never your street address. Reply STOP and we stop texting you.",
+    "privacy": "Your phone number or this browser's notification address, the governments you follow, and your language. Never your street address. Reply STOP or turn off notifications, and we stop.",
     "previewPhone": "What the texts look like",
     "previewPhoneNote": "Built from sample items.",
-    "whyMetaTitle": "Why did I get this text?",
-    "whyTitle": "Why did I get this text?",
-    "whyUnknown": "We couldn't tell which rule this text came from. Here are all of them.",
+    "whyMetaTitle": "Why did I get this alert?",
+    "whyTitle": "Why did I get this alert?",
+    "whyUnknown": "We couldn't tell which rule this alert came from. Here are all of them.",
     "whyItem": "Read the agenda item",
-    "allRules": "All texting rules"
+    "allRules": "All alert rules",
+    "textsTitle": "Text messages"
+  },
+  "Push": {
+    "title": "Browser notifications",
+    "lede": "Get a notification on this device when one of your governments is about to vote on something big. No phone number needed.",
+    "checking": "Checking this browser…",
+    "consent": "I agree to get notifications from ShowUp HTX in this browser about upcoming votes by the local governments that cover my address, plus sign-up reminders I ask for. Usually 1–3 a month. I can turn them off here or in my browser settings at any time.",
+    "minor": "I'm under 18",
+    "parentConsent": "A parent or guardian says it's OK for me to get these notifications.",
+    "minorNote": "Under 18 without a parent's OK? You can still follow everything here on the site.",
+    "turnOn": "Turn on notifications",
+    "turnOff": "Turn off notifications",
+    "onTitle": "Notifications are on in this browser",
+    "onBody": "We'll notify you when one of your governments is about to vote on something big, only between 8 a.m. and 8 p.m. Central.",
+    "previewTitle": "Notifications aren't switched on yet",
+    "previewBody": "This is a preview. Nothing was saved, and no notifications will be sent.",
+    "unsupportedTitle": "This browser can't show notifications",
+    "unsupportedBody": "Try Chrome, Edge, Firefox or Safari on a computer or Android phone. You can still follow everything here on the site.",
+    "iosTitle": "On iPhone or iPad, add ShowUp HTX to your Home Screen first",
+    "iosBody": "In Safari, tap Share, then Add to Home Screen. Open ShowUp HTX from your Home Screen, look up your address there, and turn on notifications.",
+    "deniedTitle": "Notifications are blocked for this site",
+    "deniedBody": "Allow notifications for this site in your browser's settings, then reload this page.",
+    "needLookup": "Look up your address first, so we know which governments to watch.",
+    "errors": {
+      "consent": "Check the box to agree to get notifications.",
+      "parent_consent_required": "Under 18, a parent or guardian needs to say yes first.",
+      "no_bodies": "Look up your address first, then come back.",
+      "rate_limited": "Too many tries. Wait an hour and try again.",
+      "permission": "Your browser didn't allow notifications. Try again and choose Allow.",
+      "generic": "Something went wrong. Try again in a minute."
+    }
   },
   "Coverage": {
     "toggle": "What news coverage says ({outlets, plural, one {# outlet} other {# outlets}}, {viewpoints, plural, one {# viewpoint} other {# viewpoints}})",
@@ -337,7 +368,7 @@
     "tryAnother": "Try another address",
     "dashboard": "Open your dashboard",
     "weekly": "See this week's news",
-    "alerts": "Get text alerts",
+    "alerts": "Get alerts",
     "notGovernment": "Not a government, but it affects you",
     "limits": "A body marked unverified is a location hint, not a confirmed match. Check its official source before relying on it.",
     "bodies": "Governments linked to your address",
@@ -531,8 +562,8 @@
     "draftUnknown": "Prepare my comment"
   },
   "AppAlerts": {
-    "title": "Text alerts",
-    "lede": "A text only when something big is on the line. Usually 1–3 a month.",
+    "title": "Alerts",
+    "lede": "A notification or text only when something big is on the line. Usually 1–3 a month.",
     "statusOn": "Alerts on",
     "statusPending": "Waiting for parent approval",
     "statusOff": "Alerts off",
@@ -564,13 +595,14 @@
       "approved": "Parent approved. Alerts are on.",
       "off": "Text alerts are off"
     },
-    "keepNote": "We keep your phone number and your governments, never your street address.",
-    "quietNote": "No texts between 8 p.m. and 8 a.m. Central. Anything later waits until morning.",
-    "stopNote": "Reply STOP at any time and the texts stop.",
+    "keepNote": "We keep your governments and your phone number or this browser's notification address, never your street address.",
+    "quietNote": "No alerts between 8 p.m. and 8 a.m. Central. Anything later waits until morning.",
+    "stopNote": "Turn off notifications here or reply STOP to a text, and the alerts stop.",
     "previewDay": "Text message · Today",
     "reply": "thanks, signing up now",
     "previewReal": "Preview of the texts you'd get, written by the same code that sends them, using items from your governments.",
-    "previewSample": "Preview of the texts you'd get, using sample items."
+    "previewSample": "Preview of the texts you'd get, using sample items.",
+    "textsTitle": "Text messages"
   },
   "speak": {
     "title": "Speak up",

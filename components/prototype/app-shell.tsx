@@ -52,7 +52,7 @@ const MENU: { href: string; label: string; icon: LucideIcon }[] = [
 ]
 
 const GENERAL: { href: string; label: string; icon: LucideIcon }[] = [
-  { href: "/app/alerts", label: "Text alerts", icon: BellRing },
+  { href: "/app/alerts", label: "Alerts", icon: BellRing },
   { href: "/", label: "Change address", icon: Settings2 },
 ]
 
@@ -220,7 +220,7 @@ function TopBar() {
                 <Link href="/">Change address</Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild className="rounded-xl">
-                <Link href="/app/alerts">Text alerts</Link>
+                <Link href="/app/alerts">Alerts</Link>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

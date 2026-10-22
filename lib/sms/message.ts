@@ -54,9 +54,10 @@ export function deadlineText(d: DeadlineInput, lang: Lang): { text: string; late
 }
 
 /** Ends a sentence once: Spanish times already end in "p.m.", so never add a second period. */
-const period = (s: string) => (s.endsWith(".") ? s : `${s}.`)
+export const period = (s: string) => (s.endsWith(".") ? s : `${s}.`)
 
-function clip(text: string, max: number) {
+/** Shortens text to `max` characters at a word break, ending in "…". */
+export function clip(text: string, max: number) {
   if (text.length <= max) return text
   return `${text.slice(0, Math.max(0, max - 1)).replace(/\s+\S*$/, "")}…`
 }
@@ -74,30 +75,36 @@ export function itemAlertText(
   return `${head}${headline}${headline.endsWith("…") ? "" : "."}${tail}`
 }
 
-/** Reminder texts (7a, 7b) and the protest-deadline reminder. */
-export function reminderText(
-  rule: Extract<AlertRule, "registration_opens" | "registration_closes" | "protest_deadline">,
-  a: { body: string; title: string; at: string; link: string },
-  lang: Lang,
-) {
+export type ReminderRule = Extract<AlertRule, "registration_opens" | "registration_closes" | "protest_deadline">
+
+/** Who a reminder is from: the item's government, or HCAD for the protest deadline. */
+export const reminderSender = (rule: ReminderRule, body: string) => (rule === "protest_deadline" ? "HCAD" : body)
+
+/** A reminder's sentence, without the sender, link or STOP line. Texts and browser notifications share it. */
+export function reminderSentence(rule: ReminderRule, a: { title: string; at: string }, lang: Lang) {
   const t = clip(a.title.replace(/\.$/, ""), 120)
   const at = when(a.at, lang)
-  const lines: Record<typeof rule, Record<Lang, string>> = {
+  const lines: Record<ReminderRule, Record<Lang, string>> = {
     registration_opens: {
-      en: `${a.body}: Registration to speak on "${t}" opens today (${at}).`,
-      es: `${a.body}: Hoy se abre la inscripción para hablar sobre "${t}" (${at}).`,
+      en: `Registration to speak on "${t}" opens today (${at}).`,
+      es: `Hoy se abre la inscripción para hablar sobre "${t}" (${at}).`,
     },
     registration_closes: {
-      en: period(`${a.body}: Registration to speak on "${t}" closes ${at}`),
-      es: period(`${a.body}: La inscripción para hablar sobre "${t}" cierra el ${at}`),
+      en: period(`Registration to speak on "${t}" closes ${at}`),
+      es: period(`La inscripción para hablar sobre "${t}" cierra el ${at}`),
     },
     protest_deadline: {
-      en: period(`HCAD: Your deadline to protest your home's appraised value is ${at}`),
-      es: period(`HCAD: Tu fecha límite para protestar el valor de tasación de tu casa es el ${at}`),
+      en: period(`Your deadline to protest your home's appraised value is ${at}`),
+      es: period(`Tu fecha límite para protestar el valor de tasación de tu casa es el ${at}`),
     },
   }
+  return lines[rule][lang]
+}
+
+/** Reminder texts (7a, 7b) and the protest-deadline reminder. */
+export function reminderText(rule: ReminderRule, a: { body: string; title: string; at: string; link: string }, lang: Lang) {
   const link = rule === "protest_deadline" ? a.link : `${SPEAK[lang]}: ${a.link}`
-  return clip(`${lines[rule][lang]} ${link} ${STOP[lang]}`, MAX_SMS_CHARS)
+  return clip(`${reminderSender(rule, a.body)}: ${reminderSentence(rule, a, lang)} ${link} ${STOP[lang]}`, MAX_SMS_CHARS)
 }
 
 /** The reply to the opt-in confirmation and to HELP. */

@@ -2,6 +2,8 @@
 
 Owner: P3 (sohankamsala). Plan refs: `Project_Plan.md` §8, `Technical_Implementation_Plan.md` §11, §19, §22.
 
+> **Status, Oct 22, 2026: not being submitted for the hackathon.** Twilio asks the account owner to verify their identity with an ID, and the team decided not to send one. Carrier review would also take days. Alerts go out as browser notifications instead (`Technical_Implementation_Plan.md` §11), and text sign-up stays a labeled preview. Everything below still applies if an adult registers a sender later. The privacy and terms pages now also describe browser notifications, so recheck §4's wording against them before submitting.
+
 Texts to real users need a registered sender. This file has everything to paste into Twilio, plus what has to happen first. **An agent can't submit any of this:** it needs a real account, a real person's identity and payment, and the team owner's sign-off. Check every requirement against the Twilio Console when you start; Twilio and carriers change these forms often.
 
 ---
@@ -86,3 +88,4 @@ Terms, SMS section:
 | Date | Step | Who | Result |
 |---|---|---|---|
 | 2026-10-19 | Paperwork drafted (this file) | sohankamsala | Not submitted. Waiting on an adult account owner and P5's privacy and terms pages. |
+| 2026-10-22 | Twilio dropped for the submission | PlaidMod (helping P3) | Not submitted: Twilio requires ID verification, which the team declined. Alerts switched to browser notifications; texting code kept, off. |

@@ -1,6 +1,6 @@
 import { createHmac } from "node:crypto"
 import { describe, expect, it } from "vitest"
-import { canText, normalizeUsPhone, textBlock } from "@/lib/sms/eligibility"
+import { canAlert, canText, normalizeUsPhone, textBlock } from "@/lib/sms/eligibility"
 import { MAX_SMS_CHARS, deadlineText, itemAlertText, reminderText } from "@/lib/sms/message"
 import { inSendingHours, nextSendTime } from "@/lib/sms/quietHours"
 import { buildTimeBasedAlerts, dueAlerts, enqueueItemAlerts } from "@/lib/sms/schedule"
@@ -99,6 +99,29 @@ describe("message text", () => {
     expect(reminderText("registration_closes", a, "en")).toMatch(/closes Mon, Oct 19, 3:00 PM\. Speak up: https/)
     expect(reminderText("registration_opens", a, "es")).toMatch(/^City Council: Hoy se abre/)
   })
+
+  it("keeps every reminder's exact wording (shared with browser notifications)", () => {
+    const a = { body: "City Council", title: "Public hearing on water rates.", at: "2026-10-19T15:00:00-05:00", link: "https://s.example/2" }
+    const hcad = { ...a, body: "HCAD", title: "" }
+    expect(reminderText("registration_opens", a, "en")).toBe(
+      'City Council: Registration to speak on "Public hearing on water rates" opens today (Mon, Oct 19, 3:00 PM). Speak up: https://s.example/2 Reply STOP to opt out.',
+    )
+    expect(reminderText("registration_opens", a, "es")).toBe(
+      'City Council: Hoy se abre la inscripción para hablar sobre "Public hearing on water rates" (lun 19 de oct, 3:00 p.m.). Participa: https://s.example/2 Responde STOP para cancelar.',
+    )
+    expect(reminderText("registration_closes", a, "en")).toBe(
+      'City Council: Registration to speak on "Public hearing on water rates" closes Mon, Oct 19, 3:00 PM. Speak up: https://s.example/2 Reply STOP to opt out.',
+    )
+    expect(reminderText("registration_closes", a, "es")).toBe(
+      'City Council: La inscripción para hablar sobre "Public hearing on water rates" cierra el lun 19 de oct, 3:00 p.m. Participa: https://s.example/2 Responde STOP para cancelar.',
+    )
+    expect(reminderText("protest_deadline", hcad, "en")).toBe(
+      "HCAD: Your deadline to protest your home's appraised value is Mon, Oct 19, 3:00 PM. https://s.example/2 Reply STOP to opt out.",
+    )
+    expect(reminderText("protest_deadline", hcad, "es")).toBe(
+      "HCAD: Tu fecha límite para protestar el valor de tasación de tu casa es el lun 19 de oct, 3:00 p.m. https://s.example/2 Responde STOP para cancelar.",
+    )
+  })
 })
 
 describe("alert scheduling", () => {
@@ -151,6 +174,25 @@ describe("alert scheduling", () => {
     expect(r).toEqual([
       { user_id: "u1", item_id: null, rule: "protest_deadline", scheduled_for: ct("2027-05-08T09:00:00").toISOString() },
     ])
+  })
+
+  it("queues for browser-notification followers too, but not under-18s without a parent's OK", () => {
+    const push = { endpoint: "https://fcm.googleapis.com/fcm/send/x", p256dh: "k", auth: "a" }
+    const browser = user({ id: "p1", phone: null, phone_verified: false, push })
+    const minor = user({ id: "p2", phone: null, phone_verified: false, push, is_minor: true })
+    const now = ct("2026-10-20T10:00:00")
+    expect(canAlert(browser)).toBe(true)
+    expect(canAlert(minor)).toBe(false)
+    expect(canAlert(user({ id: "p3", phone: null, phone_verified: false }))).toBe(false)
+    expect(enqueueItemAlerts(smsItem, [browser, minor], now).map((a) => a.user_id)).toEqual(["p1"])
+    const protest = buildTimeBasedAlerts({
+      now: ct("2027-05-08T09:00:00"),
+      reminders: [{ user_id: "p1", item_id: "i1" }],
+      windows: { i1: { closes_at: "2027-05-08T17:00:00-05:00" } },
+      users: { p1: { ...browser, stakes: ["homeowner"] } },
+      protestDeadline: { at: "2027-05-15T23:59:00-05:00" },
+    })
+    expect(protest.map((a) => a.rule)).toEqual(["registration_closes", "protest_deadline"])
   })
 
   it("sends each (user, item, rule) once and nothing during quiet hours", () => {

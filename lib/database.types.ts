@@ -1197,6 +1197,9 @@ export type Database = {
           parent_consent: boolean
           phone: string | null
           phone_verified: boolean
+          push_auth: string | null
+          push_endpoint: string | null
+          push_p256dh: string | null
           sms_opted_out: boolean
           stakes: string[]
         }
@@ -1208,6 +1211,9 @@ export type Database = {
           parent_consent?: boolean
           phone?: string | null
           phone_verified?: boolean
+          push_auth?: string | null
+          push_endpoint?: string | null
+          push_p256dh?: string | null
           sms_opted_out?: boolean
           stakes?: string[]
         }
@@ -1219,6 +1225,9 @@ export type Database = {
           parent_consent?: boolean
           phone?: string | null
           phone_verified?: boolean
+          push_auth?: string | null
+          push_endpoint?: string | null
+          push_p256dh?: string | null
           sms_opted_out?: boolean
           stakes?: string[]
         }

@@ -5,6 +5,7 @@ import { useLocale, useTranslations } from "next-intl"
 import * as React from "react"
 import { toast } from "sonner"
 import { AlertSignup } from "@/components/alerts/AlertSignup"
+import { PushSignup } from "@/components/alerts/PushSignup"
 import { Chip, Panel } from "@/components/prototype/civic"
 import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
@@ -20,8 +21,11 @@ function formatPhone(v: string) {
   return `(${d.slice(0, 3)}) ${d.slice(3, 6)}-${d.slice(6)}`
 }
 
-/** With a looked-up address, sign-up is P3's real flow (AlertSignup); the demo keeps a simulated form. */
-export function Alerts({ token, preview }: { token: string | null; preview: boolean }) {
+/**
+ * With a looked-up address, sign-up is P3's real flow: browser notifications (PushSignup) and
+ * texts (AlertSignup, a labeled preview until Twilio is registered). The demo keeps a simulated form.
+ */
+export function Alerts({ token, preview, vapidKey }: { token: string | null; preview: boolean; vapidKey: string | null }) {
   const t = useTranslations("AppAlerts")
   const lang = useLocale() === "es" ? "es" : "en"
   const { profile, patch, updates, bodies, source } = useProfile()
@@ -108,9 +112,15 @@ export function Alerts({ token, preview }: { token: string | null; preview: bool
       <div className="mt-6 grid grid-cols-[minmax(0,1fr)] gap-4 xl:grid-cols-[minmax(0,1fr)_400px]">
         <div className="space-y-4">
           {source !== "demo" ? (
-            <Panel>
-              <AlertSignup token={token} preview={preview} />
-            </Panel>
+            <>
+              <Panel>
+                <PushSignup token={token} vapidKey={vapidKey} />
+              </Panel>
+              <Panel>
+                <h2 className="mb-4 text-lg font-bold">{t("textsTitle")}</h2>
+                <AlertSignup token={token} preview={preview} />
+              </Panel>
+            </>
           ) : (
             <Panel>
               <form onSubmit={submit} className="space-y-7">

@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import type { PushNotice } from '@/lib/push/message'
 import { runAlertsJob, type AlertsStore, type ItemContext } from '@/lib/sms/job'
 import { signSubscriber, verifySubscriber } from '@/lib/sms/subscriber'
 import { alertKey, type AlertUser, type QueuedAlert } from '@/lib/sms/types'
@@ -21,6 +22,7 @@ const user = (over: Partial<AlertUser> = {}): AlertUser => ({
 function memoryStore(init: { users: AlertUser[]; follows: Record<string, string[]>; items: string[]; sent?: QueuedAlert[] }) {
   let queue: (QueuedAlert & { id: string })[] = []
   const sent: QueuedAlert[] = [...(init.sent ?? [])]
+  const removed: string[] = []
   let n = 0
   const ctx: ItemContext = {
     body: 'HISD board',
@@ -39,7 +41,12 @@ function memoryStore(init: { users: AlertUser[]; follows: Record<string, string[
       return []
     },
     async users() {
-      return Object.fromEntries(init.users.filter((u) => u.phone_verified && !u.sms_opted_out).map((u) => [u.id, u]))
+      return Object.fromEntries(init.users.filter((u) => (u.phone_verified && !u.sms_opted_out) || u.push).map((u) => [u.id, u]))
+    },
+    async removePush(id) {
+      removed.push(id)
+      const u = init.users.find((x) => x.id === id)
+      if (u) u.push = null
     },
     async protestDeadline() {
       return null
@@ -64,8 +71,95 @@ function memoryStore(init: { users: AlertUser[]; follows: Record<string, string[
       queue = queue.filter((q) => q.id !== id)
     },
   }
-  return { store, sent, queue: () => queue }
+  return { store, sent, removed, queue: () => queue }
 }
+
+const push = { endpoint: 'https://fcm.googleapis.com/fcm/send/abc', p256dh: 'key', auth: 'auth' }
+const browser = (over: Partial<AlertUser> = {}) => user({ id: 'p1', phone: null, phone_verified: false, push, ...over })
+
+describe('runAlertsJob with browser notifications', () => {
+  it('sends a notification to a follower who signed up in the browser', async () => {
+    const notices: { target: unknown; notice: PushNotice }[] = []
+    const m = memoryStore({ users: [browser()], follows: { p1: ['hisd_board'] }, items: ['item-1'] })
+    const r = await runAlertsJob({
+      store: m.store,
+      send: null,
+      push: async (target, notice) => {
+        notices.push({ target, notice })
+        return 'sent'
+      },
+      siteUrl: 'https://showup.example',
+      now: ct('2026-10-19T10:00:00'),
+    })
+    expect(r).toMatchObject({ queued: 1, sent: 1, failed: 0, preview: false })
+    expect(notices).toEqual([
+      {
+        target: push,
+        notice: {
+          title: 'HISD board',
+          body: 'Board to vote on closing 9 campuses. Meeting Thu, Oct 22, 5:00 PM.',
+          url: 'https://showup.example/items/item-1?why=school_change',
+          tag: 'school_change:item-1',
+          lang: 'en',
+        },
+      },
+    ])
+    expect(m.sent).toHaveLength(1)
+  })
+
+  it('deletes an expired subscription and drops its alert', async () => {
+    const m = memoryStore({ users: [browser()], follows: { p1: ['hisd_board'] }, items: ['item-1'] })
+    const r = await runAlertsJob({ store: m.store, send: null, push: async () => 'gone', siteUrl: 'https://s', now: ct('2026-10-19T10:00:00') })
+    expect(r).toMatchObject({ sent: 0, dropped: 1, removed: 1 })
+    expect(m.removed).toEqual(['p1'])
+    expect(m.queue()).toHaveLength(0)
+  })
+
+  it('keeps a texting-only alert queued while only notifications are switched on', async () => {
+    const m = memoryStore({ users: [user()], follows: { u1: ['hisd_board'] }, items: ['item-1'] })
+    const r = await runAlertsJob({ store: m.store, send: null, push: async () => 'sent', siteUrl: 'https://s', now: ct('2026-10-19T10:00:00') })
+    expect(r).toMatchObject({ queued: 1, sent: 0, dropped: 0, preview: false })
+    expect(m.queue()).toHaveLength(1)
+  })
+
+  it('never notifies an under-18 reader without a parent’s OK', async () => {
+    let calls = 0
+    const m = memoryStore({ users: [browser({ is_minor: true })], follows: { p1: ['hisd_board'] }, items: ['item-1'] })
+    const r = await runAlertsJob({
+      store: m.store,
+      send: null,
+      push: async () => {
+        calls++
+        return 'sent'
+      },
+      siteUrl: 'https://s',
+      now: ct('2026-10-19T10:00:00'),
+    })
+    expect(r).toMatchObject({ queued: 0, sent: 0 })
+    expect(calls).toBe(0)
+  })
+
+  it('holds notifications during quiet hours, like texts', async () => {
+    const m = memoryStore({ users: [browser()], follows: { p1: ['hisd_board'] }, items: ['item-1'] })
+    const night = await runAlertsJob({ store: m.store, send: null, push: async () => 'sent', siteUrl: 'https://s', now: ct('2026-10-19T22:00:00') })
+    expect(night).toMatchObject({ queued: 1, sent: 0 })
+  })
+
+  it('keeps a failed notification queued for the next run', async () => {
+    const m = memoryStore({ users: [browser()], follows: { p1: ['hisd_board'] }, items: ['item-1'] })
+    const r = await runAlertsJob({
+      store: m.store,
+      send: null,
+      push: async () => {
+        throw new Error('push service answered 500')
+      },
+      siteUrl: 'https://s',
+      now: ct('2026-10-19T10:00:00'),
+    })
+    expect(r).toMatchObject({ sent: 0, failed: 1 })
+    expect(m.queue()).toHaveLength(1)
+  })
+})
 
 describe('runAlertsJob', () => {
   it('queues and sends one text per follower, with the plan format and a why link', async () => {

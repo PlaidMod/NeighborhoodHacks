@@ -1,11 +1,18 @@
 # Project Plan
 
-**Revision 5, Oct 19, 2026**
+**Revision 5, Oct 19, 2026** (updated Oct 22, 2026: alerts go out as browser notifications)
 **Working name:** [App Name] (placeholder ideas: "MyLayers", "WhoDecides")
 
 The companion file, *Technical_Implementation_Plan.md*, covers how each part is built.
 
 ---
+
+## What changed on Oct 22, 2026
+
+- **Alerts go out as browser notifications.** Twilio needs an adult account owner who verifies their identity with an ID, and US carriers also require every texting app to register its sender, which takes days. The team chose not to send ID, and approval couldn't land before the deadline anyway. So the same alerts (the same rules, quiet hours, one alert per item, reminders 7a/7b and the protest reminder) now arrive as notifications in the reader's browser. They need no phone number and no outside account: the app signs them with its own keys.
+- **Texting stays built but off.** The Twilio code, the opt-in and the registration paperwork stay in the repo. Without Twilio keys, text sign-up shows a labeled preview. If an adult registers a sender later, texts switch on alongside notifications.
+- **iPhone and iPad:** Safari shows notifications only for sites added to the Home Screen (iOS 16.4 or later). The app now has a Home Screen manifest and icon, and the alerts page explains the steps.
+- The technical plan's §11 has the details.
 
 ## What changed in revision 5
 
@@ -249,9 +256,11 @@ Example headline style: *"Harris County MUD 123 to vote Oct. 28 on $14 million w
 
 Other bodies show "Registration details coming soon" with a link to the body's own page.
 
-### 8. SMS alerts (published rules)
+### 8. Alerts (published rules)
 
-Texts come only from SMS-eligible bodies: City Council, Commissioners Court (including Flood Control items), school boards, community college boards, MUDs and ESDs.
+**Delivery (Oct 22, 2026):** alerts go out as browser notifications. Texts follow the same rules once an adult-owned Twilio sender is registered; until then, text sign-up is a labeled preview. Below, "SMS" names the alert tier (shown as "Urgent"), not the channel.
+
+Alerts come only from SMS-eligible bodies: City Council, Commissioners Court (including Flood Control items), school boards, community college boards, MUDs and ESDs.
 
 An item is texted only if it is binding, affects money, schools or property, and hasn't been voted on yet:
 
@@ -272,10 +281,10 @@ An item is texted only if it is binding, affects money, schools or property, and
 Port, METRO and regional water authority items go to the weekly report only.
 
 **Other rules:**
-- Agenda items extracted by AI must be approved by a teammate in the review queue before they can trigger a text.
-- Texts are sent only between 8 a.m. and 8 p.m. Central.
-- Opt-in only. Users under 18 need parent consent; without it they get in-app alerts only.
-- The rules appear on one pitch slide and on a "Why did I get this text?" page.
+- Agenda items extracted by AI must be approved by a teammate in the review queue before they can trigger an alert.
+- Alerts (notifications and texts) are sent only between 8 a.m. and 8 p.m. Central.
+- Opt-in only. Users under 18 need parent consent for notifications and texts; without it they get in-app alerts only.
+- The rules appear on one pitch slide and on a "Why did I get this alert?" page.
 
 ### 9. Neutrality and labeling
 
@@ -318,7 +327,7 @@ P1 picks both addresses on Day 1 and checks their bodies against HCAD records by
 1. Enter the CFISD address → the "Who governs you?" question → "You knew 3 of 9" → results with MUD, ESD and HOA highlighted.
 2. Tax receipt: "who sets each dollar," with turnout per slice.
 3. The weekly news page, with the lead story. Open "What news coverage says" on a real item that several outlets have covered (picked by P4's watchlist).
-4. An SMS alert → Speak up → find your point → register by email with Houston City Council (using the HISD address) → the coach catches a guardrail issue → rehearsal timer.
+4. A browser notification alert → Speak up → find your point → register by email with Houston City Council (using the HISD address) → the coach catches a guardrail issue → rehearsal timer.
 5. Close with evidence: the real comment delivered, plus the "Who governs you?" results.
 
 ---
@@ -379,9 +388,10 @@ Each part also moves the text on its own screens into the English and Spanish tr
 - Gemini story writing, fact-check and template fallback.
 - News coverage perspectives: viewpoint extraction, code checks, the Gemini judge pass, and the "What news coverage says" block.
 - Weekly news page and timeline.
-- SMS opt-in, phone verification, sending, quiet hours, reminders 7a/7b, protest reminder.
-- Twilio registration paperwork (10DLC or toll-free).
-- "Why did I get this text?" page and the published rules screen.
+- Browser notifications (added Oct 22): opt-in, sending, turn-off.
+- SMS opt-in, phone verification and sending (built, off until a sender is registered), quiet hours, reminders 7a/7b, protest reminder.
+- Twilio registration paperwork (10DLC or toll-free). Not submitted: it needs an adult account owner's ID.
+- "Why did I get this alert?" page and the published rules screen.
 
 ### Part 4: Speak up
 

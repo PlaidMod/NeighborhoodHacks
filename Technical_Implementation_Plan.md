@@ -1,6 +1,6 @@
 # Technical Implementation Plan
 
-**Revision 5, Oct 19, 2026** (updated Oct 20, 2026: the AI provider is now OpenRouter, in §1, §14, §19, §21 and §22)
+**Revision 5, Oct 19, 2026** (updated Oct 20, 2026: the AI provider is now OpenRouter, in §1, §14, §19, §21 and §22; updated Oct 22, 2026: alerts also go out as browser notifications, in §1, §2, §11, §16, §19, §20 and §21)
 
 Revision 5 adds news coverage perspectives (see *Project_Plan.md*, "What changed in revision 5", and the full spec in `.plans/news-coverage-perspectives-spec.md`). The sections changed here are §1, §2, §6 (news), the new §9a, §10 (sort order), §16, §19, §20, §21 and §22.
 
@@ -28,7 +28,8 @@ This file covers how each part is built. *Project_Plan.md* covers what the produ
   - Speak up explanation and coaching (P4)
 
   Models come from the `GEMINI_*_MODEL` env vars: `gemini-3.8-flash` by default, and `gemini-4-argon` for P2's retry (scraper spec D17). Each model must be on OpenRouter's model list with structured output. Use paid models, not `:free` ones, and check the OpenRouter account's data-use settings, since some providers may keep or train on what's sent.
-- **SMS:** Twilio Programmable Messaging, plus Twilio Verify for phone confirmation.
+- **Alerts:** browser notifications through the Web Push standard (the `web-push` library, `lib/push/`), signed with the app's own VAPID keys, so no outside account is needed (added Oct 22, 2026; see §11).
+- **SMS:** Twilio Programmable Messaging, plus Twilio Verify for phone confirmation. Built, but off until an adult-owned sender is registered (§11).
 - **i18n:** next-intl, with `messages/en.json` and `messages/es.json`.
 - **Timezone:** all deadlines and meeting times are computed and displayed in `America/Chicago`.
 - **Database access:** every table has Row Level Security enabled, with no policies for the `anon` role. All reads and writes go through Next.js server routes using the service-role key, which is never sent to the client.
@@ -46,13 +47,14 @@ app/
   (public)/timeline/                timeline                       P3
   (public)/items/[id]/              item page                      P3
   (public)/speak-up/[itemId]/       Speak up flow                  P4
-  (public)/alerts/                  opt-in, rules, why-this-text   P3
+  (public)/alerts/                  opt-in, rules, why-this-alert  P3
   (public)/about/, privacy/, terms/                                P5
   admin/review/                     review queue                   P2
   api/lookup, api/quiz, api/tax-receipt, api/bodies               P1
   api/cron/ingest                                                  P2
-  api/weekly, api/items, api/alerts/*, api/reminders,
-    api/twilio/inbound, api/cron/alerts                            P3
+  api/weekly, api/items, api/alerts/* (incl. alerts/push),
+    api/reminders, api/twilio/inbound, api/cron/alerts             P3
+  manifest.ts                       Home Screen manifest           P3
   api/coach                                                        P4
 lib/
   geo/        geocoder, PostGIS queries, merge rules               P1
@@ -62,12 +64,14 @@ lib/
   rules/      classify.ts                                          P3
   stories/    story generation, fact-check                         P3
   perspectives/  coverage viewpoints: extract, checks, judge       P3
-  sms/        twilio send, verify                                  P3
+  sms/        alert queue and job, twilio send, verify             P3
+  push/       notification wording, subscription checks, sender    P3
   registration/  deadline resolver, channel builders               P4
   coach/      prompts, schema validation, guardrails               P4
   gemini.ts, db.ts, tokens.ts, rateLimit.ts                        P5
 scripts/
   load-hcad.ts, load-boundaries.sh                                 P1
+public/sw.js  service worker that shows notifications              P3
 supabase/migrations/                                               P5 (others add)
 tests/
   golden/legistar, golden/llm-extract, golden/news-articles        P2
@@ -350,9 +354,20 @@ The full spec is `.plans/news-coverage-perspectives-spec.md`. Summary:
 - **Rendering:** server-rendered and cached per token for 1 hour.
 - **Speak up** buttons appear on "Coming up" items and link to `/speak-up/[itemId]`.
 
-## 11. SMS and alerts (P3)
+## 11. Alerts: browser notifications and SMS (P3)
 
-**Opt-in:**
+**Browser notifications (added Oct 22, 2026).** Twilio needs an adult account owner who verifies their identity with an ID, and US carriers require every texting app to register its sender, which takes days. The team chose not to send ID, so alerts also go out as Web Push notifications. Texts stay built and switch on alongside notifications if an adult registers a sender later.
+1. **Opt-in:** `POST /api/alerts/push` takes the browser's `PushSubscription` JSON, the reader's `bodies_token`, consent, and the same under-18 rule as texts (`is_minor` needs `parent_consent`).
+   - The endpoint must be on a known push service host (Google FCM, Mozilla, Apple or Microsoft WNS), so the server never posts to an address of the sender's choosing.
+   - One `users` row per browser, keyed by `push_endpoint`, with its followed bodies from the token.
+   - It sets the `showup_sub` cookie, so Speak up reminders work, then sends one confirmation notification (a reply to the reader's action, so not held for quiet hours).
+2. **Opt-out:** `DELETE /api/alerts/push` with the endpoint deletes the row, with its bodies, reminders and queued alerts. When a push service answers 404 or 410 during a send, the subscription has expired, and the job deletes it the same way.
+3. **Sending:** `/api/cron/alerts` queues and sends exactly as for texts: same rules, quiet hours and `alerts_sent` idempotency. Each due alert goes to every channel the user signed up for that is switched on. An alert for a channel that isn't on stays queued.
+4. **Wording** (`lib/push/message.ts`): the title is the body's name; the text is the headline plus the [deadline] part of the text format, without the link and STOP line. Tapping opens the item page with `?why=<rule>`. Notifications expire after one day.
+5. **Keys:** `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY` and `VAPID_SUBJECT` (§21). Without them the alerts page shows a labeled preview.
+6. **iPhone and iPad:** Safari allows push only for web apps added to the Home Screen (iOS 16.4 or later). `app/manifest.ts` and the Home Screen icon make that possible, and the alerts page explains the steps. Home Screen apps keep their own cookies, so the reader looks up their address again there.
+
+**Text opt-in:**
 1. `POST /api/alerts/subscribe` sends a Twilio Verify code.
 2. `POST /api/alerts/verify` confirms it and stores `users.phone`.
 3. If `is_minor` is set, `parent_consent` must also be true (a checkbox for the hackathon).
@@ -365,7 +380,7 @@ The full spec is `.plans/news-coverage-perspectives-spec.md`. Summary:
    - 7b: registration closes within 24 hours
 
    Both use the registration resolver (section 13). Also generate the protest-deadline reminder for Homeowner users.
-2. Send `alert_queue` rows through Twilio.
+2. Send `alert_queue` rows through Twilio and Web Push.
    - **Quiet hours:** 8:00 a.m.–8:00 p.m. Central; anything outside that window is held.
    - **Idempotency:** a unique key `(user_id, item_id, rule)` in `alerts_sent`.
 
@@ -375,11 +390,11 @@ The full spec is `.plans/news-coverage-perspectives-spec.md`. Summary:
 
 **Opt-out:** Twilio's STOP handling, plus the `/api/twilio/inbound` webhook, which sets `users.sms_opted_out`.
 
-**Registration (P3):** start 10DLC or toll-free registration on Day 1, as soon as P5's privacy and terms pages are live.
+**Registration (P3):** start 10DLC or toll-free registration on Day 1, as soon as P5's privacy and terms pages are live. **Not submitted (Oct 22):** it needs an adult account owner's ID, and approval takes days. Browser notifications carry the alerts for the submission, and text sign-up shows a labeled preview.
 
 **Trial account:** until 10DLC or toll-free registration completes, only verified numbers can receive texts. Verify the team's phones for the demo.
 
-**"Why did I get this text?":** each alert link includes the `rule` key. The page shows the rule's plain-language text and the source.
+**"Why did I get this alert?":** each alert link includes the `rule` key. The page shows the rule's plain-language text and the source.
 
 All cron routes check the `CRON_SECRET` header.
 
@@ -504,7 +519,7 @@ The client removes every `guardrail_hits` quote from the draft and shows its rea
 - **`registration_methods`:** id, body_id, meeting_type, channel, opens_rule, closes_rule, required_fields, url, email, phone, word_limit_subject, minutes_per_speaker, reduced_minutes_rule, agenda_only, confirmation_type, remote_allowed, translation_request_rule, priority_groups, handouts_accepted, policy_url, last_verified
 
 **Users and alerts [P3]**
-- **`users`:** id, address_point (nullable), stakes, phone, phone_verified, language, is_minor, parent_consent, sms_opted_out
+- **`users`:** id, address_point (nullable), stakes, phone, phone_verified, language, is_minor, parent_consent, sms_opted_out, push_endpoint (unique), push_p256dh, push_auth (the three push columns are all set or all null; added Oct 22, 2026)
 - **`user_bodies`:** user_id, body_id
 - **`reminders`:** user_id, item_id, created_at
 - **`alert_queue`:** id, user_id, item_id, rule, scheduled_for
@@ -543,7 +558,8 @@ The client removes every `guardrail_hits` quote from the draft and shows its rea
 - Service-role key is server-only; RLS is enabled everywhere with no anon policies.
 - No addresses or drafts in the database or logs. `bodies_token` contains body IDs only.
 - Phone numbers only after Twilio Verify. STOP handling is on.
-- Paid AI models only (no `:free` OpenRouter models). OpenRouter, Google and Twilio are named as processors in the privacy policy.
+- Browser push subscriptions are accepted only from known push service hosts, are deleted when the reader turns notifications off or the push service reports them gone, and are never logged. Notifications carry only the alert's title, text and link.
+- Paid AI models only (no `:free` OpenRouter models). OpenRouter, Google, the browser push services (Google, Mozilla, Apple, Microsoft) and Twilio are named as processors in the privacy policy.
 - Admin routes are behind the Supabase Auth allowlist. Cron routes require `CRON_SECRET`.
 - Rate limits on `/api/coach` and `/api/lookup`.
 - News article text (`news_articles.text`) is never returned by a public route. It's deleted 90 days after fetch. The privacy page says the app stores the text of public news articles to summarize them and shows only short quotes with links.
@@ -567,7 +583,7 @@ The client removes every `guardrail_hits` quote from the draft and shows its rea
 | Coverage perspectives | P3 | Fake quotes, changed numbers, stance labels and private names are dropped; a failing judge verdict drops the argument; post-meeting articles don't change a frozen block |
 | Rule engine | P3 | Every rule fires on its sample; all near-misses don't |
 | Story fact-check | P3 | Correct stories pass; deliberately wrong numbers and dates are rejected |
-| SMS | P3 | No duplicates; quiet hours respected; STOP works |
+| SMS and browser notifications | P3 | No duplicates; quiet hours respected; STOP works; turning notifications off deletes the subscription; expired subscriptions are deleted; endpoints outside the known push services are refused |
 | Registration resolver | P4 | Deadlines for all 6 recipes match the official rules for real upcoming meetings |
 | Coach golden (EN/ES) | P4 | 5 drafts per language: item cited, time fits, no added opinion, criticism kept |
 | Guardrails (EN/ES) | P4 | 2+ examples each of attack, private info and threat removed; near-misses kept |
@@ -575,7 +591,9 @@ The client removes every `guardrail_hits` quote from the draft and shows its rea
 
 ## 21. Environment variables (P5)
 
-`SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `OPENROUTER_API_KEY`, `GEMINI_EXTRACT_MODEL`, `GEMINI_EXTRACT_FALLBACK_MODEL`, `GEMINI_JUDGE_MODEL`, `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_MESSAGING_SERVICE_SID`, `TWILIO_VERIFY_SID`, `BODIES_TOKEN_SECRET`, `CRON_SECRET`, `ADMIN_EMAILS`, `DEMO_MODE`
+`SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `OPENROUTER_API_KEY`, `GEMINI_EXTRACT_MODEL`, `GEMINI_EXTRACT_FALLBACK_MODEL`, `GEMINI_JUDGE_MODEL`, `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_MESSAGING_SERVICE_SID`, `TWILIO_VERIFY_SID`, `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT`, `BODIES_TOKEN_SECRET`, `CRON_SECRET`, `ADMIN_EMAILS`, `DEMO_MODE`
+
+The three `VAPID_*` values (Oct 22, 2026) sign browser notifications. Every environment that sends to the same subscribers shares one key pair; a new pair makes existing subscriptions stop working. `VAPID_SUBJECT` is an https: URL (not localhost) or a mailto: address, and falls back to `SITE_URL` when that's https.
 
 `GEMINI_API_KEY` is used only until `OPENROUTER_API_KEY` is set (§1).
 

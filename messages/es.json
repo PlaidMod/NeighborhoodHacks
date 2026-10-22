@@ -60,7 +60,7 @@
     "privacy": {
       "metaTitle": "Política de privacidad",
       "title": "Política de privacidad",
-      "effective": "Vigente desde el 20 de octubre de 2026",
+      "effective": "Vigente desde el 22 de octubre de 2026",
       "intro": "ShowUp HTX te ayuda a conocer tus gobiernos locales y a hacerte escuchar. Recopilamos lo mínimo posible. Esto es lo que guardamos y por qué.",
       "address": {
         "title": "Tu dirección",
@@ -68,7 +68,7 @@
       },
       "cookies": {
         "title": "Sin cuentas, pocas cookies",
-        "body": "No necesitas una cuenta. Usamos unas pocas cookies pequeñas: tu idioma (NEXT_LOCALE), los roles que elegiste, como estudiante o inquilino (showup_stakes), los identificadores de tus gobiernos, para mostrarte sus novedades (showup_bodies), y un identificador aleatorio del navegador (showup_coach_id) que limita cuántas veces puede usarse el asistente de IA. Si te inscribes en las alertas por mensaje de texto, otra cookie (showup_sub) recuerda que te inscribiste. No contiene tu número de teléfono. Los administradores del equipo también reciben una cookie de inicio de sesión."
+        "body": "No necesitas una cuenta. Usamos unas pocas cookies pequeñas: tu idioma (NEXT_LOCALE), los roles que elegiste, como estudiante o inquilino (showup_stakes), los identificadores de tus gobiernos, para mostrarte sus novedades (showup_bodies), y un identificador aleatorio del navegador (showup_coach_id) que limita cuántas veces puede usarse el asistente de IA. Si te inscribes en las alertas, otra cookie (showup_sub) recuerda que te inscribiste. No contiene tu número de teléfono. Los administradores del equipo también reciben una cookie de inicio de sesión."
       },
       "rateLimits": {
         "title": "Límites de uso",
@@ -83,8 +83,8 @@
         "body": "Los borradores de \"Habla\" nunca se guardan en nuestros servidores. Tu progreso se queda en tu propio navegador. Para darte comentarios, enviamos tu borrador a OpenRouter, que lo pasa a un modelo de IA de Google (Gemini) que lo procesa por nosotros."
       },
       "alerts": {
-        "title": "Alertas por mensaje de texto",
-        "body": "Las alertas por mensaje de texto son opcionales. Si te inscribes, guardamos tu número de teléfono después de que lo verifiques, y Twilio envía los mensajes por nosotros. El programa se llama \"ShowUp HTX alerts\". La frecuencia de los mensajes varía. Pueden aplicarse tarifas de mensajes y datos. Responde STOP para dejar de recibirlos o HELP para pedir ayuda. Si tienes menos de 18 años, uno de tus padres debe aceptar antes de que te enviemos mensajes."
+        "title": "Alertas",
+        "body": "Las alertas son opcionales. Si activas las notificaciones del navegador, guardamos la suscripción de tu navegador (una dirección web y claves del servicio de notificaciones de tu navegador, que opera Google, Mozilla, Apple o Microsoft según tu navegador), los gobiernos que sigues y tu idioma. Ese servicio entrega las notificaciones por nosotros. Desactívalas en la página de Alertas y la borramos. Si te inscribes en las alertas por mensaje de texto, guardamos tu número de teléfono después de que lo verifiques, y Twilio envía los mensajes por nosotros. El programa se llama \"ShowUp HTX alerts\". La frecuencia de los mensajes varía. Pueden aplicarse tarifas de mensajes y datos. Responde STOP para dejar de recibirlos o HELP para pedir ayuda. Si tienes menos de 18 años, uno de tus padres debe aceptar antes de que te enviemos mensajes o notificaciones."
       },
       "sharing": {
         "title": "No compartimos para publicidad",
@@ -92,7 +92,7 @@
       },
       "processors": {
         "title": "Servicios que manejan datos por nosotros",
-        "body": "Supabase (nuestra base de datos), Vercel (aloja el sitio web), la Oficina del Censo de EE. UU. (ubica tu dirección), Photon y OpenStreetMap (sugieren nombres de calles mientras escribes), OpenRouter y Google (modelos de IA, para resúmenes y comentarios sobre tus borradores) y Twilio (mensajes de texto)."
+        "body": "Supabase (nuestra base de datos), Vercel (aloja el sitio web), la Oficina del Censo de EE. UU. (ubica tu dirección), Photon y OpenStreetMap (sugieren nombres de calles mientras escribes), OpenRouter y Google (modelos de IA, para resúmenes y comentarios sobre tus borradores), el servicio de notificaciones de tu navegador, de Google, Mozilla, Apple o Microsoft (notificaciones del navegador) y Twilio (mensajes de texto)."
       },
       "news": {
         "title": "Enlaces a noticias",
@@ -100,7 +100,7 @@
       }
     },
     "terms": {
-      "effective": "Vigente desde el 19 de octubre de 2026",
+      "effective": "Vigente desde el 22 de octubre de 2026",
       "metaTitle": "Términos de uso",
       "title": "Términos de uso",
       "intro": "Al usar ShowUp HTX, aceptas estos términos.",
@@ -121,8 +121,8 @@
         "body": "No uses ShowUp HTX para amenazas ni acoso, ni para compartir información privada de otras personas."
       },
       "alerts": {
-        "title": "Alertas por mensaje de texto",
-        "body": "\"ShowUp HTX alerts\" envía mensajes sobre decisiones de los gobiernos que sigues. La frecuencia de los mensajes varía. Pueden aplicarse tarifas de mensajes y datos. Responde STOP para dejar de recibirlos o HELP para pedir ayuda. Las compañías telefónicas no son responsables de mensajes retrasados o no entregados."
+        "title": "Alertas",
+        "body": "\"ShowUp HTX alerts\" envía notificaciones del navegador y mensajes de texto sobre decisiones de los gobiernos que sigues. Desactiva las notificaciones en la página de Alertas o en la configuración de tu navegador. Para los mensajes de texto: la frecuencia varía. Pueden aplicarse tarifas de mensajes y datos. Responde STOP para dejar de recibirlos o HELP para pedir ayuda. Las compañías telefónicas no son responsables de mensajes retrasados o no entregados."
       },
       "asIs": {
         "title": "Un proyecto estudiantil",
@@ -212,7 +212,7 @@
     "nav": "Secciones de noticias",
     "thisWeek": "Esta semana",
     "latest": "Lo más reciente",
-    "alerts": "Mensajes de texto",
+    "alerts": "Alertas",
     "sample": "Datos de ejemplo. No son decisiones reales. Los puntos reales de las agendas aparecerán cuando la base de datos esté conectada.",
     "aiLabel": "Escrito con IA a partir de la agenda oficial — ver la fuente",
     "source": "Fuente oficial",
@@ -269,13 +269,13 @@
     "back": "Volver a esta semana",
     "agendaItem": "Punto de agenda {number}",
     "notFound": "No encontramos ese punto de agenda.",
-    "whyTitle": "¿Por qué recibí este mensaje?",
+    "whyTitle": "¿Por qué recibí esta alerta?",
     "whyLink": "Ver todas las reglas de los mensajes"
   },
   "Alerts": {
-    "metaTitle": "Mensajes de texto",
-    "title": "Recibe un mensaje cuando importa",
-    "lede": "Solo te escribimos cuando un gobierno de tu dirección está por votar algo importante. Normalmente de 1 a 3 mensajes al mes.",
+    "metaTitle": "Alertas",
+    "title": "Recibe una alerta cuando importa",
+    "lede": "Solo te avisamos cuando un gobierno de tu dirección está por votar algo importante. Normalmente de 1 a 3 alertas al mes.",
     "phoneLabel": "Número de celular",
     "phonePlaceholder": "(713) 555-0142",
     "consent": "Acepto recibir mensajes de texto automáticos de ShowUp HTX sobre próximas votaciones de los gobiernos locales de mi dirección, además de los recordatorios de inscripción que pida. Normalmente de 1 a 3 mensajes al mes. Pueden aplicar tarifas de mensajes y datos. Responde HELP para ayuda o STOP para cancelar en cualquier momento. El consentimiento no es condición para ninguna compra.",
@@ -291,7 +291,7 @@
     "doneBody": "Te escribiremos cuando uno de tus gobiernos esté por votar algo importante. Responde STOP en cualquier momento para dejar de recibirlos.",
     "previewTitle": "Los mensajes de texto aún no están activados",
     "previewBody": "Esta es una vista previa. No se envió ningún mensaje y no guardamos tu número. Así se verán los mensajes.",
-    "needLookup": "Primero busca tu dirección para saber qué gobiernos seguir. Luego abre Mensajes de texto desde tus resultados.",
+    "needLookup": "Primero busca tu dirección para saber qué gobiernos seguir. Luego abre Alertas desde tus resultados.",
     "errors": {
       "invalid_phone": "Escribe un número de celular de EE. UU. de 10 dígitos.",
       "consent": "Marca la casilla para aceptar recibir mensajes.",
@@ -301,19 +301,50 @@
       "no_bodies": "Primero busca tu dirección y luego regresa.",
       "generic": "Algo salió mal. Intenta otra vez en un minuto."
     },
-    "rulesTitle": "Cuándo enviamos mensajes",
+    "rulesTitle": "Cuándo enviamos alertas",
     "rulesLede": "Solo cuando un punto es obligatorio, afecta dinero, escuelas o propiedades, y todavía no se ha votado:",
     "remindersTitle": "Recordatorios que pides",
-    "quiet": "Los mensajes se envían solo entre las 8 a. m. y las 8 p. m., hora del centro.",
+    "quiet": "Las alertas se envían solo entre las 8 a. m. y las 8 p. m., hora del centro.",
     "privacyTitle": "Lo que guardamos",
-    "privacy": "Tu número de teléfono, los gobiernos que sigues y tu idioma. Nunca tu dirección. Responde STOP y dejamos de escribirte.",
+    "privacy": "Tu número de teléfono o la dirección de notificaciones de este navegador, los gobiernos que sigues y tu idioma. Nunca tu dirección. Responde STOP o desactiva las notificaciones, y dejamos de avisarte.",
     "previewPhone": "Cómo se ven los mensajes",
     "previewPhoneNote": "Hechos con puntos de ejemplo.",
-    "whyMetaTitle": "¿Por qué recibí este mensaje?",
-    "whyTitle": "¿Por qué recibí este mensaje?",
-    "whyUnknown": "No pudimos saber de qué regla vino este mensaje. Aquí están todas.",
+    "whyMetaTitle": "¿Por qué recibí esta alerta?",
+    "whyTitle": "¿Por qué recibí esta alerta?",
+    "whyUnknown": "No pudimos saber de qué regla vino esta alerta. Aquí están todas.",
     "whyItem": "Leer el punto de la agenda",
-    "allRules": "Todas las reglas de los mensajes"
+    "allRules": "Todas las reglas de las alertas",
+    "textsTitle": "Mensajes de texto"
+  },
+  "Push": {
+    "title": "Notificaciones del navegador",
+    "lede": "Recibe una notificación en este dispositivo cuando uno de tus gobiernos esté por votar algo importante. No necesitas número de teléfono.",
+    "checking": "Revisando este navegador…",
+    "consent": "Acepto recibir notificaciones de ShowUp HTX en este navegador sobre próximas votaciones de los gobiernos locales de mi dirección, además de los recordatorios de inscripción que pida. Normalmente de 1 a 3 al mes. Puedo desactivarlas aquí o en la configuración de mi navegador en cualquier momento.",
+    "minor": "Tengo menos de 18 años",
+    "parentConsent": "Mi padre, madre o tutor está de acuerdo en que reciba estas notificaciones.",
+    "minorNote": "¿Tienes menos de 18 años y no tienes el permiso de tus padres? Igual puedes seguir todo aquí en el sitio.",
+    "turnOn": "Activar notificaciones",
+    "turnOff": "Desactivar notificaciones",
+    "onTitle": "Las notificaciones están activadas en este navegador",
+    "onBody": "Te avisaremos cuando uno de tus gobiernos esté por votar algo importante, solo entre las 8 a. m. y las 8 p. m., hora del centro.",
+    "previewTitle": "Las notificaciones aún no están activadas",
+    "previewBody": "Esta es una vista previa. No guardamos nada y no se enviarán notificaciones.",
+    "unsupportedTitle": "Este navegador no puede mostrar notificaciones",
+    "unsupportedBody": "Prueba Chrome, Edge, Firefox o Safari en una computadora o un teléfono Android. Igual puedes seguir todo aquí en el sitio.",
+    "iosTitle": "En iPhone o iPad, primero agrega ShowUp HTX a tu pantalla de inicio",
+    "iosBody": "En Safari, toca Compartir y luego Agregar a inicio. Abre ShowUp HTX desde tu pantalla de inicio, busca tu dirección ahí y activa las notificaciones.",
+    "deniedTitle": "Las notificaciones están bloqueadas para este sitio",
+    "deniedBody": "Permite las notificaciones de este sitio en la configuración de tu navegador y vuelve a cargar esta página.",
+    "needLookup": "Primero busca tu dirección para saber qué gobiernos seguir.",
+    "errors": {
+      "consent": "Marca la casilla para aceptar recibir notificaciones.",
+      "parent_consent_required": "Si tienes menos de 18 años, primero necesitas el permiso de tu padre, madre o tutor.",
+      "no_bodies": "Primero busca tu dirección y luego regresa.",
+      "rate_limited": "Demasiados intentos. Espera una hora e intenta otra vez.",
+      "permission": "Tu navegador no permitió las notificaciones. Intenta otra vez y elige Permitir.",
+      "generic": "Algo salió mal. Intenta otra vez en un minuto."
+    }
   },
   "Coverage": {
     "toggle": "Qué dice la cobertura de noticias ({outlets, plural, one {# medio} other {# medios}}, {viewpoints, plural, one {# punto de vista} other {# puntos de vista}})",
@@ -337,7 +368,7 @@
     "tryAnother": "Probar otra dirección",
     "dashboard": "Abrir tu panel",
     "weekly": "Ver las noticias de esta semana",
-    "alerts": "Recibir mensajes de texto",
+    "alerts": "Recibir alertas",
     "notGovernment": "No es un gobierno, pero te afecta",
     "limits": "Una entidad marcada sin verificar es una pista de ubicación, no una coincidencia confirmada. Revisa la fuente oficial antes de confiar en ella.",
     "bodies": "Gobiernos vinculados a tu dirección",
@@ -531,8 +562,8 @@
     "draftUnknown": "Preparar mi comentario"
   },
   "AppAlerts": {
-    "title": "Alertas por mensaje de texto",
-    "lede": "Un mensaje solo cuando hay algo importante en juego. Normalmente 1–3 al mes.",
+    "title": "Alertas",
+    "lede": "Una notificación o un mensaje solo cuando hay algo importante en juego. Normalmente 1–3 al mes.",
     "statusOn": "Alertas activadas",
     "statusPending": "Esperando la aprobación de tu padre o madre",
     "statusOff": "Alertas desactivadas",
@@ -564,13 +595,14 @@
       "approved": "Tu padre o madre aprobó. Las alertas están activadas.",
       "off": "Las alertas por mensaje están desactivadas"
     },
-    "keepNote": "Guardamos tu número de teléfono y tus gobiernos, nunca tu dirección.",
-    "quietNote": "No enviamos mensajes entre las 8 p. m. y las 8 a. m., hora del centro. Lo que llegue más tarde espera hasta la mañana.",
-    "stopNote": "Responde STOP en cualquier momento y los mensajes se detienen.",
+    "keepNote": "Guardamos tus gobiernos y tu número de teléfono o la dirección de notificaciones de este navegador, nunca tu dirección.",
+    "quietNote": "No enviamos alertas entre las 8 p. m. y las 8 a. m., hora del centro. Lo que llegue más tarde espera hasta la mañana.",
+    "stopNote": "Desactiva las notificaciones aquí o responde STOP a un mensaje, y las alertas se detienen.",
     "previewDay": "Mensaje de texto · Hoy",
     "reply": "gracias, me inscribo ahora",
     "previewReal": "Vista previa de los mensajes que recibirías, escritos por el mismo código que los envía, con puntos de tus gobiernos.",
-    "previewSample": "Vista previa de los mensajes que recibirías, con puntos de muestra."
+    "previewSample": "Vista previa de los mensajes que recibirías, con puntos de muestra.",
+    "textsTitle": "Mensajes de texto"
   },
   "speak": {
     "title": "Hazte escuchar",

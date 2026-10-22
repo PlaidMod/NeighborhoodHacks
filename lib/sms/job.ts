@@ -1,17 +1,20 @@
 import { db } from '@/lib/db'
+import { itemNotice, reminderNotice, type PushNotice } from '@/lib/push/message'
+import type { PushSender } from '@/lib/push/send'
 import type { RuleKey } from '@/lib/rules/classify'
 import type { AlertRule } from '@/lib/rules/ruleText'
 import type { Stake } from '@/lib/stakes'
 import { StorySchema } from '@/lib/stories/types'
-import { canText } from './eligibility'
-import { itemAlertText, reminderText } from './message'
+import { canAlert, canPush, canText } from './eligibility'
+import { itemAlertText, reminderText, type DeadlineInput, type ReminderRule } from './message'
 import { buildTimeBasedAlerts, dueAlerts, enqueueItemAlerts, type ItemForAlerts, type RegistrationWindow } from './schedule'
-import { alertKey, type AlertUser, type QueuedAlert } from './types'
+import { alertKey, type AlertUser, type Lang, type QueuedAlert } from './types'
 
 // The alerts job behind /api/cron/alerts (Technical Plan §11):
 //   1. queue rule alerts for SMS-tier items to the users who follow their body
 //   2. queue time-based alerts (reminders 7a/7b and the HCAD protest reminder)
-//   3. send what's due, inside 8 a.m.–8 p.m. Central, once per (user, item, rule)
+//   3. send what's due, inside 8 a.m.–8 p.m. Central, once per (user, item, rule),
+//      as a text and/or a browser notification, whichever the user signed up for
 
 export type ItemContext = {
   body: string
@@ -37,16 +40,21 @@ export interface AlertsStore {
   markSent(row: QueuedAlert & { id: string }): Promise<void>
   /** Removes a queue row that can no longer be sent (opted out, item gone). */
   drop(id: string): Promise<void>
+  /** Deletes an expired browser subscription, and the user row too if it has no phone number. */
+  removePush(userId: string): Promise<void>
 }
 
 /** Sends one text. Null means texting isn't set up: nothing is sent and nothing is marked sent. */
 export type Sender = ((to: string, body: string) => Promise<void>) | null
 
-export type AlertsJobResult = { queued: number; sent: number; dropped: number; failed: number; preview: boolean }
+/** `removed` counts expired browser subscriptions deleted during the run. */
+export type AlertsJobResult = { queued: number; sent: number; dropped: number; failed: number; removed: number; preview: boolean }
 
 export async function runAlertsJob(opts: {
   store: AlertsStore
   send: Sender
+  /** Sends one browser notification. Null or missing means notifications aren't set up. */
+  push?: PushSender | null
   siteUrl: string
   now?: Date
   /** Registration windows from P4's resolver, keyed by item ID. Empty until P4's resolver exists. */
@@ -54,7 +62,8 @@ export async function runAlertsJob(opts: {
 }): Promise<AlertsJobResult> {
   const { store } = opts
   const now = opts.now ?? new Date()
-  const result: AlertsJobResult = { queued: 0, sent: 0, dropped: 0, failed: 0, preview: opts.send === null }
+  const push = opts.push ?? null
+  const result: AlertsJobResult = { queued: 0, sent: 0, dropped: 0, failed: 0, removed: 0, preview: opts.send === null && push === null }
 
   // 1 + 2: queue
   const known = await store.knownKeys()
@@ -87,7 +96,7 @@ export async function runAlertsJob(opts: {
   result.queued = fresh.length
 
   // 3: send
-  if (opts.send === null) return result
+  if (opts.send === null && push === null) return result
   const queue = await store.queued()
   const due = dueAlerts(queue, now, new Set()) as (QueuedAlert & { id: string })[]
   const context = await store.itemContext([...new Set(due.map((d) => d.item_id).filter((id): id is string => !!id))])
@@ -95,58 +104,97 @@ export async function runAlertsJob(opts: {
   for (const row of due) {
     const user = users[row.user_id]
     const ctx = row.item_id ? context[row.item_id] : undefined
-    if (!user || !canText(user) || (row.item_id && !ctx)) {
+    if (!user || !canAlert(user) || (row.item_id && !ctx)) {
       await store.drop(row.id)
       result.dropped++
       continue
     }
-    const body = textFor(row.rule, user, ctx, opts.siteUrl, row.item_id, opts.windows?.[row.item_id ?? ''], protest?.at ?? row.scheduled_for)
-    try {
-      await opts.send(user.phone!, body)
+    const alert = alertFor(row.rule, user.language, ctx, opts.siteUrl, row.item_id, opts.windows?.[row.item_id ?? ''], protest?.at ?? row.scheduled_for)
+    // waiting: the user signed up for a channel that isn't switched on, so keep the row for later.
+    let delivered = false
+    let failed = false
+    let waiting = false
+    if (canText(user)) {
+      if (opts.send) {
+        try {
+          await opts.send(user.phone!, smsText(alert, user.language))
+          delivered = true
+        } catch (error) {
+          failed = true
+          logFailure('text', row.rule, error)
+        }
+      } else waiting = true
+    }
+    if (canPush(user)) {
+      if (push) {
+        try {
+          if ((await push(user.push!, pushNotice(alert, user.language))) === 'gone') {
+            await store.removePush(user.id)
+            result.removed++
+          } else delivered = true
+        } catch (error) {
+          failed = true
+          logFailure('notification', row.rule, error)
+        }
+      } else waiting = true
+    }
+    if (delivered) {
       await store.markSent(row)
       result.sent++
-    } catch (error) {
+    } else if (failed) {
       result.failed++
-      // Never log the phone number or message text.
-      console.error(`alert send failed for rule ${row.rule}: ${error instanceof Error ? error.message : String(error)}`)
+    } else if (!waiting) {
+      // The only channel was a subscription that just expired.
+      await store.drop(row.id)
+      result.dropped++
     }
   }
   return result
 }
 
-function textFor(
+/** Never log the phone number, push address or message text. */
+function logFailure(channel: 'text' | 'notification', rule: AlertRule, error: unknown) {
+  console.error(`alert ${channel} failed for rule ${rule}: ${error instanceof Error ? error.message : String(error)}`)
+}
+
+/** The facts of one alert, before they're worded as a text or a notification. */
+type Alert =
+  | { kind: 'reminder'; rule: ReminderRule; body: string; title: string; at: string; link: string; tag: string }
+  | { kind: 'item'; body: string; headline: string; deadline: DeadlineInput; link: string; tag: string }
+
+function alertFor(
   rule: AlertRule,
-  user: AlertUser,
+  lang: Lang,
   ctx: ItemContext | undefined,
   siteUrl: string,
   itemId: string | null,
   window: RegistrationWindow | undefined,
   protestAt: string,
-) {
-  const lang = user.language
+): Alert {
   const base = siteUrl.replace(/\/$/, '')
+  // One notification per alert: a repeat with the same tag replaces it instead of stacking.
+  const tag = `${rule}:${itemId ?? 'hcad'}`
   if (rule === 'protest_deadline') {
-    return reminderText(rule, { body: 'HCAD', title: '', at: protestAt, link: `${base}/alerts/why?rule=${rule}` }, lang)
+    return { kind: 'reminder', rule, body: 'HCAD', title: '', at: protestAt, link: `${base}/alerts/why?rule=${rule}`, tag }
   }
   const link = `${base}/items/${itemId}?why=${rule}`
+  const headline = lang === 'es' ? ctx!.headline_es : ctx!.headline_en
   if (rule === 'registration_opens' || rule === 'registration_closes') {
     const at = (rule === 'registration_opens' ? window?.opens_at : window?.closes_at) ?? ctx!.meeting_at
-    return reminderText(rule, { body: ctx!.body, title: lang === 'es' ? ctx!.headline_es : ctx!.headline_en, at, link }, lang)
+    return { kind: 'reminder', rule, body: ctx!.body, title: headline, at, link, tag }
   }
-  return itemAlertText(
-    {
-      body: ctx!.body,
-      headline: lang === 'es' ? ctx!.headline_es : ctx!.headline_en,
-      deadline: {
-        meeting_at: ctx!.meeting_at,
-        registration_closes_at: window?.closes_at ?? null,
-        first_seen_at: ctx!.first_seen_at,
-      },
-      link,
-    },
-    lang,
-  )
+  return {
+    kind: 'item',
+    body: ctx!.body,
+    headline,
+    deadline: { meeting_at: ctx!.meeting_at, registration_closes_at: window?.closes_at ?? null, first_seen_at: ctx!.first_seen_at },
+    link,
+    tag,
+  }
 }
+
+const smsText = (a: Alert, lang: Lang) => (a.kind === 'reminder' ? reminderText(a.rule, a, lang) : itemAlertText(a, lang))
+const pushNotice = (a: Alert, lang: Lang): PushNotice => (a.kind === 'reminder' ? reminderNotice(a.rule, a, lang) : itemNotice(a, lang))
 
 // ---------------------------------------------------------------------------
 // Supabase store. Server-only.
@@ -161,9 +209,12 @@ type UserRow = {
   is_minor: boolean
   parent_consent: boolean
   sms_opted_out: boolean
+  push_endpoint: string | null
+  push_p256dh: string | null
+  push_auth: string | null
 }
 
-const USER_COLUMNS = 'id, phone, phone_verified, language, stakes, is_minor, parent_consent, sms_opted_out'
+const USER_COLUMNS = 'id, phone, phone_verified, language, stakes, is_minor, parent_consent, sms_opted_out, push_endpoint, push_p256dh, push_auth'
 
 function toUser(r: UserRow): AlertUser {
   return {
@@ -175,6 +226,7 @@ function toUser(r: UserRow): AlertUser {
     is_minor: r.is_minor,
     parent_consent: r.parent_consent,
     sms_opted_out: r.sms_opted_out,
+    push: r.push_endpoint && r.push_p256dh && r.push_auth ? { endpoint: r.push_endpoint, p256dh: r.push_p256dh, auth: r.push_auth } : null,
   }
 }
 
@@ -225,7 +277,8 @@ export const supabaseAlertsStore: AlertsStore = {
   },
 
   async users(ids) {
-    let q = db().from('users').select(USER_COLUMNS).eq('phone_verified', true).eq('sms_opted_out', false)
+    // Textable phones, plus browsers with a push subscription.
+    let q = db().from('users').select(USER_COLUMNS).or('and(phone_verified.eq.true,sms_opted_out.eq.false),push_endpoint.not.is.null')
     if (ids) q = q.in('id', ids)
     const { data, error } = await q
     if (error) throw error
@@ -310,5 +363,14 @@ export const supabaseAlertsStore: AlertsStore = {
   async drop(id) {
     const { error } = await db().from('alert_queue').delete().eq('id', id)
     if (error) throw error
+  },
+
+  async removePush(userId) {
+    // A browser-only row has nothing left once its subscription is gone, so delete it
+    // (its followed bodies, reminders and queue rows go with it).
+    const del = await db().from('users').delete().eq('id', userId).is('phone', null)
+    if (del.error) throw del.error
+    const upd = await db().from('users').update({ push_endpoint: null, push_p256dh: null, push_auth: null }).eq('id', userId)
+    if (upd.error) throw upd.error
   },
 }

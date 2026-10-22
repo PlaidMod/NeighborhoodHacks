@@ -3,6 +3,7 @@ import { getOptionalEnv } from '@/lib/env'
 import { llmConfigured } from '@/lib/openrouter'
 import { geminiModel } from '@/lib/gemini'
 import { geminiExtractor, geminiJudge, judgeModel, runPerspectivesJob, supabasePerspectivesStore } from '@/lib/perspectives/job'
+import { createPushSender, pushConfigFromEnv } from '@/lib/push/send'
 import { runAlertsJob, supabaseAlertsStore } from '@/lib/sms/job'
 import { twilioConfigured } from '@/lib/sms/subscriber'
 import { twilioClient, twilioConfigFromEnv } from '@/lib/sms/twilio'
@@ -11,8 +12,9 @@ import { runStoryJob, supabaseStoryStore } from '@/lib/stories/job'
 import { loadRegistrationWindows } from '@/lib/registration/server'
 
 // GET /api/cron/alerts (Technical Plan §11). Writes pending stories first, so texts can
-// use their headlines, then news coverage blocks (§9a), then queues and sends alerts. Without Twilio keys it queues but
-// sends nothing.
+// use their headlines, then news coverage blocks (§9a), then queues and sends alerts: texts
+// through Twilio and browser notifications through Web Push. A channel without its keys
+// sends nothing; its alerts stay queued.
 export const maxDuration = 300
 
 export async function GET(req: Request) {
@@ -39,9 +41,11 @@ export async function GET(req: Request) {
     }
   }
   const twilio = twilioConfigured() ? twilioClient(twilioConfigFromEnv()) : null
+  const pushConfig = pushConfigFromEnv()
   const alerts = await runAlertsJob({
     store: supabaseAlertsStore,
     send: twilio ? async (to, body) => void (await twilio.sendSms(to, body)) : null,
+    push: pushConfig ? createPushSender(pushConfig) : null,
     siteUrl: getOptionalEnv('SITE_URL') ?? new URL(req.url).origin,
     windows: await loadRegistrationWindows(),
   })

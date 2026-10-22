@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
 import { getLocale, getTranslations } from 'next-intl/server'
 import { AlertSignup } from '@/components/alerts/AlertSignup'
+import { PushSignup } from '@/components/alerts/PushSignup'
+import { vapidPublicKey } from '@/lib/push/send'
 import { NeedAddress, NewsNav } from '@/components/weekly/NewsChrome'
 import { RULE_TEXT, SMS_BODY_NOTE, type AlertRule } from '@/lib/rules/ruleText'
 import { itemAlertText, reminderText } from '@/lib/sms/message'
@@ -61,7 +63,14 @@ export default async function AlertsPage({ searchParams }: { searchParams: Promi
             <p className="mt-3 max-w-2xl text-lg text-muted-foreground">{t('lede')}</p>
           </header>
 
-          {needsLookup ? <NeedAddress reason="no_token" /> : <AlertSignup token={token ?? null} preview={preview} />}
+          <div className="rounded-[24px] bg-white p-6 ring-1 ring-border">
+            <PushSignup token={token ?? null} vapidKey={vapidPublicKey()} />
+          </div>
+
+          <section>
+            <h2 className="mb-4 text-lg font-bold">{t('textsTitle')}</h2>
+            {needsLookup ? <NeedAddress reason="no_token" /> : <AlertSignup token={token ?? null} preview={preview} />}
+          </section>
 
           <section id="rules">
             <h2 className="text-lg font-bold">{t('rulesTitle')}</h2>

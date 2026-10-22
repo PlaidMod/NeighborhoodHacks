@@ -18,7 +18,18 @@ const nextConfig: NextConfig = {
     '/api/cron/ingest': ['./data/sources.yaml', './data/manual/**/*'],
   },
   async headers() {
-    return [{ source: '/:path*', headers: securityHeaders }]
+    return [
+      { source: '/:path*', headers: securityHeaders },
+      {
+        // The notification service worker: always fetch the latest, and let it load only our own scripts.
+        source: '/sw.js',
+        headers: [
+          { key: 'Content-Type', value: 'application/javascript; charset=utf-8' },
+          { key: 'Cache-Control', value: 'no-cache, no-store, must-revalidate' },
+          { key: 'Content-Security-Policy', value: "default-src 'self'; script-src 'self'" },
+        ],
+      },
+    ]
   },
 }
 
