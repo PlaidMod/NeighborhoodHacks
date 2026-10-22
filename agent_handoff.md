@@ -33,6 +33,21 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-22: Browser notifications live on production
+- **Who:** PlaidMod · helping P3 News and Alerts
+- **Branch:** main
+- **What changed:**
+  - Added `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY` (sensitive) and `VAPID_SUBJECT` to Vercel for Production and Preview. They're the same pair as `.env.local`.
+  - Pushed `2794362` (the feature) and `004d0b9`. The second makes the sign-up route log why a confirmation failed, with the status or reason only and never the push address. The sender now keeps the reason for errors that never reached the push service.
+- **Files:** `lib/push/send.ts`, `app/api/alerts/push/route.ts`, their tests, `agent_handoff.md`
+- **Contract changes:** None
+- **Checked:**
+  - Live site: `/manifest.webmanifest`, `/icons/icon-192.png` and `/sw.js` return 200. `sw.js` has the no-cache and CSP headers, and `/alerts` carries the public key.
+  - The first live sign-up (deploy `c0sm6t2ef`) saved, but its confirmation never showed. That deploy didn't log the reason. A test send from the local keys to the same subscription arrived, so the subscription and keys were fine.
+  - On deploy `khriytob3`, two off-and-on cycles each showed the confirmation; the second took 1.6 s from the click. No failure was logged.
+  - The test sign-up was turned off; the users, user_bodies, alert_queue and alerts_sent tables have 0 rows.
+- **Open issues / next:** The first missed confirmation is unexplained. If it happens again, `vercel logs` shows `push confirmation failed: …`. Still untested: a real alert from the daily job (no item qualifies today), and iPhone or Safari.
+
 ### 2026-10-22: Alerts go out as browser notifications (Twilio dropped)
 - **Who:** PlaidMod · helping P3 News and Alerts
 - **Branch:** main
