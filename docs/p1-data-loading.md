@@ -49,11 +49,15 @@ Use `--layer School` for school districts and `--layer College` for college dist
 Done on Oct 21, 2026:
 - Migrations `20261021040012_p1_lookup_support.sql` and `20261021050753_hcad_lookup_code_sets.sql` are applied.
 - The body catalog (11 rows) and the jurisdiction map (9 codes) are seeded.
-- HCAD 2026 parcels for 24 ZIPs are loaded through the workflow above: 307,173 parcels and 2,760,722 tax-code rows.
+- HCAD 2026 parcels for 30 ZIPs are loaded through the workflow above: 385,337 parcels and 3,435,567 tax-code rows.
   - First run: 77002, 77003, 77004, 77006, 77007, 77008, 77019, 77021, 77098 and 77433 (142,406 parcels).
   - Second run (39686003192): 77009, 77011, 77018, 77023, 77025, 77027, 77030, 77054, 77056, 77096, 77065, 77070, 77095 and 77429 (164,767 parcels).
-  - The tax-code index was rebuilt on Oct 21, which shrank it from 155 MB to 107 MB. The quota is now at 338 MB of the 500 MB free-plan limit; above 500 MB the database becomes read-only. The quota counts all of the project's databases, including Postgres's two template databases (about 15 MB together).
-  - That leaves room for about 6 more ZIPs of average size, about 13,000 parcels each. This is an estimate: loads that insert between existing accounts grow the index faster than the table.
+  - Third run (39703086677): 77020, 77022, 77026, 77040, 77041 and 77064 (78,164 parcels).
+- **Space:** the quota is at 435 MB of the 500 MB free-plan limit. Above 500 MB the database becomes read-only.
+  - The quota counts all of the project's databases, including Postgres's two template databases (about 15 MB together).
+  - The tax-code index was rebuilt between the second and third runs, shrinking it from 155 MB to 107 MB. The third run grew it to 156 MB.
+  - Don't load more ZIPs without freeing space first. An average ZIP (about 13,000 parcels) adds about 16 MB, and rebuilding the index again (below) would return about 20 MB.
+- HCAD code `012`, HOUSTON ISD (FORMERLY NFISD), isn't in the jurisdiction map. No loaded parcel has it. In ZIPs where it appears, the lookup would list it as an untracked government instead of showing the HISD board. Source-check it and add it to the map before loading those ZIPs.
 
 **Rebuilding the tax-code index.** Run these as two separate runs in the SQL editor. A plain `REINDEX` keeps the old index until the new one is built, so it needs room for both, and so does putting both statements in one run.
 

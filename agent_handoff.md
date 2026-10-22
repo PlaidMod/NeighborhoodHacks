@@ -33,6 +33,22 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-21: HCAD data for 6 more ZIPs (30 in all)
+- **Who:** PlaidMod · P5 Platform (P1's lookup data)
+- **Branch:** main
+- **What changed:** Ran the HCAD slice workflow (run 39703086677) for 77020, 77022 and 77026 (City of Houston, HISD) and 77040, 77041 and 77064 (Cypress-Fairbanks). Loaded 78,164 parcels; 536 with no tax codes were skipped. That makes 385,337 parcels and 3,435,567 tax-code rows in 30 ZIPs. The local slice is deleted. No code changed.
+- **Files:** `docs/p1-data-loading.md`, `agent_handoff.md`
+- **Contract changes:** None
+- **Checked:**
+  - The new totals equal the earlier ones plus exactly what the workflow staged.
+  - By school district, the new parcels are CFISD 41,187, HISD 35,093, Aldine ISD 1,700, and under 200 in other districts.
+  - Live, 40 random new addresses: all gave `match: hcad`; 36 got the HISD or CFISD board. A second live sample of 30: all 30 got a board.
+  - Local dev server, 110 random new addresses: 106 got a board. 3 are in Aldine ISD or Spring Branch ISD, which we don't track, and are listed as not tracked. 1 was "not found": a street address shared by several accounts, sent without a ZIP (the known test-format case in the entry below).
+- **Space:** the quota is at 435 MB of 500. The tax-code index grew from 107 MB back to 156 MB.
+- **Open issues / next:**
+  - Don't load more ZIPs without freeing space first. An average ZIP adds about 16 MB; another index rebuild (the two runs in `docs/p1-data-loading.md`) would return about 20 MB.
+  - **For P1:** HCAD code `012`, HOUSTON ISD (FORMERLY NFISD), isn't in `data/hcad-jurisdiction-map.yaml`. No loaded parcel has it, but in ZIPs where it appears the lookup would list it as untracked instead of showing the HISD board. Source-check it and add it to the map before loading those ZIPs.
+
 ### 2026-10-21: Rebuilt the HCAD tax-code index (48 MB freed)
 - **Who:** PlaidMod · P5 Platform (P1's lookup data)
 - **Branch:** main
