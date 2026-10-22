@@ -33,6 +33,23 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-21: Rebuilt the HCAD tax-code index (48 MB freed)
+- **Who:** PlaidMod · P5 Platform (P1's lookup data)
+- **Branch:** main
+- **What changed:**
+  - **Index.** PlaidMod rebuilt `hcad_jurisdictions_pkey` in the Supabase SQL editor. The primary key was dropped, then added back in a separate run with the migration's definition, `(account, hcad_code)`. A plain `REINDEX` was ruled out because it keeps the old index until the new one is built, and the quota would have peaked near 499 MB. No schema change.
+  - **Space.** The index went from 155 MB to 107 MB. The quota total went from 386 MB to 338 MB of 500.
+  - **Log fix.** A merge on Oct 19 (`50aae75`) had pasted a second copy of this file's header into the P5 Task 8 (`bodies_token`) entry, which cut off its ID-format line. The copy is removed and the line restored from before the merge. Nothing else in that entry changed.
+- **Files:** `docs/p1-data-loading.md`, `agent_handoff.md`
+- **Contract changes:** None
+- **Checked:**
+  - The primary key is valid, and the 2,760,722 rows are unchanged.
+  - The lookup's join uses an index-only scan on the new key.
+  - Live: 20 random loaded addresses all gave `match: hcad`. 901 Bagby St gives `hcad` with 7 governments and 3 untracked, the same as before.
+  - Disk: about 800 MB of 1 GB. 464 MB of that is the write-ahead log, mostly spare files that Postgres reuses.
+- **Correction:** The entry below says 371 MB of 500. That figure was the main database only. The quota counts all the project's databases, including Postgres's two template databases (7 MB each), so the total was 386 MB.
+- **Open issues / next:** There's room for about 6 more ZIPs of average size, about 13,000 parcels each. That's an estimate: new loads grow the index faster than the table. To reclaim the space later, repeat the two-run rebuild in `docs/p1-data-loading.md`.
+
 ### 2026-10-21: HCAD data for 14 more ZIPs; HCAD matches no longer need a map point
 - **Who:** PlaidMod · P5 Platform (P1's lookup data and route)
 - **Branch:** main
@@ -918,42 +935,7 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 - **Files:** `lib/tokens.ts`, `tests/platform/tokens.test.ts`
 - **Contract changes (shared, §3):**
   - **Format:** `<payload>.<signature>`. The payload is base64url JSON `{"v":1,"b":[sorted unique ids]}`, and the signature is base64url HMAC-SHA256 with `BODIES_TOKEN_SECRET`.
-  - **Body IDs:** 1 to 64 IDs, each matching `^[a-z0-9][a-z0-9_-]{0,63}# Agent handoff log
-
-A shared log of changes made in this repo, so the next teammate or agent can catch up without reading every diff. Entries follow `INSTRUCTIONS.md`: record the teammate, never the agent or model.
-
-## Rules for agents
-
-1. **At the start of a session,** read the newest 3–5 entries below, plus any entry that touches the files you're about to change.
-2. **After you add, edit or delete anything in the repo,** add one entry before you finish the task or commit. One entry per task, not per file.
-3. **Put new entries at the top,** directly under "Entries." Never edit or delete someone else's entry. If an older entry is now wrong, say so in your new entry.
-4. **Keep it short.** Aim for under 15 lines, and write for a teammate who hasn't seen the code.
-5. **Flag shared-contract changes** in the "Contract changes" line. Other parts are built against these, so a silent change breaks them:
-   - DB schema (Technical_Implementation_Plan.md §16)
-   - `Meeting` and `Item` types (§6)
-   - `bodies_token` format (§3)
-   - the `classify()` signature (§8)
-   - types in `lib/prototype/types.ts` (the `/app` screens' data shapes; moved from `web/src/lib/data/types.ts`)
-6. **On a merge conflict in this file,** keep both entries, newest first.
-
-## Entry template
-
-```markdown
-### YYYY-MM-DD: <short title>
-- **Who:** <teammate> · <part, e.g. P3 News and Alerts>
-- **Branch:** <branch>
-- **What changed:** <1–3 sentences on what and why>
-- **Files:** <main files or folders touched>
-- **Contract changes:** None | <what changed and who it affects>
-- **Checked:** <e.g. npm run lint, npx tsc --noEmit, manual check at 390px; or "not run" and why>
-- **Open issues / next:** <anything unfinished, broken, or for the next person>
-```
-
----
-
-## Entries
-
-.
+  - **Body IDs:** 1 to 64 IDs, each matching `^[a-z0-9][a-z0-9_-]{0,63}$`.
   - The same set always gives the same token, so P3 can cache the weekly page by token.
   - **P1** signs the token in `/api/lookup`. **P3** verifies it on `/weekly?t=`. When `verifyBodiesToken` returns null, show "enter your address again" instead of an error.
 - **Checked:** `npm test -- tokens` (13/13), typecheck and lint pass.

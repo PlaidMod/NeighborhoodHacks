@@ -52,7 +52,20 @@ Done on Oct 21, 2026:
 - HCAD 2026 parcels for 24 ZIPs are loaded through the workflow above: 307,173 parcels and 2,760,722 tax-code rows.
   - First run: 77002, 77003, 77004, 77006, 77007, 77008, 77019, 77021, 77098 and 77433 (142,406 parcels).
   - Second run (39686003192): 77009, 77011, 77018, 77023, 77025, 77027, 77030, 77054, 77056, 77096, 77065, 77070, 77095 and 77429 (164,767 parcels).
-  - The database is at 371 MB of the 500 MB free-plan limit, so there's little room for more ZIPs. The tax-code index (155 MB) is larger than its table because later loads insert between existing accounts; rebuilding it would save space but needs about 100 MB free while it runs.
+  - The tax-code index was rebuilt on Oct 21, which shrank it from 155 MB to 107 MB. The quota is now at 338 MB of the 500 MB free-plan limit; above 500 MB the database becomes read-only. The quota counts all of the project's databases, including Postgres's two template databases (about 15 MB together).
+  - That leaves room for about 6 more ZIPs of average size, about 13,000 parcels each. This is an estimate: loads that insert between existing accounts grow the index faster than the table.
+
+**Rebuilding the tax-code index.** Run these as two separate runs in the SQL editor. A plain `REINDEX` keeps the old index until the new one is built, so it needs room for both, and so does putting both statements in one run.
+
+```sql
+-- Run 1: drop the old index (lookups stay correct but slow until run 2 finishes)
+set lock_timeout = '10s';
+alter table public.hcad_jurisdictions drop constraint hcad_jurisdictions_pkey;
+
+-- Run 2: build it fresh with the migration's definition
+set statement_timeout = '10min';
+alter table public.hcad_jurisdictions add constraint hcad_jurisdictions_pkey primary key (account, hcad_code);
+```
 
 Addresses elsewhere in Harris County use the Census fallback until their ZIP is loaded. To add ZIPs, run the workflow with just the new ZIPs: the loader updates by account and keeps what's already loaded. Reloading is safe.
 
