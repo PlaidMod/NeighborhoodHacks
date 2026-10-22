@@ -5,6 +5,7 @@ const state = vi.hoisted(() => ({
   deleted: [] as string[],
   deletedId: null as string | null,
   sent: [] as { target: unknown; notice: { body: string; lang: string } }[],
+  sendResult: 'sent' as 'sent' | 'gone' | Error,
   cookies: new Map<string, string>(),
 }))
 
@@ -31,7 +32,8 @@ vi.mock('@/lib/push/send', async (original) => ({
   ...(await original<typeof import('@/lib/push/send')>()),
   createPushSender: () => async (target: unknown, notice: { body: string; lang: string }) => {
     state.sent.push({ target, notice })
-    return 'sent' as const
+    if (state.sendResult instanceof Error) throw state.sendResult
+    return state.sendResult
   },
 }))
 
@@ -56,6 +58,7 @@ describe('POST /api/alerts/push', () => {
     state.saved = []
     state.deleted = []
     state.sent = []
+    state.sendResult = 'sent'
     state.deletedId = null
     state.cookies = new Map()
     vi.unstubAllEnvs()
@@ -111,6 +114,19 @@ describe('POST /api/alerts/push', () => {
     const minor = await call('POST', { subscription, t, consent: true, is_minor: true })
     expect(await minor.json()).toEqual({ error: 'parent_consent_required' })
     expect((await call('POST', { subscription, t, consent: true, is_minor: true, parent_consent: true })).status).toBe(200)
+  })
+
+  it('still signs up, and logs why, when the confirmation fails, without the push address', async () => {
+    const log = vi.spyOn(console, 'error').mockImplementation(() => {})
+    state.sendResult = new Error('push service answered 403')
+    const res = await call('POST', { subscription, t: signBodiesToken(['hisd_board'], secret), consent: true })
+    expect(await res.json()).toEqual({ ok: true })
+    expect(log).toHaveBeenCalledWith('push confirmation failed: push service answered 403')
+    state.sendResult = 'gone'
+    await call('POST', { subscription, t: signBodiesToken(['hisd_board'], secret), consent: true })
+    expect(log).toHaveBeenLastCalledWith('push confirmation failed: subscription gone')
+    expect(JSON.stringify(log.mock.calls)).not.toContain(subscription.endpoint)
+    log.mockRestore()
   })
 
   it('needs a valid lookup token', async () => {

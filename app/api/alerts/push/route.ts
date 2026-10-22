@@ -56,9 +56,13 @@ export async function POST(req: Request) {
     secure: getOptionalEnv('VERCEL_ENV') !== undefined,
     maxAge: 60 * 60 * 24 * 365,
   })
-  // A reply to the reader's own action, so it isn't held for quiet hours.
+  // A reply to the reader's own action, so it isn't held for quiet hours. The sign-up stands
+  // even if it fails; the log says why, but never includes the push address.
   const siteUrl = getOptionalEnv('SITE_URL') ?? new URL(req.url).origin
-  await createPushSender(config)(target, confirmationNotice(lang, siteUrl)).catch(() => undefined)
+  const confirmed = await createPushSender(config)(target, confirmationNotice(lang, siteUrl)).catch((error: unknown) =>
+    error instanceof Error ? error.message : 'unknown error',
+  )
+  if (confirmed !== 'sent') console.error(`push confirmation failed: ${confirmed === 'gone' ? 'subscription gone' : confirmed}`)
   return Response.json({ ok: true })
 }
 

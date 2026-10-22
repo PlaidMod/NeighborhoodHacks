@@ -131,6 +131,17 @@ describe('push sender', () => {
     expect((error as Error).message).toBe('push service answered 500')
   })
 
+  it('explains failures that never reached the push service, with web addresses removed', async () => {
+    const keyError = vi.fn(async () => {
+      throw new Error('Vapid private key should be 32 bytes long when decoded.')
+    })
+    await expect(createPushSender(config, keyError)(target, notice)).rejects.toThrow('push failed: Vapid private key should be 32 bytes long when decoded.')
+    const network = vi.fn(async () => {
+      throw new Error(`connect ETIMEDOUT for ${target.endpoint}`)
+    })
+    await expect(createPushSender(config, network)(target, notice)).rejects.toThrow('push failed: connect ETIMEDOUT for [url]')
+  })
+
   it('needs both keys and an https or mailto contact', () => {
     vi.stubEnv('VAPID_PUBLIC_KEY', 'pub')
     vi.stubEnv('VAPID_PRIVATE_KEY', 'priv')

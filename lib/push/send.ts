@@ -52,7 +52,10 @@ export function createPushSender(config: PushConfig, send: SendNotification = we
       const status = (error as { statusCode?: unknown } | null)?.statusCode
       if (status === 404 || status === 410) return 'gone'
       // The library's error carries the endpoint, which identifies the browser: never pass it on.
-      throw new Error(`push service answered ${typeof status === 'number' ? status : 'with an error'}`)
+      if (typeof status === 'number') throw new Error(`push service answered ${status}`)
+      // Never reached the push service (bad key, network): keep the reason, minus any web address.
+      const reason = error instanceof Error ? error.message.replace(/https?:\/\/\S+/g, '[url]') : 'unknown error'
+      throw new Error(`push failed: ${reason}`)
     }
   }
 }
