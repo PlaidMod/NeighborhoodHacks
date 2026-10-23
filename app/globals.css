@@ -272,6 +272,36 @@
   }
 }
 
+/*
+ * One-time confirmations ("You're signed in", "Your account is deleted") rise in once, so the reader
+ * notices the action worked. They arrive with a full page load, so a CSS animation (off the main
+ * thread) rather than a transition. Reduced motion keeps a short fade and drops the movement; the
+ * !important beats the global reduced-motion rule below, which would otherwise make it instant.
+ */
+:root {
+  --ease-out-strong: cubic-bezier(0.23, 1, 0.32, 1);
+}
+@keyframes status-fade {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes status-rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+.status-in {
+  animation: status-rise 250ms var(--ease-out-strong) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .status-in {
+    animation-name: status-fade !important;
+    animation-duration: 200ms !important;
+  }
+}
+
 @keyframes rise {
   from {
     opacity: 0;

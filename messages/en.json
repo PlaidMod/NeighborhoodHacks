@@ -37,7 +37,7 @@
     "featureThreeTitle": "Speak up with confidence",
     "featureThreeBody": "Prepare for public comment and learn how to take part in local decisions.",
     "addressLabel": "Your home address",
-    "addressPlaceholder": "Street, city and ZIP",
+    "addressPlaceholder": "e.g. 901 Bagby St, Houston, TX 77002…",
     "submit": "Find my governments",
     "privacyNote": "We save your address only in this browser so you can use it again. We never store it on our servers.",
     "coverage": "Harris County addresses only for now.",
@@ -94,7 +94,7 @@
       },
       "account": {
         "title": "Signing in with Google",
-        "body": "Signing in is optional. If you sign in with Google, Google shares your email address, your name and a link to your profile photo with us, and Supabase, our database, keeps them for your account. We also save the IDs of the governments you follow and the roles you picked, so they follow you to other devices. Your street address stays only in this browser and is never added to your account. Signing out makes this browser forget your governments, your roles and your saved address, but your account keeps your governments and roles. To delete your account and everything saved with it, ask us on our project page (see Contact). Don't post your email address there. We'll set up a private way to confirm it's you."
+        "body": "Signing in is optional. If you sign in with Google, Google shares your email address, your name and a link to your profile photo with us, and Supabase, our database, keeps them for your account. We also save the IDs of the governments you follow and the roles you picked, so they follow you to other devices. Your street address stays only in this browser and is never added to your account. Signing out makes this browser forget your governments, your roles and your saved address, but your account keeps your governments and roles. To delete your account and everything saved with it, choose Delete my account in the account menu."
       },
       "rateLimits": {
         "title": "Limits on use",
@@ -526,6 +526,65 @@
     "inBrief": "In your brief",
     "outcomePending": "Outcome not posted yet"
   },
+  "AppShell": {
+    "nav": {
+      "home": "Home",
+      "timeline": "Timeline",
+      "brief": "Weekly brief",
+      "districts": "My districts",
+      "speak": "Speak up",
+      "vote": "Vote",
+      "alerts": "Alerts",
+      "changeAddress": "Change address"
+    },
+    "sections": {
+      "menu": "Menu",
+      "general": "General",
+      "navigation": "Navigation"
+    },
+    "footer": {
+      "tagline": "Your neighborhood. Your voice.",
+      "independent": "Independent & nonpartisan.",
+      "builtBy": "Built by Houston students."
+    },
+    "banner": {
+      "saved": "Sample data · Your address is saved in this browser; look it up to load your governments.",
+      "demo": "Sample data · Exploring Third Ward as Maya.",
+      "useMyAddress": "Use my address",
+      "noDatabase": "Sample data · The meeting database isn't connected here, so these are sample governments and items."
+    },
+    "toggle": {
+      "hide": "Hide the menu",
+      "show": "Show the menu"
+    },
+    "search": {
+      "button": "Search meetings, bodies, topics",
+      "placeholder": "Search meetings, bodies, topics…",
+      "empty": "Nothing matches that yet.",
+      "governments": "Your governments",
+      "updates": "Updates"
+    },
+    "account": {
+      "trigger": "Profile and interests",
+      "yourArea": "Your area",
+      "governments": "{count, plural, one {# government} other {# governments}}",
+      "signedIn": "Signed in with Google · saved to your account",
+      "guest": "Guest",
+      "guestNote": "Saved on this browser only",
+      "signIn": "Sign in to use it on other devices",
+      "explainFor": "Explain things for a",
+      "signOut": "Sign out",
+      "signOutGuest": "Sign out and forget this browser",
+      "delete": "Delete my account"
+    },
+    "persona": {
+      "student": "Student",
+      "parent": "Parent",
+      "renter": "Renter",
+      "homeowner": "Homeowner",
+      "voter": "First-time voter"
+    }
+  },
   "AppBrief": {
     "chip": "Weekly brief",
     "minRead": "{count} min read",
@@ -810,5 +869,18 @@
     "signInLink": "Sign in with Google",
     "welcome": "You're signed in. Look up your address once and ShowUp will remember it.",
     "or": "or"
+  },
+  "AccountDelete": {
+    "metaTitle": "Delete your account",
+    "title": "Delete your account",
+    "signedInAs": "You're signed in as {email}.",
+    "what": "This deletes your ShowUp account and the governments and roles saved to it. It can't be undone.",
+    "browser": "This browser also forgets your governments and your saved address. You can keep using ShowUp as a guest, or sign in again later to start over.",
+    "confirm": "Delete my account",
+    "deleting": "Deleting your account…",
+    "cancel": "Keep my account",
+    "admin": "Team admin accounts can't be deleted here. Ask the team to remove yours.",
+    "failed": "We couldn't delete your account. Try again in a minute.",
+    "done": "Your account is deleted. You can keep using ShowUp as a guest."
   }
 }

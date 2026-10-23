@@ -33,6 +33,35 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-23: "Delete my account", the app shell in Spanish, and a skip link in /app
+- **Who:** PlaidMod · P5 Platform
+- **Branch:** main
+- **What changed:**
+  - **Delete my account:** signed-in readers get "Delete my account" in the account menu. It opens `/account/delete`, which explains what's deleted and asks to confirm.
+    - The button posts to `/auth/delete` through `DeleteAccountForm`, which clears the saved address first.
+    - The route refuses posts from other sites (Origin and Sec-Fetch-Site checks), guests and team admin accounts (the team removes those by hand).
+    - It deletes the Supabase user, whose `account_profiles` row goes with it (on delete cascade). Then it signs out, clears the government and role cookies, and lands on `/?deleted=1`, which shows "Your account is deleted".
+    - The privacy page (en/es) now points to the button instead of "ask us on our project page".
+    - The menu's sign-out also shows for a signed-in reader before their first lookup.
+  - **App shell in Spanish:** the sidebar, sample-data banners, search, account menu and role names now come from the new `AppShell` messages in English and Spanish. Spanish matches existing wording ("Hazte escuchar", "Datos de muestra", "Cerrar sesión").
+  - **Motion and guideline pass:**
+    - The "signed in" and "account deleted" confirmations on the home page rise in once (`.status-in`: 250ms with the new `--ease-out-strong`; a 200ms fade under reduced motion).
+    - `/app` gets the same "Skip to content" link as the public pages.
+    - Page headings use balanced wrapping, and the avatar has explicit width and height.
+  - **Three small guideline fixes:**
+    - The search hint shows ⌘K on Apple devices and Ctrl K elsewhere (`lib/prototype/shortcut.ts`), after hydration.
+    - The delete button shows "Deleting your account…" with a spinner once pressed, and ignores a second press.
+    - The address placeholder shows an example: "e.g. 901 Bagby St, Houston, TX 77002…".
+- **Files:** `app/auth/delete/route.ts`, `app/(public)/account/delete/page.tsx`, `lib/accountDeletion.ts` (new); `components/prototype/{app-shell,sign-out-form}.tsx`, `app/(public)/page.tsx`, `messages/*.json`, `docs/testing-checklist.md`, `app/globals.css`, `app/(public)/address/page.tsx`; tests `accountDeletion`, `appShellText` (new), `signOut`, `messages`
+- **Contract changes:** None to the schema. Privacy (§19): readers can now delete their own account. Tech plan §16 and §19 still don't mention `account_profiles` or deletion; not edited, since no teammate asked for a plan change. Every form posting to `/auth/delete` must use `DeleteAccountForm` (a test checks).
+- **Checked:**
+  - Tests: the new tests failed first, then passed; `npm test` (844 Vitest + 72 P4), typecheck and lint pass.
+  - Refusals (local): a post with no Origin, or from another site, goes to `?error=cross_site`; a signed-out post goes to `/signin`.
+  - End to end with a throwaway `@example.com` user with a saved profile, in local Chromium: menu, confirm page, deletion, then the home page message, an empty profile and no cookies. In Supabase, the user and its row were gone, with no leftover test users or orphaned rows.
+  - Spanish shell in Chromium: no English left in the shell, and no sideways scroll at 390px.
+  - Also in Chromium: the confirmation uses `status-rise` normally and `status-fade` under reduced motion. The first Tab in `/app` shows the skip link, and the next Tab after it lands inside the main content. With a second throwaway user: one press sends one request; the button reads "Deleting your account…" with a spinner, and a second press is blocked. The flow still ends deleted. The search hint reads Ctrl K on Windows. No leftover test users or orphaned rows.
+- **Open issues / next:** Dates in the search list (`relDay`) and the dashboards' own text are still English (UI owner). Push subscriptions aren't tied to accounts, so deleting an account leaves browser alerts on; turn them off on the Alerts page.
+
 ### 2026-10-23: UI polish pass: focus rings, hover tints and shadows work again under the glass style
 - **Who:** PlaidMod · P5 Platform
 - **Branch:** main

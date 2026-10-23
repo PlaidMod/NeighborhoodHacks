@@ -37,7 +37,7 @@
     "featureThreeTitle": "Participa con confianza",
     "featureThreeBody": "Prepárate para comentar en público y aprende cómo participar en las decisiones locales.",
     "addressLabel": "Tu dirección",
-    "addressPlaceholder": "Calle, ciudad y código postal",
+    "addressPlaceholder": "p. ej., 901 Bagby St, Houston, TX 77002…",
     "submit": "Buscar mis gobiernos",
     "privacyNote": "Guardamos tu dirección solo en este navegador para que puedas volver a usarla. Nunca la guardamos en nuestros servidores.",
     "coverage": "Por ahora, solo direcciones del condado de Harris.",
@@ -94,7 +94,7 @@
       },
       "account": {
         "title": "Iniciar sesión con Google",
-        "body": "Iniciar sesión es opcional. Si inicias sesión con Google, Google nos comparte tu correo electrónico, tu nombre y un enlace a tu foto de perfil, y Supabase, nuestra base de datos, los guarda para tu cuenta. También guardamos los identificadores de los gobiernos que sigues y los roles que elegiste, para que te acompañen en otros dispositivos. Tu dirección se queda solo en este navegador y nunca se agrega a tu cuenta. Al cerrar sesión, este navegador olvida tus gobiernos, tus roles y tu dirección guardada, pero tu cuenta conserva tus gobiernos y roles. Para eliminar tu cuenta y todo lo que guardó, pídenoslo en la página de nuestro proyecto (ver Contacto). No publiques ahí tu correo electrónico. Te daremos una forma privada de confirmar que eres tú."
+        "body": "Iniciar sesión es opcional. Si inicias sesión con Google, Google nos comparte tu correo electrónico, tu nombre y un enlace a tu foto de perfil, y Supabase, nuestra base de datos, los guarda para tu cuenta. También guardamos los identificadores de los gobiernos que sigues y los roles que elegiste, para que te acompañen en otros dispositivos. Tu dirección se queda solo en este navegador y nunca se agrega a tu cuenta. Al cerrar sesión, este navegador olvida tus gobiernos, tus roles y tu dirección guardada, pero tu cuenta conserva tus gobiernos y roles. Para eliminar tu cuenta y todo lo que guardó, elige Eliminar mi cuenta en el menú de tu cuenta."
       },
       "rateLimits": {
         "title": "Límites de uso",
@@ -526,6 +526,65 @@
     "inBrief": "En tu resumen",
     "outcomePending": "Resultado aún no publicado"
   },
+  "AppShell": {
+    "nav": {
+      "home": "Inicio",
+      "timeline": "Cronología",
+      "brief": "Resumen semanal",
+      "districts": "Mis distritos",
+      "speak": "Hazte escuchar",
+      "vote": "Votar",
+      "alerts": "Alertas",
+      "changeAddress": "Cambiar dirección"
+    },
+    "sections": {
+      "menu": "Menú",
+      "general": "General",
+      "navigation": "Navegación"
+    },
+    "footer": {
+      "tagline": "Tu vecindario. Tu voz.",
+      "independent": "Independiente y apartidista.",
+      "builtBy": "Hecho por estudiantes de Houston."
+    },
+    "banner": {
+      "saved": "Datos de muestra · Tu dirección está guardada en este navegador; búscala para cargar tus gobiernos.",
+      "demo": "Datos de muestra · Explorando Third Ward como Maya.",
+      "useMyAddress": "Usar mi dirección",
+      "noDatabase": "Datos de muestra · La base de datos de reuniones no está conectada aquí, así que estos gobiernos y puntos son de muestra."
+    },
+    "toggle": {
+      "hide": "Ocultar el menú",
+      "show": "Mostrar el menú"
+    },
+    "search": {
+      "button": "Busca reuniones, gobiernos y temas",
+      "placeholder": "Busca reuniones, gobiernos y temas…",
+      "empty": "Todavía no hay resultados.",
+      "governments": "Tus gobiernos",
+      "updates": "Novedades"
+    },
+    "account": {
+      "trigger": "Perfil e intereses",
+      "yourArea": "Tu zona",
+      "governments": "{count, plural, one {# gobierno} other {# gobiernos}}",
+      "signedIn": "Sesión iniciada con Google · guardado en tu cuenta",
+      "guest": "Invitado",
+      "guestNote": "Guardado solo en este navegador",
+      "signIn": "Inicia sesión para usarlo en otros dispositivos",
+      "explainFor": "Explicar las cosas para",
+      "signOut": "Cerrar sesión",
+      "signOutGuest": "Cerrar sesión y olvidar este navegador",
+      "delete": "Eliminar mi cuenta"
+    },
+    "persona": {
+      "student": "Estudiante",
+      "parent": "Madre o padre",
+      "renter": "Inquilino",
+      "homeowner": "Propietario",
+      "voter": "Votante por primera vez"
+    }
+  },
   "AppBrief": {
     "chip": "Resumen semanal",
     "minRead": "{count} min de lectura",
@@ -810,5 +869,18 @@
     "signInLink": "Inicia sesión con Google",
     "welcome": "Iniciaste sesión. Busca tu dirección una vez y ShowUp la recordará.",
     "or": "o"
+  },
+  "AccountDelete": {
+    "metaTitle": "Eliminar tu cuenta",
+    "title": "Eliminar tu cuenta",
+    "signedInAs": "Iniciaste sesión como {email}.",
+    "what": "Esto elimina tu cuenta de ShowUp y los gobiernos y roles guardados en ella. No se puede deshacer.",
+    "browser": "Este navegador también olvida tus gobiernos y tu dirección guardada. Puedes seguir usando ShowUp como invitado, o volver a iniciar sesión más tarde para empezar de nuevo.",
+    "confirm": "Eliminar mi cuenta",
+    "deleting": "Eliminando tu cuenta…",
+    "cancel": "Conservar mi cuenta",
+    "admin": "Las cuentas de administración del equipo no se pueden eliminar aquí. Pide al equipo que elimine la tuya.",
+    "failed": "No pudimos eliminar tu cuenta. Inténtalo de nuevo en un minuto.",
+    "done": "Tu cuenta se eliminó. Puedes seguir usando ShowUp como invitado."
   }
 }

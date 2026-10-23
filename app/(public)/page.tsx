@@ -8,13 +8,14 @@ import { getAccount, googleEnabled, hasRememberedGovernments } from '@/lib/accou
 
 const benefitIcons = [MapPinned, CalendarDays, MessageCircle]
 
-export default async function Home({ searchParams }: { searchParams: Promise<{ change?: string; welcome?: string }> }) {
-  const { change, welcome } = await searchParams
+export default async function Home({ searchParams }: { searchParams: Promise<{ change?: string; welcome?: string; deleted?: string }> }) {
+  const { change, welcome, deleted } = await searchParams
   // Returning readers go straight to their dashboard. Address changes happen at /address.
-  if (change === undefined && welcome === undefined && (await hasRememberedGovernments())) redirect('/app')
-  const [t, ta, account, google] = await Promise.all([
+  if (change === undefined && welcome === undefined && deleted === undefined && (await hasRememberedGovernments())) redirect('/app')
+  const [t, ta, td, account, google] = await Promise.all([
     getTranslations('Home'),
     getTranslations('Account'),
+    getTranslations('AccountDelete'),
     getAccount(),
     googleEnabled(),
   ])
@@ -23,14 +24,19 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ c
     <main id="main" className="bg-canvas">
       <div className="mx-auto max-w-7xl px-4 pt-12 pb-16 md:px-8 md:pt-16 2xl:max-w-[1440px]">
         {welcome !== undefined && account && (
-          <p role="status" className="mx-auto mb-8 max-w-[34rem] rounded-2xl bg-sage-soft px-4 py-3 text-sm font-semibold text-sage">
+          <p role="status" className="status-in mx-auto mb-8 max-w-[34rem] rounded-2xl bg-sage-soft px-4 py-3 text-sm font-semibold text-sage">
             {ta('welcome')}
+          </p>
+        )}
+        {deleted !== undefined && !account && (
+          <p role="status" className="status-in mx-auto mb-8 max-w-[34rem] rounded-2xl bg-sage-soft px-4 py-3 text-sm font-semibold text-sage">
+            {td('done')}
           </p>
         )}
 
         <section className="mx-auto max-w-5xl text-center">
           <p className="mb-4 text-xs font-extrabold tracking-[0.16em] text-denim uppercase">{t('eyebrow')}</p>
-          <h1 className="mx-auto max-w-[15ch] text-[2.8rem] leading-[1.02] font-extrabold tracking-[-0.045em] text-ink md:text-6xl lg:text-[4.5rem]">
+          <h1 className="mx-auto max-w-[15ch] text-[2.8rem] text-balance leading-[1.02] font-extrabold tracking-[-0.045em] text-ink md:text-6xl lg:text-[4.5rem]">
             {t('title')}
           </h1>
           <p className="mx-auto mt-5 max-w-[42rem] text-lg leading-relaxed text-muted-foreground md:text-xl">{t('lede')}</p>

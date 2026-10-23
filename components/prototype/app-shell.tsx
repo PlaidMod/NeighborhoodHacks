@@ -17,6 +17,7 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
+import { useTranslations } from "next-intl"
 import * as React from "react"
 import { BodyIcon, Logo } from "@/components/prototype/civic"
 import { StoryProvider, useStory } from "@/components/prototype/story-sheet"
@@ -43,20 +44,38 @@ import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet"
 import { PERSONAS, relDay } from "@/lib/prototype/format"
 import { useProfile } from "@/lib/prototype/profile"
 import { hasSavedAddress } from "@/lib/prototype/profile-storage"
+import { searchShortcutLabel } from "@/lib/prototype/shortcut"
 import { cn } from "@/lib/utils"
 
-const MENU: { href: string; label: string; icon: LucideIcon }[] = [
-  { href: "/app", label: "Home", icon: LayoutGrid },
-  { href: "/app/timeline", label: "Timeline", icon: Rows3 },
-  { href: "/app/brief", label: "Weekly brief", icon: Newspaper },
-  { href: "/app/districts", label: "My districts", icon: Map },
-  { href: "/app/speak", label: "Speak up", icon: Mic },
-  { href: "/app/vote", label: "Vote", icon: Vote },
+const noSubscribe = () => () => {}
+
+/** ⌘K or Ctrl K for this device. Null on the server, so the hint appears after hydration without a mismatch. */
+function useShortcutLabel(): string | null {
+  return React.useSyncExternalStore(
+    noSubscribe,
+    () => {
+      const nav = navigator as Navigator & { userAgentData?: { platform?: string } }
+      return searchShortcutLabel(nav.userAgentData?.platform || nav.platform || "")
+    },
+    () => null,
+  )
+}
+
+/** Each link's label is AppShell.nav.<key> in messages/*.json. */
+type NavLink = { href: string; key: string; icon: LucideIcon }
+
+const MENU: NavLink[] = [
+  { href: "/app", key: "home", icon: LayoutGrid },
+  { href: "/app/timeline", key: "timeline", icon: Rows3 },
+  { href: "/app/brief", key: "brief", icon: Newspaper },
+  { href: "/app/districts", key: "districts", icon: Map },
+  { href: "/app/speak", key: "speak", icon: Mic },
+  { href: "/app/vote", key: "vote", icon: Vote },
 ]
 
-const GENERAL: { href: string; label: string; icon: LucideIcon }[] = [
-  { href: "/app/alerts", label: "Alerts", icon: BellRing },
-  { href: "/address?change=1", label: "Change address", icon: Settings2 },
+const GENERAL: NavLink[] = [
+  { href: "/app/alerts", key: "alerts", icon: BellRing },
+  { href: "/address?change=1", key: "changeAddress", icon: Settings2 },
 ]
 
 /** Pages that hide the sidebar by default so the content can use the whole screen. */
@@ -64,6 +83,7 @@ const IMMERSIVE = ["/app/timeline"]
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const { ready } = useProfile()
+  const ts = useTranslations("Shell")
   const path = usePathname()
   const immersive = IMMERSIVE.includes(path)
   // The path the reader reopened the sidebar on; leaving that page hides it again next time.
@@ -72,6 +92,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   if (!ready) return <div className="min-h-screen bg-canvas" />
   return (
     <StoryProvider>
+      {/* Same skip link as the public pages: jumps past the sidebar and top bar. */}
+      <a
+        href="#main-content"
+        className="sr-only fixed top-3 left-3 z-[100] rounded-full bg-ink px-5 py-3 text-sm font-semibold text-white focus:not-sr-only focus:fixed"
+      >
+        {ts("skip")}
+      </a>
       <div className="min-h-screen bg-canvas p-2 md:p-3">
         <div className="mx-auto flex max-w-[1520px]">
           <aside
@@ -97,10 +124,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
 function SidebarBody({ onNavigate }: { onNavigate?: () => void }) {
   const path = usePathname()
+  const t = useTranslations("AppShell")
   const { updates } = useProfile()
   const urgent = updates.filter((u) => u.tier === "urgent" && new Date(u.date) >= new Date()).length
 
-  const item = (m: (typeof MENU)[number]) => {
+  const item = (m: NavLink) => {
     const active = m.href === "/app" ? path === "/app" : m.href.startsWith("/?") ? false : path.startsWith(m.href)
     return (
       <Link
@@ -115,7 +143,7 @@ function SidebarBody({ onNavigate }: { onNavigate?: () => void }) {
       >
         {active && <span className="absolute top-2.5 bottom-2.5 -left-0 w-1 rounded-r-full bg-denim" />}
         <m.icon className={cn("size-[1.15rem]", active ? "text-denim" : "")} strokeWidth={2} />
-        {m.label}
+        {t(`nav.${m.key}`)}
         {m.href === "/app/timeline" && urgent > 0 && (
           <span className="ml-auto grid h-5 min-w-5 place-items-center rounded-full bg-brick px-1.5 text-[10px] font-bold text-white">
             {urgent}
@@ -130,15 +158,19 @@ function SidebarBody({ onNavigate }: { onNavigate?: () => void }) {
       <div className="px-3 pt-2 pb-8">
         <Logo />
       </div>
-      <p className="px-4 pb-2 text-[11px] font-bold tracking-[0.12em] text-muted-foreground/70 uppercase">Menu</p>
+      <p className="px-4 pb-2 text-[11px] font-bold tracking-[0.12em] text-muted-foreground/70 uppercase">{t("sections.menu")}</p>
       <nav className="space-y-1">{MENU.map(item)}</nav>
       <p className="px-4 pt-7 pb-2 text-[11px] font-bold tracking-[0.12em] text-muted-foreground/70 uppercase">
-        General
+        {t("sections.general")}
       </p>
       <nav className="space-y-1">{GENERAL.map(item)}</nav>
       <div className="mt-auto px-4 pt-10 pb-2">
-        <p className="text-xs font-semibold text-ink">Your neighborhood. Your voice.</p>
-        <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">Independent & nonpartisan.<br />Built by Houston students.</p>
+        <p className="text-xs font-semibold text-ink">{t("footer.tagline")}</p>
+        <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
+          {t("footer.independent")}
+          <br />
+          {t("footer.builtBy")}
+        </p>
       </div>
     </div>
   )
@@ -146,12 +178,14 @@ function SidebarBody({ onNavigate }: { onNavigate?: () => void }) {
 
 function TopBar({ navToggle }: { navToggle?: { open: boolean; toggle: () => void } }) {
   const { profile, jurisdiction, patch, isDemo, source, bodies, account, canSignIn } = useProfile()
+  const t = useTranslations("AppShell")
+  const shortcut = useShortcutLabel()
   const [mobileOpen, setMobileOpen] = React.useState(false)
   const [searchOpen, setSearchOpen] = React.useState(false)
   const who = account?.name || profile.name
   const savedAddress = hasSavedAddress(profile)
   const initials = who ? who.split(/\s+/).map((w) => w[0]).join("").slice(0, 2).toUpperCase() : "ME"
-  const place = jurisdiction.zip ? `${jurisdiction.area} · ${jurisdiction.zip}` : `${bodies.length} governments`
+  const place = jurisdiction.zip ? `${jurisdiction.area} · ${jurisdiction.zip}` : t("account.governments", { count: bodies.length })
 
   React.useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -168,17 +202,15 @@ function TopBar({ navToggle }: { navToggle?: { open: boolean; toggle: () => void
     <>
       {isDemo && (
         <p className="rounded-t-[28px] border-b border-line bg-white/60 px-4 py-2 text-center text-[11px] text-muted-foreground">
-          {savedAddress
-            ? "Sample data · Your address is saved in this browser; look it up to load your governments. "
-            : "Sample data · Exploring Third Ward as Maya. "}
+          {savedAddress ? t("banner.saved") : t("banner.demo")}{" "}
           <Link href="/address?change=1" className="font-semibold text-denim underline underline-offset-2">
-            Use my address
+            {t("banner.useMyAddress")}
           </Link>
         </p>
       )}
       {source === "sample" && (
         <p className="rounded-t-[28px] border-b border-line bg-white/60 px-4 py-2 text-center text-[11px] text-muted-foreground">
-          Sample data · The meeting database isn&apos;t connected here, so these are sample governments and items.
+          {t("banner.noDatabase")}
         </p>
       )}
       <header className="flex items-center gap-3 px-4 pt-5 pb-3 md:px-8 md:pt-6">
@@ -186,7 +218,7 @@ function TopBar({ navToggle }: { navToggle?: { open: boolean; toggle: () => void
           <button
             onClick={navToggle.toggle}
             aria-expanded={navToggle.open}
-            aria-label={navToggle.open ? "Hide the menu" : "Show the menu"}
+            aria-label={navToggle.open ? t("toggle.hide") : t("toggle.show")}
             className="hidden size-11 shrink-0 place-items-center rounded-full bg-white text-ink transition-[scale,background-color] duration-150 ease-out hover:bg-muted active:scale-[0.96] lg:grid"
           >
             <ChevronRight
@@ -199,10 +231,10 @@ function TopBar({ navToggle }: { navToggle?: { open: boolean; toggle: () => void
         <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
           <Button variant="ghost" size="icon" className="lg:hidden" onClick={() => setMobileOpen(true)}>
             <Menu />
-            <span className="sr-only">Menu</span>
+            <span className="sr-only">{t("sections.menu")}</span>
           </Button>
           <SheetContent side="left" className="w-[280px] border-0 bg-canvas p-2" showCloseButton={false}>
-            <SheetTitle className="sr-only">Navigation</SheetTitle>
+            <SheetTitle className="sr-only">{t("sections.navigation")}</SheetTitle>
             <SidebarBody onNavigate={() => setMobileOpen(false)} />
           </SheetContent>
         </Sheet>
@@ -212,24 +244,26 @@ function TopBar({ navToggle }: { navToggle?: { open: boolean; toggle: () => void
           className="flex h-11 min-w-0 flex-1 items-center gap-3 rounded-full bg-white px-4 text-left text-sm text-muted-foreground ring-1 ring-transparent transition hover:ring-border md:max-w-[380px]"
         >
           <Search className="size-[1.1rem] shrink-0 text-ink" />
-          <span className="truncate">Search meetings, bodies, topics</span>
-          <kbd className="ml-auto hidden rounded-md bg-muted px-1.5 py-0.5 font-sans text-[11px] font-semibold md:block">
-            ⌘K
-          </kbd>
+          <span className="truncate">{t("search.button")}</span>
+          {shortcut && (
+            <kbd className="ml-auto hidden rounded-md bg-muted px-1.5 py-0.5 font-sans text-[11px] font-semibold md:block">
+              {shortcut}
+            </kbd>
+          )}
         </button>
 
         <div className="ml-auto flex items-center gap-2">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button aria-label="Profile and interests" className="flex items-center gap-3 rounded-full py-1 pr-1 pl-1 hover:bg-white/60 md:pr-4">
+              <button aria-label={t("account.trigger")} className="flex items-center gap-3 rounded-full py-1 pr-1 pl-1 hover:bg-white/60 md:pr-4">
                 {account?.avatar ? (
                   // eslint-disable-next-line @next/next/no-img-element -- Google's avatar URL; not worth configuring next/image remote hosts
-                  <img src={account.avatar} alt="" referrerPolicy="no-referrer" className="size-10 rounded-full object-cover outline outline-1 -outline-offset-1 outline-black/10" />
+                  <img src={account.avatar} alt="" width={40} height={40} referrerPolicy="no-referrer" className="size-10 rounded-full object-cover outline outline-1 -outline-offset-1 outline-black/10" />
                 ) : (
                   <span className="grid size-10 place-items-center rounded-full bg-denim-soft text-sm font-bold text-denim-deep">{initials}</span>
                 )}
                 <span className="hidden text-left leading-tight xl:block">
-                  <span className="block text-sm font-bold">{who || "Your area"}</span>
+                  <span className="block text-sm font-bold">{who || t("account.yourArea")}</span>
                   <span className="block text-xs text-muted-foreground">{place}</span>
                 </span>
               </button>
@@ -239,18 +273,18 @@ function TopBar({ navToggle }: { navToggle?: { open: boolean; toggle: () => void
                 {account ? (
                   <>
                     <span className="block font-semibold text-ink">{account.name ?? account.email}</span>
-                    Signed in with Google · saved to your account
+                    {t("account.signedIn")}
                   </>
                 ) : (
                   <>
-                    <span className="block font-semibold text-ink">Guest</span>
-                    Saved on this browser only
+                    <span className="block font-semibold text-ink">{t("account.guest")}</span>
+                    {t("account.guestNote")}
                   </>
                 )}
               </DropdownMenuLabel>
               {!account && canSignIn && (
                 <DropdownMenuItem asChild className="rounded-xl font-semibold text-denim">
-                  <a href="/signin">Sign in to use it on other devices</a>
+                  <a href="/signin">{t("account.signIn")}</a>
                 </DropdownMenuItem>
               )}
               <DropdownMenuSeparator />
@@ -258,7 +292,7 @@ function TopBar({ navToggle }: { navToggle?: { open: boolean; toggle: () => void
                 <MapPin className="size-3.5" /> {place}
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuLabel className="text-xs text-muted-foreground">Explain things for a</DropdownMenuLabel>
+              <DropdownMenuLabel className="text-xs text-muted-foreground">{t("account.explainFor")}</DropdownMenuLabel>
               {PERSONAS.map((p) => (
                 <DropdownMenuCheckboxItem
                   key={p.id}
@@ -271,25 +305,30 @@ function TopBar({ navToggle }: { navToggle?: { open: boolean; toggle: () => void
                   }
                   className="rounded-xl"
                 >
-                  {p.label}
+                  {t(`persona.${p.id}`)}
                 </DropdownMenuCheckboxItem>
               ))}
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild className="rounded-xl">
-                <Link href="/address?change=1">Change address</Link>
+                <Link href="/address?change=1">{t("nav.changeAddress")}</Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild className="rounded-xl">
-                <Link href="/app/alerts">Alerts</Link>
+                <Link href="/app/alerts">{t("nav.alerts")}</Link>
               </DropdownMenuItem>
-              {(!isDemo || savedAddress) && (
+              {(!isDemo || savedAddress || account) && (
                 <>
                   <DropdownMenuSeparator />
                   {/* Guests sign out too: it makes this browser forget their governments and saved address (shared computers). */}
                   <SignOutForm>
                     <DropdownMenuItem asChild className="w-full rounded-xl text-brick focus:text-brick">
-                      <button type="submit">{account ? "Sign out" : "Sign out and forget this browser"}</button>
+                      <button type="submit">{account ? t("account.signOut") : t("account.signOutGuest")}</button>
                     </DropdownMenuItem>
                   </SignOutForm>
+                  {account && (
+                    <DropdownMenuItem asChild className="rounded-xl text-brick focus:text-brick">
+                      <Link href="/account/delete">{t("account.delete")}</Link>
+                    </DropdownMenuItem>
+                  )}
                 </>
               )}
             </DropdownMenuContent>
@@ -304,14 +343,15 @@ function TopBar({ navToggle }: { navToggle?: { open: boolean; toggle: () => void
 
 function SearchDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (o: boolean) => void }) {
   const { bodies, updates } = useProfile()
+  const t = useTranslations("AppShell")
   const router = useRouter()
   const openStory = useStory()
   return (
     <CommandDialog open={open} onOpenChange={onOpenChange} className="rounded-3xl! sm:max-w-xl">
-      <CommandInput placeholder="Search meetings, bodies, topics…" />
+      <CommandInput placeholder={t("search.placeholder")} />
       <CommandList className="max-h-[420px]">
-        <CommandEmpty>Nothing matches that yet.</CommandEmpty>
-        <CommandGroup heading="Your governments">
+        <CommandEmpty>{t("search.empty")}</CommandEmpty>
+        <CommandGroup heading={t("search.governments")}>
           {bodies.map((b) => (
             <CommandItem
               key={b.id}
@@ -327,7 +367,7 @@ function SearchDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (o:
             </CommandItem>
           ))}
         </CommandGroup>
-        <CommandGroup heading="Updates">
+        <CommandGroup heading={t("search.updates")}>
           {updates.map((u) => (
             <CommandItem
               key={u.id}
