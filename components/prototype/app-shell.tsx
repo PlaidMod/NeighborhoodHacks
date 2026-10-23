@@ -276,12 +276,13 @@ function TopBar({ navToggle }: { navToggle?: { open: boolean; toggle: () => void
               <DropdownMenuItem asChild className="rounded-xl">
                 <Link href="/app/alerts">Alerts</Link>
               </DropdownMenuItem>
-              {account && (
+              {!isDemo && (
                 <>
                   <DropdownMenuSeparator />
+                  {/* Guests sign out too: it makes this browser forget their governments (shared computers). */}
                   <form action="/auth/signout" method="post">
-                    <DropdownMenuItem asChild className="w-full rounded-xl">
-                      <button type="submit">Sign out</button>
+                    <DropdownMenuItem asChild className="w-full rounded-xl text-brick focus:text-brick">
+                      <button type="submit">{account ? "Sign out" : "Sign out and forget this browser"}</button>
                     </DropdownMenuItem>
                   </form>
                 </>

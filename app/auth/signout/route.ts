@@ -5,8 +5,9 @@ import { BODIES_COOKIE } from '@/lib/prototype/liveData'
 import { STAKES_COOKIE } from '@/lib/stakes'
 import { createSupabaseServerClient } from '@/lib/supabase/server'
 
-// POST /auth/signout: signs out and forgets this browser's governments, so the next person on a
-// shared computer doesn't see them. The account keeps its saved copy.
+// POST /auth/signout: signs out of Google (if signed in) and makes this browser forget its
+// governments, so the next person on a shared computer doesn't see them. Guests use it too.
+// A signed-in account keeps its saved copy.
 export async function POST(req: Request) {
   if (accountsConfigured()) {
     const supabase = await createSupabaseServerClient()

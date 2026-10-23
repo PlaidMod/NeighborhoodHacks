@@ -46,6 +46,7 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
   - **New table:** `account_profiles`, with RLS on and no policies; server only.
   - **Proxy:** now also runs on `/` and `/app/*` to refresh the Supabase session, and it skips when the Supabase keys are missing.
   - **Admin:** requires a password sign-in.
+- **Handed off to PlaidMod (P5):** the migration is **not applied**. This machine has no database connection (`SUPABASE_DB_URL` is empty) and isn't on the Vercel team, so these four steps are yours. Until then, guest mode works, the Google button stays hidden, and saving to an account is skipped without errors.
 - **To turn Google on (someone with Supabase and Google Cloud access):**
   1. Google Cloud Console → APIs & Services → Credentials → create a Web OAuth client. Authorized redirect URI: `https://elsvhqqwdxwsuvkbchdq.supabase.co/auth/v1/callback`.
   2. Supabase → Authentication → Providers → Google: enable it and paste the client ID and secret.
@@ -55,6 +56,7 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 - **Checked:**
   - `npm test` (823), lint and typecheck pass.
   - In the browser, the guest flow works: first visit, lookup, return visit straight to the dashboard, change address. `/signin` shows the "not turned on yet" notice and the guest button.
+  - The account menu has "Sign out" for signed-in readers and "Sign out and forget this browser" for guests. Both clear this browser's governments.
   - Google sign-in itself is **not verified**, because the provider is off.
 - **Open issues / next:**
   - **P5:** regenerate `lib/database.types.ts` after the migration (`lib/account.ts` uses an untyped client until then).
