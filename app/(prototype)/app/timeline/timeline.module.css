@@ -1,41 +1,17 @@
 /*
- * Scroll-linked depth for the timeline. CSS scroll-driven animations run off the main thread, so
- * they stay smooth while tiles load. Only photos and tile depth move; text never does.
- * Browsers without `animation-timeline` (and anyone who asks for reduced motion) get still photos.
+ * Tiles settle up to full size as they scroll in. CSS scroll-driven animation, off the main thread.
+ * Browsers without `animation-timeline`, and readers with reduced motion, get no settle.
+ * The photo parallax is in page.tsx (<Parallax>) so it works in every browser.
  */
 
 @media (prefers-reduced-motion: no-preference) {
   @supports (animation-timeline: view()) {
-    /*
-     * The photo drifts slower than the page as its tile crosses the screen. The timeline is named
-     * on the tile's wrapper: the photo's own frame clips (overflow: hidden), so view() there would
-     * measure against the frame instead of the page.
-     */
-    .frame {
-      view-timeline-name: --tile;
-    }
-    .photo {
-      animation: drift linear both;
-      animation-timeline: --tile;
-      animation-range: cover;
-    }
-
     /* Tiles settle up to full size as they come in from the bottom edge. */
     .tile {
       animation: settle cubic-bezier(0.23, 1, 0.32, 1) both;
       animation-timeline: view();
       animation-range: entry 0% entry 90%;
     }
-  }
-}
-
-/* About 60px of drift across the screen, easing out of a slight zoom as the tile passes. */
-@keyframes drift {
-  from {
-    transform: translateY(-15%) scale(1.42);
-  }
-  to {
-    transform: translateY(15%) scale(1.32);
   }
 }
 

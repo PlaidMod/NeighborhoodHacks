@@ -279,7 +279,7 @@ function StoryTile({ u, b, right, now, onOpen }: { u: Update; b: Body; right: bo
   const closes = u.comment && +new Date(u.comment.deadline) > now ? u.comment.deadline : null
   const outlets = u.coverage?.outlet_count ?? 0
   return (
-    <Reveal className={cn(styles.frame, "w-full lg:w-[88%]", right && "lg:ml-[12%]")}>
+    <Reveal className={cn("w-full lg:w-[88%]", right && "lg:ml-[12%]")}>
       <button
         onClick={onOpen}
         aria-label={u.title}
@@ -292,13 +292,15 @@ function StoryTile({ u, b, right, now, onOpen }: { u: Update; b: Body; right: bo
         )}
       >
         <span className="relative block h-[180px] overflow-hidden outline-1 -outline-offset-1 outline-black/10 md:h-[210px]">
-          <Image
-            src={photo.src}
-            alt=""
-            fill
-            sizes="(min-width: 1280px) 560px, (min-width: 1024px) 60vw, 100vw"
-            className={cn(styles.photo, "object-cover transition-[scale] duration-700 group-hover:scale-[1.03] motion-reduce:transition-none", EASE)}
-          />
+          <Parallax>
+            <Image
+              src={photo.src}
+              alt=""
+              fill
+              sizes="(min-width: 1280px) 560px, (min-width: 1024px) 60vw, 100vw"
+              className={cn("object-cover transition-[scale] duration-700 group-hover:scale-[1.03] motion-reduce:transition-none", EASE)}
+            />
+          </Parallax>
           <span
             className={cn(
               "absolute top-4 left-4 rounded-full px-3 py-1.5 text-[11.5px] font-bold",
@@ -342,6 +344,46 @@ function StoryTile({ u, b, right, now, onOpen }: { u: Update; b: Body; right: bo
         </span>
       </button>
     </Reveal>
+  )
+}
+
+/**
+ * Holds a photo in a layer 50% taller than its frame and slides it against the scroll, so the photo
+ * moves slower than the page (about 110px of travel across the screen). Text never moves. One
+ * passive scroll listener per tile, batched to animation frames; off with reduced motion.
+ */
+function Parallax({ children }: { children: React.ReactNode }) {
+  const ref = React.useRef<HTMLSpanElement>(null)
+  React.useEffect(() => {
+    const layer = ref.current
+    const frame = layer?.parentElement
+    if (!layer || !frame || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return
+    let raf = 0
+    const update = () => {
+      raf = 0
+      const r = frame.getBoundingClientRect()
+      const vh = window.innerHeight
+      if (r.bottom < -100 || r.top > vh + 100) return
+      // -1 when the frame enters at the bottom, 1 when it leaves at the top.
+      const p = Math.max(-1, Math.min(1, (vh / 2 - (r.top + r.height / 2)) / (vh / 2 + r.height / 2)))
+      layer.style.transform = `translate3d(0, ${(p * 17).toFixed(2)}%, 0)`
+    }
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(update)
+    }
+    update()
+    window.addEventListener("scroll", onScroll, { passive: true })
+    window.addEventListener("resize", onScroll)
+    return () => {
+      cancelAnimationFrame(raf)
+      window.removeEventListener("scroll", onScroll)
+      window.removeEventListener("resize", onScroll)
+    }
+  }, [])
+  return (
+    <span ref={ref} aria-hidden className="absolute inset-x-0 -top-1/4 -bottom-1/4 block will-change-transform">
+      {children}
+    </span>
   )
 }
 

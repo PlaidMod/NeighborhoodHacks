@@ -36,7 +36,7 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 ### 2026-10-22: Parallax on timeline photos
 - **Who:** sohankamsala · P3 Weekly News and Alerts
 - **Branch:** main (local commit; not pushed)
-- **What changed:** On `/app/timeline`, each tile's photo drifts slightly slower than the page as you scroll, and tiles settle from 95% to full size as they come in. Text never moves. It uses CSS scroll-driven animations, which run off the main thread with no JavaScript. Browsers without support (Firefox today) and readers with reduced motion get still photos.
+- **What changed:** On `/app/timeline`, each tile's photo slides against the scroll (about 110px of travel; a small rAF-batched scroll handler, `<Parallax>`, so it works in every browser), and tiles settle from 92% to full size as they come in (CSS scroll-driven, Chromium and Safari). Text never moves. With reduced motion, nothing moves.
 - **Files:** `app/(prototype)/app/timeline/timeline.module.css` (new), `app/(prototype)/app/timeline/page.tsx`
 - **Contract changes:** None.
 - **Checked:** Lint, typecheck and tests pass. In Chromium, the photo transform changes as the page scrolls, and with reduced motion it stays at none.
