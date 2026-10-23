@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 import * as React from "react"
 import { Button } from "@/components/ui/button"
 import { DEMO_ADDRESSES, findJurisdiction } from "@/lib/prototype/zips"
+import { rememberBrowserAddress } from "@/lib/prototype/profile-storage"
 import { cn } from "@/lib/utils"
 
 export function AddressForm({
@@ -31,6 +32,7 @@ export function AddressForm({
         "We couldn't place that address yet. Include a Houston-area ZIP code, like 77004.",
       )
     setError(null)
+    rememberBrowserAddress(a)
     if (onResolved) onResolved(a)
     else router.push(`/start?a=${encodeURIComponent(a)}`)
   }

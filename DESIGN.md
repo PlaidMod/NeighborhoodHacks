@@ -7,7 +7,7 @@
 > - **§5** shell and dashboard grids; **§7** stat card, date tile and story sheet.
 > - **§9** personas. The plan has four stakes: student, parent, renter and homeowner.
 > - **§10** tier names. The plan uses `sms | weekly | timeline`; `TierPill` shows "Urgent" for `sms` only.
-> - **§14** file paths, and its rule about storing the address in a profile. The plan never stores addresses. Paths are now `components/`, `lib/` and `app/` at the root.
+> - **§14** file paths and the address-storage rule. The plan now permits storing a street address only in the reader's browser profile; it is not stored by the server or synced to an account. Paths are now `components/`, `lib/` and `app/` at the root.
 > - The "Live reference" link points to the prototype. The real app is https://showup-htx-six.vercel.app.
 
 The rules for how ShowUp looks, reads, and behaves. Read this before you add a page, a component, or a line of copy. If something you need isn't covered here, copy the closest existing pattern and raise it with the team so we can add it.

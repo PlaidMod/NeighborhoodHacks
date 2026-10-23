@@ -6,8 +6,7 @@ import { updatesFor } from "./updates"
 import { ZIPS, findJurisdiction } from "./zips"
 import type { LiveData } from "./live"
 import type { Body, Jurisdiction, Profile, Update } from "./types"
-
-const KEY = "showup.profile.v1"
+import { clearBrowserProfile, readBrowserProfile, writeBrowserProfile } from "./profile-storage"
 
 export const DEMO_PROFILE: Profile = {
   name: "Maya",
@@ -30,7 +29,7 @@ interface Ctx {
   /** Google sign-in is turned on, so guests can be offered it. */
   canSignIn: boolean
   ready: boolean
-  /** The demo neighborhood (Maya in Third Ward): no address has been looked up. */
+  /** Whether this view is using sample data because no looked-up government list is available. */
   isDemo: boolean
   /** Where bodies and updates come from: the demo, P3's sample items, or the database. */
   source: "demo" | LiveData["mode"]
@@ -62,20 +61,15 @@ export function ProfileProvider({
   const [ready, setReady] = React.useState(false)
 
   React.useEffect(() => {
-    try {
-      const raw = localStorage.getItem(KEY)
-      // Hydrate from browser storage once after mount
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      if (raw) setStored(JSON.parse(raw))
-    } catch {}
+    // Hydrate from browser storage once after mount
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setStored(readBrowserProfile())
     setReady(true)
   }, [])
 
   const save = React.useCallback((p: Profile) => {
     setStored(p)
-    try {
-      localStorage.setItem(KEY, JSON.stringify(p))
-    } catch {}
+    writeBrowserProfile(p)
   }, [])
 
   const base = stored && !stored.demo ? stored : live ? { ...LIVE_PROFILE, personas: live.personas } : (stored ?? DEMO_PROFILE)
@@ -89,7 +83,7 @@ export function ProfileProvider({
   const value = React.useMemo<Ctx>(
     () => ({
       ready,
-      isDemo: !live && (!stored || !!stored.demo),
+      isDemo: !live,
       account,
       canSignIn,
       source: live ? live.mode : "demo",
@@ -103,9 +97,7 @@ export function ProfileProvider({
       patch: (p) => save({ ...profile, ...p }),
       reset: () => {
         setStored(null)
-        try {
-          localStorage.removeItem(KEY)
-        } catch {}
+        clearBrowserProfile()
       },
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps

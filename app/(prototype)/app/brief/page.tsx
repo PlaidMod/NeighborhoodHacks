@@ -22,11 +22,11 @@ import { cn } from "@/lib/utils"
  * thinner at the bottom so the photo shows. The veils keep the text at 4.5:1 or better.
  */
 const TILES = [
-  { cls: "sm:col-span-2 xl:row-span-1 bg-denim text-white", btn: "text-denim", veil: "from-denim/95 via-denim/85 to-denim/40", big: true },
-  { cls: "xl:row-span-2 bg-ink text-white", btn: "text-ink", veil: "from-ink/95 via-ink/85 to-ink/35" },
-  { cls: "xl:row-span-2 bg-brick text-white", btn: "text-brick", veil: "from-brick/95 via-brick/88 to-brick/40" },
-  { cls: "bg-sand text-ink", btn: "text-sand-deep", veil: "from-sand via-sand/95 to-sand/60", light: true },
-  { cls: "bg-denim-soft text-ink", btn: "text-denim", veil: "from-denim-soft via-denim-soft/95 to-denim-soft/60", light: true },
+  { cls: "sm:col-span-2 bg-denim text-white", btn: "text-denim", veil: "from-denim/95 via-denim/85 to-denim/40", big: true },
+  { cls: "bg-ink text-white", btn: "text-ink", veil: "from-ink/95 via-ink/85 to-ink/35" },
+  { cls: "bg-brick text-white", btn: "text-brick", veil: "from-brick/95 via-brick/88 to-brick/40" },
+  { cls: "xl:col-span-2 bg-sand text-ink", btn: "text-sand-deep", veil: "from-sand via-sand/95 to-sand/60", light: true },
+  { cls: "xl:col-span-2 bg-denim-soft text-ink", btn: "text-denim", veil: "from-denim-soft via-denim-soft/95 to-denim-soft/60", light: true },
 ]
 
 /** Demo ordering only. Real data uses P3's buildWeekly order (plan §10), passed in as `weekly`. */
@@ -126,7 +126,7 @@ export default function Brief() {
       )}
 
       {/* Bento */}
-      <section className="mt-8 grid auto-rows-[minmax(220px,auto)] gap-4 sm:grid-cols-2 xl:auto-rows-[240px] xl:grid-cols-4">
+      <section className="mt-8 grid auto-rows-[minmax(220px,auto)] gap-4 sm:grid-cols-2 xl:auto-rows-[minmax(300px,auto)] xl:grid-cols-4">
         {top.map((u, i) => {
           const tile = TILES[i]!
           const b = bodies.find((x) => x.id === u.bodyId)!
@@ -167,12 +167,17 @@ export default function Brief() {
                     tile.big
                       ? "line-clamp-3 max-w-[24ch] text-[1.5rem] xl:line-clamp-2 xl:text-[1.75rem]"
                       : i === 1 || i === 2
-                        ? "line-clamp-[9] text-[1.3rem]"
+                        ? "line-clamp-4 text-[1.3rem]"
                         : "line-clamp-3 text-[1.3rem]",
                   )}
                 >
                   {u.title}
                 </p>
+                {u.summary && (
+                  <p className={cn("mt-2 line-clamp-3 text-sm leading-relaxed", tile.light ? "text-ink/75" : "text-white/85")}>
+                    {u.summary}
+                  </p>
+                )}
               </div>
               <span
                 className={cn(

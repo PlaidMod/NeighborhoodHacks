@@ -1,4 +1,4 @@
-import { Info } from 'lucide-react'
+import { ArrowLeft, Info } from 'lucide-react'
 import Link from 'next/link'
 import { getTranslations } from 'next-intl/server'
 import { Button } from '@/components/ui/button'
@@ -13,28 +13,56 @@ export function withToken(path: string, token?: string | null) {
   return `${path}${path.includes('?') ? '&' : '?'}t=${encodeURIComponent(token)}`
 }
 
-export async function NewsNav({ active, token }: { active: 'weekly' | 'timeline' | 'alerts'; token?: string | null }) {
+export async function NewsNav({
+  active,
+  token,
+  backHref,
+  backLabel,
+}: {
+  active: 'weekly' | 'timeline' | 'alerts'
+  token?: string | null
+  backHref?: string
+  backLabel?: string
+}) {
   const t = await getTranslations('News')
+  const shell = await getTranslations('Shell')
   const links = [
     { key: 'weekly', href: withToken('/weekly', token), label: t('thisWeek') },
     { key: 'timeline', href: withToken('/timeline', token), label: t('latest') },
     { key: 'alerts', href: withToken('/alerts', token), label: t('alerts') },
   ] as const
   return (
-    <nav aria-label={t('nav')} className="flex gap-6 border-b border-border font-news text-sm font-semibold">
-      {links.map((l) => (
-        <Link
-          key={l.key}
-          href={l.href}
-          aria-current={active === l.key ? 'page' : undefined}
-          className={cn(
-            'relative -mb-px border-b-[3px] border-transparent pb-2.5 text-muted-foreground hover:text-ink',
-            active === l.key && 'border-brick text-ink',
-          )}
-        >
-          {l.label}
-        </Link>
-      ))}
+    <nav aria-label={t('nav')} className="flex items-center justify-between gap-4 border-b border-border font-news text-sm font-semibold">
+      <div className="flex min-w-0 items-center gap-6">
+        {backHref && (
+          <Link
+            href={backHref}
+            aria-label={backLabel}
+            className="mb-2.5 inline-flex size-9 shrink-0 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-ink"
+          >
+            <ArrowLeft aria-hidden className="size-5" />
+          </Link>
+        )}
+        {links.map((l) => (
+          <Link
+            key={l.key}
+            href={l.href}
+            aria-current={active === l.key ? 'page' : undefined}
+            className={cn(
+              'relative -mb-px border-b-[3px] border-transparent pb-2.5 text-muted-foreground hover:text-ink',
+              active === l.key && 'border-brick text-ink',
+            )}
+          >
+            {l.label}
+          </Link>
+        ))}
+      </div>
+      <Link
+        href="/"
+        className="mb-2.5 shrink-0 rounded-full border border-border px-3 py-1.5 text-ink transition-colors hover:bg-muted"
+      >
+        {shell('home')}
+      </Link>
     </nav>
   )
 }

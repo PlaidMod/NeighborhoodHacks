@@ -6,6 +6,7 @@
   "Shell": {
     "skip": "Skip to content",
     "navLabel": "Main",
+    "home": "Home",
     "about": "About",
     "language": "Language",
     "neutral": "We summarize. We never recommend.",
@@ -23,7 +24,7 @@
     "addressLabel": "Your home address",
     "addressPlaceholder": "Street, city and ZIP",
     "submit": "Find my governments",
-    "privacyNote": "We use your address once to find your governments. We don't save it.",
+    "privacyNote": "We save your address only in this browser so you can use it again. We never store it on our servers.",
     "coverage": "Harris County addresses only for now.",
     "errors": {
       "empty": "Enter your street address, city and ZIP.",
@@ -64,7 +65,7 @@
       "intro": "ShowUp HTX helps you find your local governments and speak up. We collect as little as we can. Here is what we keep and why.",
       "address": {
         "title": "Your address",
-        "body": "We send your address once to the U.S. Census Bureau's address lookup to find your local governments, and then we forget it. We never save it. While you type, we send only the street name, never your house number, to Photon, a free street search built on OpenStreetMap, to suggest matching streets. Links to your results hold only a list of government IDs, not your address."
+        "body": "We send your address once to the U.S. Census Bureau's address lookup to find your local governments. To save you from retyping it, we keep it only in this browser's local storage. We do not store it on our servers, in your account, or in links. While you type, we send only the street name, never your house number, to Photon, a free street search built on OpenStreetMap, to suggest matching streets. Links to your results hold only a list of government IDs, not your address. Clear this browser's site data to remove the saved address."
       },
       "cookies": {
         "title": "Optional sign-in, a few cookies",
@@ -72,7 +73,7 @@
       },
       "account": {
         "title": "Signing in with Google",
-        "body": "Signing in is optional. If you sign in with Google, Google shares your email address, your name and a link to your profile photo with us, and Supabase, our database, keeps them for your account. We also save the IDs of the governments you follow and the roles you picked, so they follow you to other devices. We never save your address. Signing out makes this browser forget them, but your account keeps them. To delete your account and everything saved with it, ask us on our project page (see Contact). Don't post your email address there. We'll set up a private way to confirm it's you."
+        "body": "Signing in is optional. If you sign in with Google, Google shares your email address, your name and a link to your profile photo with us, and Supabase, our database, keeps them for your account. We also save the IDs of the governments you follow and the roles you picked, so they follow you to other devices. Your street address stays only in this browser and is never added to your account. Signing out clears this browser's government and role cookies, but does not clear the locally saved address. Clear this browser's site data to remove it. To delete your account and everything saved with it, ask us on our project page (see Contact). Don't post your email address there. We'll set up a private way to confirm it's you."
       },
       "rateLimits": {
         "title": "Limits on use",
@@ -310,7 +311,7 @@
     "remindersTitle": "Reminders you ask for",
     "quiet": "Alerts go out only between 8 a.m. and 8 p.m. Central.",
     "privacyTitle": "What we keep",
-    "privacy": "Your phone number or this browser's notification address, the governments you follow, and your language. Never your street address. Reply STOP or turn off notifications, and we stop.",
+    "privacy": "Your phone number or this browser's notification address, the governments you follow, and your language. Your street address stays only in this browser, not on our servers. Reply STOP or turn off notifications, and we stop.",
     "previewPhone": "What the texts look like",
     "previewPhoneNote": "Built from sample items.",
     "whyMetaTitle": "Why did I get this alert?",
@@ -449,7 +450,7 @@
     "caveat": "Actual bills depend on taxable value, exemptions, and current-year rates. This estimate does not include exemptions and may be incomplete."
   },
   "BodyDetail": {
-    "back": "Back to home",
+    "back": "Back to your governments",
     "error": "We couldn’t load this body for the signed address results.",
     "loading": "Loading body details…",
     "selection": "How members are chosen",
@@ -626,7 +627,7 @@
       "approved": "Parent approved. Alerts are on.",
       "off": "Text alerts are off"
     },
-    "keepNote": "We keep your governments and your phone number or this browser's notification address, never your street address.",
+    "keepNote": "We keep your governments and your phone number or this browser's notification address. Your street address stays only in this browser, not on our servers.",
     "quietNote": "No alerts between 8 p.m. and 8 a.m. Central. Anything later waits until morning.",
     "stopNote": "Turn off notifications here or reply STOP to a text, and the alerts stop.",
     "previewDay": "Text message · Today",

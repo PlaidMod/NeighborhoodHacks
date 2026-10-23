@@ -45,14 +45,16 @@ describe('message files', () => {
     expect(es['Legal.privacy.processors.body']).toMatch(/Oficina del Censo/)
   })
 
-  it('the privacy page explains Google sign-in: what is saved, that the address is not, and how to delete it', () => {
+  it('the privacy page explains Google sign-in and keeps the saved address browser-only', () => {
     expect(en['Legal.privacy.account.body']).toMatch(/Google/)
     expect(en['Legal.privacy.account.body']).toMatch(/email address/)
-    expect(en['Legal.privacy.account.body']).toMatch(/never save your address/)
+    expect(en['Legal.privacy.account.body']).toMatch(/stays only in this browser/)
+    expect(en['Legal.privacy.account.body']).toMatch(/never added to your account/)
     expect(en['Legal.privacy.account.body']).toMatch(/delete your account/)
     expect(es['Legal.privacy.account.body']).toMatch(/Google/)
     expect(es['Legal.privacy.account.body']).toMatch(/correo electrónico/)
-    expect(es['Legal.privacy.account.body']).toMatch(/Nunca guardamos tu dirección/)
+    expect(es['Legal.privacy.account.body']).toMatch(/se queda solo en este navegador/)
+    expect(es['Legal.privacy.account.body']).toMatch(/nunca se agrega a tu cuenta/)
     expect(es['Legal.privacy.account.body']).toMatch(/eliminar tu cuenta/)
     expect(en['Legal.privacy.processors.body']).toMatch(/Google \(sign-in/)
     expect(es['Legal.privacy.processors.body']).toMatch(/Google \(inicio de sesión/)

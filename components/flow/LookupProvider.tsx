@@ -5,7 +5,8 @@ import type { LookupErrorCode, LookupRequest, LookupResponse } from '@/lib/contr
 import { INITIAL_LOOKUP_STATE, lookupReducer, type LookupState } from '@/lib/flow/lookupState'
 
 // Keeps the address lookup running while the visitor moves from home to the stake picker
-// to results. The address lives only in this request: never in storage, a cookie or the URL.
+// to results. The submitted address is also retained in the browser profile only; never in
+// a server cookie, account, link or request log.
 
 type LookupContextValue = {
   state: LookupState

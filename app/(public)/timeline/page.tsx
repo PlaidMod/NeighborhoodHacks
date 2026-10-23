@@ -45,7 +45,7 @@ export default async function TimelinePage({ searchParams }: { searchParams: Pro
   const filterHref = (key: Filter) => withToken(key === 'all' ? '/timeline' : `/timeline?f=${key}`, token)
 
   return (
-    <main id="main" className="mx-auto max-w-7xl px-4 pt-6 pb-16 font-news text-ink md:px-8 2xl:max-w-[1440px]">
+    <main id="main" className="mx-auto max-w-7xl px-4 pt-6 pb-8 font-news text-ink md:px-8 2xl:max-w-[1440px]">
       <NewsNav active="timeline" token={token} />
       <div className="max-w-3xl">
       {resolved.mode === 'sample' && <SampleNotice className="mt-4" />}

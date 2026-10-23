@@ -70,7 +70,7 @@ export default async function WeeklyPage({ searchParams }: { searchParams: Promi
   const nothing = !edition.lead && edition.decided.length === 0
 
   return (
-    <main id="main" className="mx-auto max-w-7xl px-4 md:px-8 2xl:max-w-[1440px] pt-6 pb-16 font-news text-ink">
+    <main id="main" className="mx-auto max-w-7xl px-4 md:px-8 2xl:max-w-[1440px] pt-6 pb-8 font-news text-ink">
       <NewsNav active="weekly" token={token} />
       {resolved.mode === 'sample' && <SampleNotice className="mt-4" />}
 
@@ -255,7 +255,7 @@ export default async function WeeklyPage({ searchParams }: { searchParams: Promi
         </aside>
       </div>
 
-      <footer className="mt-16 border-t border-border pt-6 text-sm text-muted-foreground">
+      <footer className="mt-10 border-t border-border pt-6 text-sm text-muted-foreground">
         <p className="max-w-3xl">
           {tn('howWritten')} {tc('tieBreak')}
         </p>

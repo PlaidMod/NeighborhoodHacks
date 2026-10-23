@@ -9,10 +9,10 @@ export async function SiteFooter() {
     { href: '/terms', label: t('terms') },
   ]
   return (
-    <footer className="mt-16 border-t border-line">
-      <div className="mx-auto max-w-7xl px-4 md:px-8 2xl:max-w-[1440px] py-8 text-sm">
+    <footer className="mt-4 border-t border-line">
+      <div className="mx-auto max-w-7xl px-4 py-4 text-sm md:px-8 2xl:max-w-[1440px]">
         <p className="font-semibold text-ink">{t('neutral')}</p>
-        <nav aria-label={t('footerNavLabel')} className="mt-3">
+        <nav aria-label={t('footerNavLabel')} className="mt-2">
           <ul className="flex flex-wrap gap-x-5 gap-y-2">
             {links.map((link) => (
               <li key={link.href}>
@@ -23,7 +23,7 @@ export async function SiteFooter() {
             ))}
           </ul>
         </nav>
-        <p className="mt-3 text-muted-foreground">{t('project')}</p>
+        <p className="mt-2 text-muted-foreground">{t('project')}</p>
       </div>
     </footer>
   )

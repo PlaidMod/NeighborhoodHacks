@@ -33,6 +33,168 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-23: Improve government card hover and return navigation
+- **Who:** Marie Gary Blueberry · public lookup and government details
+- **Branch:** main
+- **What changed:** Government result cards now use a straight right arrow and only highlight and slightly enlarge on hover. The government detail link now returns to Your governments and carries the result token, so the lookup page is reachable without re-entering the address.
+- **Files:** `app/(public)/results/page.tsx`, `components/flow/BodyDetailClient.tsx`, `messages/en.json`, `messages/es.json`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `git diff --check` and `npx tsc --noEmit` passed; tests not run.
+- **Open issues / next:** Browser visual check wasn't available.
+
+### 2026-10-23: Remember addresses in this browser only
+- **Who:** Marie Gary Blueberry · P5 privacy and address lookup
+- **Branch:** main
+- **What changed:** The public lookup now saves the normalized address in the existing `showup.profile.v1` local profile and prefills it on return. Address data remains out of server storage, cookies, links, logs, and account sync; English/Spanish privacy copy and the plan/checklist now reflect browser-only retention. The app keeps sample data clearly labeled until a looked-up government list is available.
+- **Files:** `lib/prototype/profile-storage.ts`, `lib/prototype/profile.tsx`, `components/home/AddressForm.tsx`, `components/prototype/address-form.tsx`, `components/prototype/app-shell.tsx`, `components/flow/LookupProvider.tsx`, `messages/en.json`, `messages/es.json`, `Technical_Implementation_Plan.md`, `DESIGN.md`, `docs/testing-checklist.md`, `docs/readiness.md`, `docs/project-pace.md`, `tests/platform/messages.test.ts`, `agent_handoff.md`
+- **Contract changes:** User address retention is now browser-local only; no server or account persistence.
+- **Checked:** `npx tsc --noEmit` and `git diff --check` passed; tests not run.
+- **Open issues / next:** Browser visual check wasn't available.
+
+### 2026-10-23: Keep Speak up navigation visible while scrolling
+- **Who:** Marie Gary Blueberry · P4 Speak up
+- **Branch:** main
+- **What changed:** The back/continue controls now stick to the bottom of the viewport while moving through the long Speak up steps, so the next action stays visible. Removed the panel overflow that would prevent sticky positioning.
+- **Files:** `app/(prototype)/app/speak/speak.tsx`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `git diff --check` passed; no tests run.
+- **Open issues / next:** Browser visual check wasn't available.
+
+### 2026-10-23: Use the full article content width
+- **Who:** Marie Gary Blueberry · P3 News and Alerts
+- **Branch:** main
+- **What changed:** Removed the remaining max-width limits from article detail content so the headline, story text, meeting details, action panel, source, and coverage fill the available page width.
+- **Files:** `app/(public)/items/[id]/page.tsx`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `git diff --check` passed; no tests run.
+- **Open issues / next:** Browser visual check wasn't available.
+
+### 2026-10-23: Widen the public article details page
+- **Who:** Marie Gary Blueberry · P3 News and Alerts
+- **Branch:** main
+- **What changed:** Removed the 3xl cap around article details, widened the headline, meeting metadata, and supporting sections, and kept story paragraphs at a narrower reading width.
+- **Files:** `app/(public)/items/[id]/page.tsx`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `git diff --check` passed; no tests run.
+- **Open issues / next:** Browser visual check wasn't available.
+
+### 2026-10-23: Fill out and shorten weekly story tiles
+- **Who:** Marie Gary Blueberry · prototype weekly brief
+- **Branch:** main
+- **What changed:** Removed the two story tiles' two-row spans to reduce unused height, gave desktop tiles a compact minimum row size, and added the story summary beneath each headline.
+- **Files:** `app/(prototype)/app/brief/page.tsx`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `git diff --check` passed; no tests run.
+- **Open issues / next:** Browser visual check wasn't available.
+
+### 2026-10-23: Tighten spacing at the bottom of public pages
+- **Who:** Marie Gary Blueberry · public site layout
+- **Branch:** main
+- **What changed:** Reduced bottom padding across public pages and tightened the shared footer gap. Kept each page's top spacing unchanged; shortened the weekly page's closing gap as well.
+- **Files:** `app/(public)/*/page.tsx`, `app/(public)/page.tsx`, `components/shell/SiteFooter.tsx`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `git diff --check` passed; no tests run.
+- **Open issues / next:** Browser visual check wasn't available.
+
+### 2026-10-23: Add back and home actions to article navigation
+- **Who:** Marie Gary Blueberry · P3 News and Alerts
+- **Branch:** main
+- **What changed:** Added a left-arrow link back to this week's stories and an explicit Home button in the news top navigation. Removed the less-visible text back link from article pages and localized Home in English and Spanish.
+- **Files:** `components/weekly/NewsChrome.tsx`, `app/(public)/items/[id]/page.tsx`, `messages/en.json`, `messages/es.json`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `git diff --check` passed; no tests run.
+- **Open issues / next:** None.
+
+### 2026-10-23: Reduce footer height and enlarge home content
+- **Who:** Marie Gary Blueberry · home page layout
+- **Branch:** main
+- **What changed:** Reduced the footer's top gap and padding. Widened the home container and stack, and increased the hero headline, copy, and government-card size.
+- **Files:** `components/shell/SiteFooter.tsx`, `app/(public)/page.tsx`, `components/home/GovernmentStack.tsx`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** Local `GET /` returns 200.
+- **Open issues / next:** Browser visual check wasn't available.
+
+### 2026-10-23: Restore web-push after the local install disappeared
+- **Who:** Marie Gary Blueberry · local setup
+- **Branch:** main
+- **What changed:** The package was still absent from `node_modules` despite npm lock metadata. Forced npm to restore `web-push@3.6.7`; package manifests did not change.
+- **Files:** `node_modules/web-push` (restored), `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `npm ls web-push` shows 3.6.7; local `GET /alerts` now returns 200.
+- **Open issues / next:** Reload the browser if the old build-error overlay is still visible.
+
+### 2026-10-23: Install the missing local web-push package
+- **Who:** Marie Gary Blueberry · local setup
+- **Branch:** main
+- **What changed:** `web-push` was declared in `package.json` and the lockfile but absent from `node_modules` after pulling. Ran `npm install`; no tracked dependency files changed.
+- **Files:** `node_modules/web-push` (installed), `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `npm ls web-push` shows 3.6.7; local `GET /alerts` returns 200.
+- **Open issues / next:** None for this error.
+
+### 2026-10-23: Align About content to the page gutter
+- **Who:** Marie Gary Blueberry · About page layout
+- **Branch:** main
+- **What changed:** Moved the About content from a centered narrow column to a narrow column aligned with the shared site container and header gutter.
+- **Files:** `app/(public)/about/page.tsx`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `git diff --check` passed.
+- **Open issues / next:** Visual check wasn't available. The local dev log showed an unrelated missing `web-push` module error while compiling the alerts page.
+
+### 2026-10-23: Fit all results actions on one row
+- **Who:** Marie Gary Blueberry · results page layout
+- **Branch:** main
+- **What changed:** Reduced horizontal padding on the four results actions from the small-screen breakpoint so they fit together at the width in the screenshot; they can still wrap on narrower screens.
+- **Files:** `app/(public)/results/page.tsx`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** Next.js compiled the change; local `/results` returned 200.
+- **Open issues / next:** Browser access was denied earlier, so the row was not visually inspected.
+
+### 2026-10-23: Make result cards link to government details
+- **Who:** Marie Gary Blueberry · results page interaction
+- **Branch:** main
+- **What changed:** Removed the separate Details link and made each details-eligible government card a full-card link. Added a hover tint, lift and slight scale, plus the shared arrow cue.
+- **Files:** `app/(public)/results/page.tsx`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** Next.js compiled the change.
+- **Open issues / next:** Chrome access was denied, so the hover effect was not visually inspected.
+
+### 2026-10-23: Tighten the results page top spacing
+- **Who:** Marie Gary Blueberry · results page layout
+- **Branch:** main
+- **What changed:** Reduced the results page's top padding by 24px on desktop and 16px on small screens, keeping its bottom spacing intact.
+- **Files:** `app/(public)/results/page.tsx`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** Next.js compiled the update; local `/results` returned 200.
+- **Open issues / next:** None.
+
+### 2026-10-23: Configure local lookup environment
+- **Who:** Marie Gary Blueberry · local setup
+- **Branch:** main
+- **What changed:** Copied the teammate-provided environment file to ignored `.env.local` with owner-only permissions so the local lookup can reach Supabase and sign its response. No values were added to Git.
+- **Files:** `.env.local` (ignored), `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** Dev server starts with `.env.local`; `POST /api/lookup` returned 200 and 7 bodies for the non-personal test address `123 Main St, Houston, TX 77004`.
+- **Open issues / next:** The test matched Census fallback; the teammate's actual address was not submitted.
+
+### 2026-10-23: Keep the home government stack label on one line
+- **Who:** Marie Gary Blueberry · home page layout
+- **Branch:** main
+- **What changed:** The final government-stack card now stays on one line, with a smaller inset on wider screens, no inset on small screens, and slightly smaller text on narrow screens to fit both languages.
+- **Files:** `components/home/GovernmentStack.tsx`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** The running Next.js server compiled the change.
+- **Open issues / next:** Browser UI was unavailable for a visual check. The server log also showed an unrelated `POST /api/lookup` 500; not investigated.
+
+### 2026-10-23: Pulled latest main and started the app locally
+- **Who:** Marie Gary Blueberry · local setup
+- **Branch:** main
+- **What changed:** Fast-forwarded local `main` from `e26b379` to `776105f` from `origin/main` and started the Next.js development server.
+- **Files:** `agent_handoff.md` (this entry); the pull brought in the upstream changes listed by Git.
+- **Contract changes:** None made locally.
+- **Checked:** `git pull --ff-only` succeeded; `npm run dev` reports Next.js 16.4.2 ready at `http://localhost:3000`.
+- **Open issues / next:** Dev server is running in this session. Turbopack warned that it ignored `/Users/Ishaan/package-lock.json` because it is outside this repository.
+
 ### 2026-10-23: Accounts table applied; privacy page covers Google sign-in
 - **Who:** PlaidMod · P5 Platform (the P5 steps handed off in sohankamsala's sign-in entry below)
 - **Branch:** main

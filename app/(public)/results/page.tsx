@@ -1,6 +1,6 @@
 'use client'
 
-import { Loader2 } from 'lucide-react'
+import { ArrowRight, Loader2 } from 'lucide-react'
 import Link from 'next/link'
 import { useTranslations } from 'next-intl'
 import { BodyIcon } from '@/components/civic'
@@ -14,7 +14,7 @@ export default function ResultsPage() {
   const { state, reset } = useLookup()
 
   return (
-    <main id="main" className="mx-auto max-w-7xl px-4 py-12 md:px-8 md:py-16 2xl:max-w-[1440px]">
+    <main id="main" className="mx-auto max-w-7xl px-4 pt-8 pb-8 md:px-8 md:pt-10 2xl:max-w-[1440px]">
       <div className="max-w-3xl">
         <h1 className="text-[2.1rem] leading-tight font-extrabold tracking-[-0.03em] text-ink md:text-[2.6rem]">{t('title')}</h1>
 
@@ -56,8 +56,8 @@ export default function ResultsPage() {
                 {state.data.bodies.map((b) => {
                   // With the Census fallback, every listed body is in the token, so its details page works.
                   const inToken = b.verified || state.data.match === 'census'
-                  return (
-                    <li key={b.id} className="flex items-center gap-4 rounded-[24px] bg-white p-4 ring-1 ring-border">
+                  const card = (
+                    <>
                       <BodyIcon type={b.type ?? 'other'} id={b.id} />
                       <div className="min-w-0 flex-1">
                         <p className="font-bold text-ink">{b.name}</p>
@@ -65,7 +65,26 @@ export default function ResultsPage() {
                           {b.verified ? t('verified') : state.data.match === 'census' ? t('fromCensus') : t('unverified')}
                         </p>
                       </div>
-                      {inToken && <Link href={`/bodies/${encodeURIComponent(b.id)}?t=${encodeURIComponent(state.data.bodies_token)}`} className="text-sm font-bold text-primary underline underline-offset-4">{t('details')}</Link>}
+                    </>
+                  )
+                  const cardClass = 'flex items-center gap-4 rounded-[24px] bg-white p-4 ring-1 ring-border'
+                  const detailsHref = `/bodies/${encodeURIComponent(b.id)}?t=${encodeURIComponent(state.data.bodies_token)}`
+
+                  return (
+                    <li key={b.id}>
+                      {inToken ? (
+                        <Link
+                          href={detailsHref}
+                          className={`${cardClass} group w-full text-left motion-safe:transition-[background-color,box-shadow,transform] motion-safe:duration-200 hover:bg-denim-soft/30 hover:ring-denim/50 motion-safe:hover:scale-[1.01]`}
+                        >
+                          {card}
+                          <span aria-hidden className="grid size-8 shrink-0 place-items-center rounded-full border border-current/25 text-ink">
+                            <ArrowRight className="size-4" />
+                          </span>
+                        </Link>
+                      ) : (
+                        <div className={cardClass}>{card}</div>
+                      )}
                     </li>
                   )
                 })}
@@ -139,18 +158,18 @@ export default function ResultsPage() {
             <p className="mt-6 text-sm text-muted-foreground">{t('limits')}</p>
             <BodyQuiz />
             <div className="mt-8 flex flex-wrap gap-3">
-              <Button asChild size="lg">
+              <Button asChild size="lg" className="sm:px-3">
                 {/* /app/use remembers the bodies_token (body IDs only) so the dashboard shows these governments.
                     A plain <a>: it's a route handler that sets a cookie and redirects, not a page. */}
                 <a href={`/app/use?t=${encodeURIComponent(state.data.bodies_token)}`}>{t('dashboard')}</a>
               </Button>
-              <Button asChild size="lg" variant="outline">
+              <Button asChild size="lg" variant="outline" className="sm:px-3">
                 <Link href={`/weekly?t=${encodeURIComponent(state.data.bodies_token)}`}>{t('weekly')}</Link>
               </Button>
-              <Button asChild size="lg" variant="outline">
+              <Button asChild size="lg" variant="outline" className="sm:px-3">
                 <Link href={`/alerts?t=${encodeURIComponent(state.data.bodies_token)}`}>{t('alerts')}</Link>
               </Button>
-              <Button asChild size="lg" variant="outline">
+              <Button asChild size="lg" variant="outline" className="sm:px-3">
                 <Link href={`/tax-receipt?t=${encodeURIComponent(state.data.bodies_token)}`}>{t('taxReceipt')}</Link>
               </Button>
             </div>

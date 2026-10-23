@@ -100,7 +100,7 @@ function SpeakFlow({ item, body, name, zip, student, lang }: { item: Update; bod
     setError(null)
     toast.success(t.cleared)
   }
-  return <section className="min-w-0 overflow-hidden rounded-[28px] bg-white">
+  return <section className="min-w-0 rounded-[28px] bg-white">
     <nav aria-label={t.title} className="scrollbar-none flex gap-2 overflow-x-auto border-b border-line p-3">{steps.map((step, index) => <button key={index} aria-current={progress.step === index ? "step" : undefined} disabled={index > progress.step} onClick={() => update({ step: index as SpeakProgress["step"] })} className={cn("flex min-h-10 shrink-0 items-center gap-2 rounded-full px-3 text-xs font-semibold disabled:opacity-50", index === progress.step ? "bg-ink text-white" : "text-muted-foreground")}><span className={cn("grid size-5 place-items-center rounded-full border border-current/30 text-[10px]", index < progress.step && "bg-denim text-white")}>{index < progress.step ? <Check className="size-3" aria-hidden /> : index + 1}</span>{step}</button>)}</nav>
     <div className="p-5 md:p-8">
       <div key={`${progress.step}:${lang}`}>
@@ -110,7 +110,10 @@ function SpeakFlow({ item, body, name, zip, student, lang }: { item: Update; bod
         {progress.step === 3 && <PracticeStep item={item} recipe={recipe} progress={progress} update={update} lang={lang} t={t} />}
       </div>
       {error && <p role="alert" className="mt-4 text-sm font-semibold text-brick">{error}</p>}
-      <div className="mt-8 flex flex-wrap gap-3 border-t border-line pt-5">{progress.step > 0 && <Button variant="outline" onClick={() => update({ step: (progress.step - 1) as SpeakProgress["step"] })}><ArrowLeft data-icon="inline-start" />{t.back}</Button>}{progress.step < 3 && <Button onClick={next}>{progress.step === 1 ? t.nextDraft : progress.step === 2 ? t.nextPractice : t.continue}<ArrowRight data-icon="inline-end" /></Button>}</div>
+      <div className="sticky bottom-0 z-20 -mx-5 mt-8 flex flex-wrap gap-3 border-t border-line bg-white/95 px-5 py-4 shadow-[0_-8px_24px_rgb(27_38_59/0.06)] backdrop-blur md:-mx-8 md:px-8">
+        {progress.step > 0 && <Button variant="outline" onClick={() => update({ step: (progress.step - 1) as SpeakProgress["step"] })}><ArrowLeft data-icon="inline-start" />{t.back}</Button>}
+        {progress.step < 3 && <Button onClick={next}>{progress.step === 1 ? t.nextDraft : progress.step === 2 ? t.nextPractice : t.continue}<ArrowRight data-icon="inline-end" /></Button>}
+      </div>
       {progress.step === 1 && progress.registrationStatus !== "confirmed" && <p className="mt-3 text-xs text-muted-foreground">{t.registerFirst}</p>}
       <div className="mt-6 space-y-3 border-t border-line pt-5 text-xs leading-relaxed text-muted-foreground"><p>{t.central} {t.meeting}: {formatSpeakTime(item.date, lang)}</p><p>{t.privacy}</p><p>{t.saveNote}</p>{storageProblem && <p role="status" className="font-semibold text-brick">{t.storageUnavailable}</p>}<div className="flex flex-wrap items-center gap-4"><a href={item.source} target="_blank" rel="noreferrer" className="inline-flex min-h-10 items-center gap-1.5 font-semibold text-denim underline underline-offset-4">{t.source}<ExternalLink className="size-3.5" aria-hidden /></a><button onClick={reset} className="min-h-10 font-semibold text-denim underline underline-offset-4">{t.clear}</button></div></div>
     </div>

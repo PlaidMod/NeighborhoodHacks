@@ -17,12 +17,12 @@ export async function GovernmentStack() {
   const t = await getTranslations('Home.stack')
   const slip = 'rise rounded-2xl shadow-[0_12px_32px_-16px_rgb(27_38_59/0.25)]'
   return (
-    <div aria-hidden className="mx-auto w-full max-w-sm select-none">
-      <ol className="space-y-2.5">
+    <div aria-hidden className="mx-auto w-full max-w-md select-none">
+      <ol className="space-y-3">
         {LAYERS.map(({ type, id }, i) => (
           <li
             key={type}
-            className={`${slip} flex items-center gap-3 bg-white p-3 pr-5`}
+            className={`${slip} flex items-center gap-3 bg-white p-4 pr-5`}
             style={{ marginLeft: `${i * 6}%`, animationDelay: `${i * 70}ms` }}
           >
             <BodyIcon type={type} id={id} />
@@ -30,8 +30,8 @@ export async function GovernmentStack() {
           </li>
         ))}
         <li
-          className={`${slip} bg-ink px-5 py-4 font-bold text-balance text-white`}
-          style={{ marginLeft: `${LAYERS.length * 6}%`, animationDelay: `${LAYERS.length * 70}ms` }}
+          className={`${slip} ml-0 bg-ink px-5 py-4 text-[0.8125rem] font-bold whitespace-nowrap text-white sm:ml-[10%] sm:text-base`}
+          style={{ animationDelay: `${LAYERS.length * 70}ms` }}
         >
           {t('more')}
         </li>

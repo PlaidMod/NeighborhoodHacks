@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { validateAddress } from '@/lib/address'
 import { MIN_STREET_CHARS, formatAddress, splitAddressInput, type StreetSuggestion } from '@/lib/lookup/suggest'
+import { readBrowserProfile, rememberBrowserAddress } from '@/lib/prototype/profile-storage'
 import { cn } from '@/lib/utils'
 
 const DEBOUNCE_MS = 250
@@ -35,6 +36,16 @@ export function AddressForm({ className }: { className?: string }) {
   const messageId = useId()
   const noteId = useId()
   const listId = useId()
+
+  useEffect(() => {
+    const savedAddress = readBrowserProfile()?.address
+    if (savedAddress) {
+      skipNext.current = true
+      // Hydrate the input from the browser-only profile after the first client render.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setValue(savedAddress)
+    }
+  }, [])
 
   // Fetch suggestions shortly after typing stops. A newer keystroke cancels the older request,
   // so a slow answer can never replace a newer one.
@@ -73,6 +84,7 @@ export function AddressForm({ className }: { className?: string }) {
       return
     }
     setOpen(false)
+    rememberBrowserAddress(check.value)
     start(check.value)
     router.push('/stake')
   }

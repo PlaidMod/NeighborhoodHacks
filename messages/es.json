@@ -6,6 +6,7 @@
   "Shell": {
     "skip": "Saltar al contenido",
     "navLabel": "Principal",
+    "home": "Inicio",
     "about": "Acerca de",
     "language": "Idioma",
     "neutral": "Resumimos. Nunca recomendamos.",
@@ -23,7 +24,7 @@
     "addressLabel": "Tu dirección",
     "addressPlaceholder": "Calle, ciudad y código postal",
     "submit": "Buscar mis gobiernos",
-    "privacyNote": "Usamos tu dirección una sola vez para encontrar tus gobiernos. No la guardamos.",
+    "privacyNote": "Guardamos tu dirección solo en este navegador para que puedas volver a usarla. Nunca la guardamos en nuestros servidores.",
     "coverage": "Por ahora, solo direcciones del condado de Harris.",
     "errors": {
       "empty": "Escribe tu calle, ciudad y código postal.",
@@ -64,7 +65,7 @@
       "intro": "ShowUp HTX te ayuda a conocer tus gobiernos locales y a hacerte escuchar. Recopilamos lo mínimo posible. Esto es lo que guardamos y por qué.",
       "address": {
         "title": "Tu dirección",
-        "body": "Enviamos tu dirección una sola vez a la búsqueda de direcciones de la Oficina del Censo de EE. UU. para encontrar tus gobiernos locales, y luego la olvidamos. Nunca la guardamos. Mientras escribes, enviamos solo el nombre de la calle, nunca el número de tu casa, a Photon, un buscador gratuito de calles basado en OpenStreetMap, para sugerirte calles. Los enlaces a tus resultados solo contienen una lista de identificadores de gobiernos, no tu dirección."
+        "body": "Enviamos tu dirección una vez a la búsqueda de direcciones de la Oficina del Censo de EE. UU. para encontrar tus gobiernos locales. Para que no tengas que volver a escribirla, la guardamos solo en el almacenamiento local de este navegador. No la guardamos en nuestros servidores, en tu cuenta ni en enlaces. Mientras escribes, enviamos solo el nombre de la calle, nunca el número de tu casa, a Photon, un buscador gratuito de calles basado en OpenStreetMap, para sugerirte calles. Los enlaces a tus resultados solo contienen identificadores de gobiernos, no tu dirección. Borra los datos del sitio en este navegador para eliminar la dirección guardada."
       },
       "cookies": {
         "title": "Inicio de sesión opcional, pocas cookies",
@@ -72,7 +73,7 @@
       },
       "account": {
         "title": "Iniciar sesión con Google",
-        "body": "Iniciar sesión es opcional. Si inicias sesión con Google, Google nos comparte tu correo electrónico, tu nombre y un enlace a tu foto de perfil, y Supabase, nuestra base de datos, los guarda para tu cuenta. También guardamos los identificadores de los gobiernos que sigues y los roles que elegiste, para que te acompañen en otros dispositivos. Nunca guardamos tu dirección. Al cerrar sesión, este navegador los olvida, pero tu cuenta los conserva. Para eliminar tu cuenta y todo lo que guardó, pídenoslo en la página de nuestro proyecto (ver Contacto). No publiques ahí tu correo electrónico. Te daremos una forma privada de confirmar que eres tú."
+        "body": "Iniciar sesión es opcional. Si inicias sesión con Google, Google nos comparte tu correo electrónico, tu nombre y un enlace a tu foto de perfil, y Supabase, nuestra base de datos, los guarda para tu cuenta. También guardamos los identificadores de los gobiernos que sigues y los roles que elegiste, para que te acompañen en otros dispositivos. Tu dirección se queda solo en este navegador y nunca se agrega a tu cuenta. Al cerrar sesión se eliminan las cookies locales de gobiernos y roles, pero no la dirección guardada localmente. Borra los datos del sitio en este navegador para eliminarla. Para eliminar tu cuenta y todo lo que guardó, pídenoslo en la página de nuestro proyecto (ver Contacto). No publiques ahí tu correo electrónico. Te daremos una forma privada de confirmar que eres tú."
       },
       "rateLimits": {
         "title": "Límites de uso",
@@ -310,7 +311,7 @@
     "remindersTitle": "Recordatorios que pides",
     "quiet": "Las alertas se envían solo entre las 8 a. m. y las 8 p. m., hora del centro.",
     "privacyTitle": "Lo que guardamos",
-    "privacy": "Tu número de teléfono o la dirección de notificaciones de este navegador, los gobiernos que sigues y tu idioma. Nunca tu dirección. Responde STOP o desactiva las notificaciones, y dejamos de avisarte.",
+    "privacy": "Tu número de teléfono o la dirección de notificaciones de este navegador, los gobiernos que sigues y tu idioma. Tu dirección se queda solo en este navegador, no en nuestros servidores. Responde STOP o desactiva las notificaciones, y dejamos de avisarte.",
     "previewPhone": "Cómo se ven los mensajes",
     "previewPhoneNote": "Hechos con puntos de ejemplo.",
     "whyMetaTitle": "¿Por qué recibí esta alerta?",
@@ -449,7 +450,7 @@
     "caveat": "Las cuentas reales dependen del valor gravable, las exenciones y las tasas vigentes. Esta estimación no incluye exenciones y puede estar incompleta."
   },
   "BodyDetail": {
-    "back": "Volver al inicio",
+    "back": "Volver a tus gobiernos",
     "error": "No pudimos cargar este organismo para los resultados firmados de la dirección.",
     "loading": "Cargando detalles del organismo…",
     "selection": "Cómo se eligen sus integrantes",
@@ -626,7 +627,7 @@
       "approved": "Tu padre o madre aprobó. Las alertas están activadas.",
       "off": "Las alertas por mensaje están desactivadas"
     },
-    "keepNote": "Guardamos tus gobiernos y tu número de teléfono o la dirección de notificaciones de este navegador, nunca tu dirección.",
+    "keepNote": "Guardamos tus gobiernos y tu número de teléfono o la dirección de notificaciones de este navegador. Tu dirección se queda solo en este navegador, no en nuestros servidores.",
     "quietNote": "No enviamos alertas entre las 8 p. m. y las 8 a. m., hora del centro. Lo que llegue más tarde espera hasta la mañana.",
     "stopNote": "Desactiva las notificaciones aquí o responde STOP a un mensaje, y las alertas se detienen.",
     "previewDay": "Mensaje de texto · Hoy",

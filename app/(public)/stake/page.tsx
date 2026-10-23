@@ -14,7 +14,7 @@ export default async function StakePage() {
   const t = await getTranslations('Stake')
   const initial = parseStakes((await cookies()).get(STAKES_COOKIE)?.value)
   return (
-    <main id="main" className="mx-auto max-w-3xl px-4 py-12 md:py-16">
+    <main id="main" className="mx-auto max-w-3xl px-4 pt-12 pb-8 md:pt-16">
       <h1 className="text-[2.1rem] leading-tight font-extrabold tracking-[-0.03em] text-ink md:text-[2.6rem]">
         {t('title')}
       </h1>

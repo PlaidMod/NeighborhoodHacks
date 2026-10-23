@@ -16,7 +16,7 @@ export default async function SignInPage({ searchParams }: { searchParams: Promi
   const [t, account, google] = await Promise.all([getTranslations('Account'), getAccount(), googleEnabled()])
   if (account) redirect('/app')
   return (
-    <main id="main" className="mx-auto grid min-h-[70vh] max-w-7xl place-items-center px-4 py-16 md:px-8">
+    <main id="main" className="mx-auto grid min-h-[70vh] max-w-7xl place-items-center px-4 pt-16 pb-8 md:px-8">
       <div className="w-full max-w-md rounded-[28px] bg-white p-8 shadow-[0_1px_2px_rgb(27_38_59/0.04),0_6px_20px_-12px_rgb(27_38_59/0.16)] md:p-10">
         <h1 className="text-[2rem] leading-tight font-extrabold tracking-[-0.03em] text-ink">{t('title')}</h1>
         <p className="mt-3 text-muted-foreground">{t('lede')}</p>

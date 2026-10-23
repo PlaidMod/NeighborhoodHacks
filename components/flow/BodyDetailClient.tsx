@@ -49,7 +49,7 @@ export function BodyDetailClient({ bodyId, token }: { bodyId: string; token: str
 
   return (
     <main id="main" className="mx-auto max-w-4xl px-4 py-10 md:px-8 md:py-14">
-      <Link href="/" className="text-sm font-semibold text-primary underline underline-offset-4">{t('back')}</Link>
+      <Link href={`/results?t=${encodeURIComponent(token)}`} className="text-sm font-semibold text-primary underline underline-offset-4">{t('back')}</Link>
       {error && <p role="alert" className="mt-6 font-semibold text-brick">{t('error')}</p>}
       {!body && !error && <p role="status" className="mt-6 text-muted-foreground">{t('loading')}</p>}
       {body && (

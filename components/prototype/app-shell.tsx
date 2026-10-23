@@ -165,7 +165,9 @@ function TopBar({ navToggle }: { navToggle?: { open: boolean; toggle: () => void
     <>
       {isDemo && (
         <p className="rounded-t-[28px] border-b border-line bg-white/60 px-4 py-2 text-center text-[11px] text-muted-foreground">
-          Sample data · Exploring Third Ward as Maya.{" "}
+          {profile.address
+            ? "Sample data · Your address is saved in this browser; look it up to load your governments. "
+            : "Sample data · Exploring Third Ward as Maya. "}
           <Link href="/?change=1" className="font-semibold text-denim underline underline-offset-2">
             Use my address
           </Link>
