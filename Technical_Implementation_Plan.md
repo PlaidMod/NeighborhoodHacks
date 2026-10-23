@@ -103,7 +103,7 @@ messages/en.json, es.json                                          P5 (all add k
    - HOA candidate
    - `bodies_token`: an HMAC-signed, URL-safe encoding of the body IDs, with no address or coordinates in it
 
-**Address retention:** The browser keeps the submitted street address only in its existing local profile (`showup.profile.v1`) so the reader can reuse it on this device. The server must not retain it in a database, cookie, account, link, or request log. Request logging must exclude request bodies.
+**Address retention:** The browser keeps the submitted street address only in its existing local profile (`showup.profile.v1`) so the reader can reuse it on this device. Signing out ("Sign out and forget this browser" for guests) clears it, so the next person on a shared computer doesn't see it. The server must not retain it in a database, cookie, account, link, or request log. Request logging must exclude request bodies.
 
 **HCAD data load** (`scripts/load-hcad.ts`, one-time on Day 1):
 - Download HCAD's bulk data files and load only these columns into `hcad_parcels` and `hcad_jurisdictions`:
@@ -556,7 +556,7 @@ The client removes every `guardrail_hits` quote from the draft and shows its rea
 ## 19. Security and privacy checklist (P5 owns; everyone follows)
 
 - Service-role key is server-only; RLS is enabled everywhere with no anon policies.
-- No user-submitted addresses or drafts in the database, server cookies, accounts, links, or logs. The address may be kept only in the reader's browser profile (`showup.profile.v1`). `bodies_token` contains body IDs only.
+- No user-submitted addresses or drafts in the database, server cookies, accounts, links, or logs. The address may be kept only in the reader's browser profile (`showup.profile.v1`), and signing out clears it. `bodies_token` contains body IDs only.
 - Phone numbers only after Twilio Verify. STOP handling is on.
 - Browser push subscriptions are accepted only from known push service hosts, are deleted when the reader turns notifications off or the push service reports them gone, and are never logged. Notifications carry only the alert's title, text and link.
 - Paid AI models only (no `:free` OpenRouter models). OpenRouter, Google, the browser push services (Google, Mozilla, Apple, Microsoft) and Twilio are named as processors in the privacy policy.

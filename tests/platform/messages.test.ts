@@ -61,6 +61,15 @@ describe('message files', () => {
     expect(en['Legal.privacy.cookies.body']).not.toMatch(/Team admins also get/)
   })
 
+  it('the privacy page says signing out also removes the address saved in this browser', () => {
+    expect(en['Legal.privacy.account.body']).toMatch(/Signing out .*saved address/)
+    expect(en['Legal.privacy.account.body']).not.toMatch(/does not clear the locally saved address/)
+    expect(en['Legal.privacy.address.body']).toMatch(/sign out/)
+    expect(es['Legal.privacy.account.body']).toMatch(/Al cerrar sesión.*dirección guardada/)
+    expect(es['Legal.privacy.account.body']).not.toMatch(/pero no la dirección guardada/)
+    expect(es['Legal.privacy.address.body']).toMatch(/cierra sesión/)
+  })
+
   it('placeholders match between languages', () => {
     const mismatched = Object.keys(en).filter(
       (k) => k in es && placeholders(en[k]).join() !== placeholders(es[k]).join(),

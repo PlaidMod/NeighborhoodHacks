@@ -33,6 +33,21 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-23: Signing out clears the saved address; Google sign-in is on
+- **Who:** PlaidMod · P5 Platform
+- **Branch:** main
+- **What changed:**
+  - Marie Gary Blueberry's change below ("Remember addresses in this browser only") keeps the street address in `showup.profile.v1`. But "Sign out and forget this browser" left the address there, so the next person on a shared computer saw it. Every sign-out button now uses `SignOutForm`, which clears the profile before posting to `/auth/signout`. The menu also shows the button whenever an address is saved.
+  - The sample-data banner told every new visitor "Your address is saved in this browser", because the sample profile (Maya) has an address. It now checks `hasSavedAddress()`.
+  - The privacy page (en/es) says signing out removes the saved address. Docs updated at the owner's request: tech plan §3 and §19, DESIGN.md, CLAUDE.md, the testing checklist and readiness.
+- **Files:** `components/prototype/sign-out-form.tsx` (new), `components/prototype/app-shell.tsx`, `lib/prototype/profile-storage.ts`, `messages/*.json`, `tests/platform/signOut.test.ts` (new), `tests/platform/messages.test.ts`, the docs above
+- **Contract changes:** Privacy (§3, §19): signing out now clears the browser's saved address. New sign-out buttons must use `SignOutForm`; a test fails on any page or component that posts to `/auth/signout` directly.
+- **Checked:**
+  - Tests and build: the new tests failed first, then passed; `npm test` (830 Vitest + 72 P4), typecheck, lint and build all pass.
+  - Local Chromium: banner text for a new visitor and for a saved address; sign-out by mouse and by keyboard lands on `/` with the profile gone.
+  - Google sign-in: PlaidMod turned it on (Google Cloud client; Supabase provider; Site URL `https://showup-htx-six.vercel.app`; redirect URLs for `/auth/callback` on the live site and localhost:3000). The live button reaches Google's login screen with Supabase's callback, and a bad code returns to `/signin?error=failed`. A live sign-in created one Google user. Its `account_profiles` row is written after the first signed-in lookup, as designed.
+- **Open issues / next:** The app shell's banner and menu text are still English only. Account deletion is still by request. This push also deploys 7c1fd1e, which Vercel had blocked as a teammate commit.
+
 ### 2026-10-23: Improve government card hover and return navigation
 - **Who:** Marie Gary Blueberry · public lookup and government details
 - **Branch:** main

@@ -65,7 +65,7 @@
       "intro": "ShowUp HTX te ayuda a conocer tus gobiernos locales y a hacerte escuchar. Recopilamos lo mínimo posible. Esto es lo que guardamos y por qué.",
       "address": {
         "title": "Tu dirección",
-        "body": "Enviamos tu dirección una vez a la búsqueda de direcciones de la Oficina del Censo de EE. UU. para encontrar tus gobiernos locales. Para que no tengas que volver a escribirla, la guardamos solo en el almacenamiento local de este navegador. No la guardamos en nuestros servidores, en tu cuenta ni en enlaces. Mientras escribes, enviamos solo el nombre de la calle, nunca el número de tu casa, a Photon, un buscador gratuito de calles basado en OpenStreetMap, para sugerirte calles. Los enlaces a tus resultados solo contienen identificadores de gobiernos, no tu dirección. Borra los datos del sitio en este navegador para eliminar la dirección guardada."
+        "body": "Enviamos tu dirección una vez a la búsqueda de direcciones de la Oficina del Censo de EE. UU. para encontrar tus gobiernos locales. Para que no tengas que volver a escribirla, la guardamos solo en el almacenamiento local de este navegador. No la guardamos en nuestros servidores, en tu cuenta ni en enlaces. Mientras escribes, enviamos solo el nombre de la calle, nunca el número de tu casa, a Photon, un buscador gratuito de calles basado en OpenStreetMap, para sugerirte calles. Los enlaces a tus resultados solo contienen identificadores de gobiernos, no tu dirección. Para eliminar la dirección guardada, cierra sesión en el menú de tu cuenta o borra los datos del sitio en este navegador."
       },
       "cookies": {
         "title": "Inicio de sesión opcional, pocas cookies",
@@ -73,7 +73,7 @@
       },
       "account": {
         "title": "Iniciar sesión con Google",
-        "body": "Iniciar sesión es opcional. Si inicias sesión con Google, Google nos comparte tu correo electrónico, tu nombre y un enlace a tu foto de perfil, y Supabase, nuestra base de datos, los guarda para tu cuenta. También guardamos los identificadores de los gobiernos que sigues y los roles que elegiste, para que te acompañen en otros dispositivos. Tu dirección se queda solo en este navegador y nunca se agrega a tu cuenta. Al cerrar sesión se eliminan las cookies locales de gobiernos y roles, pero no la dirección guardada localmente. Borra los datos del sitio en este navegador para eliminarla. Para eliminar tu cuenta y todo lo que guardó, pídenoslo en la página de nuestro proyecto (ver Contacto). No publiques ahí tu correo electrónico. Te daremos una forma privada de confirmar que eres tú."
+        "body": "Iniciar sesión es opcional. Si inicias sesión con Google, Google nos comparte tu correo electrónico, tu nombre y un enlace a tu foto de perfil, y Supabase, nuestra base de datos, los guarda para tu cuenta. También guardamos los identificadores de los gobiernos que sigues y los roles que elegiste, para que te acompañen en otros dispositivos. Tu dirección se queda solo en este navegador y nunca se agrega a tu cuenta. Al cerrar sesión, este navegador olvida tus gobiernos, tus roles y tu dirección guardada, pero tu cuenta conserva tus gobiernos y roles. Para eliminar tu cuenta y todo lo que guardó, pídenoslo en la página de nuestro proyecto (ver Contacto). No publiques ahí tu correo electrónico. Te daremos una forma privada de confirmar que eres tú."
       },
       "rateLimits": {
         "title": "Límites de uso",

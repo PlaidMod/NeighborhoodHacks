@@ -65,7 +65,7 @@
       "intro": "ShowUp HTX helps you find your local governments and speak up. We collect as little as we can. Here is what we keep and why.",
       "address": {
         "title": "Your address",
-        "body": "We send your address once to the U.S. Census Bureau's address lookup to find your local governments. To save you from retyping it, we keep it only in this browser's local storage. We do not store it on our servers, in your account, or in links. While you type, we send only the street name, never your house number, to Photon, a free street search built on OpenStreetMap, to suggest matching streets. Links to your results hold only a list of government IDs, not your address. Clear this browser's site data to remove the saved address."
+        "body": "We send your address once to the U.S. Census Bureau's address lookup to find your local governments. To save you from retyping it, we keep it only in this browser's local storage. We do not store it on our servers, in your account, or in links. While you type, we send only the street name, never your house number, to Photon, a free street search built on OpenStreetMap, to suggest matching streets. Links to your results hold only a list of government IDs, not your address. To remove the saved address, sign out in the account menu or clear this browser's site data."
       },
       "cookies": {
         "title": "Optional sign-in, a few cookies",
@@ -73,7 +73,7 @@
       },
       "account": {
         "title": "Signing in with Google",
-        "body": "Signing in is optional. If you sign in with Google, Google shares your email address, your name and a link to your profile photo with us, and Supabase, our database, keeps them for your account. We also save the IDs of the governments you follow and the roles you picked, so they follow you to other devices. Your street address stays only in this browser and is never added to your account. Signing out clears this browser's government and role cookies, but does not clear the locally saved address. Clear this browser's site data to remove it. To delete your account and everything saved with it, ask us on our project page (see Contact). Don't post your email address there. We'll set up a private way to confirm it's you."
+        "body": "Signing in is optional. If you sign in with Google, Google shares your email address, your name and a link to your profile photo with us, and Supabase, our database, keeps them for your account. We also save the IDs of the governments you follow and the roles you picked, so they follow you to other devices. Your street address stays only in this browser and is never added to your account. Signing out makes this browser forget your governments, your roles and your saved address, but your account keeps your governments and roles. To delete your account and everything saved with it, ask us on our project page (see Contact). Don't post your email address there. We'll set up a private way to confirm it's you."
       },
       "rateLimits": {
         "title": "Limits on use",

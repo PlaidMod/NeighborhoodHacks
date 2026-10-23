@@ -37,6 +37,11 @@ export function writeBrowserProfile(profile: Profile): boolean {
   }
 }
 
+/** This reader saved a real street address here. The sample profile (Maya) doesn't count. */
+export function hasSavedAddress(profile: Profile): boolean {
+  return !profile.demo && profile.address.trim() !== ""
+}
+
 /** Keep the full street address only in this browser's existing profile record. */
 export function rememberBrowserAddress(address: string): boolean {
   const old = readBrowserProfile()

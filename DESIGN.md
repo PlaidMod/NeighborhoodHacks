@@ -7,7 +7,7 @@
 > - **§5** shell and dashboard grids; **§7** stat card, date tile and story sheet.
 > - **§9** personas. The plan has four stakes: student, parent, renter and homeowner.
 > - **§10** tier names. The plan uses `sms | weekly | timeline`; `TierPill` shows "Urgent" for `sms` only.
-> - **§14** file paths and the address-storage rule. The plan now permits storing a street address only in the reader's browser profile; it is not stored by the server or synced to an account. Paths are now `components/`, `lib/` and `app/` at the root.
+> - **§14** file paths and the address-storage rule. The plan now permits storing a street address only in the reader's browser profile; it is not stored by the server or synced to an account, and signing out clears it. Paths are now `components/`, `lib/` and `app/` at the root.
 > - The "Live reference" link points to the prototype. The real app is https://showup-htx-six.vercel.app.
 
 The rules for how ShowUp looks, reads, and behaves. Read this before you add a page, a component, or a line of copy. If something you need isn't covered here, copy the closest existing pattern and raise it with the team so we can add it.
@@ -514,7 +514,7 @@ src/
 - **Add shadcn components with** `npx shadcn@latest add <name>`, then restyle them to match this guide (pill buttons, 24px cards, no ring borders on cards).
 - **Read "now" with `useNow()`**, not `Date.now()` in render. The React compiler lint rule rejects impure render code.
 - **Data stays in `src/lib/data/`.** Pages never hard-code meetings or bodies. A new body kind needs a `BodyKind`, a `KIND_STYLE` entry, a `KIND_LABEL`, and an update generator in `MAKERS`.
-- **Client-only state** (profile, saved items) lives in `ProfileProvider` and localStorage. Don't add new storage keys without a reason, and never store a street address anywhere except the profile.
+- **Client-only state** (profile, saved items) lives in `ProfileProvider` and localStorage. Don't add new storage keys without a reason, and never store a street address anywhere except the profile. Every sign-out button uses `SignOutForm` (`components/prototype/sign-out-form.tsx`), which clears it.
 - Run `npm run lint` and `npx tsc --noEmit` before you open a PR. Both must pass clean.
 
 ---

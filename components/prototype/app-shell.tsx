@@ -38,9 +38,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { SignOutForm } from "@/components/prototype/sign-out-form"
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet"
 import { PERSONAS, relDay } from "@/lib/prototype/format"
 import { useProfile } from "@/lib/prototype/profile"
+import { hasSavedAddress } from "@/lib/prototype/profile-storage"
 import { cn } from "@/lib/utils"
 
 const MENU: { href: string; label: string; icon: LucideIcon }[] = [
@@ -147,6 +149,7 @@ function TopBar({ navToggle }: { navToggle?: { open: boolean; toggle: () => void
   const [mobileOpen, setMobileOpen] = React.useState(false)
   const [searchOpen, setSearchOpen] = React.useState(false)
   const who = account?.name || profile.name
+  const savedAddress = hasSavedAddress(profile)
   const initials = who ? who.split(/\s+/).map((w) => w[0]).join("").slice(0, 2).toUpperCase() : "ME"
   const place = jurisdiction.zip ? `${jurisdiction.area} · ${jurisdiction.zip}` : `${bodies.length} governments`
 
@@ -165,7 +168,7 @@ function TopBar({ navToggle }: { navToggle?: { open: boolean; toggle: () => void
     <>
       {isDemo && (
         <p className="rounded-t-[28px] border-b border-line bg-white/60 px-4 py-2 text-center text-[11px] text-muted-foreground">
-          {profile.address
+          {savedAddress
             ? "Sample data · Your address is saved in this browser; look it up to load your governments. "
             : "Sample data · Exploring Third Ward as Maya. "}
           <Link href="/?change=1" className="font-semibold text-denim underline underline-offset-2">
@@ -278,15 +281,15 @@ function TopBar({ navToggle }: { navToggle?: { open: boolean; toggle: () => void
               <DropdownMenuItem asChild className="rounded-xl">
                 <Link href="/app/alerts">Alerts</Link>
               </DropdownMenuItem>
-              {!isDemo && (
+              {(!isDemo || savedAddress) && (
                 <>
                   <DropdownMenuSeparator />
-                  {/* Guests sign out too: it makes this browser forget their governments (shared computers). */}
-                  <form action="/auth/signout" method="post">
+                  {/* Guests sign out too: it makes this browser forget their governments and saved address (shared computers). */}
+                  <SignOutForm>
                     <DropdownMenuItem asChild className="w-full rounded-xl text-brick focus:text-brick">
                       <button type="submit">{account ? "Sign out" : "Sign out and forget this browser"}</button>
                     </DropdownMenuItem>
-                  </form>
+                  </SignOutForm>
                 </>
               )}
             </DropdownMenuContent>
