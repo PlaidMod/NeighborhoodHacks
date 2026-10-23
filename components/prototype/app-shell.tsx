@@ -224,7 +224,7 @@ function TopBar({ navToggle }: { navToggle?: { open: boolean; toggle: () => void
               <button aria-label="Profile and interests" className="flex items-center gap-3 rounded-full py-1 pr-1 pl-1 hover:bg-white/60 md:pr-4">
                 {account?.avatar ? (
                   // eslint-disable-next-line @next/next/no-img-element -- Google's avatar URL; not worth configuring next/image remote hosts
-                  <img src={account.avatar} alt="" referrerPolicy="no-referrer" className="size-10 rounded-full object-cover" />
+                  <img src={account.avatar} alt="" referrerPolicy="no-referrer" className="size-10 rounded-full object-cover outline outline-1 -outline-offset-1 outline-black/10" />
                 ) : (
                   <span className="grid size-10 place-items-center rounded-full bg-denim-soft text-sm font-bold text-denim-deep">{initials}</span>
                 )}

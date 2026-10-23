@@ -177,29 +177,47 @@
   }
 }
 
-/* Shared glass surface treatment for light panels, cards, menus and controls. */
-.bg-canvas {
-  background-color: var(--canvas);
-  background-image:
-    radial-gradient(ellipse at 8% 4%, color-mix(in oklab, var(--denim-soft) 58%, transparent), transparent 34%),
-    radial-gradient(ellipse at 95% 18%, color-mix(in oklab, var(--sage-soft) 62%, transparent), transparent 32%);
-  background-attachment: fixed;
+/*
+ * Shared glass surface treatment for light panels, cards, menus and controls.
+ * It lives in two layers so it never hides an element's own utilities:
+ *   - components: the edge, highlight, depth and blur. An element's own ring-*, shadow-*,
+ *     border-* and focus-visible:ring-* utilities win, so focus rings and card shadows still show.
+ *   - utilities, after Tailwind's own: the see-through fill. It replaces the opaque bg-white and
+ *     bg-surface, but hover:bg-* and other variants are more specific, so hover tints still show.
+ * tests/platform/cssLayers.test.ts fails if any of this moves outside a layer.
+ */
+@layer components {
+  :is(.bg-white, .bg-surface) {
+    /* Forced-colors mode drops box-shadow and paints this border, so the edge survives there. */
+    border: 1px solid transparent;
+    box-shadow:
+      0 0 0 1px color-mix(in oklab, var(--surface) 78%, var(--denim-soft)),
+      inset 0 1px 0 color-mix(in oklab, white 78%, transparent);
+    -webkit-backdrop-filter: blur(18px) saturate(145%);
+    backdrop-filter: blur(18px) saturate(145%);
+  }
+
+  :is(.bg-ink, .bg-denim, .bg-brick, .bg-primary) {
+    box-shadow:
+      inset 0 1px 0 color-mix(in oklab, white 28%, transparent),
+      0 16px 38px -28px color-mix(in oklab, var(--ink) 48%, transparent);
+    -webkit-backdrop-filter: blur(16px) saturate(140%);
+    backdrop-filter: blur(16px) saturate(140%);
+  }
 }
 
-:is(.bg-white, .bg-surface) {
-  background-color: color-mix(in oklab, var(--surface) 82%, transparent);
-  border: 1px solid color-mix(in oklab, var(--surface) 78%, var(--denim-soft));
-  box-shadow: inset 0 1px 0 color-mix(in oklab, white 78%, transparent);
-  -webkit-backdrop-filter: blur(18px) saturate(145%);
-  backdrop-filter: blur(18px) saturate(145%);
-}
+@layer utilities {
+  .bg-canvas {
+    background-color: var(--canvas);
+    background-image:
+      radial-gradient(ellipse at 8% 4%, color-mix(in oklab, var(--denim-soft) 58%, transparent), transparent 34%),
+      radial-gradient(ellipse at 95% 18%, color-mix(in oklab, var(--sage-soft) 62%, transparent), transparent 32%);
+    background-attachment: fixed;
+  }
 
-:is(.bg-ink, .bg-denim, .bg-brick, .bg-primary) {
-  box-shadow:
-    inset 0 1px 0 color-mix(in oklab, white 28%, transparent),
-    0 16px 38px -28px color-mix(in oklab, var(--ink) 48%, transparent);
-  -webkit-backdrop-filter: blur(16px) saturate(140%);
-  backdrop-filter: blur(16px) saturate(140%);
+  :is(.bg-white, .bg-surface) {
+    background-color: color-mix(in oklab, var(--surface) 82%, transparent);
+  }
 }
 
 @media (prefers-reduced-motion: no-preference) {

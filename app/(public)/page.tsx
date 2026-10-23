@@ -82,9 +82,9 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ c
         </section>
 
         <section className="mt-12 grid gap-4 md:mt-16 md:grid-cols-3 md:gap-5">
-          {(['featureOne', 'featureTwo', 'featureThree'] as const).map((key, index) => (
+          {(['featureOne', 'featureTwo', 'featureThree'] as const).map((key) => (
             <article key={key} className="rounded-[1.5rem] border border-border bg-surface p-6 md:p-7">
-              <p className="text-xs font-extrabold tracking-[0.14em] text-denim uppercase">{t(`feature${index + 1}Label`)}</p>
+              <p className="text-xs font-extrabold tracking-[0.14em] text-denim uppercase">{t(`${key}Label`)}</p>
               <h2 className="mt-3 text-xl leading-tight font-bold tracking-tight text-ink">{t(`${key}Title`)}</h2>
               <p className="mt-3 leading-relaxed text-muted-foreground">{t(`${key}Body`)}</p>
             </article>

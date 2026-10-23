@@ -11,7 +11,8 @@ export async function SiteHeader() {
       <div className="mx-auto flex max-w-7xl 2xl:max-w-[1440px] flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 py-3 md:px-8">
         <Logo />
         <nav aria-label={t('navLabel')} className="flex items-center gap-3">
-          <Button asChild size="sm" className="rounded-full px-4">
+          {/* Hidden on phones: the header would scroll sideways at 390px, and the page itself offers this action. */}
+          <Button asChild size="sm" className="hidden rounded-full px-4 sm:inline-flex">
             <Link href="/address" transitionTypes={['nav-forward']}>
               {t('findGovernments')}
             </Link>

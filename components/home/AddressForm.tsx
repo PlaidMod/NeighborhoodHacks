@@ -192,7 +192,7 @@ export function AddressForm({ className }: { className?: string }) {
               id={listId}
               role="listbox"
               aria-label={t('suggestionsLabel')}
-              className="absolute top-full right-0 left-0 z-30 mt-2 max-h-80 overflow-auto rounded-3xl bg-white p-1.5 shadow-[0_16px_40px_-12px_rgb(27_38_59/0.3)] ring-1 ring-border"
+              className="absolute top-full right-0 left-0 z-30 mt-2 max-h-80 overflow-auto overscroll-contain rounded-3xl bg-white p-1.5 shadow-[0_16px_40px_-12px_rgb(27_38_59/0.3)] ring-1 ring-border"
             >
               {suggestions.map((s, i) => (
                 <li

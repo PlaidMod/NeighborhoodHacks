@@ -33,6 +33,23 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-23: UI polish pass: focus rings, hover tints and shadows work again under the glass style
+- **Who:** PlaidMod · P5 Platform
+- **Branch:** main
+- **What changed:**
+  - Marie Gary Blueberry's glass style (below) sat outside every CSS layer, so it beat Tailwind's utilities. The address box and buttons lost their focus rings, white buttons lost their hover tint (the Google button), and cards lost their own shadows (the sign-in card). The edge, depth and blur now live in `@layer components`, and the see-through fill in `@layer utilities`. The glass look stays, and an element's own utilities win. The glass edge is now a shadow ring over a transparent border, so forced-colors mode still draws it.
+  - The landing page's feature labels showed raw keys (`Home.feature1Label`); it now uses the existing `featureOneLabel` keys.
+  - The header's new "Find my governments" button made every public page scroll sideways at 390px. It now shows from 640px up; the page itself offers the action on phones.
+  - `/address` showed the privacy sentence twice; the address form already shows it.
+  - Polish: menus, the search list and address suggestions no longer scroll the page behind them. The switch names its transition properties. The results cards' hover zoom animates instead of jumping. The Google avatar gets a faint outline.
+- **Files:** `app/globals.css`, `app/(public)/{page,address/page,results/page}.tsx`, `components/shell/SiteHeader.tsx`, `components/home/AddressForm.tsx`, `components/prototype/app-shell.tsx`, `components/ui/{dropdown-menu,command,switch}.tsx`, `tests/platform/cssLayers.test.ts` (new)
+- **Contract changes:** None. New rule: don't set box-shadow, border, outline or background in CSS outside a layer; `cssLayers.test.ts` fails if you do.
+- **Checked:**
+  - Tests and build: the new test failed first, then passed; `npm test` (832 Vitest + 72 P4), typecheck, lint and build pass.
+  - Local Chromium: focus rings on the address box and the primary and Google buttons; the Google hover tint; the sign-in card shadow; glass fill and blur on cards.
+  - No sideways scroll at 390, 640 and 1280px on `/`, `/address`, `/about` and `/privacy` in English, or at 390px in Spanish (`/signin` included).
+- **Open issues / next (left for the landing page's owner):** The hero's two buttons are different sizes (main action 56px, Google 64px), so the secondary outweighs the main one. `/address` uses a hex background (`bg-[#f4f6f9]`), but the rules say tokens only. Lucide icons keep their default stroke beside semibold text.
+
 ### 2026-10-23: Apply a shared glass surface style
 - **Who:** Marie Gary Blueberry · app-wide visual system
 - **Branch:** main

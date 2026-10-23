@@ -19,7 +19,6 @@ export default async function AddressPage() {
           <h1 className="max-w-[14ch] text-4xl leading-tight font-extrabold tracking-[-0.035em] text-ink md:text-5xl">{t('title')}</h1>
           <p className="mt-4 max-w-[38rem] text-lg leading-relaxed text-muted-foreground">{t('lede')}</p>
           <AddressForm className="mt-8 max-w-[42rem]" />
-          <p className="mt-4 max-w-[42rem] text-sm leading-relaxed text-muted-foreground">{home('privacyNote')}</p>
           <p className="mt-3 text-sm text-muted-foreground">{home('coverage')}</p>
         </div>
         <div className="rounded-[2rem] bg-[#f4f6f9] px-5 py-8 md:px-10 md:py-12 lg:px-8 xl:px-12">
