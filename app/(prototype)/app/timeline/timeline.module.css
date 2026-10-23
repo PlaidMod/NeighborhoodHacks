@@ -24,23 +24,24 @@
     .tile {
       animation: settle cubic-bezier(0.23, 1, 0.32, 1) both;
       animation-timeline: view();
-      animation-range: entry 0% entry 70%;
+      animation-range: entry 0% entry 90%;
     }
   }
 }
 
+/* About 60px of drift across the screen, easing out of a slight zoom as the tile passes. */
 @keyframes drift {
   from {
-    transform: translateY(-6%) scale(1.14);
+    transform: translateY(-15%) scale(1.42);
   }
   to {
-    transform: translateY(6%) scale(1.14);
+    transform: translateY(15%) scale(1.32);
   }
 }
 
 @keyframes settle {
   from {
-    scale: 0.95;
+    scale: 0.92;
   }
   to {
     scale: 1;
