@@ -33,6 +33,15 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-23: Apply a shared glass surface style
+- **Who:** Marie Gary Blueberry · app-wide visual system
+- **Branch:** main
+- **What changed:** Added a soft tinted canvas and translucent, blurred treatment to white and surface panels across public and app routes. Added a restrained highlight and depth to denim, ink and brick surfaces while preserving their palette colors and text contrast intent.
+- **Files:** `app/globals.css`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `npx tsc --noEmit` and `git diff --check`; tests not run.
+- **Open issues / next:** Browser visual check unavailable in this session.
+
 ### 2026-10-23: Refresh the landing page and smooth route changes
 - **Who:** Marie Gary Blueberry · public experience
 - **Branch:** main
