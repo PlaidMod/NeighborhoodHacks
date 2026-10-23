@@ -33,6 +33,19 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-22: Photos on the weekly brief, readable agenda titles on real data
+- **Who:** sohankamsala · P3 Weekly News and Alerts
+- **Branch:** main (local commit; not pushed)
+- **What changed:** I checked `/app/timeline` and `/app/brief` against the real database (local env, an address lookup, then "Open your dashboard"). Both show real Houston agenda items.
+  - **Brief photos:** each bento tile now has its government's photo under a veil of the tile color. "Also decided" stories have a photo thumbnail. Photos come from `lib/bodyPhotos.ts`, with credits shown.
+  - **Readable titles:** real items have no stories yet, so cards showed raw titles like "ORDINANCE finding and determining that…". `lib/weekly/agendaTitle.ts` makes a card headline from the official wording. The leading document type becomes a tag ("Ordinance"), the headline stops at the first clause, and all-caps names are put in normal case. Nothing is reworded; the full official title is the story sheet's summary, next to the source link. Written stories replace this automatically.
+- **Files:** `lib/weekly/agendaTitle.ts` (new), `tests/weekly/agendaTitle.test.ts` (new), `lib/prototype/live.ts`, `lib/prototype/types.ts` (`docKind`), `app/(prototype)/app/brief/page.tsx`, `app/(prototype)/app/timeline/page.tsx`
+- **Contract changes:** `Update` (`lib/prototype/types.ts`) gains an optional `docKind`.
+- **Checked:** `npm test` (822), lint and typecheck pass. Both pages loaded with real data in the browser, with no console errors.
+- **Open issues / next:**
+  - **Stories:** none of these real items have a written story (`story_en` is null). The story job runs from `/api/cron/alerts`. I didn't run it by hand, because it writes to the production database and uses AI credits.
+  - **Photos:** every City Council item shows the same City Hall photo. A few more photos per body would add variety.
+
 ### 2026-10-22: Scroll motion on the timeline (Motion library)
 - **Who:** sohankamsala · P3 Weekly News and Alerts
 - **Branch:** main (local commits; not pushed)

@@ -322,7 +322,7 @@ function StoryTile({ u, b, right, now, onOpen }: { u: Update; b: Body; right: bo
               urgent ? "bg-brick text-white" : "bg-white text-ink",
             )}
           >
-            {urgent ? tl("urgent") : tl(`type.${u.type}`)}
+            {urgent ? tl("urgent") : (u.docKind ?? tl(`type.${u.type}`))}
           </span>
           <span className="absolute right-3.5 bottom-2.5 text-[10px] text-white/85 [text-shadow:0_1px_2px_rgb(0_0_0/0.4)]">
             {t("photo", { credit: photo.credit })}

@@ -1,6 +1,7 @@
 import type { BodyType } from "@/lib/contracts/bodyTypes"
 import type { Stake } from "@/lib/stakes"
 import type { Deadline, Lang, WeeklyEdition, WeeklyItem } from "@/lib/weekly/build"
+import { agendaHeadline } from "@/lib/weekly/agendaTitle"
 import type { WeeklyBody } from "@/lib/weekly/data"
 import { STATIC_BODIES } from "./bodies"
 import type { Body, BodyKind, Persona, Tier, Topic, Update, UpdateType } from "./types"
@@ -101,6 +102,8 @@ function updateType(i: WeeklyItem): UpdateType {
 
 export function toUpdate(i: WeeklyItem, kind: BodyKind = "county", lang: Lang = "en"): Update {
   const story = (lang === "es" ? i.story_es : i.story_en) ?? i.story_en ?? null
+  // No story written yet: show the official title trimmed to a card, with the full title as the summary.
+  const raw = story ? null : agendaHeadline(i.title)
   return {
     id: i.item_id,
     bodyId: i.body_id,
@@ -109,8 +112,9 @@ export function toUpdate(i: WeeklyItem, kind: BodyKind = "county", lang: Lang = 
     topic: ITEM_TOPIC[i.item_type] ?? TOPIC[kind] ?? "budget",
     date: i.meeting_date,
     posted: i.first_seen_at ?? i.meeting_date,
-    title: story?.headline ?? i.title,
-    summary: story?.dek ?? "",
+    title: story?.headline ?? raw!.headline,
+    summary: story?.dek ?? (raw!.trimmed ? i.title : ""),
+    docKind: raw?.kind ?? undefined,
     detail: story?.body_paragraphs,
     // The story's renter line is its "why it matters"; without a story there's nothing to say yet.
     why: { default: story?.renter_line ?? (lang === "es" ? "El punto de la agenda está enlazado abajo." : "The agenda item is linked below.") },

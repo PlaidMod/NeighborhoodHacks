@@ -2,25 +2,31 @@
 
 import { ArrowRight, ChevronRight, Clock, Mic } from "lucide-react"
 import { useTranslations } from "next-intl"
+import Image from "next/image"
 import Link from "next/link"
 import * as React from "react"
-import { Chip, KIND_STYLE, LogoTile } from "@/components/prototype/civic"
+import { Chip, LogoTile } from "@/components/prototype/civic"
 import { useStory } from "@/components/prototype/story-sheet"
 import { Button } from "@/components/ui/button"
 import { Coverage } from "@/components/weekly/Coverage"
+import { bodyPhoto } from "@/lib/bodyPhotos"
 import type { Update } from "@/lib/prototype/types"
 import { relevance, whyFor } from "@/lib/prototype/updates"
 import { daysFromNow, fmtDate, fmtDateTime, fmtTime, monthDay } from "@/lib/prototype/format"
 import { useMarkDone, useNow, useProfile } from "@/lib/prototype/profile"
 import { cn } from "@/lib/utils"
 
-/** Tile styles for the bento grid, from the sports-page reference. */
+/**
+ * Tile styles for the bento grid, from the sports-page reference. Each tile shows its government's
+ * photo (lib/bodyPhotos.ts) under a veil of the tile's color: solid behind the text at the top,
+ * thinner at the bottom so the photo shows. The veils keep the text at 4.5:1 or better.
+ */
 const TILES = [
-  { cls: "sm:col-span-2 xl:row-span-1 bg-denim text-white", btn: "text-denim", big: true },
-  { cls: "xl:row-span-2 bg-ink text-white", btn: "text-ink" },
-  { cls: "xl:row-span-2 bg-brick text-white", btn: "text-brick" },
-  { cls: "bg-sand text-ink", btn: "text-sand-deep", light: true },
-  { cls: "bg-denim-soft text-ink", btn: "text-denim", light: true },
+  { cls: "sm:col-span-2 xl:row-span-1 bg-denim text-white", btn: "text-denim", veil: "from-denim/95 via-denim/85 to-denim/40", big: true },
+  { cls: "xl:row-span-2 bg-ink text-white", btn: "text-ink", veil: "from-ink/95 via-ink/85 to-ink/35" },
+  { cls: "xl:row-span-2 bg-brick text-white", btn: "text-brick", veil: "from-brick/95 via-brick/88 to-brick/40" },
+  { cls: "bg-sand text-ink", btn: "text-sand-deep", veil: "from-sand via-sand/95 to-sand/60", light: true },
+  { cls: "bg-denim-soft text-ink", btn: "text-denim", veil: "from-denim-soft via-denim-soft/95 to-denim-soft/60", light: true },
 ]
 
 /** Demo ordering only. Real data uses P3's buildWeekly order (plan §10), passed in as `weekly`. */
@@ -124,7 +130,7 @@ export default function Brief() {
         {top.map((u, i) => {
           const tile = TILES[i]!
           const b = bodies.find((x) => x.id === u.bodyId)!
-          const Icon = KIND_STYLE[b.kind].icon
+          const photo = bodyPhoto(b.id, b.kind)
           return (
             <button
               key={u.id}
@@ -135,14 +141,17 @@ export default function Brief() {
                 tile.cls,
               )}
             >
-              <Icon
-                aria-hidden
-                className={cn(
-                  "absolute -right-8 -bottom-8 size-44 transition-transform duration-300 motion-safe:group-hover:scale-110 motion-safe:group-hover:-rotate-6",
-                  tile.light ? "text-ink/[0.06]" : "text-white/[0.08]",
-                )}
-                strokeWidth={1.1}
+              <Image
+                src={photo.src}
+                alt=""
+                fill
+                sizes="(min-width: 1280px) 560px, (min-width: 640px) 50vw, 100vw"
+                className="object-cover transition-[scale] duration-700 ease-[cubic-bezier(0.23,1,0.32,1)] group-hover:scale-[1.04] motion-reduce:transition-none"
               />
+              <span aria-hidden className={cn("absolute inset-0 bg-linear-to-b", tile.veil)} />
+              <span className={cn("absolute right-4 bottom-3 font-sans text-[10px]", tile.light ? "text-ink/70" : "text-white/80")}>
+                {photo.credit}
+              </span>
               <div className="relative">
                 <p className={cn("flex items-center gap-2 text-xs font-bold", tile.light ? "text-muted-foreground" : "text-white/70")}>
                   <LogoTile id={b.id} className="size-7 rounded-lg ring-0" />
@@ -190,8 +199,17 @@ export default function Brief() {
             {decided.map((u) => {
               const b = bodies.find((x) => x.id === u.bodyId)!
               return (
-                <article key={u.id} className="group grid gap-2 py-6 sm:grid-cols-[140px_minmax(0,1fr)]">
+                <article key={u.id} className="group grid gap-x-6 gap-y-3 py-6 sm:grid-cols-[160px_minmax(0,1fr)]">
                   <div>
+                    <span className="relative mb-3 block h-36 overflow-hidden rounded-2xl outline-1 -outline-offset-1 outline-black/10 sm:h-28">
+                      <Image
+                        src={bodyPhoto(b.id, b.kind).src}
+                        alt=""
+                        fill
+                        sizes="(min-width: 640px) 160px, 100vw"
+                        className="object-cover transition-[scale] duration-700 group-hover:scale-[1.04] motion-reduce:transition-none"
+                      />
+                    </span>
                     <p className="text-xs font-bold text-denim">{b.short}</p>
                     <p className="text-xs text-muted-foreground">{fmtDate(u.date, { weekday: "long" })}</p>
                   </div>

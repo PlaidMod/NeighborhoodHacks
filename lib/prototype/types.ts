@@ -90,6 +90,8 @@ export interface Update {
   aiWritten?: boolean
   /** Real items only: the item's own page. */
   itemPath?: string
+  /** Real items with no story yet: the official title's document type ("Ordinance", "Resolution"). */
+  docKind?: string
   /** Real items only: "What news coverage says" (perspectives spec §7). */
   coverage?: Coverage | null
   /** Real items only: the meeting happened but the minutes aren't posted ("Outcome not posted yet"). */
