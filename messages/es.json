@@ -532,7 +532,11 @@
     "speakUnknown": "Prepara tu comentario sobre «{title}»",
     "signupCloses": "Cierra la inscripción para hablar",
     "deadline": "Fecha límite",
-    "more": "+{count} más"
+    "more": "+{count} más",
+    "signupShort": "Cierra inscripción",
+    "dayEmpty": "No hay nada en la agenda este día.",
+    "seeAll": "Ver los {count} en la cronología",
+    "signupTag": "Inscripción"
   },
   "AppTimeline": {
     "title": "Cronología",

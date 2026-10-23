@@ -532,7 +532,11 @@
     "speakUnknown": "Prepare your comment on “{title}”",
     "signupCloses": "Sign-up to speak closes",
     "deadline": "Deadline",
-    "more": "+{count} more"
+    "more": "+{count} more",
+    "signupShort": "Sign-up closes",
+    "dayEmpty": "Nothing on the agenda this day.",
+    "seeAll": "See all {count} on the timeline",
+    "signupTag": "Sign-up"
   },
   "AppTimeline": {
     "title": "Timeline",

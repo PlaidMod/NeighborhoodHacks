@@ -44,6 +44,10 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 - **Files:** `app/(prototype)/app/brief/page.tsx`, `messages/*.json` (`AppBrief.signupCloses`, `deadline`, `more`, `speakFor`)
 - **Contract changes:** None.
 - **Checked:** `npm test`, lint and typecheck pass. In the browser on real data at 1536px and 390px, there's no horizontal scroll and no console errors.
+- **Follow-up (same day):** the deadlines section is folded into the calendar, and cells carry less text.
+  - **Each cell:** the day number, a red "Sign-up 8:00 AM" tag on deadline days, and one line per meeting (body logo, short name, item count). No item titles.
+  - **Day panel:** clicking a day lists its deadlines and items underneath, one line each, with "See all N on the timeline". The next busy day is selected by default.
+  - **Phones:** a scrollable row of days with dots, plus the same day panel.
 - **Open issues / next:** None.
 
 ### 2026-10-23: Shorter titles, a clearer Speak up, no falling books

@@ -5,14 +5,14 @@ import { useTranslations } from "next-intl"
 import Image from "next/image"
 import Link from "next/link"
 import * as React from "react"
-import { Chip, LogoTile } from "@/components/prototype/civic"
+import { BodyIcon, Chip, LogoTile } from "@/components/prototype/civic"
 import { useStory } from "@/components/prototype/story-sheet"
 import { Button } from "@/components/ui/button"
 import { Coverage } from "@/components/weekly/Coverage"
 import { bodyPhoto } from "@/lib/bodyPhotos"
-import type { Update } from "@/lib/prototype/types"
+import type { Body, Update } from "@/lib/prototype/types"
 import { relevance, whyFor } from "@/lib/prototype/updates"
-import { TIME_ZONE, daysFromNow, fmtDate, fmtTime, monthDay } from "@/lib/prototype/format"
+import { TIME_ZONE, daysFromNow, fmtDate, fmtTime } from "@/lib/prototype/format"
 import { useMarkDone, useNow, useProfile } from "@/lib/prototype/profile"
 import { cn } from "@/lib/utils"
 
@@ -110,6 +110,7 @@ export default function Brief() {
       today: i === dow,
       past: i < dow,
       items: (byDay.get(dayKey(iso)) ?? []).sort((a, b) => +new Date(a.date) - +new Date(b.date)),
+      deadlines: deadlines.filter((d) => dayKey(d.at) === dayKey(iso)),
     }
   })
 
@@ -231,114 +232,10 @@ export default function Brief() {
 
       {/* Everything below the bento stacks full width, so an empty section never leaves half the page blank. */}
       <div className="mt-12 space-y-12">
-        {deadlines.length > 0 && (
-          <section>
-            <SectionHeading>{t("deadlines")}</SectionHeading>
-            <ul className="mt-4 grid grid-cols-[minmax(0,1fr)] gap-3 font-sans sm:grid-cols-2 xl:grid-cols-3">
-              {deadlines.slice(0, 6).map((d) => {
-                const { month, day } = monthDay(d.at)
-                return (
-                  <li key={d.key}>
-                    <button
-                      onClick={() => d.update && openStory(d.update)}
-                      className="group flex w-full items-start gap-4 rounded-[22px] bg-white p-4 text-left transition-[translate] duration-200 hover:-translate-y-0.5"
-                    >
-                      <span className="grid w-12 shrink-0 place-items-center rounded-2xl bg-brick-soft py-2 leading-none text-brick-deep">
-                        <span className="text-[10px] font-bold tracking-wider">{month}</span>
-                        <span className="mt-0.5 text-xl font-extrabold">{day}</span>
-                      </span>
-                      <span className="min-w-0">
-                        <span className="block text-xs font-bold text-brick">
-                          {d.kind === "registration" ? t("signupCloses") : t("deadline")} · {fmtTime(d.at)}
-                        </span>
-                        <span className="mt-1 line-clamp-2 text-sm leading-snug font-bold text-ink group-hover:text-denim">{d.title}</span>
-                        {d.body && <span className="mt-1 block truncate text-xs text-muted-foreground">{d.body}</span>}
-                      </span>
-                    </button>
-                  </li>
-                )
-              })}
-            </ul>
-          </section>
-        )}
-
-        {calendarDays.some((d) => d.items.length > 0) && (
+        {calendarDays.some((d) => d.items.length > 0 || d.deadlines.length > 0) && (
           <section>
             <SectionHeading>{t("calendar")}</SectionHeading>
-            {/* Two weeks, Sunday to Saturday. Phones get the same days as a list. */}
-            <div className="mt-4 hidden overflow-hidden rounded-[24px] bg-white font-sans md:block">
-              <div className="grid grid-cols-7 border-b border-line">
-                {calendarDays.slice(0, 7).map((d) => (
-                  <span key={d.key} className="px-3 py-2 text-[11px] font-bold tracking-wider text-muted-foreground uppercase">
-                    {d.weekday}
-                  </span>
-                ))}
-              </div>
-              <div className="grid grid-cols-7">
-                {calendarDays.map((d, i) => (
-                  <div
-                    key={d.key}
-                    className={cn(
-                      "min-h-32 border-line p-2",
-                      i % 7 !== 6 && "border-r",
-                      i < 7 && "border-b",
-                      d.past && "bg-muted/60",
-                    )}
-                  >
-                    <span
-                      className={cn(
-                        "grid size-7 place-items-center rounded-full text-xs font-bold",
-                        d.today ? "bg-brick text-white" : d.past ? "text-muted-foreground" : "text-ink",
-                      )}
-                    >
-                      {d.day}
-                    </span>
-                    <ul className="mt-1.5 space-y-1">
-                      {d.items.slice(0, 2).map((u) => (
-                        <li key={u.id}>
-                          <button
-                            onClick={() => openStory(u)}
-                            className={cn(
-                              "block w-full rounded-lg border-l-2 bg-canvas px-2 py-1 text-left transition-[background-color] duration-150 hover:bg-denim-soft",
-                              u.tier === "urgent" ? "border-brick" : "border-denim",
-                            )}
-                          >
-                            <span className="block text-[10px] font-semibold text-muted-foreground">{fmtTime(u.date)}</span>
-                            <span className="line-clamp-2 text-[11px] leading-tight font-semibold text-ink">{u.title}</span>
-                          </button>
-                        </li>
-                      ))}
-                      {d.items.length > 2 && (
-                        <li>
-                          <Link href="/app/timeline" className="block px-2 text-[11px] font-semibold text-denim hover:underline">
-                            {t("more", { count: d.items.length - 2 })}
-                          </Link>
-                        </li>
-                      )}
-                    </ul>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <ul className="mt-4 space-y-3 font-sans md:hidden">
-              {calendarDays
-                .filter((d) => d.items.length > 0 && !d.past)
-                .map((d) => (
-                  <li key={d.key} className="rounded-[22px] bg-white p-4">
-                    <p className={cn("text-xs font-bold", d.today ? "text-brick" : "text-muted-foreground")}>{d.label}</p>
-                    <ul className="mt-2 space-y-2">
-                      {d.items.slice(0, 4).map((u) => (
-                        <li key={u.id}>
-                          <button onClick={() => openStory(u)} className="block w-full text-left">
-                            <span className="text-xs text-muted-foreground">{fmtTime(u.date)} · </span>
-                            <span className="text-sm font-semibold">{u.title}</span>
-                          </button>
-                        </li>
-                      ))}
-                    </ul>
-                  </li>
-                ))}
-            </ul>
+            <WeekCalendar days={calendarDays} bodies={bodies} onOpen={openStory} />
           </section>
         )}
 
@@ -440,5 +337,156 @@ function SectionHeading({ children }: { children: React.ReactNode }) {
     <h2 className="flex items-center gap-3 text-xs font-bold tracking-[0.14em] text-muted-foreground uppercase">
       {children} <span aria-hidden className="h-px flex-1 bg-border" />
     </h2>
+  )
+}
+
+type CalendarDay = {
+  key: string
+  day: number
+  weekday: string
+  label: string
+  today: boolean
+  past: boolean
+  items: Update[]
+  deadlines: { key: string; at: string; title: string; update?: Update }[]
+}
+
+/** "Harris County Commissioners Court" -> "Commissioners Court", so a calendar cell fits one line. */
+function shortBody(name: string) {
+  return name
+    .replace(/^(Harris County|Houston|City of Houston)\s+/i, "")
+    .replace(/\s+Board of (Managers|Trustees)$/i, " board")
+    .replace(/\s+District$/i, "")
+}
+
+/**
+ * Two weeks at a glance. Each day shows its sign-up deadline and which governments meet (with an
+ * item count), not item titles. Picking a day lists that day's deadlines and items underneath.
+ */
+function WeekCalendar({ days, bodies, onOpen }: { days: CalendarDay[]; bodies: Body[]; onOpen: (u: Update) => void }) {
+  const t = useTranslations("AppBrief")
+  const busy = (d: CalendarDay) => d.items.length > 0 || d.deadlines.length > 0
+  const [selected, setSelected] = React.useState(() => (days.find((d) => !d.past && busy(d)) ?? days.find((d) => d.today) ?? days[0]!).key)
+  const day = days.find((d) => d.key === selected) ?? days[0]!
+  const byBody = (d: CalendarDay) => {
+    const counts = new Map<string, number>()
+    for (const u of d.items) counts.set(u.bodyId, (counts.get(u.bodyId) ?? 0) + 1)
+    return [...counts.entries()].map(([id, count]) => ({ body: bodies.find((b) => b.id === id), count })).filter((x) => x.body)
+  }
+  const cell = (d: CalendarDay) => (
+    <>
+      <span
+        className={cn(
+          "grid size-7 shrink-0 place-items-center rounded-full text-xs font-bold",
+          d.today ? "bg-brick text-white" : d.past ? "text-muted-foreground" : "text-ink",
+        )}
+      >
+        {d.day}
+      </span>
+      {d.deadlines[0] && (
+        <span className="mt-1.5 flex items-center gap-1 rounded-md bg-brick-soft px-1.5 py-0.5 text-[10px] font-bold text-brick-deep">
+          <span aria-hidden className="size-1.5 shrink-0 rounded-full bg-brick" />
+          <span className="truncate">
+            {t("signupTag")} {fmtTime(d.deadlines[0].at)}
+          </span>
+        </span>
+      )}
+      {byBody(d)
+        .slice(0, 2)
+        .map(({ body, count }) => (
+          <span key={body!.id} className="mt-1.5 flex items-center gap-1.5 text-[11px] font-semibold text-ink">
+            <BodyIcon kind={body!.kind} id={body!.id} className="size-4 rounded-full" />
+            <span className="min-w-0 flex-1 truncate">{shortBody(body!.short)}</span>
+            <span className="text-muted-foreground">{count}</span>
+          </span>
+        ))}
+    </>
+  )
+  return (
+    <div className="mt-4 font-sans">
+      {/* Desktop: the grid */}
+      <div className="hidden overflow-hidden rounded-[24px] bg-white md:block">
+        <div className="grid grid-cols-7 border-b border-line">
+          {days.slice(0, 7).map((d) => (
+            <span key={d.key} className="px-3 py-2 text-[11px] font-bold tracking-wider text-muted-foreground uppercase">
+              {d.weekday}
+            </span>
+          ))}
+        </div>
+        <div className="grid grid-cols-7">
+          {days.map((d, i) => (
+            <button
+              key={d.key}
+              onClick={() => setSelected(d.key)}
+              aria-pressed={d.key === selected}
+              className={cn(
+                "flex min-h-28 flex-col items-stretch justify-start border-line p-2 text-left transition-[background-color] duration-150 hover:bg-denim-soft/40",
+                i % 7 !== 6 && "border-r",
+                i < 7 && "border-b",
+                d.past && "bg-muted/60",
+                d.key === selected && "bg-denim-soft/60 ring-2 ring-denim ring-inset",
+              )}
+            >
+              {cell(d)}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Phones: a row of days */}
+      <div className="scrollbar-none -mx-4 flex gap-2 overflow-x-auto px-4 md:hidden">
+        {days
+          .filter((d) => !d.past)
+          .map((d) => (
+            <button
+              key={d.key}
+              onClick={() => setSelected(d.key)}
+              aria-pressed={d.key === selected}
+              className={cn(
+                "flex w-14 shrink-0 flex-col items-center gap-1 rounded-2xl bg-white py-2",
+                d.key === selected && "bg-ink text-white",
+              )}
+            >
+              <span className="text-[10px] font-bold uppercase opacity-70">{d.weekday}</span>
+              <span className="text-base font-extrabold">{d.day}</span>
+              <span className="flex h-1.5 gap-1">
+                {d.deadlines.length > 0 && <span className="size-1.5 rounded-full bg-brick" />}
+                {d.items.length > 0 && <span className={cn("size-1.5 rounded-full", d.key === selected ? "bg-white" : "bg-denim")} />}
+              </span>
+            </button>
+          ))}
+      </div>
+
+      {/* The picked day */}
+      <div className="mt-3 rounded-[24px] bg-white p-5">
+        <p className="text-sm font-bold">{day.label}</p>
+        {!busy(day) && <p className="mt-2 text-sm text-muted-foreground">{t("dayEmpty")}</p>}
+        <ul className="mt-3 space-y-2">
+          {day.deadlines.map((d) => (
+            <li key={d.key}>
+              <button onClick={() => d.update && onOpen(d.update)} className="flex w-full flex-col items-start gap-1 text-left text-sm sm:flex-row sm:items-center sm:gap-3">
+                <span className="shrink-0 rounded-md bg-brick-soft px-2 py-0.5 text-xs font-bold text-brick-deep">
+                  {t("signupShort")} {fmtTime(d.at)}
+                </span>
+                <span className="line-clamp-2 min-w-0 font-semibold hover:text-denim sm:truncate">{d.title}</span>
+              </button>
+            </li>
+          ))}
+          {day.items.slice(0, 8).map((u) => (
+            <li key={u.id}>
+              <button onClick={() => onOpen(u)} className="flex w-full items-center gap-3 text-left text-sm">
+                <span className="w-16 shrink-0 text-xs font-semibold text-muted-foreground">{fmtTime(u.date)}</span>
+                <span className="min-w-0 flex-1 truncate font-semibold hover:text-denim">{u.title}</span>
+              </button>
+            </li>
+          ))}
+        </ul>
+        {day.items.length > 8 && (
+          <Link href="/app/timeline" className="mt-3 inline-block text-sm font-semibold text-denim hover:underline">
+            {t("seeAll", { count: day.items.length })}
+          </Link>
+        )}
+      </div>
+    </div>
   )
 }
