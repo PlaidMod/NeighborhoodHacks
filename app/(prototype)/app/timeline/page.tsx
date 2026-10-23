@@ -2,6 +2,7 @@
 
 import { ArrowRight, ChevronDown, Clock } from "lucide-react"
 import { useTranslations } from "next-intl"
+import { motion, useMotionTemplate, useReducedMotion, useScroll, useTransform } from "motion/react"
 import Image from "next/image"
 import Link from "next/link"
 import * as React from "react"
@@ -15,7 +16,6 @@ import { useNow, useProfile } from "@/lib/prototype/profile"
 import type { Body, Topic, Update } from "@/lib/prototype/types"
 import { relevance } from "@/lib/prototype/updates"
 import { cn } from "@/lib/utils"
-import styles from "./timeline.module.css"
 
 // The timeline (plan §2, Project_Plan §6): every item from the reader's governments, coming up
 // soonest first, then what was already decided. Cards load in batches as the reader scrolls.
@@ -143,8 +143,8 @@ export default function Timeline() {
         </Reveal>
       </aside>
 
-      {/* Center: the scrolling timeline */}
-      <section className="min-w-0">
+      {/* Center: the scrolling timeline. Clipped sideways so tiles sliding in never widen the page. */}
+      <section className="min-w-0 overflow-x-clip">
         <Reveal className="mb-8 flex flex-wrap items-center justify-between gap-4">
           <h1 className="text-[2rem] leading-none font-bold tracking-[-0.035em]">{t("title")}</h1>
           <div role="tablist" aria-label={t("view")} className="scrollbar-none flex w-full overflow-x-auto rounded-full bg-muted p-1 sm:w-auto">
@@ -278,13 +278,28 @@ function StoryTile({ u, b, right, now, onOpen }: { u: Update; b: Body; right: bo
   const urgent = u.tier === "urgent"
   const closes = u.comment && +new Date(u.comment.deadline) > now ? u.comment.deadline : null
   const outlets = u.coverage?.outlet_count ?? 0
+
+  // Scroll-linked depth (Motion). As the tile comes up from the bottom it slides in from its own
+  // side, grows from 88% and untilts; across the whole screen its photo moves against the scroll.
+  // Tied to scroll position, so it reverses when you scroll back. Still with reduced motion.
+  const ref = React.useRef<HTMLDivElement>(null)
+  const reduce = useReducedMotion()
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] })
+  const enter = useTransform(scrollYProgress, [0, 0.4], [0, 1], { clamp: true })
+  const x = useTransform(enter, [0, 1], [reduce ? 0 : right ? 72 : -72, 0])
+  const scale = useTransform(enter, [0, 1], [reduce ? 1 : 0.88, 1])
+  const rotate = useTransform(enter, [0, 1], [reduce ? 0 : right ? 3 : -3, 0])
+  const opacity = useTransform(enter, [0, 1], [reduce ? 1 : 0.25, 1])
+  const photoY = useTransform(scrollYProgress, [0, 1], [reduce ? 0 : -22, reduce ? 0 : 22])
+  const tileTransform = useMotionTemplate`translateX(${x}px) scale(${scale}) rotate(${rotate}deg)`
+  const photoTransform = useMotionTemplate`translateY(${photoY}%)`
+
   return (
-    <Reveal className={cn("w-full lg:w-[88%]", right && "lg:ml-[12%]")}>
+    <motion.div ref={ref} style={{ transform: tileTransform, opacity }} className={cn("w-full origin-center lg:w-[88%]", right && "lg:ml-[12%]")}>
       <button
         onClick={onOpen}
         aria-label={u.title}
         className={cn(
-          styles.tile,
           "group block w-full overflow-hidden rounded-[26px] border border-transparent bg-white text-left transition-[translate,box-shadow] duration-300 hover:-translate-y-[3px] motion-reduce:hover:translate-y-0",
           EASE,
           LIFT,
@@ -292,7 +307,7 @@ function StoryTile({ u, b, right, now, onOpen }: { u: Update; b: Body; right: bo
         )}
       >
         <span className="relative block h-[180px] overflow-hidden outline-1 -outline-offset-1 outline-black/10 md:h-[210px]">
-          <Parallax>
+          <motion.span aria-hidden style={{ transform: photoTransform }} className="absolute inset-x-0 -top-[30%] -bottom-[30%] block">
             <Image
               src={photo.src}
               alt=""
@@ -300,7 +315,7 @@ function StoryTile({ u, b, right, now, onOpen }: { u: Update; b: Body; right: bo
               sizes="(min-width: 1280px) 560px, (min-width: 1024px) 60vw, 100vw"
               className={cn("object-cover transition-[scale] duration-700 group-hover:scale-[1.03] motion-reduce:transition-none", EASE)}
             />
-          </Parallax>
+          </motion.span>
           <span
             className={cn(
               "absolute top-4 left-4 rounded-full px-3 py-1.5 text-[11.5px] font-bold",
@@ -343,47 +358,7 @@ function StoryTile({ u, b, right, now, onOpen }: { u: Update; b: Body; right: bo
           )}
         </span>
       </button>
-    </Reveal>
-  )
-}
-
-/**
- * Holds a photo in a layer 50% taller than its frame and slides it against the scroll, so the photo
- * moves slower than the page (about 110px of travel across the screen). Text never moves. One
- * passive scroll listener per tile, batched to animation frames; off with reduced motion.
- */
-function Parallax({ children }: { children: React.ReactNode }) {
-  const ref = React.useRef<HTMLSpanElement>(null)
-  React.useEffect(() => {
-    const layer = ref.current
-    const frame = layer?.parentElement
-    if (!layer || !frame || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return
-    let raf = 0
-    const update = () => {
-      raf = 0
-      const r = frame.getBoundingClientRect()
-      const vh = window.innerHeight
-      if (r.bottom < -100 || r.top > vh + 100) return
-      // -1 when the frame enters at the bottom, 1 when it leaves at the top.
-      const p = Math.max(-1, Math.min(1, (vh / 2 - (r.top + r.height / 2)) / (vh / 2 + r.height / 2)))
-      layer.style.transform = `translate3d(0, ${(p * 17).toFixed(2)}%, 0)`
-    }
-    const onScroll = () => {
-      if (!raf) raf = requestAnimationFrame(update)
-    }
-    update()
-    window.addEventListener("scroll", onScroll, { passive: true })
-    window.addEventListener("resize", onScroll)
-    return () => {
-      cancelAnimationFrame(raf)
-      window.removeEventListener("scroll", onScroll)
-      window.removeEventListener("resize", onScroll)
-    }
-  }, [])
-  return (
-    <span ref={ref} aria-hidden className="absolute inset-x-0 -top-1/4 -bottom-1/4 block will-change-transform">
-      {children}
-    </span>
+    </motion.div>
   )
 }
 

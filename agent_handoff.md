@@ -33,14 +33,18 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
-### 2026-10-22: Parallax on timeline photos
+### 2026-10-22: Scroll motion on the timeline (Motion library)
 - **Who:** sohankamsala · P3 Weekly News and Alerts
-- **Branch:** main (local commit; not pushed)
-- **What changed:** On `/app/timeline`, each tile's photo slides against the scroll (about 110px of travel; a small rAF-batched scroll handler, `<Parallax>`, so it works in every browser), and tiles settle from 92% to full size as they come in (CSS scroll-driven, Chromium and Safari). Text never moves. With reduced motion, nothing moves.
-- **Files:** `app/(prototype)/app/timeline/timeline.module.css` (new), `app/(prototype)/app/timeline/page.tsx`
+- **Branch:** main (local commits; not pushed)
+- **What changed:** On `/app/timeline`, tiles slide in from their own side as they scroll up (72px), grow from 88% and untilt from 3°, while each photo moves against the scroll (about 150px of travel). Everything is tied to scroll position, so it reverses when you scroll back, and nothing moves with reduced motion. Two lighter CSS-only versions earlier today were too subtle to notice, so this replaces them.
+- **New dependency:** `motion` 13.5.1 (motion.dev, pinned exact). It's used only in the timeline page so far. `npm install` also rewrote some `libc` lines in `package-lock.json`, which is npm-version noise.
+- **Files:** `app/(prototype)/app/timeline/page.tsx`, `package.json`, `package-lock.json` (`timeline.module.css` from earlier today was removed)
 - **Contract changes:** None.
-- **Checked:** Lint, typecheck and tests pass. In Chromium, the photo transform changes as the page scrolls, and with reduced motion it stays at none.
-- **Open issues / next:** None.
+- **Checked:**
+  - Lint, typecheck and tests pass.
+  - In Chromium, the tile and photo transforms change as you scroll, and with reduced motion they stay at rest.
+  - No horizontal scroll at 320–1440px while scrolling: the timeline column clips sideways overflow.
+- **Open issues / next:** Not checked in Firefox or Safari. Motion's scroll tracking supports both.
 
 ### 2026-10-22: New timeline layout with photos, motion and a hideable sidebar
 - **Who:** sohankamsala · P3 Weekly News and Alerts
