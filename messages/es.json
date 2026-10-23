@@ -560,6 +560,7 @@
     "search": {
       "button": "Busca reuniones, gobiernos y temas",
       "placeholder": "Busca reuniones, gobiernos y temas…",
+      "description": "Busca uno de tus gobiernos o una novedad y pulsa Intro para abrirlo.",
       "empty": "Todavía no hay resultados.",
       "governments": "Tus gobiernos",
       "updates": "Novedades"

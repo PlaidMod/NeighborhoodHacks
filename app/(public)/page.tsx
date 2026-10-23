@@ -43,13 +43,13 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ c
           <div className="mt-8 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center">
             <Button asChild size="lg" className="h-14 rounded-full px-8 text-base">
               <Link href="/address" transitionTypes={['nav-forward']}>
-                {t('submit')} <ArrowRight aria-hidden className="size-4" />
+                {t('submit')} <ArrowRight aria-hidden className="size-4" size={16} strokeWidth={2} absoluteStrokeWidth />
               </Link>
             </Button>
             {!account && google && (
-              <Button asChild size="lg" variant="outline" className="h-16 w-full justify-center rounded-full px-8 text-lg sm:w-auto sm:min-w-[20rem] sm:px-10">
+              <Button asChild size="lg" variant="outline" className="h-14 rounded-full px-8 text-base">
                 <a href="/auth/google">
-                  <svg aria-hidden viewBox="0 0 24 24" className="size-6">
+                  <svg aria-hidden viewBox="0 0 24 24" className="size-5">
                     <path fill="currentColor" d="M21.8 12.2c0-.7-.1-1.4-.2-2H12v3.8h5.5a4.7 4.7 0 0 1-2 3.1v2.6h3.3c1.9-1.8 3-4.4 3-7.5ZM12 22c2.7 0 5-.9 6.7-2.4l-3.3-2.6c-.9.6-2 1-3.4 1-2.6 0-4.8-1.8-5.6-4.1H3v2.6A10 10 0 0 0 12 22Zm-5.6-8.1a6 6 0 0 1 0-3.8V7.5H3a10 10 0 0 0 0 9ZM12 6c1.5 0 2.8.5 3.9 1.5l2.9-2.9A10 10 0 0 0 3 7.5l3.4 2.6C7.2 7.8 9.4 6 12 6Z" />
                   </svg>
                   {ta('signInLink')}
@@ -71,7 +71,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ c
                   return (
                     <li key={key} className="flex items-start gap-4">
                       <span className="grid size-11 shrink-0 place-items-center rounded-2xl bg-denim-soft text-denim-deep">
-                        <Icon aria-hidden className="size-5" />
+                        <Icon aria-hidden className="size-5" size={20} strokeWidth={2} absoluteStrokeWidth />
                       </span>
                       <span className="pt-1 text-base leading-relaxed font-semibold text-ink md:text-lg">{t(key)}</span>
                     </li>

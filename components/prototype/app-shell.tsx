@@ -23,6 +23,7 @@ import { BodyIcon, Logo } from "@/components/prototype/civic"
 import { StoryProvider, useStory } from "@/components/prototype/story-sheet"
 import { Button } from "@/components/ui/button"
 import {
+  Command,
   CommandDialog,
   CommandEmpty,
   CommandGroup,
@@ -347,43 +348,52 @@ function SearchDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (o:
   const router = useRouter()
   const openStory = useStory()
   return (
-    <CommandDialog open={open} onOpenChange={onOpenChange} className="rounded-3xl! sm:max-w-xl">
-      <CommandInput placeholder={t("search.placeholder")} />
-      <CommandList className="max-h-[420px]">
-        <CommandEmpty>{t("search.empty")}</CommandEmpty>
-        <CommandGroup heading={t("search.governments")}>
-          {bodies.map((b) => (
-            <CommandItem
-              key={b.id}
-              value={`${b.name} ${b.short}`}
-              onSelect={() => {
-                onOpenChange(false)
-                router.push(`/app/districts/${b.id}`)
-              }}
-              className="gap-3 rounded-xl"
-            >
-              <BodyIcon kind={b.kind} id={b.id} className="size-8 rounded-xl" />
-              {b.name}
-            </CommandItem>
-          ))}
-        </CommandGroup>
-        <CommandGroup heading={t("search.updates")}>
-          {updates.map((u) => (
-            <CommandItem
-              key={u.id}
-              value={`${u.title} ${u.topic}`}
-              onSelect={() => {
-                onOpenChange(false)
-                openStory(u)
-              }}
-              className="rounded-xl"
-            >
-              <span className="truncate">{u.title}</span>
-              <span className="ml-auto shrink-0 text-xs text-muted-foreground">{relDay(u.date)}</span>
-            </CommandItem>
-          ))}
-        </CommandGroup>
-      </CommandList>
+    <CommandDialog
+      open={open}
+      onOpenChange={onOpenChange}
+      title={t("search.button")}
+      description={t("search.description")}
+      className="rounded-3xl! sm:max-w-xl"
+    >
+      {/* cmdk's parts need their <Command> root; this CommandDialog doesn't add one. */}
+      <Command>
+        <CommandInput placeholder={t("search.placeholder")} />
+        <CommandList className="max-h-[420px]">
+          <CommandEmpty>{t("search.empty")}</CommandEmpty>
+          <CommandGroup heading={t("search.governments")}>
+            {bodies.map((b) => (
+              <CommandItem
+                key={b.id}
+                value={`${b.name} ${b.short}`}
+                onSelect={() => {
+                  onOpenChange(false)
+                  router.push(`/app/districts/${b.id}`)
+                }}
+                className="gap-3 rounded-xl"
+              >
+                <BodyIcon kind={b.kind} id={b.id} className="size-8 rounded-xl" />
+                {b.name}
+              </CommandItem>
+            ))}
+          </CommandGroup>
+          <CommandGroup heading={t("search.updates")}>
+            {updates.map((u) => (
+              <CommandItem
+                key={u.id}
+                value={`${u.title} ${u.topic}`}
+                onSelect={() => {
+                  onOpenChange(false)
+                  openStory(u)
+                }}
+                className="rounded-xl"
+              >
+                <span className="truncate">{u.title}</span>
+                <span className="ml-auto shrink-0 text-xs text-muted-foreground">{relDay(u.date)}</span>
+              </CommandItem>
+            ))}
+          </CommandGroup>
+        </CommandList>
+      </Command>
     </CommandDialog>
   )
 }

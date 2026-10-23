@@ -33,6 +33,24 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-23: Search in /app no longer crashes the page; landing page leftovers fixed
+- **Who:** PlaidMod · P5 Platform
+- **Branch:** main
+- **What changed:**
+  - **Search crash (live bug):** opening search in `/app` (the search box or Ctrl/⌘K) replaced the whole page with "This page couldn't load". The app's shadcn `CommandDialog` doesn't wrap its children in cmdk's `<Command>` root, and the search panel put `CommandInput` and `CommandList` straight inside it, so cmdk found no store ("reading 'subscribe'"). The search panel now wraps them in `<Command>`, with a translated dialog title and description. This has likely been broken since the screens moved to the root app (Oct 20).
+  - **Landing page leftovers** from the UI polish entry below:
+    - The two hero buttons are now the same size (56px, 16px text).
+    - `/address` uses `bg-muted` instead of the hex `#f4f6f9`.
+    - Icons beside semibold text on `/`, `/address` and the address form render a 2px stroke. Lucide's `absoluteStrokeWidth` needs the `size` prop; a CSS size class alone leaves it at 2 units.
+  - **Correction to my guideline review below:** the search list's dates were never English-only. `relDay()` already reads `<html lang>` and formats in Central time; in Spanish they read "1 nov", "Jueves", "Hace 4 días".
+- **Files:** `components/prototype/app-shell.tsx`, `app/(public)/page.tsx`, `app/(public)/address/page.tsx`, `components/home/AddressForm.tsx`, `messages/*.json` (`AppShell.search.description`), `tests/platform/appShellText.test.ts`
+- **Contract changes:** None. Any other `CommandDialog` must also wrap its contents in `<Command>`.
+- **Checked:**
+  - Live before the fix: clicking Search on `/app` showed "This page couldn't load" with the same error.
+  - The new test failed first, passes with the fix, and fails again with the fix stashed. `npm test` (850 Vitest + 72 P4), typecheck, lint and build pass.
+  - Local Chromium, English and Spanish: search opens from the button and from Ctrl K, filters as you type, shows translated headings and dates, with no page errors. Hero buttons are both 56px at 1280px and 390px. Icon strokes are 3 at 16px and 2.4 at 20px (2px rendered).
+- **Open issues / next:** The app's colors in `app/manifest.ts` are still the old cream and brick. Lucide icons elsewhere in the app still use the default stroke.
+
 ### 2026-10-23: "Delete my account", the app shell in Spanish, and a skip link in /app
 - **Who:** PlaidMod · P5 Platform
 - **Branch:** main

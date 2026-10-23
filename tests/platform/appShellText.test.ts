@@ -28,6 +28,11 @@ describe('app shell text (sidebar, banners, account menu, search)', () => {
     expect(phrases.filter((phrase) => src.includes(phrase))).toEqual([])
   })
 
+  it('wraps the search dialog in <Command>, which cmdk needs (without it, opening search crashed /app)', () => {
+    // The first child of <CommandDialog>, after any {/* comment */}, must be <Command>.
+    expect(src).toMatch(/<CommandDialog[^>]*>\s*(\{\/\*[^]*?\*\/\}\s*)?<Command[\s>]/)
+  })
+
   it('starts with a skip link to the main content, so keyboard users can jump past the sidebar', () => {
     expect(src).toMatch(/<a\s+href="#main-content"[^>]*>\s*\{\w+\("skip"\)\}/)
     expect(src).toMatch(/<main id="main-content"/)

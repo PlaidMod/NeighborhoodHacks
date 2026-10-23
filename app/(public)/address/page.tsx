@@ -10,7 +10,7 @@ export default async function AddressPage() {
   return (
     <main id="main" className="mx-auto max-w-7xl px-4 pt-8 pb-16 md:px-8 md:pt-12 2xl:max-w-[1440px]">
       <Link href="/" className="inline-flex items-center gap-2 text-sm font-semibold text-denim underline-offset-4 hover:underline">
-        <ArrowLeft aria-hidden className="size-4" />
+        <ArrowLeft aria-hidden className="size-4" size={16} strokeWidth={2} absoluteStrokeWidth />
         {t('back')}
       </Link>
       <section className="mt-8 grid items-center gap-12 lg:grid-cols-[1.05fr_0.95fr] xl:gap-20">
@@ -21,7 +21,7 @@ export default async function AddressPage() {
           <AddressForm className="mt-8 max-w-[42rem]" />
           <p className="mt-3 text-sm text-muted-foreground">{home('coverage')}</p>
         </div>
-        <div className="rounded-[2rem] bg-[#f4f6f9] px-5 py-8 md:px-10 md:py-12 lg:px-8 xl:px-12">
+        <div className="rounded-[2rem] bg-muted px-5 py-8 md:px-10 md:py-12 lg:px-8 xl:px-12">
           <GovernmentStack />
         </div>
       </section>

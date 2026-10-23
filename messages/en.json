@@ -560,6 +560,7 @@
     "search": {
       "button": "Search meetings, bodies, topics",
       "placeholder": "Search meetings, bodies, topics…",
+      "description": "Find one of your governments or an update, then press Enter to open it.",
       "empty": "Nothing matches that yet.",
       "governments": "Your governments",
       "updates": "Updates"

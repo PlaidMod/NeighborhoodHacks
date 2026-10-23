@@ -227,7 +227,7 @@ export function AddressForm({ className }: { className?: string }) {
         </div>
         <Button type="submit" size="lg">
           {t('submit')}
-          <ArrowRight data-icon="inline-end" />
+          <ArrowRight data-icon="inline-end" size={16} strokeWidth={2} absoluteStrokeWidth />
         </Button>
       </div>
 
