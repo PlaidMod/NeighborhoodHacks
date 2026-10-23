@@ -84,14 +84,14 @@ export default function Timeline() {
   return (
     <div
       // With the sidebar open, the left column folds away (its track animates to 0) and the timeline moves left.
-      style={{ "--left": navOpen ? "0px" : "328px" } as React.CSSProperties}
-      className="grid grid-cols-[minmax(0,1fr)] gap-10 pt-4 pb-10 lg:grid-cols-[minmax(0,1fr)_300px] xl:grid-cols-[var(--left)_minmax(0,1fr)_300px] xl:gap-x-0 xl:transition-[grid-template-columns] xl:duration-300 xl:ease-[cubic-bezier(0.2,0,0,1)] motion-reduce:transition-none"
+      style={{ "--left": navOpen ? "0px" : "304px" } as React.CSSProperties}
+      className="grid grid-cols-[minmax(0,1fr)] gap-10 pt-4 pb-10 lg:grid-cols-[minmax(0,1fr)_272px] lg:gap-x-16 xl:grid-cols-[var(--left)_minmax(0,1fr)_272px] xl:gap-x-0 xl:transition-[grid-template-columns] xl:duration-300 xl:ease-[cubic-bezier(0.2,0,0,1)] motion-reduce:transition-none"
     >
       {/* Left: the big number, the week's memo and topics. Hidden while the sidebar is open. */}
       <aside
         inert={navOpen}
         className={cn(
-          "lg:col-span-2 xl:sticky xl:top-6 xl:col-span-1 xl:min-w-0 xl:self-start xl:overflow-hidden xl:pr-12 xl:transition-opacity xl:duration-200",
+          "lg:col-span-2 xl:sticky xl:top-6 xl:col-span-1 xl:min-w-0 xl:self-start xl:overflow-hidden xl:pr-16 xl:transition-opacity xl:duration-200",
           navOpen && "lg:max-xl:hidden xl:pointer-events-none xl:opacity-0",
         )}
       >
@@ -102,8 +102,8 @@ export default function Timeline() {
         </Reveal>
         <div className="sm:flex sm:flex-wrap sm:items-end sm:gap-x-8 sm:gap-y-6 xl:block">
           <Reveal delay={100}>
-            <CountUp value={weighIn} className="mt-6 block text-[6.5rem] leading-[0.8] font-bold tracking-[-0.07em] tabular-nums md:text-[8.5rem]" />
-            <p className="mt-3 text-[0.95rem] font-semibold text-muted-foreground">
+            <CountUp value={weighIn} className="mt-5 block text-[4.5rem] leading-[0.8] font-bold tracking-[-0.06em] tabular-nums md:text-[5.5rem]" />
+            <p className="mt-2.5 text-[0.86rem] font-semibold text-muted-foreground">
               <span className="text-ink">{t("bigLabel")}</span> {t("bigSub")}
             </p>
           </Reveal>
@@ -112,13 +112,13 @@ export default function Timeline() {
               <button
                 onClick={() => openStory(lead)}
                 className={cn(
-                  "group block w-full max-w-md rounded-[26px] bg-sand p-5 text-left transition-[rotate,translate] duration-300 hover:-translate-y-0.5 hover:rotate-0 sm:-rotate-1 motion-reduce:rotate-0 motion-reduce:transition-none",
+                  "group block w-full max-w-md rounded-[22px] bg-sand p-4 text-left transition-[rotate,translate] duration-300 hover:-translate-y-0.5 hover:rotate-0 sm:-rotate-1 motion-reduce:rotate-0 motion-reduce:transition-none",
                   EASE,
                   LIFT,
                 )}
               >
                 <span className="text-xs font-bold text-sand-deep">{t("memoKicker")}</span>
-                <span className="mt-2 line-clamp-4 text-[1.3rem] leading-snug font-bold tracking-[-0.025em] text-ink">{lead.title}</span>
+                <span className="mt-1.5 line-clamp-3 text-[1.02rem] leading-snug font-bold tracking-[-0.02em] text-ink">{lead.title}</span>
                 <span className="mt-2 block text-sm font-semibold text-sand-deep">
                   {lead.comment && +new Date(lead.comment.deadline) > now
                     ? t("memoSignup", { when: `${relDayLower(lead.comment.deadline)}, ${fmtTime(lead.comment.deadline)}` })
@@ -149,15 +149,15 @@ export default function Timeline() {
       </aside>
 
       {/* Center: the scrolling timeline. Clipped sideways so tiles sliding in never widen the page. */}
-      <section className="min-w-0 overflow-x-clip xl:pr-12">
+      <section className="min-w-0 overflow-x-clip xl:pr-16">
         <Reveal className="mb-8">
-          <h1 className="text-[2rem] leading-none font-bold tracking-[-0.035em]">{t("title")}</h1>
+          <h1 className="text-[1.6rem] leading-none font-bold tracking-[-0.035em]">{t("title")}</h1>
         </Reveal>
 
         <Spine>
           {groups.map((g) => (
             <div key={g.key} className="mb-2">
-              <Reveal className="relative mt-10 mb-5 flex items-baseline gap-2.5 first:mt-0">
+              <Reveal className="relative mt-10 mb-4 flex items-baseline gap-2.5 first:mt-0">
                 <span
                   aria-hidden
                   className={cn(
@@ -168,7 +168,7 @@ export default function Timeline() {
                 <h2 className="text-base font-bold">{g.label}</h2>
                 {g.sub && <span className="text-sm font-semibold text-muted-foreground/80">{g.sub}</span>}
               </Reveal>
-              <div className="space-y-5">
+              <div className="space-y-6">
                 {g.items.map((u) => {
                   const b = byBody.get(u.bodyId)
                   if (!b) return null
@@ -215,7 +215,7 @@ function TopicChip({ on, onClick, children }: { on: boolean; onClick: () => void
       aria-pressed={on}
       onClick={onClick}
       className={cn(
-        "h-9 shrink-0 rounded-full border border-line px-4 text-[0.84rem] font-semibold text-muted-foreground transition-[background-color,color,scale] duration-150 ease-out hover:bg-white hover:text-ink active:scale-[0.96]",
+        "h-8 shrink-0 rounded-full border border-line px-3.5 text-[0.78rem] font-semibold text-muted-foreground transition-[background-color,color,scale] duration-150 ease-out hover:bg-white hover:text-ink active:scale-[0.96]",
         on && "border-ink bg-ink text-white hover:bg-ink hover:text-white",
       )}
     >
@@ -284,7 +284,7 @@ function StoryTile({ u, b, right, now, onOpen }: { u: Update; b: Body; right: bo
   const photoTransform = useMotionTemplate`translateY(${photoY}%)`
 
   return (
-    <motion.div ref={ref} style={{ transform: tileTransform, opacity }} className={cn("w-full origin-center lg:w-[88%]", right && "lg:ml-[12%]")}>
+    <motion.div ref={ref} style={{ transform: tileTransform, opacity }} className={cn("w-full origin-center lg:w-[86%]", right && "lg:ml-[14%]")}>
       <button
         onClick={onOpen}
         aria-label={u.title}
@@ -295,7 +295,7 @@ function StoryTile({ u, b, right, now, onOpen }: { u: Update; b: Body; right: bo
           LIFT_HI,
         )}
       >
-        <span className="relative block h-[180px] overflow-hidden outline-1 -outline-offset-1 outline-black/10 md:h-[210px]">
+        <span className="relative block h-[150px] overflow-hidden outline-1 -outline-offset-1 outline-black/10 md:h-[170px]">
           <motion.span aria-hidden style={{ transform: photoTransform }} className="absolute inset-x-0 -top-[30%] -bottom-[30%] block">
             <Image
               src={photo.src}
@@ -310,13 +310,13 @@ function StoryTile({ u, b, right, now, onOpen }: { u: Update; b: Body; right: bo
             {t("photo", { credit: photo.credit })}
           </span>
         </span>
-        <span className="block px-6 pt-5 pb-6">
+        <span className="block px-5 pt-4 pb-5">
           <span className="flex items-center gap-2 text-[0.82rem] font-semibold text-muted-foreground">
             <BodyIcon kind={b.kind} id={b.id} className="size-6 rounded-full" />
             {b.short}
           </span>
-          <span className="mt-2.5 block text-[1.25rem] leading-[1.2] font-bold tracking-[-0.03em] md:text-[1.4rem]">{u.title}</span>
-          <span className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm font-semibold text-muted-foreground">
+          <span className="mt-2 line-clamp-3 text-[1.05rem] leading-[1.25] font-bold tracking-[-0.02em] md:text-[1.15rem]">{u.title}</span>
+          <span className="mt-2.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-[0.8rem] font-semibold text-muted-foreground">
             <Clock aria-hidden className="size-3.5" strokeWidth={2.25} />
             {relDay(u.date)}, {fmtTime(u.date)}
             {closes && (
@@ -332,7 +332,7 @@ function StoryTile({ u, b, right, now, onOpen }: { u: Update; b: Body; right: bo
                 {t("outlets", { count: outlets })}
                 {u.aiWritten && ` · ${t("aiShort")}`}
               </span>
-              <span className="inline-flex items-center gap-2 rounded-full bg-ink px-5 py-3 text-sm font-bold text-white transition-[scale] duration-150 ease-out group-active:scale-[0.96]">
+              <span className="inline-flex items-center gap-2 rounded-full bg-ink px-4 py-2.5 text-[0.82rem] font-bold text-white transition-[scale] duration-150 ease-out group-active:scale-[0.96]">
                 {closes ? tb("readRespond") : tb("readMore")}
                 <ArrowRight aria-hidden className="size-4 transition-[translate] duration-150 group-hover:translate-x-0.5" strokeWidth={2.5} />
               </span>
@@ -440,7 +440,7 @@ function Countdown({ u }: { u: Update | undefined }) {
   }, [])
   if (!u?.comment) {
     return (
-      <div className={cn("rounded-[26px] bg-ink p-6 text-white", LIFT)}>
+      <div className={cn("rounded-[22px] bg-ink p-5 text-white", LIFT)}>
         <p className="text-sm font-semibold text-white/60">{t("nextDeadline")}</p>
         <p className="mt-3 text-[0.95rem] leading-relaxed text-white/80">{t("noDeadline")}</p>
       </div>
@@ -451,11 +451,11 @@ function Countdown({ u }: { u: Update | undefined }) {
   const h = Math.floor((left % 86_400_000) / 3_600_000)
   const m = Math.floor((left % 3_600_000) / 60_000)
   const s = Math.floor((left % 60_000) / 1000)
-  const unit = "mr-2 ml-0.5 text-[1.5rem] font-semibold text-white/40"
+  const unit = "mr-1.5 ml-0.5 text-[1.15rem] font-semibold text-white/40"
   return (
-    <div className={cn("rounded-[26px] bg-ink p-6 text-white", LIFT)}>
+    <div className={cn("rounded-[22px] bg-ink p-5 text-white", LIFT)}>
       <p className="text-sm font-semibold text-white/60">{t("nextDeadline")}</p>
-      <p className="mt-3 text-[2.9rem] leading-none font-bold tracking-[-0.05em] tabular-nums" aria-live="off">
+      <p className="mt-2 text-[2.2rem] leading-none font-bold tracking-[-0.05em] tabular-nums" aria-live="off">
         {d > 0 && (
           <>
             {d}
@@ -473,10 +473,10 @@ function Countdown({ u }: { u: Update | undefined }) {
           </>
         )}
       </p>
-      <p className="mt-3 line-clamp-3 text-[0.9rem] leading-snug text-white/75">{t("untilClose", { title: u.title })}</p>
+      <p className="mt-2.5 line-clamp-2 text-[0.82rem] leading-snug text-white/75">{t("untilClose", { title: u.title })}</p>
       <Link
         href={`/app/speak?item=${u.id}`}
-        className="mt-5 flex justify-center rounded-full bg-white py-3 text-sm font-bold text-ink transition-[scale] duration-150 ease-out active:scale-[0.96]"
+        className="mt-4 flex justify-center rounded-full bg-white py-2.5 text-[0.84rem] font-bold text-ink transition-[scale] duration-150 ease-out active:scale-[0.96]"
       >
         {t("signUp")}
       </Link>
@@ -497,11 +497,11 @@ function QuickActions({
 }) {
   const t = useTranslations("AppTimeline")
   const [open, setOpen] = React.useState(false)
-  const row = "flex items-center justify-between gap-3 border-t border-line py-3.5 text-[0.9rem] font-semibold first:border-t-0"
+  const row = "flex items-center justify-between gap-3 border-t border-line py-3 text-[0.84rem] font-semibold first:border-t-0"
   const arrow = <ArrowRight aria-hidden className="size-4 text-muted-foreground transition-[translate,color] duration-150 group-hover:translate-x-0.5 group-hover:text-ink" />
   return (
-    <div className={cn("rounded-[26px] bg-white px-6 pt-4 pb-2", LIFT)}>
-      <h2 className="pb-1 text-[1.02rem] font-bold">{t("quick")}</h2>
+    <div className={cn("rounded-[22px] bg-white px-5 pt-3.5 pb-1.5", LIFT)}>
+      <h2 className="pb-1 text-[0.95rem] font-bold">{t("quick")}</h2>
       <div>
         {u && (
           <Link href={`/app/speak?item=${u.id}`} className={cn(row, "group")}>

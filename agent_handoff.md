@@ -42,6 +42,9 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 - **Files:** `app/(prototype)/app/timeline/page.tsx`, `components/prototype/app-shell.tsx`
 - **Contract changes:** None.
 - **Checked:** Lint and tests pass. In the browser at 1100, 1280, 1440 and 1920px, with the sidebar open and closed, the left column hides and returns, there's no horizontal scroll and there are no console errors.
+- **Follow-up (same day):** with the sidebar hidden, the three columns were still crowded.
+  - Gutters are now 64px, the side columns are narrower (left 240px, right 272px), and the center tiles are 86% wide.
+  - Everything is scaled down: the count (4.5–5.5rem), memo, chips, title, tile headlines (clamped to 3 lines), photos (150–170px tall), countdown and quick actions.
 - **Open issues / next:** The `AppTimeline.tabs.*` and `qBrief` message keys are unused now.
 
 ### 2026-10-23: Improve government card hover and return navigation
