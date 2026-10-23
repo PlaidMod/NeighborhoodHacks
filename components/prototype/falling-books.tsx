@@ -23,16 +23,15 @@ type BookSpec = {
   tone: 0 | 1 | 2
 }
 
+// x is % across the timeline column. Fewer, calmer books: they show in the gaps beside the
+// zigzagging tiles rather than everywhere.
 const BOOKS: BookSpec[] = [
-  { x: 3, start: 0.1, w: 46, h: 64, speed: 0.55, spin: 6, tilt: -18, tone: 0 },
-  { x: 14, start: 0.62, w: 34, h: 48, speed: 0.8, spin: -9, tilt: 12, tone: 1 },
-  { x: 24, start: 0.3, w: 52, h: 70, speed: 0.4, spin: 4, tilt: 28, tone: 2 },
-  { x: 37, start: 0.85, w: 30, h: 42, speed: 0.95, spin: 11, tilt: -8, tone: 0 },
-  { x: 48, start: 0.45, w: 40, h: 56, speed: 0.6, spin: -6, tilt: -30, tone: 1 },
-  { x: 59, start: 0.05, w: 36, h: 50, speed: 0.75, spin: 8, tilt: 16, tone: 2 },
-  { x: 70, start: 0.7, w: 48, h: 66, speed: 0.5, spin: -5, tilt: 6, tone: 0 },
-  { x: 81, start: 0.22, w: 32, h: 46, speed: 0.9, spin: 10, tilt: -22, tone: 1 },
-  { x: 91, start: 0.55, w: 44, h: 60, speed: 0.65, spin: -7, tilt: 20, tone: 2 },
+  { x: 2, start: 0.15, w: 40, h: 56, speed: 0.55, spin: 5, tilt: -16, tone: 0 },
+  { x: 90, start: 0.6, w: 36, h: 50, speed: 0.7, spin: -7, tilt: 14, tone: 1 },
+  { x: 8, start: 0.85, w: 32, h: 44, speed: 0.85, spin: 8, tilt: 24, tone: 2 },
+  { x: 84, start: 0.3, w: 44, h: 62, speed: 0.5, spin: -5, tilt: -10, tone: 0 },
+  { x: 48, start: 0.5, w: 30, h: 42, speed: 0.9, spin: 9, tilt: 6, tone: 1 },
+  { x: 94, start: 0.05, w: 34, h: 48, speed: 0.65, spin: 6, tilt: -26, tone: 2 },
 ]
 
 /** Cover, spine and page-edge grays (ink at low strength, so they read as a soft gray on the page). */
@@ -42,15 +41,37 @@ const TONES = [
   { cover: "fill-ink/[0.09]", spine: "fill-ink/[0.13]" },
 ]
 
-export function FallingBooks() {
-  const [height, setHeight] = React.useState(() => (typeof window === "undefined" ? 900 : window.innerHeight))
+/**
+ * The books fall through the column `anchor` points at (the timeline), not the whole screen. The
+ * layer stays fixed to the viewport vertically and follows the column's left edge and width.
+ */
+export function FallingBooks({ anchor }: { anchor: React.RefObject<HTMLElement | null> }) {
+  const [box, setBox] = React.useState({ left: 0, width: 0, height: 900 })
   React.useEffect(() => {
-    const onResize = () => setHeight(window.innerHeight)
-    window.addEventListener("resize", onResize)
-    return () => window.removeEventListener("resize", onResize)
-  }, [])
+    const el = anchor.current
+    if (!el) return
+    const measure = () => {
+      const r = el.getBoundingClientRect()
+      setBox({ left: r.left, width: r.width, height: window.innerHeight })
+    }
+    measure()
+    const ro = new ResizeObserver(measure)
+    ro.observe(el)
+    window.addEventListener("resize", measure)
+    return () => {
+      ro.disconnect()
+      window.removeEventListener("resize", measure)
+    }
+  }, [anchor])
+  const height = box.height
+  if (!box.width) return null
   return (
-    <div aria-hidden className="pointer-events-none fixed inset-0 -z-10 hidden overflow-hidden md:block">
+    <div
+      aria-hidden
+      style={{ left: box.left, width: box.width }}
+      // Fades out toward the top so no book sits under the top bar.
+      className="pointer-events-none fixed inset-y-0 -z-10 hidden overflow-hidden [mask-image:linear-gradient(to_bottom,transparent_0,transparent_120px,black_260px)] md:block"
+    >
       {BOOKS.map((b, i) => (
         <Book key={i} spec={b} height={height} />
       ))}
@@ -76,7 +97,7 @@ function Book({ spec, height }: { spec: BookSpec; height: number }) {
       width={spec.w}
       height={spec.h}
       viewBox="0 0 40 56"
-      style={{ left: `${spec.x}%`, transform }}
+      style={{ left: `calc(${spec.x}% - ${spec.w / 2}px)`, transform }}
       className="absolute top-0 will-change-transform"
     >
       <rect x="0" y="0" width="40" height="56" rx="4" className={tone.cover} />

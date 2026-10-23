@@ -46,6 +46,11 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 - **Checked:**
   - Lint, typecheck and tests pass.
   - In the browser, the books move with scroll, the heading is centered, and after opening the sidebar, going to the brief and coming back, the sidebar is hidden again. No console errors.
+- **Follow-up:**
+  - The books now fall only through the timeline column. The layer tracks the column with a ResizeObserver and fades out near the top, so none sit under the top bar.
+  - Six books instead of nine.
+  - The first two tiles' photos load eagerly.
+- **Note:** the dev overlay's "1 Issue" is React's dev-only "Failed to execute 'measure' on 'Performance' … negative time stamp" bug, not app code. The remaining LCP warning is a false positive, because many tiles share `cityhall.jpg` and Next matches images by file name.
 - **Open issues / next:** None.
 
 ### 2026-10-23: Less on the timeline; the left column folds away when the sidebar opens

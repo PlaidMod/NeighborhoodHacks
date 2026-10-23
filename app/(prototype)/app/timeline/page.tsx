@@ -34,6 +34,7 @@ export default function Timeline() {
   const openStory = useStory()
   const navOpen = useNavOpen()
   const now = useNow()
+  const column = React.useRef<HTMLElement>(null)
   const [topic, setTopic] = React.useState<Topic | null>(null)
   const [muted, setMuted] = React.useState<string[]>([])
   const [limit, setLimit] = React.useState(BATCH)
@@ -88,7 +89,6 @@ export default function Timeline() {
       style={{ "--left": navOpen ? "0px" : "304px" } as React.CSSProperties}
       className="grid grid-cols-[minmax(0,1fr)] gap-10 pt-4 pb-10 lg:grid-cols-[minmax(0,1fr)_272px] lg:gap-x-16 xl:grid-cols-[var(--left)_minmax(0,1fr)_272px] xl:gap-x-0 xl:transition-[grid-template-columns] xl:duration-300 xl:ease-[cubic-bezier(0.2,0,0,1)] motion-reduce:transition-none"
     >
-      <FallingBooks />
       {/* Left: the big number, the week's memo and topics. Hidden while the sidebar is open. */}
       <aside
         inert={navOpen}
@@ -151,7 +151,8 @@ export default function Timeline() {
       </aside>
 
       {/* Center: the scrolling timeline. Clipped sideways so tiles sliding in never widen the page. */}
-      <section className="min-w-0 overflow-x-clip xl:pr-16">
+      <section ref={column} className="min-w-0 overflow-x-clip xl:pr-16">
+        <FallingBooks anchor={column} />
         <Reveal className="mb-8 text-center">
           <h1 className="text-[1.6rem] leading-none font-bold tracking-[-0.035em]">{t("title")}</h1>
         </Reveal>
@@ -177,7 +178,7 @@ export default function Timeline() {
                   return g.key === "past" ? (
                     <DecidedRow key={u.id} u={u} b={b} onOpen={() => openStory(u)} />
                   ) : (
-                    <StoryTile key={u.id} u={u} b={b} right={side.get(u.id) ?? false} now={now} onOpen={() => openStory(u)} />
+                    <StoryTile key={u.id} u={u} b={b} right={side.get(u.id) ?? false} first={upcoming.slice(0, 2).some((x) => x.id === u.id)} now={now} onOpen={() => openStory(u)} />
                   )
                 })}
               </div>
@@ -261,7 +262,7 @@ function Spine({ children }: { children: React.ReactNode }) {
   )
 }
 
-function StoryTile({ u, b, right, now, onOpen }: { u: Update; b: Body; right: boolean; now: number; onOpen: () => void }) {
+function StoryTile({ u, b, right, first, now, onOpen }: { u: Update; b: Body; right: boolean; first: boolean; now: number; onOpen: () => void }) {
   const t = useTranslations("AppTimeline")
   const tb = useTranslations("AppBrief")
   const tl = useTranslations("AppLabels")
@@ -303,6 +304,9 @@ function StoryTile({ u, b, right, now, onOpen }: { u: Update; b: Body; right: bo
               src={photo.src}
               alt=""
               fill
+              // The first two tiles are on screen when the page opens, so their photos load right away.
+              loading={first ? "eager" : "lazy"}
+              fetchPriority={first ? "high" : "auto"}
               sizes="(min-width: 1280px) 560px, (min-width: 1024px) 60vw, 100vw"
               className={cn("object-cover transition-[scale] duration-700 group-hover:scale-[1.03] motion-reduce:transition-none", EASE)}
             />
