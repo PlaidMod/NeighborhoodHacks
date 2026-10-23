@@ -33,6 +33,24 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-23: Align the final government-stack label
+- **Who:** Marie Gary Blueberry · home page layout
+- **Branch:** main
+- **What changed:** Matched the “ones you’ve never heard of” label’s desktop inset to the last government card so the stack continues its stagger consistently. Mobile remains flush with the stack edge.
+- **Files:** `components/home/GovernmentStack.tsx`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `npx tsc --noEmit` and `git diff --check` passed; tests not run.
+- **Open issues / next:** Browser visual check unavailable in this session.
+
+### 2026-10-23: Anchor and compact the public footer
+- **Who:** Marie Gary Blueberry · public site layout
+- **Branch:** main
+- **What changed:** Made the public shell fill at least the viewport height so the footer sits at the bottom instead of leaving unused space beneath it. Tightened the footer's vertical padding and internal gaps. The planning stress test was skipped for this fix at the teammate's request.
+- **Files:** `app/(public)/layout.tsx`, `components/shell/SiteFooter.tsx`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `npx tsc --noEmit`, `git diff --check`, and local homepage request (200); tests not run.
+- **Open issues / next:** Browser visual check unavailable in this session.
+
 ### 2026-10-23: Split the landing page from address lookup
 - **Who:** Marie Gary Blueberry · public experience
 - **Branch:** main
