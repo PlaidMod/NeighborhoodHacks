@@ -74,6 +74,12 @@ function Story({ u, close }: { u: Update; close: () => void }) {
         <SheetDescription className="mt-3 text-[0.95rem] leading-relaxed text-muted-foreground">
           {u.summary}
         </SheetDescription>
+        {u.officialTitle && (
+          <details className="mt-3 text-sm">
+            <summary className="cursor-pointer font-semibold text-denim">{t("officialText")}</summary>
+            <p className="mt-2 leading-relaxed text-muted-foreground">{u.officialTitle}</p>
+          </details>
+        )}
         <p className="mt-4 inline-flex items-center gap-2 text-sm font-semibold">
           <CalendarDays aria-hidden className="size-4 text-denim" />
           {fmtDateTime(u.date)}

@@ -8,10 +8,10 @@ describe('agendaHeadline', () => {
       'ORDINANCE approving and authorizing a First Amendment to a contract with COBB, FENDLEY & ASSOCIATES, INC., to provide Professional Engineering Services for Bissonnet Corridor Safe Streets Project - DISTRICTS C - PANZARELLA; F - THOMAS and J - POLLARD',
     )
     expect(r.kind).toBe('Ordinance')
-    expect(r.headline).toMatch(/^Approving and authorizing a First Amendment to a contract with Cobb, Fendley & Associates, INC\./)
+    expect(r.headline).toBe('Approving and authorizing a First Amendment to a contract with Cobb, Fendley…')
     expect(r.headline).not.toContain('DISTRICTS')
     expect(r.headline.endsWith('…')).toBe(true)
-    expect(r.headline.length).toBeLessThanOrEqual(121)
+    expect(r.headline.length).toBeLessThanOrEqual(91)
     expect(r.trimmed).toBe(true)
   })
 
@@ -24,7 +24,7 @@ describe('agendaHeadline', () => {
 
   it('puts shouted names in normal case', () => {
     const r = agendaHeadline('ORDINANCE relating to Fiscal Affairs of LELAND WOODS REDEVELOPMENT AUTHORITY ON BEHALF OF REINVESTMENT ZONE NUMBER TWENTY-TWO')
-    expect(r.headline).toMatch(/^Relating to Fiscal Affairs of Leland Woods Redevelopment Authority on Behalf of Reinvestment/)
+    expect(r.headline).toBe('Relating to Fiscal Affairs of Leland Woods Redevelopment Authority on Behalf…')
   })
 
   it('leaves a short plain title alone', () => {

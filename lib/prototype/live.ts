@@ -113,7 +113,10 @@ export function toUpdate(i: WeeklyItem, kind: BodyKind = "county", lang: Lang = 
     date: i.meeting_date,
     posted: i.first_seen_at ?? i.meeting_date,
     title: story?.headline ?? raw!.headline,
-    summary: story?.dek ?? (raw!.trimmed ? i.title : ""),
+    // No story: the headline is the official title shortened, and the full title is kept separately
+    // (shown collapsed), so the same words never appear twice in a row.
+    summary: story?.dek ?? "",
+    officialTitle: raw?.trimmed ? i.title : undefined,
     docKind: raw?.kind ?? undefined,
     detail: story?.body_paragraphs,
     // The story's renter line is its "why it matters"; without a story there's nothing to say yet.

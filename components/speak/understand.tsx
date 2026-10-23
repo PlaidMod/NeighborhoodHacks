@@ -26,7 +26,7 @@ export function UnderstandStep({ item, body, zip, lang, t, progress, update }: P
   }
   return <div className="space-y-6">
     <div className="flex items-center gap-3"><BodyIcon id={body.id} kind={body.kind} /><div><p className="text-sm font-semibold">{body.name}</p><p className="text-xs text-muted-foreground">{formatSpeakTime(item.date, lang)}</p></div></div>
-    <div><h2 className="max-w-3xl text-2xl leading-tight font-extrabold tracking-tight">{item.title}</h2>{lang === "es" && <p className="mt-2 text-xs text-muted-foreground">{t.original}</p>}<p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground">{item.summary}</p></div>
+    <div><h2 className="max-w-3xl text-2xl leading-tight font-extrabold tracking-tight">{item.title}</h2>{lang === "es" && <p className="mt-2 text-xs text-muted-foreground">{t.original}</p>}{item.summary && <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground">{item.summary}</p>}{item.officialTitle && <details className="mt-3 max-w-2xl text-sm"><summary className="cursor-pointer font-semibold text-denim">{t.officialText}</summary><p className="mt-2 leading-relaxed text-muted-foreground">{item.officialTitle}</p></details>}</div>
     {item.aiWritten && <p className="text-xs text-muted-foreground">{AI_LABEL[lang]}</p>}
     <Button variant="outline" disabled={busy} onClick={explain}><Lightbulb data-icon="inline-start" />{busy ? t.busy : t.explain}</Button>
     {error && <p role="alert" className="text-sm text-brick">{t.failed}</p>}

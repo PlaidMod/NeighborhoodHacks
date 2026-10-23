@@ -33,6 +33,24 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-23: Shorter titles, a clearer Speak up, no falling books
+- **Who:** sohankamsala · P3 Weekly News and Alerts (touches P4's Speak up; P4, please review)
+- **Branch:** main (local commit; not pushed)
+- **What changed:**
+  - **No repeated title:** items without a story showed the shortened official title as the headline, then the full title again as the summary. Now `summary` is empty for those, and a new `Update.officialTitle` holds the full wording. The story sheet and Speak up's Understand step show it under a collapsed "Official agenda text".
+  - **Shorter headlines:** `agendaHeadline` now caps at 90 characters and drops a dangling "of", "&" or "to the" before the "…".
+  - **Speak up (P4's screen):**
+    - The subtitle now says what the page is for: "Tell your local government what you think before it votes".
+    - A "What this is for" note explains public comment: speaking at the meeting or sending a written comment.
+    - Fixed the agenda list: `line-clamp-2 block` let the `block` class cancel the clamp, so titles ran five or six lines.
+  - **Timeline:** the heading is left-aligned again, and the falling books are removed (`falling-books.tsx` deleted, along with the shell's `isolate`).
+- **Files:** `lib/prototype/{live,types}.ts`, `lib/weekly/agendaTitle.ts`, `tests/weekly/agendaTitle.test.ts`, `components/prototype/{story-sheet,app-shell}.tsx`, `components/speak/understand.tsx` (P4's), `app/(prototype)/app/speak/speak.tsx` (P4's), `app/(prototype)/app/timeline/page.tsx`, `messages/*.json` (`speak.subtitle`, `speak.whatTitle`, `speak.whatBody`, `speak.officialText`, `AppStory.officialText`)
+- **Contract changes:** `Update` gains `officialTitle`, and `summary` is empty for items with no story.
+- **Checked:**
+  - `npm test` (824), lint and typecheck pass.
+  - In the browser on real data, the Speak up list titles stop at two lines, the subtitle and note show, the timeline heading is left-aligned, and no books render. No console errors.
+- **Open issues / next:** None.
+
 ### 2026-10-23: Falling-books background, centered heading, labeled sidebar toggle
 - **Who:** sohankamsala · P3 Weekly News and Alerts
 - **Branch:** main (local commit; not pushed)

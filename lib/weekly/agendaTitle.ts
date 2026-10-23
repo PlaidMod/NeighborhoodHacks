@@ -16,7 +16,7 @@ export type AgendaHeadline = {
   trimmed: boolean
 }
 
-const MAX = 120
+const MAX = 90
 
 /** Small words inside a shouted name: "AUTHORITY ON BEHALF OF" -> "Authority on Behalf of". */
 const SMALL = new Set(["OF", "ON", "AND", "THE", "FOR", "TO", "IN", "AT", "BY", "AN", "OR"])
@@ -51,7 +51,12 @@ export function agendaHeadline(raw: string): AgendaHeadline {
   const cut = text.search(/;\s| - (?:DISTRICTS?|[A-Z]{2,})\b/)
   if (cut > 30) text = text.slice(0, cut)
   text = unshout(text).replace(/[\s,]+$/, "")
-  if (text.length > MAX) text = `${text.slice(0, MAX).replace(/\s+\S*$/, "").replace(/[\s,;:-]+$/, "")}…`
+  if (text.length > MAX) {
+    // Cut at a word boundary, then drop a dangling connector ("of", "&", "to the") before the ellipsis.
+    let cut = text.slice(0, MAX).replace(/\s+\S*$/, "")
+    while (/(?:[\s,;:&-]+|\s(?:of|on|to|the|a|an|and|or|for|with|by|in|at))$/i.test(cut)) cut = cut.replace(/(?:[\s,;:&-]+|\s(?:of|on|to|the|a|an|and|or|for|with|by|in|at))$/i, "")
+    text = `${cut}…`
+  }
   if (text) text = text.charAt(0).toUpperCase() + text.slice(1)
   return { kind, headline: text, trimmed: text !== raw.replace(/\s+/g, " ").trim() }
 }

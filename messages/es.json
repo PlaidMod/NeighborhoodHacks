@@ -591,7 +591,8 @@
     "footReal": "De la agenda oficial. Revísala siempre antes de una reunión.",
     "footSample": "Datos de muestra. Revisa siempre la agenda oficial antes de una reunión.",
     "signupClosesUnknown": "La inscripción cierra el {when}. Verifica el límite oficial para hablar.",
-    "draftUnknown": "Preparar mi comentario"
+    "draftUnknown": "Preparar mi comentario",
+    "officialText": "Texto oficial de la agenda"
   },
   "AppAlerts": {
     "title": "Alertas",
@@ -638,7 +639,7 @@
   },
   "speak": {
     "title": "Hazte escuchar",
-    "subtitle": "Comprende la decisión. Inscríbete. Habla con tus propias palabras.",
+    "subtitle": "Dile a tu gobierno local lo que piensas antes de que vote.",
     "understand": "Comprender",
     "register": "Inscribirse",
     "draft": "Tu borrador",
@@ -774,7 +775,10 @@
     "reminderSaved": "Solicitud de recordatorio guardada",
     "reminderDelivery": "Las solicitudes siguen el consentimiento, horario de envío y plazos verificados. No se garantiza un mensaje.",
     "saveReminder": "Guardar solicitud de recordatorio SMS",
-    "reminderSubscribe": "Primero verifica tu teléfono y acepta las alertas"
+    "reminderSubscribe": "Primero verifica tu teléfono y acepta las alertas",
+    "whatTitle": "Para qué sirve",
+    "whatBody": "La mayoría de las decisiones locales aceptan comentarios del público: unos minutos en la reunión o un comentario por escrito enviado antes. Elige un punto, te mostramos cómo inscribirte, te ayudamos a escribirlo con tus propias palabras y puedes practicar.",
+    "officialText": "Texto oficial de la agenda"
   },
   "Account": {
     "metaTitle": "Iniciar sesión",

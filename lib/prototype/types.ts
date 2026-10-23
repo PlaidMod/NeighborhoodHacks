@@ -92,6 +92,8 @@ export interface Update {
   itemPath?: string
   /** Real items with no story yet: the official title's document type ("Ordinance", "Resolution"). */
   docKind?: string
+  /** Real items with no story yet, when the card headline is shortened: the full official title. */
+  officialTitle?: string
   /** Real items only: "What news coverage says" (perspectives spec §7). */
   coverage?: Coverage | null
   /** Real items only: the meeting happened but the minutes aren't posted ("Outcome not posted yet"). */

@@ -78,8 +78,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   if (!ready) return <div className="min-h-screen bg-canvas" />
   return (
     <StoryProvider>
-      {/* `isolate` gives pages a layer for decorative backgrounds (the timeline's books) above the gray, below everything else. */}
-      <div className="isolate min-h-screen bg-canvas p-2 md:p-3">
+      <div className="min-h-screen bg-canvas p-2 md:p-3">
         <div className="mx-auto flex max-w-[1520px]">
           <aside
             inert={!navOpen}

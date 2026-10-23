@@ -591,7 +591,8 @@
     "footReal": "From the official agenda. Always check it before a meeting.",
     "footSample": "Sample data. Always check the official agenda before a meeting.",
     "signupClosesUnknown": "Sign-up closes {when}. Check the official speaking limit.",
-    "draftUnknown": "Prepare my comment"
+    "draftUnknown": "Prepare my comment",
+    "officialText": "Official agenda text"
   },
   "AppAlerts": {
     "title": "Alerts",
@@ -638,7 +639,7 @@
   },
   "speak": {
     "title": "Speak up",
-    "subtitle": "Understand the decision. Register. Speak in your own words.",
+    "subtitle": "Tell your local government what you think before it votes.",
     "understand": "Understand",
     "register": "Register",
     "draft": "Your draft",
@@ -774,7 +775,10 @@
     "reminderSaved": "Reminder request saved",
     "reminderDelivery": "Saved requests follow alert consent, sending hours and verified deadline availability. This does not guarantee a text.",
     "saveReminder": "Save SMS reminder request",
-    "reminderSubscribe": "Verify your phone and opt in to alerts first"
+    "reminderSubscribe": "Verify your phone and opt in to alerts first",
+    "whatTitle": "What this is for",
+    "whatBody": "Most local decisions take public comment: a few minutes at the meeting, or a written comment sent ahead. Pick an item, we'll show you how to sign up, help you write it in your own words, and let you practice.",
+    "officialText": "Official agenda text"
   },
   "Account": {
     "metaTitle": "Sign in",

@@ -7,7 +7,6 @@ import Image from "next/image"
 import Link from "next/link"
 import * as React from "react"
 import { BodyIcon } from "@/components/prototype/civic"
-import { FallingBooks } from "@/components/prototype/falling-books"
 import { Reveal } from "@/components/prototype/reveal"
 import { useNavOpen } from "@/components/prototype/app-shell"
 import { useStory } from "@/components/prototype/story-sheet"
@@ -34,7 +33,6 @@ export default function Timeline() {
   const openStory = useStory()
   const navOpen = useNavOpen()
   const now = useNow()
-  const column = React.useRef<HTMLElement>(null)
   const [topic, setTopic] = React.useState<Topic | null>(null)
   const [muted, setMuted] = React.useState<string[]>([])
   const [limit, setLimit] = React.useState(BATCH)
@@ -151,9 +149,8 @@ export default function Timeline() {
       </aside>
 
       {/* Center: the scrolling timeline. Clipped sideways so tiles sliding in never widen the page. */}
-      <section ref={column} className="min-w-0 overflow-x-clip xl:pr-16">
-        <FallingBooks anchor={column} />
-        <Reveal className="mb-8 text-center">
+      <section className="min-w-0 overflow-x-clip xl:pr-16">
+        <Reveal className="mb-8">
           <h1 className="text-[1.6rem] leading-none font-bold tracking-[-0.035em]">{t("title")}</h1>
         </Reveal>
 
