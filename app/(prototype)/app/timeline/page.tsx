@@ -15,6 +15,7 @@ import { useNow, useProfile } from "@/lib/prototype/profile"
 import type { Body, Topic, Update } from "@/lib/prototype/types"
 import { relevance } from "@/lib/prototype/updates"
 import { cn } from "@/lib/utils"
+import styles from "./timeline.module.css"
 
 // The timeline (plan §2, Project_Plan §6): every item from the reader's governments, coming up
 // soonest first, then what was already decided. Cards load in batches as the reader scrolls.
@@ -278,24 +279,25 @@ function StoryTile({ u, b, right, now, onOpen }: { u: Update; b: Body; right: bo
   const closes = u.comment && +new Date(u.comment.deadline) > now ? u.comment.deadline : null
   const outlets = u.coverage?.outlet_count ?? 0
   return (
-    <Reveal className={cn("w-full lg:w-[88%]", right && "lg:ml-[12%]")}>
+    <Reveal className={cn(styles.frame, "w-full lg:w-[88%]", right && "lg:ml-[12%]")}>
       <button
         onClick={onOpen}
         aria-label={u.title}
         className={cn(
+          styles.tile,
           "group block w-full overflow-hidden rounded-[26px] border border-transparent bg-white text-left transition-[translate,box-shadow] duration-300 hover:-translate-y-[3px] motion-reduce:hover:translate-y-0",
           EASE,
           LIFT,
           LIFT_HI,
         )}
       >
-        <span className="relative block h-[180px] overflow-hidden md:h-[210px]">
+        <span className="relative block h-[180px] overflow-hidden outline-1 -outline-offset-1 outline-black/10 md:h-[210px]">
           <Image
             src={photo.src}
             alt=""
             fill
             sizes="(min-width: 1280px) 560px, (min-width: 1024px) 60vw, 100vw"
-            className={cn("object-cover outline-1 -outline-offset-1 outline-black/10 transition-[scale] duration-700 group-hover:scale-[1.03] motion-reduce:transition-none", EASE)}
+            className={cn(styles.photo, "object-cover transition-[scale] duration-700 group-hover:scale-[1.03] motion-reduce:transition-none", EASE)}
           />
           <span
             className={cn(
