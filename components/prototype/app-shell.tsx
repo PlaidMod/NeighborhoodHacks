@@ -2,6 +2,7 @@
 
 import {
   BellRing,
+  ChevronRight,
   LayoutGrid,
   Map,
   MapPin,
@@ -56,18 +57,34 @@ const GENERAL: { href: string; label: string; icon: LucideIcon }[] = [
   { href: "/", label: "Change address", icon: Settings2 },
 ]
 
+/** Pages that hide the sidebar by default so the content can use the whole screen. */
+const IMMERSIVE = ["/app/timeline"]
+
 export function AppShell({ children }: { children: React.ReactNode }) {
   const { ready } = useProfile()
+  const path = usePathname()
+  const immersive = IMMERSIVE.includes(path)
+  // The path the reader reopened the sidebar on; leaving that page hides it again next time.
+  const [openOn, setOpenOn] = React.useState<string | null>(null)
+  const navOpen = !immersive || openOn === path
   if (!ready) return <div className="min-h-screen bg-canvas" />
   return (
     <StoryProvider>
       <div className="min-h-screen bg-canvas p-2 md:p-3">
-        <div className="mx-auto flex max-w-[1520px] gap-3">
-          <aside className="sticky top-3 hidden h-[calc(100vh-1.5rem)] w-[248px] shrink-0 lg:block">
-            <SidebarBody />
+        <div className="mx-auto flex max-w-[1520px]">
+          <aside
+            inert={!navOpen}
+            className={cn(
+              "sticky top-3 hidden h-[calc(100vh-1.5rem)] shrink-0 overflow-hidden transition-[width,margin-right,opacity] duration-300 ease-[cubic-bezier(0.2,0,0,1)] lg:block motion-reduce:transition-[opacity]",
+              navOpen ? "mr-3 w-[248px] opacity-100" : "mr-0 w-0 opacity-0",
+            )}
+          >
+            <div className="h-full w-[248px]">
+              <SidebarBody />
+            </div>
           </aside>
           <div className="min-w-0 flex-1 rounded-[28px] bg-surface">
-            <TopBar />
+            <TopBar navToggle={immersive ? { open: navOpen, toggle: () => setOpenOn(navOpen ? null : path) } : undefined} />
             <main id="main-content" className="px-4 pb-24 md:px-8">{children}</main>
           </div>
         </div>
@@ -82,7 +99,7 @@ function SidebarBody({ onNavigate }: { onNavigate?: () => void }) {
   const urgent = updates.filter((u) => u.tier === "urgent" && new Date(u.date) >= new Date()).length
 
   const item = (m: (typeof MENU)[number]) => {
-    const active = m.href === "/app" ? path === "/app" : path.startsWith(m.href)
+    const active = m.href === "/app" || m.href === "/" ? path === m.href : path.startsWith(m.href)
     return (
       <Link
         key={m.href}
@@ -125,7 +142,7 @@ function SidebarBody({ onNavigate }: { onNavigate?: () => void }) {
   )
 }
 
-function TopBar() {
+function TopBar({ navToggle }: { navToggle?: { open: boolean; toggle: () => void } }) {
   const { profile, jurisdiction, patch, isDemo, source, bodies } = useProfile()
   const [mobileOpen, setMobileOpen] = React.useState(false)
   const [searchOpen, setSearchOpen] = React.useState(false)
@@ -159,6 +176,20 @@ function TopBar() {
         </p>
       )}
       <header className="flex items-center gap-3 px-4 pt-5 pb-3 md:px-8 md:pt-6">
+        {navToggle && (
+          <button
+            onClick={navToggle.toggle}
+            aria-expanded={navToggle.open}
+            aria-label={navToggle.open ? "Hide the menu" : "Show the menu"}
+            className="hidden size-11 shrink-0 place-items-center rounded-full bg-white text-ink transition-[scale,background-color] duration-150 ease-out hover:bg-muted active:scale-[0.96] lg:grid"
+          >
+            <ChevronRight
+              aria-hidden
+              className={cn("size-5 transition-[rotate] duration-300 ease-[cubic-bezier(0.2,0,0,1)]", navToggle.open && "rotate-180")}
+              strokeWidth={2.25}
+            />
+          </button>
+        )}
         <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
           <Button variant="ghost" size="icon" className="lg:hidden" onClick={() => setMobileOpen(true)}>
             <Menu />

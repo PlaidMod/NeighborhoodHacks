@@ -33,6 +33,28 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-22: New timeline layout with photos, motion and a hideable sidebar
+- **Who:** sohankamsala · P3 Weekly News and Alerts
+- **Branch:** main (local commit; not pushed)
+- **What changed:** `/app/timeline` has a new layout (the teammate reviewed five static previews and approved this one). The data and behavior are the same as before.
+  - **Layout:**
+    - **Left:** the count of chances to weigh in this week (counts up), a "This week's big idea" memo (the week's lead story from `buildWeekly`, or the most urgent item), and topic filters.
+    - **Center:** a timeline line with day headings. Photo tiles alternate sides; coming-up items run soonest first, then decided items show as compact rows with their result. Tiles load 6 at a time as you scroll and end with "You're all caught up".
+    - **Right:** a live countdown to the next sign-up deadline, and quick actions. The government on/off switches moved here, folding open.
+  - **Motion:** tiles fade and rise in as they scroll into view; the left column has a staged entrance 100ms apart; the line fills in as you scroll; tiles lift on hover; buttons press to 0.96. Everything uses CSS transitions; with reduced motion it's opacity only.
+  - **Sidebar:** hidden on the timeline so the page uses the full screen. A › button in the top bar brings it back, and it's hidden again on the next visit. Other pages are unchanged. I also fixed "Change address" being highlighted on every page.
+  - **Photos:** six real Houston photos from Wikimedia Commons (free licenses), in `public/photos/`. `lib/bodyPhotos.ts` picks one by government (City Hall, HISD headquarters, the 1910 courthouse, Brays Bayou) or by kind, with a skyline fallback. Each tile shows the photo credit. These are not article photos; news images were dropped earlier.
+- **Files:** `app/(prototype)/app/timeline/page.tsx`, `components/prototype/reveal.tsx` (new), `components/prototype/app-shell.tsx`, `lib/bodyPhotos.ts` (new), `public/photos/`, `messages/*.json` (`AppTimeline`)
+- **Contract changes:** None.
+- **Checked:**
+  - `npm test` (817), lint and typecheck pass.
+  - In the browser at 1440, 1024, 390 and 320px, in demo and live mode: no horizontal scroll and no console errors.
+  - More tiles load on scroll, the sidebar hides and reopens, and reduced motion shows everything without movement.
+  - Spanish has no missing messages.
+- **Open issues / next:**
+  - **P5:** the sidebar toggle's label is English, like the rest of the shell.
+  - **Photo licenses:** the CC BY-SA photo (courthouse) requires that adapted copies share the license. We only resized it. Swap it for another photo if the team would rather not.
+
 ### 2026-10-22: Browser notifications live on production
 - **Who:** PlaidMod · helping P3 News and Alerts
 - **Branch:** main
