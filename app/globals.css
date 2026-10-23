@@ -189,6 +189,29 @@
   }
 }
 
+::view-transition {
+  pointer-events: none;
+}
+::view-transition-old(.site-route) {
+  animation: 130ms ease-out both route-fade-out;
+}
+::view-transition-new(.site-route) {
+  animation: 190ms ease-out 90ms both route-fade-in;
+}
+@keyframes route-fade-out {
+  to { opacity: 0; }
+}
+@keyframes route-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(.site-route),
+  ::view-transition-new(.site-route) {
+    animation: none !important;
+  }
+}
+
 @layer utilities {
   .scrollbar-none {
     scrollbar-width: none;

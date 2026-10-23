@@ -33,6 +33,24 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-23: Refresh the landing page and smooth route changes
+- **Who:** Marie Gary Blueberry · public experience
+- **Branch:** main
+- **What changed:** Reworked the landing page around a centered hero, large actions and a rounded product preview built from ShowUp's real government stack and existing copy. Added a localized address CTA to the header and a short fade for route changes, disabled for reduced-motion preferences.
+- **Files:** `app/(public)/page.tsx`, `app/template.tsx`, `app/globals.css`, `components/shell/SiteHeader.tsx`, `messages/en.json`, `messages/es.json`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `npx tsc --noEmit` and `git diff --check` passed. `npm run build` could not fetch Geist from Google Fonts due unavailable network access; tests not run.
+- **Open issues / next:** Browser visual check unavailable in this session; validate the new landing page and route fade when browser access is available.
+
+### 2026-10-23: Enlarge sign-in and align the stack label
+- **Who:** Marie Gary Blueberry · public landing page
+- **Branch:** main
+- **What changed:** Enlarged the Google sign-in action with a wider desktop target and full-width mobile button. Reset the final government-stack label to full width, aligning it with the first card and the stack's shared right edge; this supersedes the prior desktop inset adjustment.
+- **Files:** `app/(public)/page.tsx`, `components/home/GovernmentStack.tsx`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `npx tsc --noEmit`, `git diff --check`, and local homepage request (200); tests not run.
+- **Open issues / next:** Browser visual check unavailable in this session.
+
 ### 2026-10-23: Align the final government-stack label
 - **Who:** Marie Gary Blueberry · home page layout
 - **Branch:** main
