@@ -33,6 +33,19 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-23: Weekly brief: real calendar, compact deadlines, no empty column
+- **Who:** sohankamsala · P3 Weekly News and Alerts
+- **Branch:** main (local commit; not pushed)
+- **What changed:** Below the bento on `/app/brief`, the two-column layout (decided stories plus a side rail) left half the page empty when nothing was decided. Everything now stacks full width:
+  - **Deadlines this week:** compact cards with a date block, "Sign-up to speak closes · time", the item's two-line headline (not `buildWeekly`'s long label) and the body.
+  - **On the calendar:** a real two-week grid (Sunday to Saturday, Central time) with today marked. Each day shows up to two items (time and title, red edge for urgent) plus "+N more", which links to the timeline. Phones get a day-by-day list instead.
+  - **Also decided:** shown only when there's something.
+  - **One thing you can do:** a full-width banner. It also fixes "Speak for 1 minutes" (ICU plural).
+- **Files:** `app/(prototype)/app/brief/page.tsx`, `messages/*.json` (`AppBrief.signupCloses`, `deadline`, `more`, `speakFor`)
+- **Contract changes:** None.
+- **Checked:** `npm test`, lint and typecheck pass. In the browser on real data at 1536px and 390px, there's no horizontal scroll and no console errors.
+- **Open issues / next:** None.
+
 ### 2026-10-23: Shorter titles, a clearer Speak up, no falling books
 - **Who:** sohankamsala · P3 Weekly News and Alerts (touches P4's Speak up; P4, please review)
 - **Branch:** main (local commit; not pushed)

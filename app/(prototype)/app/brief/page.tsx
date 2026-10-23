@@ -12,7 +12,7 @@ import { Coverage } from "@/components/weekly/Coverage"
 import { bodyPhoto } from "@/lib/bodyPhotos"
 import type { Update } from "@/lib/prototype/types"
 import { relevance, whyFor } from "@/lib/prototype/updates"
-import { daysFromNow, fmtDate, fmtDateTime, fmtTime, monthDay } from "@/lib/prototype/format"
+import { TIME_ZONE, daysFromNow, fmtDate, fmtTime, monthDay } from "@/lib/prototype/format"
 import { useMarkDone, useNow, useProfile } from "@/lib/prototype/profile"
 import { cn } from "@/lib/utils"
 
@@ -76,6 +76,42 @@ export default function Brief() {
       .sort((a, b) => +new Date(a.date) - +new Date(b.date))
   }
   const commentable = calendar.filter((u) => u.comment && +new Date(u.comment.deadline) > now)
+
+  // Deadlines this week: buildWeekly's (plan §10) with real data, the demo's sign-up deadlines otherwise.
+  // Each shows its item's short headline, not the long label.
+  const deadlines = (
+    weekly
+      ? weekly.deadlines.map((d) => ({ key: `${d.kind}-${d.at}-${d.item_id ?? ""}`, at: d.at, kind: d.kind, label: d.label, update: d.item_id ? byId.get(d.item_id) : undefined }))
+      : commentable.map((u) => ({ key: u.id, at: u.comment!.deadline, kind: "registration" as const, label: u.title, update: u }))
+  )
+    .map((d) => ({ ...d, title: d.update?.title ?? d.label, body: d.update ? bodies.find((x) => x.id === d.update!.bodyId)?.short : undefined }))
+    .sort((a, b) => +new Date(a.at) - +new Date(b.at))
+
+  // The calendar: this week and next, Sunday to Saturday, in Central time.
+  const DAY = 86_400_000
+  const dow = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].indexOf(
+    new Intl.DateTimeFormat("en-US", { weekday: "short", timeZone: TIME_ZONE }).format(new Date(now)),
+  )
+  const dayKey = (iso: string) => fmtDate(iso, { year: "numeric", month: "2-digit", day: "2-digit" })
+  const byDay = new Map<string, Update[]>()
+  for (const u of updates) {
+    const d = daysFromNow(u.date)
+    if (d < -dow || d > 13 - dow) continue
+    const k = dayKey(u.date)
+    byDay.set(k, [...(byDay.get(k) ?? []), u])
+  }
+  const calendarDays = Array.from({ length: 14 }, (_, i) => {
+    const iso = new Date(now + (i - dow) * DAY).toISOString()
+    return {
+      key: dayKey(iso),
+      day: Number(new Intl.DateTimeFormat("en-US", { day: "numeric", timeZone: TIME_ZONE }).format(new Date(iso))),
+      weekday: fmtDate(iso, { weekday: "short" }),
+      label: fmtDate(iso, { weekday: "long", month: "short", day: "numeric" }),
+      today: i === dow,
+      past: i < dow,
+      items: (byDay.get(dayKey(iso)) ?? []).sort((a, b) => +new Date(a.date) - +new Date(b.date)),
+    }
+  })
 
   const start = new Date()
   start.setDate(start.getDate() - start.getDay())
@@ -193,137 +229,216 @@ export default function Brief() {
         })}
       </section>
 
-      <div className="mt-12 grid grid-cols-[minmax(0,1fr)] gap-10 lg:grid-cols-[minmax(0,1fr)_340px]">
-        {/* Decided */}
-        <section>
-          <h2 className="flex items-center gap-3 text-xs font-bold tracking-[0.14em] text-muted-foreground uppercase">
-            {t("alsoDecided")} <span aria-hidden className="h-px flex-1 bg-border" />
-          </h2>
-          {decided.length === 0 && <p className="mt-4 text-sm text-muted-foreground">{t("noneDecided")}</p>}
-          <div className="mt-2 divide-y divide-border">
-            {decided.map((u) => {
-              const b = bodies.find((x) => x.id === u.bodyId)!
-              return (
-                <article key={u.id} className="group grid gap-x-6 gap-y-3 py-6 sm:grid-cols-[160px_minmax(0,1fr)]">
-                  <div>
-                    <span className="relative mb-3 block h-36 overflow-hidden rounded-2xl outline-1 -outline-offset-1 outline-black/10 sm:h-28">
-                      <Image
-                        src={bodyPhoto(b.id, b.kind).src}
-                        alt=""
-                        fill
-                        sizes="(min-width: 640px) 160px, 100vw"
-                        className="object-cover transition-[scale] duration-700 group-hover:scale-[1.04] motion-reduce:transition-none"
-                      />
-                    </span>
-                    <p className="text-xs font-bold text-denim">{b.short}</p>
-                    <p className="text-xs text-muted-foreground">{fmtDate(u.date, { weekday: "long" })}</p>
-                  </div>
-                  <div>
-                    <button onClick={() => openStory(u)} className="text-left">
-                      <h3 className="font-headline text-[1.4rem] leading-snug font-bold group-hover:text-denim">{u.title}</h3>
+      {/* Everything below the bento stacks full width, so an empty section never leaves half the page blank. */}
+      <div className="mt-12 space-y-12">
+        {deadlines.length > 0 && (
+          <section>
+            <SectionHeading>{t("deadlines")}</SectionHeading>
+            <ul className="mt-4 grid grid-cols-[minmax(0,1fr)] gap-3 font-sans sm:grid-cols-2 xl:grid-cols-3">
+              {deadlines.slice(0, 6).map((d) => {
+                const { month, day } = monthDay(d.at)
+                return (
+                  <li key={d.key}>
+                    <button
+                      onClick={() => d.update && openStory(d.update)}
+                      className="group flex w-full items-start gap-4 rounded-[22px] bg-white p-4 text-left transition-[translate] duration-200 hover:-translate-y-0.5"
+                    >
+                      <span className="grid w-12 shrink-0 place-items-center rounded-2xl bg-brick-soft py-2 leading-none text-brick-deep">
+                        <span className="text-[10px] font-bold tracking-wider">{month}</span>
+                        <span className="mt-0.5 text-xl font-extrabold">{day}</span>
+                      </span>
+                      <span className="min-w-0">
+                        <span className="block text-xs font-bold text-brick">
+                          {d.kind === "registration" ? t("signupCloses") : t("deadline")} · {fmtTime(d.at)}
+                        </span>
+                        <span className="mt-1 line-clamp-2 text-sm leading-snug font-bold text-ink group-hover:text-denim">{d.title}</span>
+                        {d.body && <span className="mt-1 block truncate text-xs text-muted-foreground">{d.body}</span>}
+                      </span>
                     </button>
-                    {u.summary && <p className="mt-2 leading-relaxed text-muted-foreground">{u.summary}</p>}
-                    <p className="mt-3 rounded-2xl bg-white px-4 py-3 text-sm">
-                      <b>{t("forYou")}</b> {whyFor(u, profile.personas)}
-                    </p>
-                    {u.vote && (
-                      <Chip tone="sage" className="mt-3">
-                        {u.vote}
-                      </Chip>
-                    )}
-                    {u.outcomePending && (
-                      <Chip tone="sand" className="mt-3">
-                        {tl("outcomePending")}
-                      </Chip>
-                    )}
-                    {u.coverage !== undefined && <Coverage coverage={u.coverage} className="mt-4" />}
-                  </div>
-                </article>
-              )
-            })}
-          </div>
+                  </li>
+                )
+              })}
+            </ul>
+          </section>
+        )}
 
-          {!weekly && mud && (
-            <div className="mt-6 rounded-[28px] bg-white p-6 md:p-8">
-              <p className="text-xs font-bold tracking-[0.14em] text-muted-foreground uppercase">{t("byNumbers")}</p>
-              <div className="mt-5 grid gap-6 sm:grid-cols-3">
-                <div>
-                  <p className="font-headline text-4xl font-black text-brick">{mud.lastTurnout?.votes}</p>
-                  <p className="mt-1 text-sm text-muted-foreground">{t("votesLast", { name: mud.short })}</p>
-                </div>
-                <div>
-                  <p className="font-headline text-4xl font-black">$38.5M</p>
-                  <p className="mt-1 text-sm text-muted-foreground">{t("bondsBallot", { name: mud.short })}</p>
-                </div>
-                <div>
-                  <p className="font-headline text-4xl font-black">14 mi</p>
-                  <p className="mt-1 text-sm text-muted-foreground">{t("distance")}</p>
-                </div>
+        {calendarDays.some((d) => d.items.length > 0) && (
+          <section>
+            <SectionHeading>{t("calendar")}</SectionHeading>
+            {/* Two weeks, Sunday to Saturday. Phones get the same days as a list. */}
+            <div className="mt-4 hidden overflow-hidden rounded-[24px] bg-white font-sans md:block">
+              <div className="grid grid-cols-7 border-b border-line">
+                {calendarDays.slice(0, 7).map((d) => (
+                  <span key={d.key} className="px-3 py-2 text-[11px] font-bold tracking-wider text-muted-foreground uppercase">
+                    {d.weekday}
+                  </span>
+                ))}
+              </div>
+              <div className="grid grid-cols-7">
+                {calendarDays.map((d, i) => (
+                  <div
+                    key={d.key}
+                    className={cn(
+                      "min-h-32 border-line p-2",
+                      i % 7 !== 6 && "border-r",
+                      i < 7 && "border-b",
+                      d.past && "bg-muted/60",
+                    )}
+                  >
+                    <span
+                      className={cn(
+                        "grid size-7 place-items-center rounded-full text-xs font-bold",
+                        d.today ? "bg-brick text-white" : d.past ? "text-muted-foreground" : "text-ink",
+                      )}
+                    >
+                      {d.day}
+                    </span>
+                    <ul className="mt-1.5 space-y-1">
+                      {d.items.slice(0, 2).map((u) => (
+                        <li key={u.id}>
+                          <button
+                            onClick={() => openStory(u)}
+                            className={cn(
+                              "block w-full rounded-lg border-l-2 bg-canvas px-2 py-1 text-left transition-[background-color] duration-150 hover:bg-denim-soft",
+                              u.tier === "urgent" ? "border-brick" : "border-denim",
+                            )}
+                          >
+                            <span className="block text-[10px] font-semibold text-muted-foreground">{fmtTime(u.date)}</span>
+                            <span className="line-clamp-2 text-[11px] leading-tight font-semibold text-ink">{u.title}</span>
+                          </button>
+                        </li>
+                      ))}
+                      {d.items.length > 2 && (
+                        <li>
+                          <Link href="/app/timeline" className="block px-2 text-[11px] font-semibold text-denim hover:underline">
+                            {t("more", { count: d.items.length - 2 })}
+                          </Link>
+                        </li>
+                      )}
+                    </ul>
+                  </div>
+                ))}
               </div>
             </div>
-          )}
-        </section>
-
-        {/* Calendar rail */}
-        <aside className="space-y-4 lg:sticky lg:top-4 lg:self-start">
-          {weekly && weekly.deadlines.length > 0 && (
-            <div className="rounded-[28px] bg-white p-6">
-              <h2 className="font-headline text-xl font-bold">{t("deadlines")}</h2>
-              <ul className="mt-4 space-y-3 text-sm">
-                {weekly.deadlines.map((d) => (
-                  <li key={`${d.kind}-${d.at}-${d.item_id ?? ""}`} className="border-l-2 border-brick pl-3">
-                    <p className="font-bold">{fmtDateTime(d.at)}</p>
-                    <p className="text-muted-foreground">{d.label}</p>
+            <ul className="mt-4 space-y-3 font-sans md:hidden">
+              {calendarDays
+                .filter((d) => d.items.length > 0 && !d.past)
+                .map((d) => (
+                  <li key={d.key} className="rounded-[22px] bg-white p-4">
+                    <p className={cn("text-xs font-bold", d.today ? "text-brick" : "text-muted-foreground")}>{d.label}</p>
+                    <ul className="mt-2 space-y-2">
+                      {d.items.slice(0, 4).map((u) => (
+                        <li key={u.id}>
+                          <button onClick={() => openStory(u)} className="block w-full text-left">
+                            <span className="text-xs text-muted-foreground">{fmtTime(u.date)} · </span>
+                            <span className="text-sm font-semibold">{u.title}</span>
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
                   </li>
                 ))}
-              </ul>
-            </div>
-          )}
+            </ul>
+          </section>
+        )}
 
-          {calendar.length > 0 && (
-            <div className="rounded-[28px] bg-white p-6">
-              <h2 className="font-headline text-xl font-bold">{t("calendar")}</h2>
-              <ul className="mt-4 space-y-4">
-                {calendar.slice(0, 7).map((u) => {
-                  const { month, day } = monthDay(u.date)
-                  const b = bodies.find((x) => x.id === u.bodyId)!
-                  return (
-                    <li key={u.id}>
-                      <button onClick={() => openStory(u)} className="group flex w-full gap-3 text-left">
-                        <span className="w-10 shrink-0 text-center leading-none">
-                          <span className="block text-[10px] font-bold tracking-wider text-muted-foreground">{month}</span>
-                          <span className="block text-xl font-extrabold">{day}</span>
-                        </span>
-                        <span className="min-w-0 border-l border-border pl-3">
-                          <span className="line-clamp-2 text-sm font-bold group-hover:text-denim">{u.title}</span>
-                          <span className="text-xs text-muted-foreground">
-                            {b.short} · {fmtTime(u.date)}
-                          </span>
-                        </span>
+        {decided.length > 0 && (
+          <section>
+            <SectionHeading>{t("alsoDecided")}</SectionHeading>
+            <div className="mt-2 divide-y divide-border">
+              {decided.map((u) => {
+                const b = bodies.find((x) => x.id === u.bodyId)!
+                return (
+                  <article key={u.id} className="group grid gap-x-6 gap-y-3 py-6 sm:grid-cols-[160px_minmax(0,1fr)]">
+                    <div>
+                      <span className="relative mb-3 block h-36 overflow-hidden rounded-2xl outline-1 -outline-offset-1 outline-black/10 sm:h-28">
+                        <Image
+                          src={bodyPhoto(b.id, b.kind).src}
+                          alt=""
+                          fill
+                          sizes="(min-width: 640px) 160px, 100vw"
+                          className="object-cover transition-[scale] duration-700 group-hover:scale-[1.04] motion-reduce:transition-none"
+                        />
+                      </span>
+                      <p className="text-xs font-bold text-denim">{b.short}</p>
+                      <p className="text-xs text-muted-foreground">{fmtDate(u.date, { weekday: "long" })}</p>
+                    </div>
+                    <div>
+                      <button onClick={() => openStory(u)} className="text-left">
+                        <h3 className="font-headline text-[1.4rem] leading-snug font-bold group-hover:text-denim">{u.title}</h3>
                       </button>
-                    </li>
-                  )
-                })}
-              </ul>
+                      {u.summary && <p className="mt-2 leading-relaxed text-muted-foreground">{u.summary}</p>}
+                      <p className="mt-3 rounded-2xl bg-white px-4 py-3 text-sm">
+                        <b>{t("forYou")}</b> {whyFor(u, profile.personas)}
+                      </p>
+                      {u.vote && (
+                        <Chip tone="sage" className="mt-3">
+                          {u.vote}
+                        </Chip>
+                      )}
+                      {u.outcomePending && (
+                        <Chip tone="sand" className="mt-3">
+                          {tl("outcomePending")}
+                        </Chip>
+                      )}
+                      {u.coverage !== undefined && <Coverage coverage={u.coverage} className="mt-4" />}
+                    </div>
+                  </article>
+                )
+              })}
             </div>
-          )}
+          </section>
+        )}
 
-          {commentable[0] && (
-            <div className="rounded-[28px] bg-brick p-6 font-sans text-white">
-              <Mic aria-hidden className="size-6 text-white/80" />
-              <p className="mt-4 text-xs font-bold tracking-[0.14em] text-white/60 uppercase">{t("oneThing")}</p>
-              <p className="mt-2 text-xl leading-snug font-extrabold tracking-tight">
-                {commentable[0].comment!.minutes !== null ? t("speakFor", { minutes: commentable[0].comment!.minutes!, title: commentable[0].title }) : t("speakUnknown", { title: commentable[0].title })}
-              </p>
-              <Button asChild variant="white" className="mt-5 w-full">
-                <Link href={`/app/speak?item=${commentable[0].id}`}>
-                  {t("draft")} <ArrowRight data-icon="inline-end" />
-                </Link>
-              </Button>
+        {!weekly && mud && (
+          <div className="rounded-[28px] bg-white p-6 md:p-8">
+            <p className="text-xs font-bold tracking-[0.14em] text-muted-foreground uppercase">{t("byNumbers")}</p>
+            <div className="mt-5 grid gap-6 sm:grid-cols-3">
+              <div>
+                <p className="font-headline text-4xl font-black text-brick">{mud.lastTurnout?.votes}</p>
+                <p className="mt-1 text-sm text-muted-foreground">{t("votesLast", { name: mud.short })}</p>
+              </div>
+              <div>
+                <p className="font-headline text-4xl font-black">$38.5M</p>
+                <p className="mt-1 text-sm text-muted-foreground">{t("bondsBallot", { name: mud.short })}</p>
+              </div>
+              <div>
+                <p className="font-headline text-4xl font-black">14 mi</p>
+                <p className="mt-1 text-sm text-muted-foreground">{t("distance")}</p>
+              </div>
             </div>
-          )}
-        </aside>
+          </div>
+        )}
+
+        {commentable[0] && (
+          <div className="flex flex-col gap-5 rounded-[28px] bg-brick p-6 font-sans text-white md:flex-row md:items-center md:justify-between md:p-8">
+            <div className="flex items-start gap-4">
+              <Mic aria-hidden className="mt-1 size-6 shrink-0 text-white/80" />
+              <div>
+                <p className="text-xs font-bold tracking-[0.14em] text-white/70 uppercase">{t("oneThing")}</p>
+                <p className="mt-1 line-clamp-2 text-xl leading-snug font-extrabold tracking-tight">
+                  {commentable[0].comment!.minutes !== null
+                    ? t("speakFor", { minutes: commentable[0].comment!.minutes!, title: commentable[0].title })
+                    : t("speakUnknown", { title: commentable[0].title })}
+                </p>
+              </div>
+            </div>
+            <Button asChild variant="white" className="shrink-0">
+              <Link href={`/app/speak?item=${commentable[0].id}`}>
+                {t("draft")} <ArrowRight data-icon="inline-end" />
+              </Link>
+            </Button>
+          </div>
+        )}
       </div>
     </div>
+  )
+}
+
+function SectionHeading({ children }: { children: React.ReactNode }) {
+  return (
+    <h2 className="flex items-center gap-3 text-xs font-bold tracking-[0.14em] text-muted-foreground uppercase">
+      {children} <span aria-hidden className="h-px flex-1 bg-border" />
+    </h2>
   )
 }

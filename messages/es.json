@@ -523,13 +523,16 @@
     "calendar": "En el calendario",
     "deadlines": "Fechas límite esta semana",
     "oneThing": "Algo que puedes hacer",
-    "speakFor": "Habla {minutes} minutos sobre “{title}”",
+    "speakFor": "Habla {minutes, plural, one {# minuto} other {# minutos}} sobre “{title}”",
     "draft": "Escribir mi comentario",
     "empty": "No hay nada en la agenda de tus gobiernos esta semana.",
     "emptyHint": "La cronología tiene todo lo del último mes y lo que viene después.",
     "openTimeline": "Abrir la cronología",
     "noneDecided": "Tus gobiernos no tomaron decisiones en la última semana.",
-    "speakUnknown": "Prepara tu comentario sobre «{title}»"
+    "speakUnknown": "Prepara tu comentario sobre «{title}»",
+    "signupCloses": "Cierra la inscripción para hablar",
+    "deadline": "Fecha límite",
+    "more": "+{count} más"
   },
   "AppTimeline": {
     "title": "Cronología",

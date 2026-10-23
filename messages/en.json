@@ -523,13 +523,16 @@
     "calendar": "On the calendar",
     "deadlines": "Deadlines this week",
     "oneThing": "One thing you can do",
-    "speakFor": "Speak for {minutes} minutes on “{title}”",
+    "speakFor": "Speak for {minutes, plural, one {# minute} other {# minutes}} on “{title}”",
     "draft": "Draft my comment",
     "empty": "Nothing is on the agenda for your governments this week.",
     "emptyHint": "The Timeline has everything from the last month and what's coming up later.",
     "openTimeline": "Open the Timeline",
     "noneDecided": "No decisions from your governments in the last week.",
-    "speakUnknown": "Prepare your comment on “{title}”"
+    "speakUnknown": "Prepare your comment on “{title}”",
+    "signupCloses": "Sign-up to speak closes",
+    "deadline": "Deadline",
+    "more": "+{count} more"
   },
   "AppTimeline": {
     "title": "Timeline",
