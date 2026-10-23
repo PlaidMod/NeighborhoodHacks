@@ -25,15 +25,32 @@ import { cn } from "@/lib/utils"
 
 // Shared building blocks from DESIGN.md section 7. Reuse these before building new ones.
 
+/**
+ * The ShowUp mark: a heavy "S" with a red dot, like a pin marking your spot (chosen Oct 22, 2026).
+ * `light` is for dark backgrounds. The icon files (favicon, apple-icon, public/icons) use the same design.
+ * Decorative: the name is always shown or announced beside it.
+ */
+export function LogoMark({ light, className }: { light?: boolean; className?: string }) {
+  return (
+    <span
+      aria-hidden
+      className={cn(
+        "relative grid size-8 shrink-0 place-items-center rounded-[10px] font-black leading-none tracking-[-0.04em]",
+        light ? "bg-white text-ink" : "bg-ink text-white",
+        className,
+      )}
+    >
+      <span className="-ml-[0.18em] -mt-[0.04em] text-[1.3em]">S</span>
+      <span className="absolute right-[18%] bottom-[24%] size-[15%] rounded-full bg-brick" />
+    </span>
+  )
+}
+
 export function Logo({ className, light }: { className?: string; light?: boolean }) {
   const [word, place] = APP_NAME.split(" ")
   return (
     <Link href="/" className={cn("group inline-flex items-center gap-2", className)}>
-      <span className="grid size-8 place-items-center rounded-[10px] bg-brick text-white shadow-[inset_0_-2px_0_rgb(0_0_0/0.15)] transition-transform motion-safe:group-hover:-rotate-6">
-        <svg viewBox="0 0 24 24" className="size-4" aria-hidden>
-          <path fill="currentColor" d="M12 2.5l2.6 6.1 6.6.5-5 4.4 1.5 6.5L12 16.6 6.3 20l1.5-6.5-5-4.4 6.6-.5z" />
-        </svg>
-      </span>
+      <LogoMark light={light} className="text-[1.05rem] transition-transform duration-300 motion-safe:group-hover:-rotate-6" />
       <span className={cn("text-[1.15rem] font-extrabold tracking-tight", light ? "text-white" : "text-ink")}>
         {word}{" "}
         <span className={cn("font-semibold", light ? "text-white/60" : "text-muted-foreground")}>{place}</span>

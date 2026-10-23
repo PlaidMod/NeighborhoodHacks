@@ -5,6 +5,7 @@ import { useLocale, useTranslations } from "next-intl"
 import * as React from "react"
 import { toast } from "sonner"
 import { AlertSignup } from "@/components/alerts/AlertSignup"
+import { LogoMark } from "@/components/civic"
 import { PushSignup } from "@/components/alerts/PushSignup"
 import { Chip, Panel } from "@/components/prototype/civic"
 import { Button } from "@/components/ui/button"
@@ -251,11 +252,7 @@ export function Alerts({ token, preview, vapidKey }: { token: string | null; pre
             <div className="overflow-hidden rounded-[34px] bg-surface">
               <div className="flex flex-col items-center border-b border-black/5 bg-white/80 pt-3 pb-3">
                 <div className="mb-3 h-5 w-24 rounded-full bg-ink" />
-                <span className="grid size-10 place-items-center rounded-full bg-brick text-white">
-                  <svg viewBox="0 0 24 24" className="size-5" aria-hidden>
-                    <path fill="currentColor" d="M12 2.5l2.6 6.1 6.6.5-5 4.4 1.5 6.5L12 16.6 6.3 20l1.5-6.5-5-4.4 6.6-.5z" />
-                  </svg>
-                </span>
+                <LogoMark className="size-10 rounded-full text-[1.25rem]" />
                 <p className="mt-1 text-xs font-bold">ShowUp HTX</p>
               </div>
               <div className="space-y-3 p-4 text-[13px] leading-snug">

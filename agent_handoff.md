@@ -33,6 +33,17 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-22: New logo (monogram)
+- **Who:** sohankamsala · P3 Weekly News and Alerts (the teammate picked it from six options)
+- **Branch:** main (local commit; not pushed)
+- **What changed:** The star logo is replaced by a monogram: a heavy Geist "S" on an ink rounded square, with a brick dot.
+  - **In the app:** a new `LogoMark` in `components/civic.tsx` (with `light` for dark backgrounds). It's used by `Logo` (site header, app sidebar, onboarding) and by the alerts phone preview.
+  - **Icon files:** regenerated from the same design. These are `app/favicon.ico` (16/32/48), `app/apple-icon.png` and `public/icons/icon-192.png` and `icon-512.png`. The install icons are full-bleed, with the S inside the maskable safe zone.
+- **Files:** `components/civic.tsx`, `app/(prototype)/app/alerts/alerts.tsx`, `app/favicon.ico`, `app/apple-icon.png`, `public/icons/`, `DESIGN.md`
+- **Contract changes:** `LogoMark` is new; `Logo` keeps its props.
+- **Checked:** Typecheck, lint and tests pass. I looked at the logo on the site header, the app sidebar and the alerts preview, and at every icon size.
+- **Open issues / next:** The Devpost thumbnail and video should use the new mark.
+
 ### 2026-10-22: White UI and one font (Geist)
 - **Who:** sohankamsala · P3 Weekly News and Alerts (the teammate's call; touches P5's design system)
 - **Branch:** main (local commit; not pushed)

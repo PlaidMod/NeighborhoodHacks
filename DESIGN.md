@@ -95,7 +95,9 @@ All colors are CSS variables in `src/app/globals.css` and are exposed as Tailwin
 
 ### Color rules
 
-- **Denim is "do this." Brick is "this is urgent" or "speak up."** Use brick only for urgent tiers, error messages, the public-comment call to action, and the logo. Don't use brick for decoration.
+- **Denim is "do this." Brick is "this is urgent" or "speak up."** Use brick only for urgent tiers, error messages, the public-comment call to action, and the logo's dot. Don't use brick for decoration.
+
+**Logo (Oct 22, 2026):** a heavy Geist "S" on an ink rounded square, with a brick dot like a pin marking your spot. Use `LogoMark` (or `Logo` for the mark plus the name) from `components/civic.tsx`, with `light` on dark backgrounds. The icon files share the design: `app/favicon.ico`, `app/apple-icon.png` and `public/icons/icon-{192,512}.png`. The install icons fill the square edge to edge, with the S inside the maskable safe zone.
 - **Use at most one brick element per card, and at most two filled denim or brick blocks per screen region.** The rest stays white or surface.
 - **Dark ink tiles are for time-sensitive or "feature" content**: the countdown, the MUD turnout story, the SMS phone frame. Use at most one or two per page.
 - **Pair text with its tint.** Text on a `*-soft` background uses the matching `*-deep` color: `bg-brick-soft text-brick-deep`, `bg-denim-soft text-denim-deep`. Never put plain black or gray on a tinted fill.
@@ -495,7 +497,7 @@ src/
   components/
     ui/                     shadcn primitives (restyled: pill buttons, 24px cards)
     dev-palette.tsx         dev-only palette studio
-    civic.tsx               Logo, BodyIcon, Chip, TierPill, ArrowCircle, Panel, SectionTitle, KIND_STYLE, TYPE_ICON
+    civic.tsx               Logo, LogoMark, BodyIcon, Chip, TierPill, ArrowCircle, Panel, SectionTitle, KIND_STYLE, TYPE_ICON
     app-shell.tsx           sidebar, top bar, search, alerts popover
     story-sheet.tsx         useStory() + the update detail sheet
     address-form.tsx
