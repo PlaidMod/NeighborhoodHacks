@@ -60,6 +60,12 @@ const GENERAL: { href: string; label: string; icon: LucideIcon }[] = [
 /** Pages that hide the sidebar by default so the content can use the whole screen. */
 const IMMERSIVE = ["/app/timeline"]
 
+/** Whether the desktop sidebar is showing, so a page can make room for it (the timeline hides its left column). */
+const NavOpenContext = React.createContext(true)
+export function useNavOpen() {
+  return React.useContext(NavOpenContext)
+}
+
 export function AppShell({ children }: { children: React.ReactNode }) {
   const { ready } = useProfile()
   const path = usePathname()
@@ -85,7 +91,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </aside>
           <div className="min-w-0 flex-1 rounded-[28px] bg-transparent">
             <TopBar navToggle={immersive ? { open: navOpen, toggle: () => setOpenOn(navOpen ? null : path) } : undefined} />
-            <main id="main-content" className="px-4 pb-24 md:px-8">{children}</main>
+            <main id="main-content" className="px-4 pb-24 md:px-8">
+              <NavOpenContext.Provider value={navOpen}>{children}</NavOpenContext.Provider>
+            </main>
           </div>
         </div>
       </div>

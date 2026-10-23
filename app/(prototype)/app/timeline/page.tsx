@@ -8,20 +8,18 @@ import Link from "next/link"
 import * as React from "react"
 import { BodyIcon } from "@/components/prototype/civic"
 import { Reveal } from "@/components/prototype/reveal"
+import { useNavOpen } from "@/components/prototype/app-shell"
 import { useStory } from "@/components/prototype/story-sheet"
 import { Switch } from "@/components/ui/switch"
 import { bodyPhoto } from "@/lib/bodyPhotos"
 import { daysFromNow, fmtDate, fmtTime, relDay, relDayLower } from "@/lib/prototype/format"
 import { useNow, useProfile } from "@/lib/prototype/profile"
 import type { Body, Topic, Update } from "@/lib/prototype/types"
-import { relevance } from "@/lib/prototype/updates"
 import { cn } from "@/lib/utils"
 
 // The timeline (plan §2, Project_Plan §6): every item from the reader's governments, coming up
 // soonest first, then what was already decided. Cards load in batches as the reader scrolls.
 
-const TABS = ["all", "foryou", "upcoming", "decided"] as const
-type Tab = (typeof TABS)[number]
 const BATCH = 6
 
 /** Soft elevation: tiles float a little above the page without a heavy shadow. */
@@ -31,10 +29,10 @@ const EASE = "ease-[cubic-bezier(0.2,0,0,1)]"
 
 export default function Timeline() {
   const t = useTranslations("AppTimeline")
-  const { updates, bodies, profile, jurisdiction, weekly } = useProfile()
+  const { updates, bodies, jurisdiction, weekly } = useProfile()
   const openStory = useStory()
+  const navOpen = useNavOpen()
   const now = useNow()
-  const [tab, setTab] = React.useState<Tab>("all")
   const [topic, setTopic] = React.useState<Topic | null>(null)
   const [muted, setMuted] = React.useState<string[]>([])
   const [limit, setLimit] = React.useState(BATCH)
@@ -44,9 +42,6 @@ export default function Timeline() {
   const filtered = updates.filter((u) => {
     if (muted.includes(u.bodyId)) return false
     if (topic && u.topic !== topic) return false
-    if (tab === "foryou") return relevance(u, profile.personas) > 0
-    if (tab === "upcoming") return +new Date(u.date) >= now
-    if (tab === "decided") return u.type === "decision" || !!u.outcomePending
     return true
   })
   const upcoming = filtered.filter((u) => +new Date(u.date) >= now).sort((a, b) => +new Date(a.date) - +new Date(b.date))
@@ -87,9 +82,19 @@ export default function Timeline() {
     .sort((a, b) => +new Date(a.comment!.deadline) - +new Date(b.comment!.deadline))[0]
 
   return (
-    <div className="grid grid-cols-[minmax(0,1fr)] gap-10 pt-4 pb-10 lg:grid-cols-[minmax(0,1fr)_300px] xl:grid-cols-[280px_minmax(0,1fr)_300px] xl:gap-12">
-      {/* Left: the big number, the week's memo and topics */}
-      <aside className="xl:sticky xl:top-6 xl:self-start lg:col-span-2 xl:col-span-1">
+    <div
+      // With the sidebar open, the left column folds away (its track animates to 0) and the timeline moves left.
+      style={{ "--left": navOpen ? "0px" : "328px" } as React.CSSProperties}
+      className="grid grid-cols-[minmax(0,1fr)] gap-10 pt-4 pb-10 lg:grid-cols-[minmax(0,1fr)_300px] xl:grid-cols-[var(--left)_minmax(0,1fr)_300px] xl:gap-x-0 xl:transition-[grid-template-columns] xl:duration-300 xl:ease-[cubic-bezier(0.2,0,0,1)] motion-reduce:transition-none"
+    >
+      {/* Left: the big number, the week's memo and topics. Hidden while the sidebar is open. */}
+      <aside
+        inert={navOpen}
+        className={cn(
+          "lg:col-span-2 xl:sticky xl:top-6 xl:col-span-1 xl:min-w-0 xl:self-start xl:overflow-hidden xl:pr-12 xl:transition-opacity xl:duration-200",
+          navOpen && "lg:max-xl:hidden xl:pointer-events-none xl:opacity-0",
+        )}
+      >
         <Reveal>
           <p className="text-sm font-semibold text-muted-foreground">
             {t("dateline", { date: fmtDate(new Date(now).toISOString(), { weekday: "long", month: "long", day: "numeric" }), area: jurisdiction.area })}
@@ -144,25 +149,9 @@ export default function Timeline() {
       </aside>
 
       {/* Center: the scrolling timeline. Clipped sideways so tiles sliding in never widen the page. */}
-      <section className="min-w-0 overflow-x-clip">
-        <Reveal className="mb-8 flex flex-wrap items-center justify-between gap-4">
+      <section className="min-w-0 overflow-x-clip xl:pr-12">
+        <Reveal className="mb-8">
           <h1 className="text-[2rem] leading-none font-bold tracking-[-0.035em]">{t("title")}</h1>
-          <div role="tablist" aria-label={t("view")} className="scrollbar-none flex w-full overflow-x-auto rounded-full bg-muted p-1 sm:w-auto">
-            {TABS.map((id) => (
-              <button
-                key={id}
-                role="tab"
-                aria-selected={tab === id}
-                onClick={() => change(() => setTab(id))}
-                className={cn(
-                  "flex-1 shrink-0 rounded-full px-3 py-2 text-[0.82rem] font-semibold whitespace-nowrap text-muted-foreground transition-[background-color,color] duration-150 hover:text-ink sm:flex-none sm:px-4",
-                  tab === id && "bg-ink text-white hover:text-white",
-                )}
-              >
-                {t(`tabs.${id}`)}
-              </button>
-            ))}
-          </div>
         </Reveal>
 
         <Spine>
@@ -316,14 +305,7 @@ function StoryTile({ u, b, right, now, onOpen }: { u: Update; b: Body; right: bo
               className={cn("object-cover transition-[scale] duration-700 group-hover:scale-[1.03] motion-reduce:transition-none", EASE)}
             />
           </motion.span>
-          <span
-            className={cn(
-              "absolute top-4 left-4 rounded-full px-3 py-1.5 text-[11.5px] font-bold",
-              urgent ? "bg-brick text-white" : "bg-white text-ink",
-            )}
-          >
-            {urgent ? tl("urgent") : (u.docKind ?? tl(`type.${u.type}`))}
-          </span>
+          {urgent && <span className="absolute top-4 left-4 rounded-full bg-brick px-3 py-1.5 text-[11.5px] font-bold text-white">{tl("urgent")}</span>}
           <span className="absolute right-3.5 bottom-2.5 text-[10px] text-white/85 [text-shadow:0_1px_2px_rgb(0_0_0/0.4)]">
             {t("photo", { credit: photo.credit })}
           </span>
@@ -529,10 +511,6 @@ function QuickActions({
         )}
         <Link href="/app/alerts" className={cn(row, "group")}>
           {t("qAlerts")}
-          {arrow}
-        </Link>
-        <Link href="/app/brief" className={cn(row, "group")}>
-          {t("qBrief")}
           {arrow}
         </Link>
         <button aria-expanded={open} onClick={() => setOpen((o) => !o)} className={cn(row, "group w-full text-left")}>

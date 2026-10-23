@@ -33,6 +33,17 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-23: Less on the timeline; the left column folds away when the sidebar opens
+- **Who:** sohankamsala · P3 Weekly News and Alerts
+- **Branch:** main (local commit; not pushed)
+- **What changed:** The teammate found `/app/timeline` crowded.
+  - **Sidebar open:** opening the sidebar (the › button) now folds away the left column (the big count, the memo and the topics). The column's grid track animates to zero, so the timeline slides left; closing the sidebar brings it back. The shell shares its open state through `useNavOpen()` (`components/prototype/app-shell.tsx`).
+  - **Removed:** the "Everything / For you / Coming up / Decided" tabs; the generic tags on photo tiles (only "Urgent" remains); and "Read the weekly brief" in quick actions (the sidebar already links to it).
+- **Files:** `app/(prototype)/app/timeline/page.tsx`, `components/prototype/app-shell.tsx`
+- **Contract changes:** None.
+- **Checked:** Lint and tests pass. In the browser at 1100, 1280, 1440 and 1920px, with the sidebar open and closed, the left column hides and returns, there's no horizontal scroll and there are no console errors.
+- **Open issues / next:** The `AppTimeline.tabs.*` and `qBrief` message keys are unused now.
+
 ### 2026-10-23: Improve government card hover and return navigation
 - **Who:** Marie Gary Blueberry · public lookup and government details
 - **Branch:** main
