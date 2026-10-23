@@ -1,5 +1,4 @@
 import 'server-only'
-import type { SupabaseClient } from '@supabase/supabase-js'
 import { cookies } from 'next/headers'
 import { db } from '@/lib/db'
 import { getOptionalEnv } from '@/lib/env'
@@ -50,18 +49,14 @@ export async function googleEnabled(): Promise<boolean> {
   }
 }
 
-// account_profiles isn't in the generated database types yet (P5 regenerates them).
-const untyped = () => db() as unknown as SupabaseClient
-
 export async function loadSavedProfile(userId: string): Promise<SavedProfile | null> {
-  const { data, error } = await untyped().from('account_profiles').select('body_ids, stakes').eq('user_id', userId).maybeSingle()
+  const { data, error } = await db().from('account_profiles').select('body_ids, stakes').eq('user_id', userId).maybeSingle()
   if (error || !data) return null
-  const row = data as { body_ids: string[] | null; stakes: string[] | null }
-  return { bodyIds: row.body_ids ?? [], stakes: (row.stakes ?? []).filter(isStake) }
+  return { bodyIds: data.body_ids, stakes: data.stakes.filter(isStake) }
 }
 
 export async function saveProfile(userId: string, profile: SavedProfile): Promise<void> {
-  const { error } = await untyped()
+  const { error } = await db()
     .from('account_profiles')
     .upsert({ user_id: userId, body_ids: profile.bodyIds, stakes: profile.stakes, updated_at: new Date().toISOString() })
   if (error) throw new Error('Could not save your governments')

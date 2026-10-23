@@ -60,15 +60,19 @@
     "privacy": {
       "metaTitle": "Política de privacidad",
       "title": "Política de privacidad",
-      "effective": "Vigente desde el 22 de octubre de 2026",
+      "effective": "Vigente desde el 23 de octubre de 2026",
       "intro": "ShowUp HTX te ayuda a conocer tus gobiernos locales y a hacerte escuchar. Recopilamos lo mínimo posible. Esto es lo que guardamos y por qué.",
       "address": {
         "title": "Tu dirección",
         "body": "Enviamos tu dirección una sola vez a la búsqueda de direcciones de la Oficina del Censo de EE. UU. para encontrar tus gobiernos locales, y luego la olvidamos. Nunca la guardamos. Mientras escribes, enviamos solo el nombre de la calle, nunca el número de tu casa, a Photon, un buscador gratuito de calles basado en OpenStreetMap, para sugerirte calles. Los enlaces a tus resultados solo contienen una lista de identificadores de gobiernos, no tu dirección."
       },
       "cookies": {
-        "title": "Sin cuentas, pocas cookies",
-        "body": "No necesitas una cuenta. Usamos unas pocas cookies pequeñas: tu idioma (NEXT_LOCALE), los roles que elegiste, como estudiante o inquilino (showup_stakes), los identificadores de tus gobiernos, para mostrarte sus novedades (showup_bodies), y un identificador aleatorio del navegador (showup_coach_id) que limita cuántas veces puede usarse el asistente de IA. Si te inscribes en las alertas, otra cookie (showup_sub) recuerda que te inscribiste. No contiene tu número de teléfono. Los administradores del equipo también reciben una cookie de inicio de sesión."
+        "title": "Inicio de sesión opcional, pocas cookies",
+        "body": "No necesitas una cuenta. Usamos unas pocas cookies pequeñas: tu idioma (NEXT_LOCALE), los roles que elegiste, como estudiante o inquilino (showup_stakes), los identificadores de tus gobiernos, para mostrarte sus novedades (showup_bodies), y un identificador aleatorio del navegador (showup_coach_id) que limita cuántas veces puede usarse el asistente de IA. Los identificadores de tus gobiernos se quedan en este navegador unos seis meses, para que no tengas que volver a escribir tu dirección. Cierra sesión en el menú de tu cuenta para que este navegador los olvide. Si te inscribes en las alertas, otra cookie (showup_sub) recuerda que te inscribiste. No contiene tu número de teléfono. Si inicias sesión con Google, o eres administrador del equipo, una cookie de inicio de sesión mantiene tu sesión abierta."
+      },
+      "account": {
+        "title": "Iniciar sesión con Google",
+        "body": "Iniciar sesión es opcional. Si inicias sesión con Google, Google nos comparte tu correo electrónico, tu nombre y un enlace a tu foto de perfil, y Supabase, nuestra base de datos, los guarda para tu cuenta. También guardamos los identificadores de los gobiernos que sigues y los roles que elegiste, para que te acompañen en otros dispositivos. Nunca guardamos tu dirección. Al cerrar sesión, este navegador los olvida, pero tu cuenta los conserva. Para eliminar tu cuenta y todo lo que guardó, pídenoslo en la página de nuestro proyecto (ver Contacto). No publiques ahí tu correo electrónico. Te daremos una forma privada de confirmar que eres tú."
       },
       "rateLimits": {
         "title": "Límites de uso",
@@ -92,7 +96,7 @@
       },
       "processors": {
         "title": "Servicios que manejan datos por nosotros",
-        "body": "Supabase (nuestra base de datos), Vercel (aloja el sitio web), la Oficina del Censo de EE. UU. (ubica tu dirección), Photon y OpenStreetMap (sugieren nombres de calles mientras escribes), OpenRouter y Google (modelos de IA, para resúmenes y comentarios sobre tus borradores), el servicio de notificaciones de tu navegador, de Google, Mozilla, Apple o Microsoft (notificaciones del navegador) y Twilio (mensajes de texto)."
+        "body": "Supabase (nuestra base de datos y el inicio de sesión), Vercel (aloja el sitio web), la Oficina del Censo de EE. UU. (ubica tu dirección), Photon y OpenStreetMap (sugieren nombres de calles mientras escribes), OpenRouter y Google (modelos de IA, para resúmenes y comentarios sobre tus borradores), Google (inicio de sesión, si lo eliges), el servicio de notificaciones de tu navegador, de Google, Mozilla, Apple o Microsoft (notificaciones del navegador) y Twilio (mensajes de texto)."
       },
       "news": {
         "title": "Enlaces a noticias",

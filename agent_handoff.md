@@ -33,6 +33,27 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-23: Accounts table applied; privacy page covers Google sign-in
+- **Who:** PlaidMod · P5 Platform (the P5 steps handed off in sohankamsala's sign-in entry below)
+- **Branch:** main
+- **What changed:**
+  - **Migration:** I applied `account_profiles` to production. Supabase recorded it as version `20261023140515`, so I renamed the file from `20261022230000_account_profiles.sql` to match, like every other migration. The file name in the sign-in entry below is now out of date.
+  - **Types:** I regenerated `account_profiles` in `lib/database.types.ts`, and `lib/account.ts` now uses the typed client.
+  - **Privacy page** (both languages, effective Oct 23, 2026):
+    - A new "Signing in with Google" section says what's saved: the Google email, name and photo link, kept by Supabase, plus body IDs and stakes, never the address. It also says how to ask for deletion.
+    - The cookies text now says government IDs stay about six months and that signing out forgets them, and that readers who sign in get a sign-in cookie too.
+    - The processors list adds Supabase and Google for sign-in.
+  - **Deploy:** this push also deploys sohankamsala's nine Oct 22 commits, which Vercel had blocked because the repo is private.
+- **Files:** `supabase/migrations/20261023140515_account_profiles.sql` (renamed), `lib/database.types.ts`, `lib/account.ts`, `app/(public)/privacy/page.tsx`, `messages/{en,es}.json` (`Legal.privacy`), `tests/platform/messages.test.ts`
+- **Contract changes:** DB schema: `account_profiles` now exists in production, as designed in the sign-in entry below. Tech plan §16 and §19 don't list it yet; the plan files are unchanged.
+- **Checked:**
+  - The new privacy test failed first, then passed.
+  - `npm test` (824 Vitest plus P4's 72), typecheck, lint and `npm run build` pass.
+  - Supabase's security check shows only the expected "RLS on, no policies" notice for the new table, the same as every other table.
+- **Open issues / next:**
+  - **Google is still off.** The owner still needs to do steps 1–3 of the sign-in entry: the Google Cloud OAuth client, the Supabase provider and the redirect URLs. Then test sign-in on the live site.
+  - **Deletion is by request only.** A "Delete my account" button would make it self-service (`auth.admin.deleteUser` cascades to `account_profiles`).
+
 ### 2026-10-22: New logo (monogram)
 - **Who:** sohankamsala · P3 Weekly News and Alerts (the teammate picked it from six options)
 - **Branch:** main (local commit; not pushed)

@@ -14,6 +14,27 @@ export type Database = {
   }
   public: {
     Tables: {
+      account_profiles: {
+        Row: {
+          body_ids: string[]
+          stakes: string[]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          body_ids?: string[]
+          stakes?: string[]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          body_ids?: string[]
+          stakes?: string[]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       alert_queue: {
         Row: {
           id: string

@@ -60,15 +60,19 @@
     "privacy": {
       "metaTitle": "Privacy policy",
       "title": "Privacy policy",
-      "effective": "Effective October 22, 2026",
+      "effective": "Effective October 23, 2026",
       "intro": "ShowUp HTX helps you find your local governments and speak up. We collect as little as we can. Here is what we keep and why.",
       "address": {
         "title": "Your address",
         "body": "We send your address once to the U.S. Census Bureau's address lookup to find your local governments, and then we forget it. We never save it. While you type, we send only the street name, never your house number, to Photon, a free street search built on OpenStreetMap, to suggest matching streets. Links to your results hold only a list of government IDs, not your address."
       },
       "cookies": {
-        "title": "No accounts, a few cookies",
-        "body": "You don't need an account. We set a few small cookies: your language (NEXT_LOCALE), the roles you picked, like student or renter (showup_stakes), the IDs of your governments, so the app can show their updates (showup_bodies), and a random browser ID (showup_coach_id) that limits how often the AI coach can run. If you sign up for alerts, one more cookie (showup_sub) remembers that you signed up. It doesn't hold your phone number. Team admins also get a sign-in cookie."
+        "title": "Optional sign-in, a few cookies",
+        "body": "You don't need an account. We set a few small cookies: your language (NEXT_LOCALE), the roles you picked, like student or renter (showup_stakes), the IDs of your governments, so the app can show their updates (showup_bodies), and a random browser ID (showup_coach_id) that limits how often the AI coach can run. Your government IDs stay on this browser for about six months, so you don't have to enter your address again. Sign out in the account menu to make this browser forget them. If you sign up for alerts, one more cookie (showup_sub) remembers that you signed up. It doesn't hold your phone number. If you sign in with Google, or you're a team admin, a sign-in cookie keeps you signed in."
+      },
+      "account": {
+        "title": "Signing in with Google",
+        "body": "Signing in is optional. If you sign in with Google, Google shares your email address, your name and a link to your profile photo with us, and Supabase, our database, keeps them for your account. We also save the IDs of the governments you follow and the roles you picked, so they follow you to other devices. We never save your address. Signing out makes this browser forget them, but your account keeps them. To delete your account and everything saved with it, ask us on our project page (see Contact). Don't post your email address there. We'll set up a private way to confirm it's you."
       },
       "rateLimits": {
         "title": "Limits on use",
@@ -92,7 +96,7 @@
       },
       "processors": {
         "title": "Services that handle data for us",
-        "body": "Supabase (our database), Vercel (hosts the website), the U.S. Census Bureau (finds where your address is), Photon and OpenStreetMap (suggest street names as you type), OpenRouter and Google (AI models, for summaries and comment feedback), your browser's push service from Google, Mozilla, Apple or Microsoft (browser notifications) and Twilio (text messages)."
+        "body": "Supabase (our database and sign-in), Vercel (hosts the website), the U.S. Census Bureau (finds where your address is), Photon and OpenStreetMap (suggest street names as you type), OpenRouter and Google (AI models, for summaries and comment feedback), Google (sign-in, if you choose it), your browser's push service from Google, Mozilla, Apple or Microsoft (browser notifications) and Twilio (text messages)."
       },
       "news": {
         "title": "News links",

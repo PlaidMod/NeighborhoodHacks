@@ -45,6 +45,20 @@ describe('message files', () => {
     expect(es['Legal.privacy.processors.body']).toMatch(/Oficina del Censo/)
   })
 
+  it('the privacy page explains Google sign-in: what is saved, that the address is not, and how to delete it', () => {
+    expect(en['Legal.privacy.account.body']).toMatch(/Google/)
+    expect(en['Legal.privacy.account.body']).toMatch(/email address/)
+    expect(en['Legal.privacy.account.body']).toMatch(/never save your address/)
+    expect(en['Legal.privacy.account.body']).toMatch(/delete your account/)
+    expect(es['Legal.privacy.account.body']).toMatch(/Google/)
+    expect(es['Legal.privacy.account.body']).toMatch(/correo electrónico/)
+    expect(es['Legal.privacy.account.body']).toMatch(/Nunca guardamos tu dirección/)
+    expect(es['Legal.privacy.account.body']).toMatch(/eliminar tu cuenta/)
+    expect(en['Legal.privacy.processors.body']).toMatch(/Google \(sign-in/)
+    expect(es['Legal.privacy.processors.body']).toMatch(/Google \(inicio de sesión/)
+    expect(en['Legal.privacy.cookies.body']).not.toMatch(/Team admins also get/)
+  })
+
   it('placeholders match between languages', () => {
     const mismatched = Object.keys(en).filter(
       (k) => k in es && placeholders(en[k]).join() !== placeholders(es[k]).join(),
