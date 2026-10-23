@@ -7,26 +7,16 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/*
- * Overpass's middle dot (·) is drawn hard against the next character, so
- * "City Council · Tuesday" reads as "City Council ·Tuesday". Borrow just that
- * one glyph from the system UI font.
- */
-@font-face {
-  font-family: "Middot Fix";
-  src: local("Helvetica"), local("Arial"), local("Roboto"), local("Segoe UI"), local("DejaVu Sans"), local("Noto Sans");
-  unicode-range: U+00B7;
-}
-
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   /* App UI type. Used everywhere except news surfaces. */
-  --font-sans: "Middot Fix", var(--font-overpass);
-  --font-heading: "Middot Fix", var(--font-overpass);
+  --font-sans: var(--font-geist);
+  --font-heading: var(--font-geist);
   /* News-only type: the weekly report and other news surfaces (DESIGN.md section 4). */
-  --font-headline: var(--font-playfair);
-  --font-news: var(--font-franklin);
+  /* One font everywhere since Oct 22, 2026: news surfaces use Geist too (font-headline, font-news kept as names). */
+  --font-headline: var(--font-geist);
+  --font-news: var(--font-geist);
   --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
 
   /* Faded americana palette */
@@ -96,7 +86,7 @@
    * tests/platform/contrast.test.ts checks the main text pairs stay at 4.5:1 or better.
    */
   --brick: #b23a48; /* red */
-  --surface: #faf7f2; /* white (warm paper) */
+  --surface: #ffffff; /* white */
   --denim: #3d5a80; /* blue */
   --ink: #1b263b;
 
@@ -104,7 +94,8 @@
   --brick-soft: color-mix(in oklab, var(--brick) 15%, white);
   --denim-deep: color-mix(in oklab, var(--denim) 75%, black);
   --denim-soft: color-mix(in oklab, var(--denim) 13%, white);
-  --canvas: color-mix(in oklab, var(--surface) 93%, #5a4630);
+  /* The page behind the cards: a cool light gray, so white cards float on it. */
+  --canvas: color-mix(in oklab, var(--surface) 95%, var(--ink));
   --line: color-mix(in oklab, var(--surface) 91%, var(--ink));
   --paper: color-mix(in oklab, var(--surface) 35%, white);
 
@@ -127,12 +118,12 @@
   --primary-foreground: #ffffff;
   --secondary: var(--denim-soft);
   --secondary-foreground: var(--denim-deep);
-  --muted: color-mix(in oklab, var(--surface) 94%, #5a4630);
+  --muted: color-mix(in oklab, var(--surface) 95.5%, var(--ink));
   --muted-foreground: color-mix(in oklab, var(--ink) 72%, var(--surface));
   --accent: var(--muted);
   --accent-foreground: var(--ink);
   --destructive: var(--brick);
-  --border: color-mix(in oklab, var(--surface) 88%, #5a4630);
+  --border: color-mix(in oklab, var(--surface) 89%, var(--ink));
   --input: var(--border);
   --ring: var(--denim);
   --chart-1: var(--denim);

@@ -83,7 +83,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               <SidebarBody />
             </div>
           </aside>
-          <div className="min-w-0 flex-1 rounded-[28px] bg-surface">
+          <div className="min-w-0 flex-1 rounded-[28px] bg-transparent">
             <TopBar navToggle={immersive ? { open: navOpen, toggle: () => setOpenOn(navOpen ? null : path) } : undefined} />
             <main id="main-content" className="px-4 pb-24 md:px-8">{children}</main>
           </div>

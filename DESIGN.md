@@ -43,7 +43,7 @@ These decide every tie. When two rules conflict, the higher one wins.
 
 1. **Plain language first.** A 15-year-old should understand every sentence without a glossary. If we must use a term like "MUD" or "bond," explain it the first time on that screen.
 2. **Tell people why it matters to them.** Every update has a "why it matters to you" line written for the user's persona. A headline alone is never enough.
-3. **Calm by default, loud only when it counts.** Most of the app is quiet cream, white, and navy. Brick red and urgency cues are reserved for decisions that need action (see [Tiers](#tiers-and-urgency)). If everything is loud, nothing is.
+3. **Calm by default, loud only when it counts.** Most of the app is quiet white, light gray, and navy. Brick red and urgency cues are reserved for decisions that need action (see [Tiers](#tiers-and-urgency)). If everything is loud, nothing is.
 4. **Always show the source.** Every fact links back to an official agenda, site, or record. We summarize; we don't replace the record.
 5. **Built for a two-minute visit.** The most important thing on any screen should be readable in under 5 seconds, on a phone, by someone who's never used the app.
 6. **Don't crowd the screen.** Each panel earns its place. Prefer fewer items per list (3–4 on home), one label per item, and no decorative charts. Trim inside the existing layout rather than adding panels.
@@ -73,8 +73,8 @@ All colors are CSS variables in `src/app/globals.css` and are exposed as Tailwin
 
 | Token | Hex | Tailwind | Role |
 |---|---|---|---|
-| `--canvas` | `#ECE7DF` | `bg-canvas` | Page background behind the panels |
-| `--surface` | `#FAF7F2` | `bg-surface` | Sidebar and main content panels; inset fields |
+| `--canvas` | `#F2F3F4` | `bg-canvas` | Page background: a cool light gray, so white cards float on it. The main content area is transparent over it |
+| `--surface` | `#FFFFFF` | `bg-surface` | Sidebar and other panels; inset fields |
 | white | `#FFFFFF` | `bg-white` | Cards |
 | `--ink` | `#1B263B` | `text-ink`, `bg-ink` | All primary text; dark feature tiles |
 | `--denim` | `#3D5A80` | `bg-denim`, `text-denim` | **Primary.** Main buttons, hero cards, active nav, links |
@@ -89,9 +89,9 @@ All colors are CSS variables in `src/app/globals.css` and are exposed as Tailwin
 | `--sage-soft` | `#E1EDE5` | `bg-sage-soft` | Background for vote result chips |
 | `--mist` | `#8DA9C4` | `bg-mist` | Flood control color; secondary chart color |
 | `--plum` / `-soft` / `-deep` | `#6D5B94` / `#ECE6F3` / `#4B3D6B` | `bg-plum` and others | Community college color only |
-| `--line` | `#F0EBE3` | `divide-line`, `border-line` | Dividers inside white cards |
-| `--border` | `#E5DED3` | `ring-border`, `border-border` | Outlines on chips, inputs, and outline cards |
-| `--muted-foreground` | `#5C6B80` | `text-muted-foreground` | Secondary text, meta, captions |
+| `--line` | `#E8E9EC` | `divide-line`, `border-line` | Dividers inside white cards |
+| `--border` | `#E3E4E8` | `ring-border`, `border-border` | Outlines on chips, inputs, and outline cards |
+| `--muted-foreground` | `#535C6E` | `text-muted-foreground` | Secondary text, meta, captions |
 
 ### Color rules
 
@@ -147,23 +147,14 @@ These ratios are for the default palette. If you change a base color, re-check t
 
 ## 4. Typography
 
-There are two type systems, and they never mix. Both are loaded in `src/app/layout.tsx`.
+**One font everywhere: Geist** (since Oct 22, 2026, chosen from the Lisso dashboard reference). It replaced Overpass for the app and Playfair Display and Libre Franklin on news surfaces. It's loaded in `app/layout.tsx`.
 
-| Role | Font | Tailwind | Where it's allowed |
+| Role | Font | Tailwind | Where |
 |---|---|---|---|
-| **App UI** | **Overpass**, based on Highway Gothic, the lettering on US road signs | `font-sans` (the default) | Everywhere **except** news |
-| **News headlines** | **Playfair Display** | `font-headline` | **News only** |
-| **News body and labels** | **Libre Franklin** | `font-news` | **News only** |
+| **Everything** | **Geist**, a clean neo-grotesk | `font-sans` (the default) | Every screen |
+| News headlines and body | Geist (same font) | `font-headline`, `font-news` | Kept as class names on news surfaces so a news face could return later; both point at Geist in `globals.css` |
 
-### The news-font rule
-
-Playfair and Franklin exist to sell "this is the news." **Use `font-headline` and `font-news` only in the weekly brief (`/app/brief`), the timeline's feed column (`/app/timeline`), and the story sheet.** Never use them on the dashboard, Speak up, Vote, Districts, Alerts, the landing page, or onboarding.
-
-Inside news surfaces, **tools stay in app type.** The "One thing you can do" card, the story sheet's comment and share buttons, and the timeline's right rail are wrapped in `font-sans`, because they're actions, not reporting.
-
-To check: `grep -rln "font-headline\|font-news" src` should list only `brief/page.tsx`, `timeline/page.tsx`, `story-sheet.tsx`, and `globals.css`.
-
-In news, Playfair headlines use `font-bold` for stories and `font-black` for the page headline, with no negative tracking.
+News surfaces (the weekly brief, the timeline and the story sheet) now set themselves apart with size, weight and photos rather than a second typeface. Page headlines use `font-black` with tight tracking; story headlines use `font-bold`.
 
 ### Fonts we don't use
 
@@ -171,7 +162,7 @@ We avoid typefaces that make a product look template-generated: Inter, Plus Jaka
 
 ### Separators
 
-Write separators as ` · ` (a middle dot with a space on each side). Overpass's own middle-dot glyph is drawn against the next letter, so `globals.css` borrows that single character from a system font with `@font-face "Middot Fix"` and `unicode-range: U+00B7`. Don't remove it.
+Write separators as ` · ` (a middle dot with a space on each side). Geist's own middle dot is spaced correctly, so no glyph fix is needed (the old Overpass "Middot Fix" was removed).
 
 ### Type scale
 
@@ -192,7 +183,7 @@ Write separators as ` · ` (a middle dot with a space on each side). Overpass's 
 
 ### Type rules
 
-- **App headlines (Overpass) are heavy and tight**: `font-extrabold` with negative tracking. News headlines (Playfair) are bold with no extra tracking. Body text is regular weight with normal tracking.
+- **Headlines are heavy and tight**: `font-extrabold` (or `font-black` for page headlines) with negative tracking. Body text is regular weight with normal tracking.
 - **Weights:** 400 for body, 600 (`font-semibold`) for meta and nav, 700 (`font-bold`) for titles and labels, and 800 (`font-extrabold`) only for headlines and big numbers.
 - **Use sentence case everywhere**, including buttons, headings, and tabs. The only uppercase text is eyebrow labels and month abbreviations in date tiles.
 - **Numbers that change or line up** (counts, money, timers) get the `tabular` utility.
@@ -516,7 +507,7 @@ src/
 
 ### Rules
 
-- **Tokens, not values.** No hex codes, no arbitrary `text-[#…]`, and no new font families. The only fonts are Overpass, plus Playfair and Franklin on news surfaces. Arbitrary sizes are fine only where this guide lists them (such as `rounded-[24px]` and `text-[2.1rem]`).
+- **Tokens, not values.** No hex codes, no arbitrary `text-[#…]`, and no new font families. The only font is Geist. Arbitrary sizes are fine only where this guide lists them (such as `rounded-[24px]` and `text-[2.1rem]`).
 - **Compose with `cn()`** from `@/lib/utils` to merge classes.
 - **Add shadcn components with** `npx shadcn@latest add <name>`, then restyle them to match this guide (pill buttons, 24px cards, no ring borders on cards).
 - **Read "now" with `useNow()`**, not `Date.now()` in render. The React compiler lint rule rejects impure render code.
@@ -534,7 +525,7 @@ Copy this into your PR description and check each item.
 Design
 - [ ] Uses existing components (Panel, Chip, TierPill, BodyIcon, Button variants) before new ones
 - [ ] Components use tokens; preset values live in lib/palette.ts; core shades derive from the four bases
-- [ ] News fonts (font-headline, font-news) appear only on news surfaces; tools inside them use font-sans
+- [ ] No font besides Geist (font-headline and font-news are Geist too)
 - [ ] Brick is used only for urgent / speak-up / errors; one primary button per view
 - [ ] Radius nests 28 → 24 → 16; cards have no resting shadow
 - [ ] Type follows the scale (extrabold, tight headlines; sentence case)

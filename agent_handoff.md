@@ -33,6 +33,19 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-22: White UI and one font (Geist)
+- **Who:** sohankamsala · P3 Weekly News and Alerts (the teammate's call; touches P5's design system)
+- **Branch:** main (local commit; not pushed)
+- **What changed:**
+  - **Color:** cream is gone. `--surface` is white, and the page behind the cards (`--canvas`) is a cool light gray (`#F2F3F4`). The derived grays mix with ink instead of brown. Red (`--brick`), blue (`--denim`) and ink are unchanged. In the `/app` shell, the main area is transparent over the gray, so white cards float on it.
+  - **Font:** Geist everywhere, replacing Overpass for the app and Playfair Display and Libre Franklin on news surfaces. `font-headline` and `font-news` still exist as class names but point at Geist. The Overpass "Middot Fix" font-face was removed.
+- **Files:** `app/globals.css`, `app/layout.tsx`, `components/prototype/app-shell.tsx`, `DESIGN.md` (tokens table, type section, checklist), `CLAUDE.md`
+- **Contract changes:** Design tokens and fonts changed (DESIGN.md is updated). Anything hard-coded to look right on cream should be rechecked.
+- **Checked:**
+  - `npm test`, including the contrast test, plus lint and typecheck pass.
+  - Every screen checked in the browser shows Geist only: `/app`, `/app/timeline`, `/app/brief`, the story sheet, `/weekly` and the home page.
+- **Open issues / next:** Template-written stories still show raw headlines like "Vote Oct. 27: ORDINANCE …". `agendaHeadline` only tidies items with no story at all.
+
 ### 2026-10-22: Sign in with Google, plus guest mode (no more re-entering the address)
 - **Who:** sohankamsala · P3 Weekly News and Alerts (the teammate asked for it; touches P5's area)
 - **Branch:** main (local commit; not pushed)

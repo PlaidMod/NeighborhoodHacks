@@ -73,8 +73,8 @@ Next.js 16 has breaking changes compared with older versions: `middleware.ts` is
 ## Design system
 
 The look and the content rules are in the root `DESIGN.md`. Read it before UI work, including its note on which sections are prototype-only. What's already in the app:
-- **Color tokens** in `app/globals.css`. There are four base variables (`--brick`, `--surface`, `--denim`, `--ink`), and every other shade is derived from them. `tests/platform/contrast.test.ts` fails if a change drops the main text pairs below 4.5:1.
-- **Fonts** in `app/layout.tsx`: Overpass everywhere; Playfair and Libre Franklin (`font-headline`, `font-news`) only on news surfaces.
+- **Color tokens** in `app/globals.css`. There are four base variables (`--brick`, `--surface` (white since Oct 22), `--denim`, `--ink`), and every other shade is derived from them. The page background is `--canvas`, a cool light gray. `tests/platform/contrast.test.ts` fails if a change drops the main text pairs below 4.5:1.
+- **Fonts** in `app/layout.tsx`: Geist everywhere, news surfaces included (`font-headline` and `font-news` now point at Geist).
 - **shadcn components** in `components/ui/` (pill buttons, 24px cards, 44px pill inputs). Add more with `npx shadcn@latest add <name>`, then restyle them to match.
 - **Prototype screens** in `app/(prototype)/` reuse the shared pieces through `components/prototype/civic.tsx`, which adds the demo-data versions of `BodyIcon` and `TierPill`. When a screen is fully on real data, switch it to the shared ones.
 - **Shared pieces** in `components/civic.tsx`: `Panel`, `SectionTitle`, `Chip`, `ArrowCircle`, `Logo`, `BodyIcon` (keyed by `BodyType` from `lib/contracts/bodyTypes.ts`) and `TierPill` (shows "Urgent" for `sms` only).
