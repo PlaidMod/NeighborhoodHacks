@@ -70,13 +70,16 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const { ready } = useProfile()
   const path = usePathname()
   const immersive = IMMERSIVE.includes(path)
-  // The path the reader reopened the sidebar on; leaving that page hides it again next time.
+  // The path the reader reopened the sidebar on. Leaving that page forgets it, so every visit to an
+  // immersive page (the timeline) starts with the sidebar hidden.
   const [openOn, setOpenOn] = React.useState<string | null>(null)
+  if (openOn !== null && openOn !== path) setOpenOn(null)
   const navOpen = !immersive || openOn === path
   if (!ready) return <div className="min-h-screen bg-canvas" />
   return (
     <StoryProvider>
-      <div className="min-h-screen bg-canvas p-2 md:p-3">
+      {/* `isolate` gives pages a layer for decorative backgrounds (the timeline's books) above the gray, below everything else. */}
+      <div className="isolate min-h-screen bg-canvas p-2 md:p-3">
         <div className="mx-auto flex max-w-[1520px]">
           <aside
             inert={!navOpen}
@@ -191,14 +194,15 @@ function TopBar({ navToggle }: { navToggle?: { open: boolean; toggle: () => void
           <button
             onClick={navToggle.toggle}
             aria-expanded={navToggle.open}
-            aria-label={navToggle.open ? "Hide the menu" : "Show the menu"}
-            className="hidden size-11 shrink-0 place-items-center rounded-full bg-white text-ink transition-[scale,background-color] duration-150 ease-out hover:bg-muted active:scale-[0.96] lg:grid"
+            aria-label={navToggle.open ? "Hide sidebar" : "Show sidebar"}
+            className="hidden h-11 shrink-0 items-center gap-1.5 rounded-full bg-white pr-4 pl-3 text-sm font-semibold text-ink transition-[scale,background-color] duration-150 ease-out hover:bg-muted active:scale-[0.96] lg:inline-flex"
           >
             <ChevronRight
               aria-hidden
               className={cn("size-5 transition-[rotate] duration-300 ease-[cubic-bezier(0.2,0,0,1)]", navToggle.open && "rotate-180")}
               strokeWidth={2.25}
             />
+            Sidebar
           </button>
         )}
         <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>

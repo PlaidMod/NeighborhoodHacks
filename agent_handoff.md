@@ -33,6 +33,21 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-23: Falling-books background, centered heading, labeled sidebar toggle
+- **Who:** sohankamsala · P3 Weekly News and Alerts
+- **Branch:** main (local commit; not pushed)
+- **What changed:** on `/app/timeline`:
+  - **Falling books:** faint gray books tumble down the background as you scroll (`components/prototype/falling-books.tsx`, Motion `useScroll`, tablet and up). They're scroll-linked and reversible, still with reduced motion, and never take clicks. The shell's wrapper is now `isolate`, so the books sit above the gray page but below the sidebar, top bar and cards.
+  - **Heading:** "Timeline" is centered over the timeline column.
+  - **Sidebar on each visit:** every visit to the timeline starts with the sidebar hidden. Before, reopening it there kept it open on the next visit.
+  - **Toggle label:** the toggle now reads "› Sidebar", and its accessible name is "Show sidebar" or "Hide sidebar".
+- **Files:** `components/prototype/falling-books.tsx` (new), `components/prototype/app-shell.tsx`, `app/(prototype)/app/timeline/page.tsx`
+- **Contract changes:** None.
+- **Checked:**
+  - Lint, typecheck and tests pass.
+  - In the browser, the books move with scroll, the heading is centered, and after opening the sidebar, going to the brief and coming back, the sidebar is hidden again. No console errors.
+- **Open issues / next:** None.
+
 ### 2026-10-23: Less on the timeline; the left column folds away when the sidebar opens
 - **Who:** sohankamsala · P3 Weekly News and Alerts
 - **Branch:** main (local commit; not pushed)

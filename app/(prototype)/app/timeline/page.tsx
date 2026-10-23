@@ -7,6 +7,7 @@ import Image from "next/image"
 import Link from "next/link"
 import * as React from "react"
 import { BodyIcon } from "@/components/prototype/civic"
+import { FallingBooks } from "@/components/prototype/falling-books"
 import { Reveal } from "@/components/prototype/reveal"
 import { useNavOpen } from "@/components/prototype/app-shell"
 import { useStory } from "@/components/prototype/story-sheet"
@@ -87,6 +88,7 @@ export default function Timeline() {
       style={{ "--left": navOpen ? "0px" : "304px" } as React.CSSProperties}
       className="grid grid-cols-[minmax(0,1fr)] gap-10 pt-4 pb-10 lg:grid-cols-[minmax(0,1fr)_272px] lg:gap-x-16 xl:grid-cols-[var(--left)_minmax(0,1fr)_272px] xl:gap-x-0 xl:transition-[grid-template-columns] xl:duration-300 xl:ease-[cubic-bezier(0.2,0,0,1)] motion-reduce:transition-none"
     >
+      <FallingBooks />
       {/* Left: the big number, the week's memo and topics. Hidden while the sidebar is open. */}
       <aside
         inert={navOpen}
@@ -150,7 +152,7 @@ export default function Timeline() {
 
       {/* Center: the scrolling timeline. Clipped sideways so tiles sliding in never widen the page. */}
       <section className="min-w-0 overflow-x-clip xl:pr-16">
-        <Reveal className="mb-8">
+        <Reveal className="mb-8 text-center">
           <h1 className="text-[1.6rem] leading-none font-bold tracking-[-0.035em]">{t("title")}</h1>
         </Reveal>
 
