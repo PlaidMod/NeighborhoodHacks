@@ -1,16 +1,21 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
-import { getEnv } from '@/lib/env'
+import { getOptionalEnv } from '@/lib/env'
 import { authCookieOptions } from '@/lib/supabase/cookieOptions'
 
-// Next.js 16 request hook (formerly middleware). It only refreshes the admin sign-in
-// session, so it runs on /admin pages and nowhere else. It must never match /api:
-// a redirect there would silently break the cron jobs.
+// Next.js 16 request hook (formerly middleware). It only refreshes the Supabase sign-in
+// session: the admin one on /admin pages, and the optional Google one (lib/account.ts) on the
+// home page and the /app screens. It must never match /api: a redirect there would silently
+// break the cron jobs.
 
 export async function proxy(request: NextRequest) {
   let response = NextResponse.next({ request })
+  const url = getOptionalEnv('NEXT_PUBLIC_SUPABASE_URL')
+  const key = getOptionalEnv('NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY')
+  // Without sign-in configured (a local preview) there is no session to refresh.
+  if (!url || !key) return response
 
-  const supabase = createServerClient(getEnv('NEXT_PUBLIC_SUPABASE_URL'), getEnv('NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY'), {
+  const supabase = createServerClient(url, key, {
     cookieOptions: authCookieOptions(),
     cookies: {
       getAll() {
@@ -32,5 +37,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/admin/:path*'],
+  matcher: ['/admin/:path*', '/app/:path*', '/'],
 }

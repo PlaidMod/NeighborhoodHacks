@@ -33,6 +33,33 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-22: Sign in with Google, plus guest mode (no more re-entering the address)
+- **Who:** sohankamsala · P3 Weekly News and Alerts (the teammate asked for it; touches P5's area)
+- **Branch:** main (local commit; not pushed)
+- **What changed:** The home page asked for the address on every visit. The teammate chose Google sign-in plus a guest mode.
+  - **Guest mode (works now):** the `showup_bodies` cookie (body IDs only) now lasts 180 days. `/` sends a returning reader straight to `/app`, and "Change address" links to `/?change=1`.
+  - **Google sign-in (code ready, provider off):** `/signin` offers "Continue with Google" or "Continue as guest". Routes are `/auth/google`, `/auth/callback` and `/auth/signout`. Signed-in readers get their body IDs and stakes saved to the new `account_profiles` table (never an address), so they follow them to other devices. The callback restores saved governments, or saves the browser's guest ones. Signing out clears the browser's copy. Signing in stays optional (Project_Plan decision 8).
+  - **Shell:** the account menu shows the Google name and avatar or "Guest · saved on this browser", with sign-in or sign-out.
+  - **Admin safety:** `requireAdmin` now also needs a password sign-in (the JWT's `amr` claim), so a Google session for an allowlisted email can't open `/admin`.
+- **Files:** `lib/account.ts` (new), `app/auth/{google,callback,signout}/route.ts` (new), `app/(public)/signin/page.tsx` (new), `app/(public)/page.tsx` (P5's home), `app/(prototype)/app/use/route.ts`, `app/(prototype)/layout.tsx`, `lib/prototype/{profile.tsx,liveData.ts}`, `components/prototype/app-shell.tsx`, `lib/adminAuth.ts` (P5's), `proxy.ts` (P5's), `messages/*.json` (`Account`), `supabase/migrations/20261022230000_account_profiles.sql` (new), `tests/platform/adminPassword.test.ts` (new)
+- **Contract changes:**
+  - **New table:** `account_profiles`, with RLS on and no policies; server only.
+  - **Proxy:** now also runs on `/` and `/app/*` to refresh the Supabase session, and it skips when the Supabase keys are missing.
+  - **Admin:** requires a password sign-in.
+- **To turn Google on (someone with Supabase and Google Cloud access):**
+  1. Google Cloud Console → APIs & Services → Credentials → create a Web OAuth client. Authorized redirect URI: `https://elsvhqqwdxwsuvkbchdq.supabase.co/auth/v1/callback`.
+  2. Supabase → Authentication → Providers → Google: enable it and paste the client ID and secret.
+  3. Supabase → Authentication → URL Configuration: add `http://localhost:3000/auth/callback` and `https://showup-htx-six.vercel.app/auth/callback` to the redirect URLs.
+  4. Apply the `account_profiles` migration.
+  The Google button appears by itself once the provider is on: `googleEnabled()` checks Supabase's auth settings every 5 minutes.
+- **Checked:**
+  - `npm test` (823), lint and typecheck pass.
+  - In the browser, the guest flow works: first visit, lookup, return visit straight to the dashboard, change address. `/signin` shows the "not turned on yet" notice and the guest button.
+  - Google sign-in itself is **not verified**, because the provider is off.
+- **Open issues / next:**
+  - **P5:** regenerate `lib/database.types.ts` after the migration (`lib/account.ts` uses an untyped client until then).
+  - **P5:** add sign-in to the privacy page: we store the Google account's email and name (Supabase Auth) plus body IDs and stakes.
+
 ### 2026-10-22: Story job picks the weekly window first; one manual run
 - **Who:** sohankamsala · P3 Weekly News and Alerts
 - **Branch:** main (local commit; not pushed)

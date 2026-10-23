@@ -9,6 +9,8 @@ import { toLiveData, type LiveData } from './live'
 // The reader's real data for the /app screens. The bodies_token from the address lookup is
 // kept in this cookie (body IDs only, signed: lib/tokens.ts), set by /app/use?t=<token>.
 export const BODIES_COOKIE = 'showup_bodies'
+/** Guests stay remembered on this browser for about six months. */
+export const BODIES_COOKIE_MAX_AGE = 60 * 60 * 24 * 180
 
 /** Real bodies and items when the reader has looked up an address; null means "show the demo". */
 export async function loadLiveData(now: Date = new Date()): Promise<LiveData | null> {

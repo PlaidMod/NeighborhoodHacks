@@ -770,5 +770,19 @@
     "reminderDelivery": "Las solicitudes siguen el consentimiento, horario de envío y plazos verificados. No se garantiza un mensaje.",
     "saveReminder": "Guardar solicitud de recordatorio SMS",
     "reminderSubscribe": "Primero verifica tu teléfono y acepta las alertas"
+  },
+  "Account": {
+    "metaTitle": "Iniciar sesión",
+    "title": "Lleva tus gobiernos contigo",
+    "lede": "Inicia sesión para que ShowUp recuerde tus gobiernos en todos tus dispositivos. Guardamos qué gobiernos te cubren y lo que te importa. Nunca tu dirección.",
+    "google": "Continuar con Google",
+    "guest": "Continuar como invitado",
+    "guestNote": "Como invitado, ShowUp recuerda tus gobiernos solo en este navegador.",
+    "googleOff": "El inicio de sesión con Google aún no está activado. Por ahora puedes continuar como invitado.",
+    "failed": "No se completó el inicio de sesión. Inténtalo de nuevo o continúa como invitado.",
+    "signInPrompt": "¿Lo quieres también en tu teléfono?",
+    "signInLink": "Inicia sesión con Google",
+    "welcome": "Iniciaste sesión. Busca tu dirección una vez y ShowUp la recordará.",
+    "or": "o"
   }
 }

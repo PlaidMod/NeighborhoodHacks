@@ -54,7 +54,7 @@ const MENU: { href: string; label: string; icon: LucideIcon }[] = [
 
 const GENERAL: { href: string; label: string; icon: LucideIcon }[] = [
   { href: "/app/alerts", label: "Alerts", icon: BellRing },
-  { href: "/", label: "Change address", icon: Settings2 },
+  { href: "/?change=1", label: "Change address", icon: Settings2 },
 ]
 
 /** Pages that hide the sidebar by default so the content can use the whole screen. */
@@ -99,7 +99,7 @@ function SidebarBody({ onNavigate }: { onNavigate?: () => void }) {
   const urgent = updates.filter((u) => u.tier === "urgent" && new Date(u.date) >= new Date()).length
 
   const item = (m: (typeof MENU)[number]) => {
-    const active = m.href === "/app" || m.href === "/" ? path === m.href : path.startsWith(m.href)
+    const active = m.href === "/app" ? path === "/app" : m.href.startsWith("/?") ? false : path.startsWith(m.href)
     return (
       <Link
         key={m.href}
@@ -143,10 +143,11 @@ function SidebarBody({ onNavigate }: { onNavigate?: () => void }) {
 }
 
 function TopBar({ navToggle }: { navToggle?: { open: boolean; toggle: () => void } }) {
-  const { profile, jurisdiction, patch, isDemo, source, bodies } = useProfile()
+  const { profile, jurisdiction, patch, isDemo, source, bodies, account, canSignIn } = useProfile()
   const [mobileOpen, setMobileOpen] = React.useState(false)
   const [searchOpen, setSearchOpen] = React.useState(false)
-  const initials = profile.name ? profile.name.slice(0, 2).toUpperCase() : "ME"
+  const who = account?.name || profile.name
+  const initials = who ? who.split(/\s+/).map((w) => w[0]).join("").slice(0, 2).toUpperCase() : "ME"
   const place = jurisdiction.zip ? `${jurisdiction.area} · ${jurisdiction.zip}` : `${bodies.length} governments`
 
   React.useEffect(() => {
@@ -165,7 +166,7 @@ function TopBar({ navToggle }: { navToggle?: { open: boolean; toggle: () => void
       {isDemo && (
         <p className="rounded-t-[28px] border-b border-line bg-white/60 px-4 py-2 text-center text-[11px] text-muted-foreground">
           Sample data · Exploring Third Ward as Maya.{" "}
-          <Link href="/" className="font-semibold text-denim underline underline-offset-2">
+          <Link href="/?change=1" className="font-semibold text-denim underline underline-offset-2">
             Use my address
           </Link>
         </p>
@@ -216,16 +217,38 @@ function TopBar({ navToggle }: { navToggle?: { open: boolean; toggle: () => void
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button aria-label="Profile and interests" className="flex items-center gap-3 rounded-full py-1 pr-1 pl-1 hover:bg-white/60 md:pr-4">
-                <span className="grid size-10 place-items-center rounded-full bg-denim-soft text-sm font-bold text-denim-deep">
-                  {initials}
-                </span>
+                {account?.avatar ? (
+                  // eslint-disable-next-line @next/next/no-img-element -- Google's avatar URL; not worth configuring next/image remote hosts
+                  <img src={account.avatar} alt="" referrerPolicy="no-referrer" className="size-10 rounded-full object-cover" />
+                ) : (
+                  <span className="grid size-10 place-items-center rounded-full bg-denim-soft text-sm font-bold text-denim-deep">{initials}</span>
+                )}
                 <span className="hidden text-left leading-tight xl:block">
-                  <span className="block text-sm font-bold">{profile.name || "Your area"}</span>
+                  <span className="block text-sm font-bold">{who || "Your area"}</span>
                   <span className="block text-xs text-muted-foreground">{place}</span>
                 </span>
               </button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-60 rounded-2xl p-1.5">
+            <DropdownMenuContent align="end" className="w-64 rounded-2xl p-1.5">
+              <DropdownMenuLabel className="text-xs font-normal text-muted-foreground">
+                {account ? (
+                  <>
+                    <span className="block font-semibold text-ink">{account.name ?? account.email}</span>
+                    Signed in with Google · saved to your account
+                  </>
+                ) : (
+                  <>
+                    <span className="block font-semibold text-ink">Guest</span>
+                    Saved on this browser only
+                  </>
+                )}
+              </DropdownMenuLabel>
+              {!account && canSignIn && (
+                <DropdownMenuItem asChild className="rounded-xl font-semibold text-denim">
+                  <a href="/signin">Sign in to use it on other devices</a>
+                </DropdownMenuItem>
+              )}
+              <DropdownMenuSeparator />
               <DropdownMenuLabel className="flex items-center gap-2 text-xs text-muted-foreground">
                 <MapPin className="size-3.5" /> {place}
               </DropdownMenuLabel>
@@ -248,11 +271,21 @@ function TopBar({ navToggle }: { navToggle?: { open: boolean; toggle: () => void
               ))}
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild className="rounded-xl">
-                <Link href="/">Change address</Link>
+                <Link href="/?change=1">Change address</Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild className="rounded-xl">
                 <Link href="/app/alerts">Alerts</Link>
               </DropdownMenuItem>
+              {account && (
+                <>
+                  <DropdownMenuSeparator />
+                  <form action="/auth/signout" method="post">
+                    <DropdownMenuItem asChild className="w-full rounded-xl">
+                      <button type="submit">Sign out</button>
+                    </DropdownMenuItem>
+                  </form>
+                </>
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

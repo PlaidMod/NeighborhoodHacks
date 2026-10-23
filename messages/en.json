@@ -770,5 +770,19 @@
     "reminderDelivery": "Saved requests follow alert consent, sending hours and verified deadline availability. This does not guarantee a text.",
     "saveReminder": "Save SMS reminder request",
     "reminderSubscribe": "Verify your phone and opt in to alerts first"
+  },
+  "Account": {
+    "metaTitle": "Sign in",
+    "title": "Keep your governments with you",
+    "lede": "Sign in so ShowUp remembers your governments on every device. We save which governments cover you and what you care about. Never your address.",
+    "google": "Continue with Google",
+    "guest": "Continue as guest",
+    "guestNote": "As a guest, ShowUp remembers your governments in this browser only.",
+    "googleOff": "Google sign-in isn't turned on yet. You can continue as a guest for now.",
+    "failed": "Sign-in didn't finish. Try again, or continue as a guest.",
+    "signInPrompt": "Want it on your phone too?",
+    "signInLink": "Sign in with Google",
+    "welcome": "You're signed in. Look up your address once and ShowUp will remember it.",
+    "or": "or"
   }
 }

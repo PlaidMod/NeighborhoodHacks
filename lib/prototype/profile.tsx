@@ -22,7 +22,13 @@ export const DEMO_PROFILE: Profile = {
 /** What a real reader sees before they fill in onboarding: no name, the stakes they picked. */
 const LIVE_PROFILE: Profile = { name: "", address: "", zip: "", personas: [] }
 
+/** The signed-in Google account, shown in the shell. Null for a guest. */
+export type AccountInfo = { name: string | null; email: string | null; avatar: string | null }
+
 interface Ctx {
+  account: AccountInfo | null
+  /** Google sign-in is turned on, so guests can be offered it. */
+  canSignIn: boolean
   ready: boolean
   /** The demo neighborhood (Maya in Third Ward): no address has been looked up. */
   isDemo: boolean
@@ -41,7 +47,17 @@ interface Ctx {
 
 const ProfileContext = React.createContext<Ctx | null>(null)
 
-export function ProfileProvider({ children, live = null }: { children: React.ReactNode; live?: LiveData | null }) {
+export function ProfileProvider({
+  children,
+  live = null,
+  account = null,
+  canSignIn = false,
+}: {
+  children: React.ReactNode
+  live?: LiveData | null
+  account?: AccountInfo | null
+  canSignIn?: boolean
+}) {
   const [stored, setStored] = React.useState<Profile | null>(null)
   const [ready, setReady] = React.useState(false)
 
@@ -74,6 +90,8 @@ export function ProfileProvider({ children, live = null }: { children: React.Rea
     () => ({
       ready,
       isDemo: !live && (!stored || !!stored.demo),
+      account,
+      canSignIn,
       source: live ? live.mode : "demo",
       weekly: live ? live.weekly : null,
       profile,
@@ -91,7 +109,7 @@ export function ProfileProvider({ children, live = null }: { children: React.Rea
       },
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [ready, stored, jurisdiction.zip, live],
+    [ready, stored, jurisdiction.zip, live, account, canSignIn],
   )
 
   return <ProfileContext.Provider value={value}>{children}</ProfileContext.Provider>
