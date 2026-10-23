@@ -19,8 +19,22 @@
     "urgent": "Urgent"
   },
   "Home": {
+    "eyebrow": "Your neighborhood, decoded",
     "title": "Who governs your block?",
-    "lede": "Type your address to see every local government that affects you, including ones you've never heard of, and how to speak up before they vote.",
+    "lede": "Every day, local governments make decisions that shape your neighborhood. ShowUp helps you find out who they are and how to be heard.",
+    "benefitOne": "See every local government connected to your address.",
+    "benefitTwo": "Understand the decisions coming up in your community.",
+    "benefitThree": "Get clear ways to speak up before a vote.",
+    "benefitsLabel": "What you can do with ShowUp",
+    "featureOneLabel": "Know who decides",
+    "featureOneTitle": "Your local governments, in one place",
+    "featureOneBody": "Find the boards, districts and elected officials whose decisions reach your neighborhood.",
+    "featureTwoLabel": "Know what is next",
+    "featureTwoTitle": "Meetings and decisions that matter",
+    "featureTwoBody": "See upcoming agenda items and plain language summaries linked to official sources.",
+    "featureThreeLabel": "Make your voice heard",
+    "featureThreeTitle": "Speak up with confidence",
+    "featureThreeBody": "Prepare for public comment and learn how to take part in local decisions.",
     "addressLabel": "Your home address",
     "addressPlaceholder": "Street, city and ZIP",
     "submit": "Find my governments",
@@ -42,6 +56,12 @@
     "suggestionsCount": "{count, plural, one {# suggestion} other {# suggestions}} available. Use the up and down arrow keys, then Enter to choose.",
     "addNumber": "Add your house number at the start, then choose Find my governments.",
     "suggestionsHint": "Start typing and pick your address from the list."
+  },
+  "AddressPage": {
+    "back": "Back to ShowUp",
+    "eyebrow": "Start with your address",
+    "title": "Find the governments that serve your neighborhood.",
+    "lede": "Enter your home address to see the local governments connected to it and what they are deciding next."
   },
   "About": {
     "metaTitle": "About ShowUp HTX",

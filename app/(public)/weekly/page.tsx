@@ -21,10 +21,12 @@ export async function generateMetadata(): Promise<Metadata> {
 /** Bento tile styles (the prototype brief the team picked). The first tile is the lead story. */
 const TILES = [
   { cls: 'sm:col-span-2 bg-denim text-white', cta: 'text-denim', big: true },
-  { cls: 'xl:row-span-2 bg-ink text-white', cta: 'text-ink' },
-  { cls: 'xl:row-span-2 bg-brick text-white', cta: 'text-brick' },
+  { cls: 'bg-ink text-white', cta: 'text-ink' },
+  { cls: 'bg-brick text-white', cta: 'text-brick' },
   { cls: 'bg-sand text-ink', cta: 'text-sand-deep', light: true },
   { cls: 'bg-denim-soft text-ink', cta: 'text-denim', light: true },
+  { cls: 'bg-sage-soft text-ink', cta: 'text-sage', light: true },
+  { cls: 'bg-plum-soft text-ink', cta: 'text-plum-deep', light: true },
 ] as const
 
 export default async function WeeklyPage({ searchParams }: { searchParams: Promise<{ t?: string }> }) {
@@ -88,7 +90,7 @@ export default async function WeeklyPage({ searchParams }: { searchParams: Promi
 
       {/* Bento: the lead story, then the next "coming up" items */}
       {tiles.length > 0 && (
-        <section aria-label={t('comingUp')} className="mt-8 grid auto-rows-[minmax(220px,auto)] gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <section aria-label={t('comingUp')} className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           {tiles.map((item, i) => {
             const tile = TILES[i]
             const s = story(item)
@@ -99,7 +101,7 @@ export default async function WeeklyPage({ searchParams }: { searchParams: Promi
                 key={item.item_id}
                 href={itemHref(item)}
                 className={cn(
-                  'group relative flex flex-col justify-between overflow-hidden rounded-[28px] p-6 transition-transform focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none motion-safe:hover:-translate-y-1',
+                  'group relative flex h-full flex-col justify-between overflow-hidden rounded-[28px] p-6 transition-transform focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none motion-safe:hover:-translate-y-1',
                   tile.cls,
                 )}
               >
@@ -111,7 +113,11 @@ export default async function WeeklyPage({ searchParams }: { searchParams: Promi
                   <h2 className={cn('mt-2 line-clamp-5 font-headline leading-[1.12] font-bold', 'big' in tile && tile.big ? 'text-[1.4rem] sm:text-[1.7rem]' : 'text-[1.25rem]')}>
                     {headline(item)}
                   </h2>
-                  {'big' in tile && tile.big && s?.dek && <p className="mt-2 max-w-xl text-sm text-white/80">{s.dek}</p>}
+                  {s?.dek && (
+                    <p className={cn('mt-3 line-clamp-4 max-w-xl text-sm leading-relaxed', light ? 'text-ink/75' : 'text-white/80')}>
+                      {s.dek}
+                    </p>
+                  )}
                 </div>
                 <div className="mt-5 flex flex-wrap items-center gap-x-3 gap-y-2">
                   <span className={cn('inline-flex h-8 items-center gap-1 rounded-full bg-white px-3.5 font-sans text-xs font-bold', tile.cta)}>
@@ -266,7 +272,7 @@ export default async function WeeklyPage({ searchParams }: { searchParams: Promi
 
 function SectionRule({ children }: { children: React.ReactNode }) {
   return (
-    <h2 className="flex items-center gap-3 border-t-2 border-ink pt-2 text-[12px] font-extrabold tracking-[0.14em] uppercase">
+    <h2 className="flex items-center gap-3 border-t-2 border-ink pt-2 text-base font-extrabold tracking-[0.1em] uppercase md:text-lg">
       {children}
     </h2>
   )

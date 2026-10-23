@@ -56,7 +56,7 @@ const MENU: { href: string; label: string; icon: LucideIcon }[] = [
 
 const GENERAL: { href: string; label: string; icon: LucideIcon }[] = [
   { href: "/app/alerts", label: "Alerts", icon: BellRing },
-  { href: "/?change=1", label: "Change address", icon: Settings2 },
+  { href: "/address?change=1", label: "Change address", icon: Settings2 },
 ]
 
 /** Pages that hide the sidebar by default so the content can use the whole screen. */
@@ -171,7 +171,7 @@ function TopBar({ navToggle }: { navToggle?: { open: boolean; toggle: () => void
           {savedAddress
             ? "Sample data · Your address is saved in this browser; look it up to load your governments. "
             : "Sample data · Exploring Third Ward as Maya. "}
-          <Link href="/?change=1" className="font-semibold text-denim underline underline-offset-2">
+          <Link href="/address?change=1" className="font-semibold text-denim underline underline-offset-2">
             Use my address
           </Link>
         </p>
@@ -276,7 +276,7 @@ function TopBar({ navToggle }: { navToggle?: { open: boolean; toggle: () => void
               ))}
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild className="rounded-xl">
-                <Link href="/?change=1">Change address</Link>
+                <Link href="/address?change=1">Change address</Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild className="rounded-xl">
                 <Link href="/app/alerts">Alerts</Link>

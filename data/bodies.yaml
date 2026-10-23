@@ -10,8 +10,8 @@
   tax_set_by_body_id: commissioners_court
   description_en: Governs Harris County services, budgets, roads, courts, and public safety.
   description_es: Gobierna los servicios, presupuestos, caminos, tribunales y seguridad pública del Condado de Harris.
-  meeting_info_url: https://www.harriscountytx.gov/Government/Court-Agenda
-  source_url: https://www.harriscountytx.gov/Government/Court-Agenda
+  meeting_info_url: https://agenda.harriscountytx.gov/
+  source_url: https://oca.harriscountytx.gov/Commissioners-Court
 - id: flood_control
   name: Harris County Flood Control District
   type: flood_control

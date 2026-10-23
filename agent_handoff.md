@@ -33,6 +33,51 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-23: Split the landing page from address lookup
+- **Who:** Marie Gary Blueberry · public experience
+- **Branch:** main
+- **What changed:** Made `/` a full ShowUp landing page with a product hero, clear address lookup and Google sign-in actions, and three feature summaries. Added `/address` for address entry and moved the app's change-address links there.
+- **Files:** `app/(public)/page.tsx`, `app/(public)/address/page.tsx`, `components/prototype/app-shell.tsx`, `messages/en.json`, `messages/es.json`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `npx tsc --noEmit`, `git diff --check`, and local requests to `/` and `/address` (both 200); tests not run.
+- **Open issues / next:** Browser visual check unavailable in this session.
+
+### 2026-10-23: Make Google sign-in prominent on the landing page
+- **Who:** Marie Gary Blueberry · public landing page
+- **Branch:** main
+- **What changed:** Replaced the small inline Google sign-in link with a larger outlined button and Google icon. The button goes directly to the Google sign-in route and fills the available width on mobile.
+- **Files:** `app/(public)/page.tsx`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `git diff --check` and `npx tsc --noEmit` passed; tests not run.
+- **Open issues / next:** Browser visual check wasn't available.
+
+### 2026-10-23: Enlarge Weekly section headers
+- **Who:** Marie Gary Blueberry · P3 News and Alerts
+- **Branch:** main
+- **What changed:** Increased the Weekly section-rule heading from 12px to 16px, scaling to 18px on desktop, and eased letter spacing so the label is easier to read.
+- **Files:** `app/(public)/weekly/page.tsx`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `git diff --check` and `npx tsc --noEmit` passed; tests not run.
+- **Open issues / next:** Browser visual check wasn't available.
+
+### 2026-10-23: Align Weekly story cards within each row
+- **Who:** Marie Gary Blueberry · P3 News and Alerts
+- **Branch:** main
+- **What changed:** Weekly cards now stretch to the same height as their row, with action buttons and sign-up deadlines aligned along the bottom. This removes the uneven card edges and staggered action spacing.
+- **Files:** `app/(public)/weekly/page.tsx`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `git diff --check` and `npx tsc --noEmit` passed; tests not run.
+- **Open issues / next:** Browser visual check wasn't available.
+
+### 2026-10-23: Show two more stories in the Weekly tile grid
+- **Who:** Marie Gary Blueberry · P3 News and Alerts
+- **Branch:** main
+- **What changed:** Expanded the Weekly tile set from five to seven using two more palette styles. The grid now fills its second desktop row with the next two available upcoming stories.
+- **Files:** `app/(public)/weekly/page.tsx`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `git diff --check` and `npx tsc --noEmit` passed; tests not run.
+- **Open issues / next:** Browser visual check wasn't available.
+
 ### 2026-10-23: Signing out clears the saved address; Google sign-in is on
 - **Who:** PlaidMod · P5 Platform
 - **Branch:** main
@@ -47,6 +92,24 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
   - Local Chromium: banner text for a new visitor and for a saved address; sign-out by mouse and by keyboard lands on `/` with the profile gone.
   - Google sign-in: PlaidMod turned it on (Google Cloud client; Supabase provider; Site URL `https://showup-htx-six.vercel.app`; redirect URLs for `/auth/callback` on the live site and localhost:3000). The live button reaches Google's login screen with Supabase's callback, and a bad code returns to `/signin?error=failed`. A live sign-in created one Google user. Its `account_profiles` row is written after the first signed-in lookup, as designed.
 - **Open issues / next:** The app shell's banner and menu text are still English only. Account deletion is still by request. This push also deploys 7c1fd1e, which Vercel had blocked as a teammate commit.
+
+### 2026-10-23: Fill the public weekly story cards with story summaries
+- **Who:** Marie Gary Blueberry · P3 News and Alerts
+- **Branch:** main
+- **What changed:** The previous tile adjustment affected the prototype brief, while the reported screen is the public Weekly page. Public cards now show each available story dek, place the action beneath the text, and use content-sized rows without the extra tall spans.
+- **Files:** `app/(public)/weekly/page.tsx`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `git diff --check` and `npx tsc --noEmit` passed; tests not run.
+- **Open issues / next:** Browser visual check wasn't available.
+
+### 2026-10-23: Repair Harris County meeting information link
+- **Who:** Marie Gary Blueberry · government details
+- **Branch:** main
+- **What changed:** Replaced the retired Commissioners Court URL with Harris County's current agenda portal and added a detail-page fallback so existing database rows with the old URL work immediately. The catalog's source now points to the county's current Office of County Administration meeting-information page.
+- **Files:** `data/bodies.yaml`, `components/flow/BodyDetailClient.tsx`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** Official Harris County agenda and meeting-information pages verified; `git diff --check` and `npx tsc --noEmit` passed.
+- **Open issues / next:** The existing database catalog row can be refreshed with `npm run seed:bodies -- --apply`; the page fallback covers it in the meantime.
 
 ### 2026-10-23: Improve government card hover and return navigation
 - **Who:** Marie Gary Blueberry · public lookup and government details

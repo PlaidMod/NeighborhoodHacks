@@ -19,8 +19,22 @@
     "urgent": "Urgente"
   },
   "Home": {
+    "eyebrow": "Tu vecindario, explicado",
     "title": "¿Quién gobierna tu cuadra?",
-    "lede": "Escribe tu dirección para ver cada gobierno local que te afecta, incluso los que nunca has oído mencionar, y cómo hablar antes de que voten.",
+    "lede": "Cada día, los gobiernos locales toman decisiones que afectan tu vecindario. ShowUp te ayuda a conocerlos y a hacerte escuchar.",
+    "benefitOne": "Mira todos los gobiernos locales vinculados a tu dirección.",
+    "benefitTwo": "Entiende las próximas decisiones de tu comunidad.",
+    "benefitThree": "Encuentra formas claras de participar antes de una votación.",
+    "benefitsLabel": "Lo que puedes hacer con ShowUp",
+    "featureOneLabel": "Conoce quién decide",
+    "featureOneTitle": "Tus gobiernos locales, en un solo lugar",
+    "featureOneBody": "Encuentra las juntas, distritos y funcionarios electos cuyas decisiones afectan tu vecindario.",
+    "featureTwoLabel": "Conoce lo que viene",
+    "featureTwoTitle": "Reuniones y decisiones importantes",
+    "featureTwoBody": "Consulta los próximos puntos de agenda y resúmenes sencillos con enlaces a fuentes oficiales.",
+    "featureThreeLabel": "Hazte escuchar",
+    "featureThreeTitle": "Participa con confianza",
+    "featureThreeBody": "Prepárate para comentar en público y aprende cómo participar en las decisiones locales.",
     "addressLabel": "Tu dirección",
     "addressPlaceholder": "Calle, ciudad y código postal",
     "submit": "Buscar mis gobiernos",
@@ -42,6 +56,12 @@
     "suggestionsCount": "{count, plural, one {# sugerencia disponible} other {# sugerencias disponibles}}. Usa las flechas arriba y abajo y Enter para elegir.",
     "addNumber": "Agrega el número de tu casa al principio y luego elige Buscar mis gobiernos.",
     "suggestionsHint": "Empieza a escribir y elige tu dirección de la lista."
+  },
+  "AddressPage": {
+    "back": "Volver a ShowUp",
+    "eyebrow": "Empieza con tu dirección",
+    "title": "Encuentra los gobiernos que sirven a tu vecindario.",
+    "lede": "Escribe tu dirección para ver los gobiernos locales vinculados a ella y sus próximas decisiones."
   },
   "About": {
     "metaTitle": "Acerca de ShowUp HTX",
