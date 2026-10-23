@@ -33,6 +33,19 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-22: Story job picks the weekly window first; one manual run
+- **Who:** sohankamsala · P3 Weekly News and Alerts
+- **Branch:** main (local commit; not pushed)
+- **What changed:**
+  - **The job's order:** `supabaseStoryStore.pending` (`lib/stories/job.ts`) never picked the soonest meetings. Its `order(..., { referencedTable: 'meetings' })` only sorts the joined rows, so it chose arbitrary items out of the 643 waiting. It now takes items in the weekly window first (7 days back to 14 ahead): upcoming meetings soonest first, then the past week, then anything else.
+  - **Manual run:** with the teammate's go-ahead, I ran `/api/cron/stories` once from a local server against the production database. It wrote 10 stories (9 AI that passed the code fact-check, 1 template, 0 failed), all for HISD's Oct 22 meeting. Most of those are closed-session items, and their stories use "an employee" as required.
+- **Files:** `lib/stories/job.ts`
+- **Contract changes:** None.
+- **Checked:** Typecheck, lint and the story tests (28) pass. I listed the written stories from the database afterwards.
+- **Open issues / next:**
+  - About 114 window items still need stories (66 City Council, 38 MUD 489, 19 CFISD). The cron writes 10 per run.
+  - Closed-session items get stories even though they show only on the timeline tier. Skipping them in `pending` would save credits; that's a team call.
+
 ### 2026-10-22: Photos on the weekly brief, readable agenda titles on real data
 - **Who:** sohankamsala · P3 Weekly News and Alerts
 - **Branch:** main (local commit; not pushed)

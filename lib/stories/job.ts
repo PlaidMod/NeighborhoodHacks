@@ -51,16 +51,41 @@ function amountsFrom(value: Json): Amount[] {
 /** Reads and writes items in Supabase. Server-only. */
 export const supabaseStoryStore: StoryStore = {
   async pending(limit) {
-    const { data, error } = await db()
+    // Readers see the weekly window first (7 days back to 14 ahead, plan §10), so those items get
+    // stories first: upcoming meetings soonest first, then the past week, then anything else.
+    // (Ordering by the joined meeting date in the query would only sort the embedded rows.)
+    const columns =
+      'id, body_id, title, description, agenda_number, status, action, vote_result, amounts, contains_private_person, source_url, meeting:meetings!inner(date, status, type)'
+    const now = Date.now()
+    const from = new Date(now - 7 * 86_400_000).toISOString()
+    const to = new Date(now + 14 * 86_400_000).toISOString()
+    const inWindow = await db()
       .from('items')
-      .select(
-        'id, body_id, title, description, agenda_number, status, action, vote_result, amounts, contains_private_person, source_url, meeting:meetings!inner(date, status, type)',
-      )
+      .select(columns)
       .eq('needs_story', true)
       .is('removed_at', null)
-      .order('date', { referencedTable: 'meetings', ascending: true })
-      .limit(limit)
-    if (error) throw error
+      .gte('meeting.date', from)
+      .lte('meeting.date', to)
+      .limit(500)
+    if (inWindow.error) throw inWindow.error
+    const when = (r: unknown) => new Date((r as { meeting: { date: string } }).meeting.date).getTime()
+    const soonest = [...(inWindow.data ?? [])].sort((a, b) => {
+      const ta = when(a)
+      const tb = when(b)
+      return Number(ta < now) - Number(tb < now) || (ta < now ? tb - ta : ta - tb)
+    })
+    let data: unknown[] = soonest.slice(0, limit)
+    if (data.length < limit) {
+      const rest = await db()
+        .from('items')
+        .select(columns)
+        .eq('needs_story', true)
+        .is('removed_at', null)
+        .limit(limit + data.length)
+      if (rest.error) throw rest.error
+      const taken = new Set(data.map((r) => (r as { id: string }).id))
+      data = data.concat((rest.data ?? []).filter((r) => !taken.has(r.id))).slice(0, limit)
+    }
     type Row = {
       id: string
       body_id: string | null
