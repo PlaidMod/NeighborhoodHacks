@@ -159,7 +159,7 @@ export default function ResultsPage() {
               <Button asChild size="lg" className="group gap-3 px-7">
                 {/* /app/use remembers the bodies_token (body IDs only) so the dashboard shows these governments.
                     A plain <a>: it's a route handler that sets a cookie and redirects, not a page. */}
-                <a data-onboarding="governmentCTA" href={`/app/use?t=${encodeURIComponent(state.data.bodies_token)}&onboarding=1&step=1`}>
+                <a href={`/app/use?t=${encodeURIComponent(state.data.bodies_token)}&onboarding=1&step=1`}>
                   {t('dashboard')}
                   <ArrowCircle />
                 </a>

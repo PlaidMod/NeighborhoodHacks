@@ -33,6 +33,15 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-24: One onboarding walkthrough, starting on the dashboard
+- **Who:** PlaidMod · P5 Platform
+- **Branch:** main
+- **What changed:** There were two walkthroughs. The "Get started · Your governments" card on the results page did nothing on its own: it only pointed at the "Open your dashboard" button under it, and pressing Back mid-tour left it on the results page as "Step 3 of 7" with nothing highlighted. It's removed. The walkthrough is now the dashboard's 7 steps, started by the results page's "Open your dashboard" link (`/app/use?…&onboarding=1&step=1`). Steps are numbered 1–7 inside `app-onboarding-tour.tsx`; the `governments`, `clickDashboard` and `startLabel` messages and the `governmentCTA` attribute are gone.
+- **Files:** `components/prototype/app-onboarding-tour.tsx`, `app/(public)/results/page.tsx`, `messages/*.json`, `tests/platform/onboardingTour.test.ts` (new)
+- **Contract changes:** None.
+- **Checked:** The new test failed first, then passed. `npm test` (878 Vitest + 72 P4), typecheck and build pass. In a local production build with 901 Bagby St 77002: no tour card on the results page; "Open your dashboard" opens Step 1 of 7; Next moves through all 7 pages with the spotlight on each; Done on step 7 closes it; no page errors.
+- **Open issues / next:** `npm run lint` still flags two setState-in-effect calls in `app-onboarding-tour.tsx` (lines 46 and 68) and the unused `shortBody` in `app/(prototype)/app/brief/page.tsx`. The spotlight still logs "negative height" SVG errors when its target scrolls off screen. `/start` (the older 4-step setup) is unlinked and still uses the demo lookup.
+
 ### 2026-10-24: Standardize arrows on linked government cards
 - **Who:** Marie Gary Blueberry · public experience
 - **Branch:** main

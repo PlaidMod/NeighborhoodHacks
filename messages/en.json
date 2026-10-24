@@ -440,20 +440,14 @@
     "taxReceipt": "Estimate property taxes"
   },
   "AppOnboardingTour": {
-    "startLabel": "Get started",
     "stepCount": "Step {current} of {total}",
     "progressLabel": "Onboarding steps",
     "goToStep": "Go to step {step}",
     "continueOn": "Continue from {title}",
     "clickHighlighted": "Click the highlighted area or choose Next to continue.",
-    "clickDashboard": "Click Open your dashboard to continue.",
     "next": "Next",
     "done": "Done",
     "skip": "Skip",
-    "governments": {
-      "title": "Your governments",
-      "body": "Review the governments linked to your address, then open your dashboard to explore them."
-    },
     "home": {
       "title": "Your home dashboard",
       "body": "See your local governments, a quick weekly summary, and the meetings or deadlines coming up."

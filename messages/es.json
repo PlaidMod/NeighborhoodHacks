@@ -440,20 +440,14 @@
     "taxReceipt": "Estimar impuestos de propiedad"
   },
   "AppOnboardingTour": {
-    "startLabel": "Comenzar",
     "stepCount": "Paso {current} de {total}",
     "progressLabel": "Pasos del recorrido",
     "goToStep": "Ir al paso {step}",
     "continueOn": "Continuar desde {title}",
     "clickHighlighted": "Pulsa el área resaltada o elige Siguiente para continuar.",
-    "clickDashboard": "Pulsa Abrir tu panel para continuar.",
     "next": "Siguiente",
     "done": "Listo",
     "skip": "Omitir",
-    "governments": {
-      "title": "Tus gobiernos",
-      "body": "Revisa los gobiernos vinculados a tu domicilio y abre tu panel para explorarlos."
-    },
     "home": {
       "title": "Tu panel principal",
       "body": "Consulta tus gobiernos locales, un resumen semanal y las próximas reuniones o fechas límite."

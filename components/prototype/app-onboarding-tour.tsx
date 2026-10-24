@@ -6,8 +6,9 @@ import { usePathname, useRouter } from "next/navigation"
 import * as React from "react"
 import { cn } from "@/lib/utils"
 
+// The walkthrough starts on the dashboard when a reader opens it from their results
+// (/app/use?…&onboarding=1&step=1). Steps are numbered from 1, as the reader sees them.
 const STEPS = [
-  { target: "governmentCTA", page: "/results", copy: "governments" },
   { target: "dashboardOverview", page: "/app", copy: "home" },
   { target: "timelineMain", page: "/app/timeline", copy: "timeline" },
   { target: "briefMain", page: "/app/brief", copy: "brief" },
@@ -16,12 +17,12 @@ const STEPS = [
   { target: "voteMain", page: "/app/vote", copy: "vote" },
   { target: "alertsMain", page: "/app/alerts", copy: "alerts" },
 ] as const
-const WALKTHROUGH_STEPS = STEPS.slice(1)
+const stepAt = (step: number) => STEPS[step - 1]!
+const validStep = (step: unknown): step is number => Number.isInteger(step) && (step as number) >= 1 && (step as number) <= STEPS.length
 
-type TourState = { step: number; entryHref?: string }
+type TourState = { step: number }
 type Rect = { top: number; right: number; bottom: number; left: number; radius: number }
 const STORAGE_KEY = "showup.app-onboarding-tour.v1"
-const DISMISSED_KEY = `${STORAGE_KEY}.dismissed`
 
 export function AppOnboardingTour() {
   const t = useTranslations("AppOnboardingTour")
@@ -36,12 +37,9 @@ export function AppOnboardingTour() {
     const params = new URLSearchParams(window.location.search)
     if (params.get("onboarding") === "1") {
       const requestedStep = Number(params.get("step"))
-      const saved: TourState = {
-        step: Number.isInteger(requestedStep) && requestedStep >= 0 && requestedStep < STEPS.length ? requestedStep : 1,
-      }
+      const saved: TourState = { step: validStep(requestedStep) ? requestedStep : 1 }
       try {
         window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify(saved))
-        window.sessionStorage.removeItem(DISMISSED_KEY)
       } catch {
         // The tour can still run for this visit if session storage is unavailable.
       }
@@ -54,8 +52,8 @@ export function AppOnboardingTour() {
       const value = window.sessionStorage.getItem(STORAGE_KEY)
       if (value) {
         const parsed = JSON.parse(value) as Partial<TourState>
-        if (Number.isInteger(parsed.step) && parsed.step! >= 0 && parsed.step! < STEPS.length) {
-          setTour(parsed as TourState)
+        if (validStep(parsed.step)) {
+          setTour({ step: parsed.step })
           return
         }
       }
@@ -66,35 +64,6 @@ export function AppOnboardingTour() {
   }, [pathname, router])
 
   React.useEffect(() => {
-    if (pathname !== "/results" || tour) return
-    try {
-      if (window.sessionStorage.getItem(DISMISSED_KEY) === "1") return
-    } catch {
-      // Continue without a dismissal preference when storage is unavailable.
-    }
-
-    let started = false
-    const startIfReady = () => {
-      if (started) return
-      const target = document.querySelector<HTMLAnchorElement>('[data-onboarding="governmentCTA"]')
-      if (!target) return
-      started = true
-      const saved = { step: 0, entryHref: target.href }
-      try {
-        window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify(saved))
-      } catch {
-        // The guide can still run for this visit without stored progress.
-      }
-      setTour(saved)
-    }
-
-    startIfReady()
-    const observer = new MutationObserver(startIfReady)
-    observer.observe(document.body, { childList: true, subtree: true })
-    return () => observer.disconnect()
-  }, [pathname, tour])
-
-  React.useEffect(() => {
     if (!tour) {
       setTargetRect(null)
       return
@@ -102,7 +71,7 @@ export function AppOnboardingTour() {
     setTargetRect(null)
     const measure = () => {
       setViewport({ width: window.innerWidth, height: window.innerHeight })
-      const target = document.querySelector<HTMLElement>(`[data-onboarding="${STEPS[tour.step].target}"]`)
+      const target = document.querySelector<HTMLElement>(`[data-onboarding="${stepAt(tour.step).target}"]`)
       if (!target) {
         setTargetRect(null)
         return
@@ -115,7 +84,7 @@ export function AppOnboardingTour() {
         : parsedRadius
       setTargetRect({ top: r.top, right: r.right, bottom: r.bottom, left: r.left, radius })
     }
-    const target = document.querySelector<HTMLElement>(`[data-onboarding="${STEPS[tour.step].target}"]`)
+    const target = document.querySelector<HTMLElement>(`[data-onboarding="${stepAt(tour.step).target}"]`)
     target?.scrollIntoView({ behavior: "smooth", block: "center" })
     const frame = requestAnimationFrame(measure)
     const timer = window.setTimeout(measure, 250)
@@ -139,37 +108,23 @@ export function AppOnboardingTour() {
 
   if (!tour) return null
 
-  const saveTour = (next: TourState | null, dismissed = false) => {
+  const saveTour = (next: TourState | null) => {
     try {
       if (next) window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify(next))
       else window.sessionStorage.removeItem(STORAGE_KEY)
-      if (dismissed) window.sessionStorage.setItem(DISMISSED_KEY, "1")
     } catch {
       // Keep the tour usable when session storage is unavailable.
     }
     setTour(next)
   }
   const goToStep = (step: number) => {
-    saveTour({ ...tour, step })
-    if (STEPS[step].page !== pathname) router.push(STEPS[step].page)
+    saveTour({ step })
+    if (stepAt(step).page !== pathname) router.push(stepAt(step).page)
   }
-  const continueFromGovernments = () => {
-    const target = document.querySelector<HTMLAnchorElement>('[data-onboarding="governmentCTA"]')
-    const href = target?.href ?? tour.entryHref
-    if (!href) return
-    saveTour({ ...tour, step: 1 })
-    const destination = new URL(href, window.location.origin)
-    destination.searchParams.set("onboarding", "1")
-    destination.searchParams.set("step", "1")
-    window.location.assign(destination.toString())
-  }
+  const last = tour.step === STEPS.length
   const next = () => {
-    if (tour.step === 0) {
-      continueFromGovernments()
-      return
-    }
-    if (tour.step === STEPS.length - 1) {
-      saveTour(null, true)
+    if (last) {
+      saveTour(null)
       return
     }
     goToStep(tour.step + 1)
@@ -179,7 +134,7 @@ export function AppOnboardingTour() {
   const top = Math.max(0, targetRect?.top ?? 0)
   const right = Math.min(viewport.width, targetRect?.right ?? 0)
   const bottom = Math.min(viewport.height, targetRect?.bottom ?? 0)
-  const stepName = STEPS[tour.step].copy
+  const stepName = stepAt(tour.step).copy
   const radius = Math.min(targetRect?.radius ?? 0, (bottom - top) / 2, (right - left) / 2)
 
   return (
@@ -223,22 +178,19 @@ export function AppOnboardingTour() {
         className="fixed right-4 bottom-4 z-[90] w-[min(500px,calc(100vw-2rem))] rounded-[28px] bg-white p-5 text-ink shadow-[0_24px_80px_rgb(9_19_37/0.3)] ring-1 ring-black/10 sm:right-6 sm:bottom-6 sm:p-6"
       >
         <p className="text-xs font-extrabold tracking-[0.14em] text-denim uppercase">
-          {tour.step === 0
-            ? t("startLabel")
-            : t("stepCount", { current: tour.step, total: WALKTHROUGH_STEPS.length })}
+          {t("stepCount", { current: tour.step, total: STEPS.length })}
         </p>
         <h2 id="app-onboarding-tour-title" className="mt-2 text-xl font-extrabold tracking-tight sm:text-2xl">
           {t(`${stepName}.title`)}
         </h2>
         <p className="mt-2 text-sm leading-relaxed text-muted-foreground sm:text-base">{t(`${stepName}.body`)}</p>
-        <p className="mt-2 text-xs font-semibold text-denim">{t(tour.step === 0 ? "clickDashboard" : "clickHighlighted")}</p>
+        <p className="mt-2 text-xs font-semibold text-denim">{t("clickHighlighted")}</p>
 
         <div className="mt-5 flex flex-wrap items-end justify-between gap-4 border-t border-border pt-4">
           <nav aria-label={t("progressLabel")} className="flex items-center gap-1.5">
-            {WALKTHROUGH_STEPS.map((item, index) => {
+            {STEPS.map((item, index) => {
               const step = index + 1
               const isCurrent = step === tour.step
-              const isStarting = tour.step === 0 && index === 0
               return (
               <button
                 key={item.target}
@@ -248,7 +200,7 @@ export function AppOnboardingTour() {
                 onClick={() => goToStep(step)}
                 className={cn(
                   "h-2.5 rounded-full transition-[width,background-color] duration-200",
-                  isCurrent || isStarting ? "w-8 bg-denim" : "w-2.5 bg-denim/20 hover:bg-denim/40",
+                  isCurrent ? "w-8 bg-denim" : "w-2.5 bg-denim/20 hover:bg-denim/40",
                 )}
               />
               )
@@ -261,12 +213,12 @@ export function AppOnboardingTour() {
               onClick={next}
               className="inline-flex h-11 items-center gap-2 rounded-full bg-denim px-5 text-sm font-bold text-white hover:bg-denim-deep focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-denim"
             >
-              {tour.step === STEPS.length - 1 ? t("done") : t("next")}
-              {tour.step !== STEPS.length - 1 && <ArrowRight aria-hidden className="size-4" />}
+              {last ? t("done") : t("next")}
+              {!last && <ArrowRight aria-hidden className="size-4" />}
             </button>
             <button
               type="button"
-              onClick={() => saveTour(null, true)}
+              onClick={() => saveTour(null)}
               className="inline-flex h-11 items-center rounded-full px-3 text-sm font-semibold text-muted-foreground hover:bg-muted hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-denim"
             >
               {t("skip")}
