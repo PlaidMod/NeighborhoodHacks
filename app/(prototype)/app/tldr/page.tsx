@@ -9,9 +9,8 @@ import { useStory } from "@/components/prototype/story-sheet"
 import { Button } from "@/components/ui/button"
 import { fmtDateTime, fmtTime, relDay } from "@/lib/prototype/format"
 import { useNow, useProfile } from "@/lib/prototype/profile"
-import { buildTldr, readMinutes, tldrFootnote } from "@/lib/prototype/tldr"
+import { buildTldr, readMinutes, tldrFootnote, tldrLine } from "@/lib/prototype/tldr"
 import type { Body, Update } from "@/lib/prototype/types"
-import { whyFor } from "@/lib/prototype/updates"
 import { AI_LABEL } from "@/lib/stories/types"
 
 /**
@@ -28,8 +27,8 @@ export default function Tldr() {
   const now = useNow()
 
   const { coming, decided, next, counts } = buildTldr({ updates, weekly, personas: profile.personas, now })
-  // Lead with the decision (the headline), then what it means for you (DESIGN.md §9).
-  const line = (u: Update) => whyFor(u, profile.personas) || u.summary
+  // Lead with the decision (the headline), then one line on what it means (DESIGN.md §9).
+  const line = (u: Update) => tldrLine(u, profile.personas)
   const bodyOf = (u: Update) => bodies.find((b) => b.id === u.bodyId)
   const gist = t("gist", counts)
   const nextText = next ? t("nextSpeak", { title: next.title, when: fmtDateTime(next.comment!.deadline) }) : t("noneOpen")

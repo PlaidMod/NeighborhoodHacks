@@ -68,6 +68,16 @@ export function buildTldr({
   }
 }
 
+/**
+ * The one line under a headline: the line written for the reader's own role, then the story's
+ * summary, then the general note. Real stories' general note is their renter line, which says
+ * little about the item itself, so the summary comes before it.
+ */
+export function tldrLine(u: Update, personas: Persona[]) {
+  const own = personas.map((p) => u.why[p]).find(Boolean)
+  return own || u.summary || u.why.default || ""
+}
+
 /** Reading time for the text on the page, at 200 words a minute, never below 1. */
 export function readMinutes(texts: string[]) {
   const words = texts.join(" ").split(/\s+/).filter(Boolean).length

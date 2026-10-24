@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { LiveData } from '@/lib/prototype/live'
 import type { Update } from '@/lib/prototype/types'
-import { TLDR_COMING, TLDR_DECIDED, buildTldr, readMinutes, tldrFootnote } from '@/lib/prototype/tldr'
+import { TLDR_COMING, TLDR_DECIDED, buildTldr, readMinutes, tldrFootnote, tldrLine } from '@/lib/prototype/tldr'
 
 // Friday Oct 23, 2026, noon in Houston.
 const NOW = new Date('2026-10-23T17:00:00Z')
@@ -107,6 +107,24 @@ describe('buildTldr with the demo (no weekly order)', () => {
   it('has nothing to show when there are no updates', () => {
     const tldr = buildTldr({ updates: [], weekly: null, personas: [], now: +NOW })
     expect(tldr).toEqual({ coming: [], decided: [], next: null, counts: { coming: 0, open: 0, decided: 0 } })
+  })
+})
+
+describe('tldrLine, the one line under each headline', () => {
+  const u = upd('a', { summary: 'What is happening', why: { default: 'Renters can weigh in too.', student: 'Decides when your summer ends.' } })
+
+  it("uses the line written for the reader's own role first", () => {
+    expect(tldrLine(u, ['renter', 'student'])).toBe('Decides when your summer ends.')
+  })
+
+  it("otherwise uses the story's summary, not the general note (real stories' general note is the renter line)", () => {
+    expect(tldrLine(u, [])).toBe('What is happening')
+    expect(tldrLine(u, ['parent'])).toBe('What is happening')
+  })
+
+  it('falls back to the general note, then to nothing', () => {
+    expect(tldrLine(upd('b', { why: { default: 'General note' } }), [])).toBe('General note')
+    expect(tldrLine(upd('c'), [])).toBe('')
   })
 })
 

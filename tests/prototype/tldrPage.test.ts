@@ -91,8 +91,9 @@ describe('/app/tldr, the weekly brief in short', () => {
     expect(html).toMatch(/<h1[^>]*>Your week, in short<\/h1>/)
     expect(html).toContain('2 things coming up, 1 open for public comment, and 1 new decision.')
     expect(html).toMatch(/<h3[^>]*><button[^>]*>Headline lead<\/button><\/h3>/)
-    // "Why it matters" first (DESIGN.md §9: lead with the decision, then the impact).
-    expect(html).toContain('Why lead matters')
+    // No role picked: the story's summary, not the general note (see tldrLine).
+    expect(html).toContain('Summary lead')
+    expect(html).not.toContain('Why lead matters')
     expect(html).toContain('href="https://example.com/lead"')
     expect(html).toContain('Headline done')
     expect(html).toContain('Passed')
