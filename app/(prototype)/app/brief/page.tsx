@@ -153,7 +153,7 @@ export default function Brief() {
       </header>
 
       {top.length === 0 && (
-        <div className="mt-8 rounded-[28px] bg-white p-8 font-sans">
+        <div data-onboarding="briefMain" className="mt-8 rounded-[28px] bg-white p-8 font-sans">
           <p className="text-lg font-bold">{t("empty")}</p>
           <p className="mt-1 text-sm text-muted-foreground">{t("emptyHint")}</p>
           <Button asChild variant="outline" className="mt-4">
@@ -172,7 +172,7 @@ export default function Brief() {
             <button
               key={u.id}
               aria-label={u.title}
-              data-tour={i === 0 ? "brief-articles" : undefined}
+              data-onboarding={i === 0 ? "briefMain" : undefined}
               onClick={() => openStory(u)}
               className={cn(
                 "group relative flex flex-col justify-between gap-6 overflow-hidden rounded-[28px] p-5 text-left transition-transform motion-safe:hover:-translate-y-0.5",

@@ -63,7 +63,7 @@ export default async function AlertsPage({ searchParams }: { searchParams: Promi
             <p className="mt-3 max-w-2xl text-lg text-muted-foreground">{t('lede')}</p>
           </header>
 
-          <div data-onboarding="alertsSignup" className="rounded-[24px] bg-white p-5 ring-1 ring-border">
+          <div className="rounded-[24px] bg-white p-5 ring-1 ring-border">
             <PushSignup token={token ?? null} vapidKey={vapidPublicKey()} />
           </div>
 
@@ -77,7 +77,7 @@ export default async function AlertsPage({ searchParams }: { searchParams: Promi
             <p className="mt-1 text-sm text-muted-foreground">{t('rulesLede')}</p>
             <ol className="mt-4 space-y-3">
               {ITEM_RULES.map((r, index) => (
-                <li key={r} id={r} data-onboarding={index === 0 ? 'alertsRules' : undefined} className="rounded-2xl bg-white p-4 ring-1 ring-border">
+                <li key={r} id={r} className="rounded-2xl bg-white p-4 ring-1 ring-border">
                   <p className="font-semibold">{RULE_TEXT[r][lang].title}</p>
                   <p className="mt-1 text-sm text-muted-foreground">{RULE_TEXT[r][lang].why}</p>
                 </li>

@@ -439,7 +439,7 @@
     "hoaNeedsConfirmation": "Possible match; confirm with your association or county records.",
     "taxReceipt": "Estimate property taxes"
   },
-  "ResultsOnboarding": {
+  "AppOnboardingTour": {
     "stepCount": "Step {current} of {total}",
     "progressLabel": "Onboarding steps",
     "goToStep": "Go to step {step}",
@@ -447,42 +447,33 @@
     "clickHighlighted": "Click the highlighted area or choose Next to continue.",
     "next": "Next",
     "skip": "Skip",
-    "done": "Done",
-    "dashboardOverview": {
-      "title": "Your local governments",
-      "body": "Start with the overview cards to see which governments cover your address and what needs attention."
+    "home": {
+      "title": "Your home dashboard",
+      "body": "See your local governments, a quick weekly summary, and the meetings or deadlines coming up."
     },
-    "dashboardSummary": {
-      "title": "This week, in short",
-      "body": "Scan a few plain-language headlines about recent decisions and what's coming up."
+    "timeline": {
+      "title": "Your timeline",
+      "body": "Follow upcoming and past meetings, votes, and public comment deadlines from your local governments."
     },
-    "dashboardUpcoming": {
-      "title": "Coming up",
-      "body": "See upcoming meetings, votes, and comment deadlines, then open an item for more detail."
+    "brief": {
+      "title": "The weekly brief",
+      "body": "Read the most relevant local stories, then open an item to see its details and official source."
     },
-    "weeklySummary": {
-      "title": "Weekly overview",
-      "body": "Start with the short summary of decisions, topics, and deadlines for this week."
+    "districts": {
+      "title": "Your districts",
+      "body": "See which governments serve your address and what decisions or services each one handles."
     },
-    "weeklyStories": {
-      "title": "Featured agenda items",
-      "body": "Open a story to read its summary, check the official source, or find ways to respond."
+    "speak": {
+      "title": "Speak up",
+      "body": "Choose a local agenda item, prepare what you want to say, and practice before the meeting."
     },
-    "alertsSignup": {
-      "title": "Choose your alerts",
-      "body": "Turn on browser notifications if you want notices before important local votes."
+    "vote": {
+      "title": "Voting",
+      "body": "Check when you can register and find resources for local elections."
     },
-    "alertsRules": {
-      "title": "What alerts cover",
-      "body": "Review the rules to see which votes and deadlines can trigger an alert."
-    },
-    "taxesForm": {
-      "title": "Enter a home value",
-      "body": "Adjust the sample home value to estimate the local property taxes shown below."
-    },
-    "taxesBreakdown": {
-      "title": "Review the estimate",
-      "body": "See the combined yearly estimate and how each taxing body contributes."
+    "alerts": {
+      "title": "Your alerts",
+      "body": "Choose browser or text updates and review how reminders keep you informed about local decisions."
     }
   },
   "BodyQuiz": {

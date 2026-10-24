@@ -97,7 +97,7 @@ export function Alerts({ token, preview, vapidKey }: { token: string | null; pre
         <div className="space-y-4">
           {source !== "demo" ? (
             <>
-              <Panel>
+              <Panel data-onboarding="alertsMain">
                 <PushSignup token={token} vapidKey={vapidKey} />
               </Panel>
               <Panel>
@@ -106,7 +106,7 @@ export function Alerts({ token, preview, vapidKey }: { token: string | null; pre
               </Panel>
             </>
           ) : (
-            <Panel>
+            <Panel data-onboarding="alertsMain">
               <form onSubmit={submit} className="space-y-7">
                 <div>
                   <label htmlFor="phone" className="text-sm font-bold">

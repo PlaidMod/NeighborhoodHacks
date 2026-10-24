@@ -439,50 +439,41 @@
     "hoaNeedsConfirmation": "Posible coincidencia; confirma con tu asociación o los registros del condado.",
     "taxReceipt": "Estimar impuestos de propiedad"
   },
-  "ResultsOnboarding": {
+  "AppOnboardingTour": {
     "stepCount": "Paso {current} de {total}",
-    "progressLabel": "Pasos de configuración",
+    "progressLabel": "Pasos del recorrido",
     "goToStep": "Ir al paso {step}",
     "continueOn": "Continuar desde {title}",
     "clickHighlighted": "Pulsa el área resaltada o elige Siguiente para continuar.",
     "next": "Siguiente",
     "skip": "Omitir",
-    "done": "Listo",
-    "dashboardOverview": {
-      "title": "Tus gobiernos locales",
-      "body": "Empieza con las tarjetas para ver qué gobiernos cubren tu dirección y qué requiere atención."
+    "home": {
+      "title": "Tu panel principal",
+      "body": "Consulta tus gobiernos locales, un resumen semanal y las próximas reuniones o fechas límite."
     },
-    "dashboardSummary": {
-      "title": "Esta semana, en breve",
-      "body": "Revisa titulares claros sobre decisiones recientes y lo que viene."
+    "timeline": {
+      "title": "Tu cronología",
+      "body": "Sigue las próximas y pasadas reuniones, votaciones y fechas límite para comentarios públicos."
     },
-    "dashboardUpcoming": {
-      "title": "Próximamente",
-      "body": "Consulta las próximas reuniones, votaciones y fechas límite para comentarios; abre un tema para ver más detalles."
+    "brief": {
+      "title": "El resumen semanal",
+      "body": "Lee las noticias locales más relevantes y abre un tema para ver detalles y su fuente oficial."
     },
-    "weeklySummary": {
-      "title": "Resumen semanal",
-      "body": "Empieza con un resumen breve de decisiones, temas y fechas límite de esta semana."
+    "districts": {
+      "title": "Tus distritos",
+      "body": "Consulta qué gobiernos sirven a tu domicilio y qué decisiones o servicios maneja cada uno."
     },
-    "weeklyStories": {
-      "title": "Temas destacados de la agenda",
-      "body": "Abre una noticia para leer su resumen, consultar la fuente oficial o ver cómo responder."
+    "speak": {
+      "title": "Hazte escuchar",
+      "body": "Elige un tema local de la agenda, prepara lo que quieres decir y practica antes de la reunión."
     },
-    "alertsSignup": {
-      "title": "Elige tus alertas",
-      "body": "Activa las notificaciones del navegador si quieres avisos antes de votaciones locales importantes."
+    "vote": {
+      "title": "Votar",
+      "body": "Consulta cuándo puedes registrarte y encuentra recursos para las elecciones locales."
     },
-    "alertsRules": {
-      "title": "Qué incluyen las alertas",
-      "body": "Revisa las reglas para ver qué votaciones y fechas límite pueden generar una alerta."
-    },
-    "taxesForm": {
-      "title": "Ingresa el valor de una vivienda",
-      "body": "Cambia el valor de ejemplo para estimar los impuestos locales que aparecen abajo."
-    },
-    "taxesBreakdown": {
-      "title": "Revisa el estimado",
-      "body": "Consulta el estimado anual combinado y cuánto aporta cada organismo que cobra impuestos."
+    "alerts": {
+      "title": "Tus alertas",
+      "body": "Elige avisos del navegador o por mensaje de texto y revisa cómo recibir recordatorios de decisiones locales."
     }
   },
   "BodyQuiz": {

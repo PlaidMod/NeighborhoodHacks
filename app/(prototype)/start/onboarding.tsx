@@ -65,7 +65,7 @@ export function Onboarding() {
       personas,
       age,
     })
-    router.push("/app")
+    router.push("/app?onboarding=1")
   }
 
   function skip() {

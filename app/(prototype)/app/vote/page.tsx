@@ -70,7 +70,7 @@ export default function VotePage() {
 
       <div className="mt-6 grid gap-4 xl:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
         {/* Eligibility */}
-        <section className="relative overflow-hidden rounded-[28px] bg-brick p-5 text-white md:p-9">
+        <section data-onboarding="voteMain" className="relative overflow-hidden rounded-[28px] bg-brick p-5 text-white md:p-9">
           <Flag className="absolute -right-8 -bottom-10 size-64 text-white/[0.07]" strokeWidth={1} />
           <Chip className="relative bg-white/15 text-white">Eligibility check</Chip>
           <h2 className="relative mt-4 max-w-lg text-[1.9rem] leading-[1.1] font-extrabold tracking-tight">

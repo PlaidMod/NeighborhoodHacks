@@ -11,10 +11,12 @@ export function Reveal({
   children,
   className,
   delay = 0,
+  dataOnboarding,
   as: Tag = "div",
 }: {
   children: React.ReactNode
   className?: string
+  dataOnboarding?: string
   /** Milliseconds; use multiples of 100 for a staged entrance. */
   delay?: number
   as?: "div" | "section" | "li" | "aside"
@@ -47,6 +49,7 @@ export function Reveal({
     <Tag
       ref={ref as React.Ref<never>}
       data-shown={shown || undefined}
+      data-onboarding={dataOnboarding}
       style={{ transitionDelay: shown ? `${delay}ms` : undefined }}
       className={cn(
         "opacity-0 transition-[opacity,translate,filter] duration-300 ease-out data-shown:opacity-100",

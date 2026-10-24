@@ -33,6 +33,15 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-24: Keep the app tour inside onboarding
+- **Who:** Marie Gary Blueberry · public experience
+- **Branch:** main
+- **What changed:** Removed the global guide that started on public results pages. Completing `/start` now launches a seven-stop guide in the persistent app shell for Home, Timeline, Brief, Districts, Speak, Vote, and Alerts; its progress tabs remain visible across routes, and the last Next returns to `/app`.
+- **Files:** `components/prototype/app-onboarding-tour.tsx`, `components/prototype/app-shell.tsx`, `app/(prototype)/start/onboarding.tsx`, app tab pages, `app/layout.tsx`, `messages/*.json`
+- **Contract changes:** None.
+- **Checked:** `PATH=/opt/homebrew/bin:$PATH npm run typecheck`, English/Spanish JSON parsing, and `git diff --check` passed; browser check and tests not run.
+- **Open issues / next:** Browser behavior and visual fit remain unverified.
+
 ### 2026-10-23: Final deploys before submission
 - **Who:** PlaidMod · P5 Platform
 - **Branch:** main

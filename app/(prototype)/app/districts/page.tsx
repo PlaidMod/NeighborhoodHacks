@@ -28,7 +28,7 @@ export default function Districts() {
       </div>
 
       {/* Layer cake */}
-      <div className="mt-6 grid gap-3">
+      <div data-onboarding={bodies.length === 0 ? "districtsMain" : undefined} className="mt-6 grid gap-3">
         {bodies.map((b, i) => {
           const next = updates
             .filter((u) => u.bodyId === b.id && +new Date(u.date) >= now)
@@ -38,6 +38,7 @@ export default function Districts() {
             <Link
               key={b.id}
               href={`/app/districts/${b.id}`}
+              data-onboarding={i === 0 ? "districtsMain" : undefined}
               className="group rise grid items-center gap-4 rounded-[24px] bg-white p-5 transition-[transform,box-shadow] motion-safe:hover:-translate-y-0.5 hover:shadow-[0_12px_32px_-16px_rgb(27_38_59/0.25)] md:grid-cols-[minmax(0,1fr)_auto_auto] md:gap-6"
               style={{ animationDelay: `${i * 50}ms` }}
             >

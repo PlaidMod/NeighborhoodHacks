@@ -42,6 +42,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { SignOutForm } from "@/components/prototype/sign-out-form"
+import { AppOnboardingTour } from "@/components/prototype/app-onboarding-tour"
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet"
 import { PERSONAS, relDay } from "@/lib/prototype/format"
 import { useProfile } from "@/lib/prototype/profile"
@@ -127,6 +128,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <main id="main-content" className="px-4 pb-6 md:px-8">
               <NavOpenContext.Provider value={navOpen}>{children}</NavOpenContext.Provider>
             </main>
+            <AppOnboardingTour />
           </div>
         </div>
       </div>

@@ -93,7 +93,7 @@ export default function Home() {
 
       {/* Coming up + countdown */}
       <div className="grid gap-4 xl:grid-cols-3">
-        <Panel data-onboarding="dashboardUpcoming" className="xl:col-span-2">
+        <Panel className="xl:col-span-2">
           <SectionTitle
             action={
               <Link href="/app/timeline" className="text-sm font-semibold text-denim hover:underline">
@@ -178,7 +178,7 @@ function WeekInShort() {
   )
 
   return (
-    <section data-onboarding="dashboardSummary" aria-labelledby="week-in-short" className="mt-3 max-w-3xl">
+    <section aria-labelledby="week-in-short" className="mt-3 max-w-3xl">
       <h2 id="week-in-short" className="flex items-center gap-1.5 text-xs font-bold text-denim">
         <Zap aria-hidden className="size-3.5" /> {t("short")}
       </h2>

@@ -173,16 +173,16 @@ export default function Timeline() {
                   const b = byBody.get(u.bodyId)
                   if (!b) return null
                   return g.key === "past" ? (
-                    <DecidedRow key={u.id} u={u} b={b} onOpen={() => openStory(u)} />
+                    <DecidedRow key={u.id} u={u} b={b} onboarding={u.id === ordered[0]?.id} onOpen={() => openStory(u)} />
                   ) : (
-                    <StoryTile key={u.id} u={u} b={b} right={side.get(u.id) ?? false} first={upcoming.slice(0, 2).some((x) => x.id === u.id)} now={now} onOpen={() => openStory(u)} />
+                    <StoryTile key={u.id} u={u} b={b} right={side.get(u.id) ?? false} first={upcoming.slice(0, 2).some((x) => x.id === u.id)} onboarding={u.id === ordered[0]?.id} now={now} onOpen={() => openStory(u)} />
                   )
                 })}
               </div>
             </div>
           ))}
           {ordered.length === 0 && (
-            <Reveal className="rounded-[26px] bg-white p-10 text-center">
+            <Reveal dataOnboarding="timelineMain" className="rounded-[26px] bg-white p-10 text-center">
               <p className="font-bold">{t("emptyTitle")}</p>
               <p className="mt-1 text-sm text-muted-foreground">{t("emptyHint")}</p>
             </Reveal>
@@ -259,7 +259,7 @@ function Spine({ children }: { children: React.ReactNode }) {
   )
 }
 
-function StoryTile({ u, b, right, first, now, onOpen }: { u: Update; b: Body; right: boolean; first: boolean; now: number; onOpen: () => void }) {
+function StoryTile({ u, b, right, first, onboarding, now, onOpen }: { u: Update; b: Body; right: boolean; first: boolean; onboarding: boolean; now: number; onOpen: () => void }) {
   const t = useTranslations("AppTimeline")
   const tb = useTranslations("AppBrief")
   const tl = useTranslations("AppLabels")
@@ -286,6 +286,7 @@ function StoryTile({ u, b, right, first, now, onOpen }: { u: Update; b: Body; ri
   return (
     <motion.div ref={ref} style={{ transform: tileTransform, opacity }} className={cn("w-full origin-center lg:w-[86%]", right && "lg:ml-[14%]")}>
       <button
+        data-onboarding={onboarding ? "timelineMain" : undefined}
         onClick={onOpen}
         aria-label={u.title}
         className={cn(
@@ -347,11 +348,12 @@ function StoryTile({ u, b, right, first, now, onOpen }: { u: Update; b: Body; ri
   )
 }
 
-function DecidedRow({ u, b, onOpen }: { u: Update; b: Body; onOpen: () => void }) {
+function DecidedRow({ u, b, onboarding, onOpen }: { u: Update; b: Body; onboarding: boolean; onOpen: () => void }) {
   const tl = useTranslations("AppLabels")
   return (
     <Reveal>
       <button
+        data-onboarding={onboarding ? "timelineMain" : undefined}
         onClick={onOpen}
         className="flex w-full flex-wrap items-center gap-x-4 gap-y-2 rounded-[22px] border border-line px-5 py-4 text-left transition-[background-color] duration-150 hover:bg-white"
       >
