@@ -3,10 +3,10 @@ import type { Persona, Update } from "./types"
 import { relevance } from "./updates"
 import { daysFromNow } from "./format"
 
-// The short version of the weekly brief (/app/tldr). It picks from the same data and order as
+// The short version of the weekly brief, on the dashboard home. It picks from the same data and order as
 // /app/brief: buildWeekly's lead, "Coming up" and "Decided" lists with real data (plan §10), and
 // the demo's own ranking otherwise. Pure: no I/O, no new text. Every line it shows is an
-// item's existing headline, summary or "why it matters".
+// item's existing headline.
 
 export const TLDR_COMING = 5
 export const TLDR_DECIDED = 3
@@ -68,24 +68,29 @@ export function buildTldr({
   }
 }
 
+/** The dashboard paragraph shows this many headlines in all, so it stays a few sentences long. */
+export const TLDR_SENTENCES = 3
+
+// Template stories for meetings without a posted result (lib/stories/template.ts) say only that.
+const PLACEHOLDER = /^(Outcome not posted yet|Aún no se publica el resultado):/i
+
 /**
- * The one line under a headline: the line written for the reader's own role, then the story's
- * summary, then the general note. Real stories' general note is their renter line, which says
- * little about the item itself, so the summary comes before it.
+ * The headlines in the dashboard's "This week, in short" paragraph: up to two decisions, then
+ * what's coming up, three in all. When one kind is empty the other gets all three. Plain-language
+ * AI headlines come first, then other items with a summary, then the rest: template stories and
+ * items without a story use the official agenda title, cut short.
  */
-export function tldrLine(u: Update, personas: Persona[]) {
-  const own = personas.map((p) => u.why[p]).find(Boolean)
-  return own || u.summary || u.why.default || ""
+export function tldrPick({ coming, decided }: Pick<Tldr, "coming" | "decided">) {
+  const rank = (u: Update) => (u.aiWritten ? 0 : u.summary ? 1 : 2)
+  // Array sort is stable, so the brief's order holds within each rank.
+  const real = (list: Update[]) => list.filter((u) => !PLACEHOLDER.test(u.title)).sort((a, b) => rank(a) - rank(b))
+  const c = real(coming)
+  const d = real(decided).slice(0, c.length ? 2 : TLDR_SENTENCES)
+  return { decided: d, coming: c.slice(0, TLDR_SENTENCES - d.length) }
 }
 
-/** Reading time for the text on the page, at 200 words a minute, never below 1. */
-export function readMinutes(texts: string[]) {
-  const words = texts.join(" ").split(/\s+/).filter(Boolean).length
-  return Math.max(1, Math.round(words / 200))
-}
-
-/** Which note the page ends with: the AI label if any summary shown was written with AI (plan "Neutrality"). */
-export function tldrFootnote(shown: Update[], source: "demo" | LiveData["mode"]): "ai" | "real" | "sample" {
-  if (shown.some((u) => u.aiWritten)) return "ai"
-  return source === "db" ? "real" : "sample"
+/** A headline as a sentence: trimmed, ending in a period unless it already ends one. */
+export function asSentence(title: string) {
+  const s = title.trim()
+  return /[.!?]$/.test(s) ? s : `${s}.`
 }

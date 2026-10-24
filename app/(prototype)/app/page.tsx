@@ -1,7 +1,7 @@
 "use client"
 
 import { ArrowRight, ChevronRight, Clock, MapPin, Mic, Zap } from "lucide-react"
-import { useTranslations } from "next-intl"
+import { useLocale, useTranslations } from "next-intl"
 import Link from "next/link"
 import * as React from "react"
 import { ArrowCircle, Panel, SectionTitle } from "@/components/prototype/civic"
@@ -9,8 +9,10 @@ import { useStory } from "@/components/prototype/story-sheet"
 import { Button } from "@/components/ui/button"
 import type { Update } from "@/lib/prototype/types"
 import { ELECTION, relevance } from "@/lib/prototype/updates"
-import { daysFromNow, fmtTime, money, monthDay } from "@/lib/prototype/format"
+import { daysFromNow, fmtDateTime, fmtTime, money, monthDay, relDayLower } from "@/lib/prototype/format"
 import { useNow, useProfile } from "@/lib/prototype/profile"
+import { asSentence, buildTldr, tldrPick } from "@/lib/prototype/tldr"
+import { AI_LABEL } from "@/lib/stories/types"
 import { cn } from "@/lib/utils"
 
 function greeting() {
@@ -22,13 +24,11 @@ export default function Home() {
   const { profile, jurisdiction, bodies, updates } = useProfile()
   const openStory = useStory()
   const now = useNow()
-  const tt = useTranslations("AppTldr")
 
   const mine = updates.filter((u) => relevance(u, profile.personas) > 0)
   const upcoming = mine
     .filter((u) => +new Date(u.date) >= now && u.type !== "decision")
     .sort((a, b) => +new Date(a.date) - +new Date(b.date))
-  const thisWeek = upcoming.filter((u) => daysFromNow(u.date) <= 7)
   const urgent = upcoming.filter((u) => u.tier === "urgent")
   const nextComment = upcoming
     .filter((u) => u.comment && +new Date(u.comment.deadline) > now)
@@ -48,16 +48,7 @@ export default function Home() {
           <h1 className="text-[2.1rem] leading-tight font-extrabold tracking-[-0.03em] md:text-[2.6rem]">
             {greeting()}{profile.name && `, ${profile.name}`}
           </h1>
-          <p className="mt-1 text-[0.95rem] text-muted-foreground">
-            Your neighborhood at a glance. {thisWeek.length} {thisWeek.length === 1 ? "thing" : "things"} coming up this week.
-          </p>
-          {/* A link, not another panel: DESIGN.md §8 keeps home to its three rows. */}
-          <Link
-            href="/app/tldr"
-            className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-denim underline-offset-4 hover:underline"
-          >
-            <Zap aria-hidden className="size-4" /> {tt("homeLink")}
-          </Link>
+          <WeekInShort />
         </div>
         <Button asChild>
           <Link href="/app/speak">
@@ -148,6 +139,68 @@ export default function Home() {
 
       <PersonaCard />
     </div>
+  )
+}
+
+/**
+ * The week in a few sentences, right under the greeting: what was just decided and what's coming
+ * up, as the items' own headlines (no new text, so nothing to fact-check). Each headline opens its
+ * story, which links to the official source.
+ */
+function WeekInShort() {
+  const t = useTranslations("AppTldr")
+  const lang = useLocale() === "es" ? "es" : "en"
+  const { updates, weekly, profile } = useProfile()
+  const openStory = useStory()
+  const now = useNow()
+  const tldr = buildTldr({ updates, weekly, personas: profile.personas, now })
+  const { decided, coming } = tldrPick(tldr)
+  const shown = [...decided, ...coming]
+
+  // A span with role="button", not a <button>: browsers always lay buttons out as inline-block,
+  // which starts each headline on a new line instead of letting the paragraph flow.
+  const headline = (u: Update, text: string) => (
+    <span
+      role="button"
+      tabIndex={0}
+      onClick={() => openStory(u)}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault()
+          openStory(u)
+        }
+      }}
+      className="cursor-pointer rounded-sm underline decoration-ink/20 underline-offset-4 transition-colors hover:decoration-denim focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-denim"
+    >
+      {text}
+    </span>
+  )
+
+  return (
+    <section aria-labelledby="week-in-short" className="mt-3 max-w-3xl">
+      <h2 id="week-in-short" className="flex items-center gap-1.5 text-xs font-bold text-denim">
+        <Zap aria-hidden className="size-3.5" /> {t("short")}
+      </h2>
+      {shown.length === 0 ? (
+        <p className="mt-1.5 text-[1.02rem] leading-relaxed text-muted-foreground">{t("quiet")}</p>
+      ) : (
+        <p className="mt-1.5 text-[1.02rem] leading-relaxed text-pretty text-ink">
+          {decided.length > 0 && <strong>{t("decidedLead")} </strong>}
+          {decided.map((u) => (
+            <React.Fragment key={u.id}>{headline(u, asSentence(u.title))} </React.Fragment>
+          ))}
+          {coming.length > 0 && <strong>{t("comingLead")} </strong>}
+          {coming.map((u) => (
+            <React.Fragment key={u.id}>
+              {headline(u, u.title.trim().replace(/\.+$/, ""))}
+              {` (${relDayLower(u.date)}). `}
+              {tldr.next?.id === u.id && `${t("closes", { when: fmtDateTime(u.comment!.deadline) })} `}
+            </React.Fragment>
+          ))}
+        </p>
+      )}
+      {shown.some((u) => u.aiWritten) && <p className="mt-1.5 text-xs text-muted-foreground">{AI_LABEL[lang]}</p>}
+    </section>
   )
 }
 
