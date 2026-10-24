@@ -2,6 +2,7 @@
 
 import {
   BellRing,
+  ChevronDown,
   ChevronRight,
   LayoutGrid,
   Map,
@@ -21,7 +22,6 @@ import { useTranslations } from "next-intl"
 import * as React from "react"
 import { BodyIcon, Logo } from "@/components/prototype/civic"
 import { StoryProvider, useStory } from "@/components/prototype/story-sheet"
-import { AppTour } from "@/components/prototype/app-tour"
 import { Button } from "@/components/ui/button"
 import {
   Command,
@@ -130,9 +130,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </div>
         </div>
       </div>
-      <React.Suspense fallback={null}>
-        <AppTour />
-      </React.Suspense>
     </StoryProvider>
   )
 }
@@ -278,17 +275,15 @@ function TopBar({ navToggle }: { navToggle?: { open: boolean; toggle: () => void
         <div className="ml-auto flex items-center gap-2">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button aria-label={t("account.trigger")} className="flex items-center gap-3 rounded-full py-1 pr-1 pl-1 hover:bg-white/60 md:pr-4">
+              <button aria-label={t("account.trigger")} title={t("account.trigger")} className="flex min-h-11 items-center gap-2 rounded-full border border-border bg-white/70 py-1 pr-2 pl-1 transition hover:bg-white md:gap-3 md:pr-3">
                 {account?.avatar ? (
                   // eslint-disable-next-line @next/next/no-img-element -- Google's avatar URL; not worth configuring next/image remote hosts
                   <img src={account.avatar} alt="" width={40} height={40} referrerPolicy="no-referrer" className="size-10 rounded-full object-cover outline outline-1 -outline-offset-1 outline-black/10" />
                 ) : (
                   <span className="grid size-10 place-items-center rounded-full bg-denim-soft text-sm font-bold text-denim-deep">{initials}</span>
                 )}
-                <span className="hidden text-left leading-tight xl:block">
-                  <span className="block text-sm font-bold">{who || t("account.yourArea")}</span>
-                  <span className="block text-xs text-muted-foreground">{place}</span>
-                </span>
+                <span className="text-sm font-semibold">{t("account.trigger")}</span>
+                <ChevronDown aria-hidden className="size-4 shrink-0 text-muted-foreground" />
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-64 rounded-2xl p-1.5">
@@ -310,6 +305,13 @@ function TopBar({ navToggle }: { navToggle?: { open: boolean; toggle: () => void
                   <a href="/signin">{t("account.signIn")}</a>
                 </DropdownMenuItem>
               )}
+              <DropdownMenuSeparator />
+              {/* Always available so guests can clear this browser and signed-in readers can sign out. */}
+              <SignOutForm>
+                <DropdownMenuItem asChild className="w-full rounded-xl font-semibold text-brick focus:text-brick">
+                  <button type="submit">{account ? t("account.signOut") : t("account.signOutGuest")}</button>
+                </DropdownMenuItem>
+              </SignOutForm>
               <DropdownMenuSeparator />
               <DropdownMenuLabel className="flex items-center gap-2 text-xs text-muted-foreground">
                 <MapPin className="size-3.5" /> {place}
@@ -338,20 +340,12 @@ function TopBar({ navToggle }: { navToggle?: { open: boolean; toggle: () => void
               <DropdownMenuItem asChild className="rounded-xl">
                 <Link href="/app/alerts">{t("nav.alerts")}</Link>
               </DropdownMenuItem>
-              {(!isDemo || savedAddress || account) && (
+              {account && (
                 <>
                   <DropdownMenuSeparator />
-                  {/* Guests sign out too: it makes this browser forget their governments and saved address (shared computers). */}
-                  <SignOutForm>
-                    <DropdownMenuItem asChild className="w-full rounded-xl text-brick focus:text-brick">
-                      <button type="submit">{account ? t("account.signOut") : t("account.signOutGuest")}</button>
-                    </DropdownMenuItem>
-                  </SignOutForm>
-                  {account && (
-                    <DropdownMenuItem asChild className="rounded-xl text-brick focus:text-brick">
-                      <Link href="/account/delete">{t("account.delete")}</Link>
-                    </DropdownMenuItem>
-                  )}
+                  <DropdownMenuItem asChild className="rounded-xl text-brick focus:text-brick">
+                    <Link href="/account/delete">{t("account.delete")}</Link>
+                  </DropdownMenuItem>
                 </>
               )}
             </DropdownMenuContent>

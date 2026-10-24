@@ -1,6 +1,7 @@
 import { getTranslations } from 'next-intl/server'
 import { BodyIcon } from '@/components/civic'
 import type { BodyType } from '@/lib/contracts/bodyTypes'
+import type { CSSProperties } from 'react'
 
 // The home page's one visual idea: a single address sits under a stack of governments.
 // Decorative only (aria-hidden): the headline and the form carry the meaning.
@@ -17,28 +18,28 @@ export async function GovernmentStack() {
   const slip = 'rise rounded-2xl shadow-[0_12px_32px_-16px_rgb(27_38_59/0.25)]'
   return (
     <div aria-hidden className="mx-auto w-full max-w-[560px] select-none">
-      <ol className="space-y-2">
+      <ol className="government-stack-list space-y-2">
         {LAYERS.map(({ type, id }, i) => (
           <li
             key={type}
-            className={`${slip} flex h-[72px] items-center gap-3 bg-white/95 px-4 pr-5`}
+            className={`government-stack-card ${slip} flex h-[72px] items-center gap-3 bg-white/95 px-4 pr-5`}
             style={{
-              width: `calc(100% - ${i * 8}%)`,
-              marginLeft: `${i * 8}%`,
+              '--stagger-desktop': `${i * 8}%`,
+              '--stagger-mobile': `${i * 2}%`,
               animationDelay: `${i * 70}ms`,
-            }}
+            } as CSSProperties}
           >
             <BodyIcon type={type} id={id} />
             <span className="font-bold text-ink">{t(type)}</span>
           </li>
         ))}
         <li
-          className={`${slip} flex h-[72px] items-center bg-ink px-4 text-base font-bold whitespace-nowrap text-white`}
+          className={`government-stack-card ${slip} flex min-h-[72px] items-center bg-ink px-3 py-3 text-[clamp(0.875rem,4vw,1rem)] font-bold leading-tight text-white sm:px-4`}
           style={{
-            width: `calc(100% - ${LAYERS.length * 8}%)`,
-            marginLeft: `${LAYERS.length * 8}%`,
+            '--stagger-desktop': `${LAYERS.length * 8}%`,
+            '--stagger-mobile': `${LAYERS.length * 2}%`,
             animationDelay: `${LAYERS.length * 70}ms`,
-          }}
+          } as CSSProperties}
         >
           {t('more')}
         </li>

@@ -227,6 +227,28 @@
     display: flex;
     flex-direction: column;
   }
+
+  .government-stack-card {
+    width: calc(100% - var(--stagger-desktop));
+    margin-left: var(--stagger-desktop);
+  }
+
+  @media (max-width: 767px) {
+    body:has(.landing-hero) .public-site-header {
+      position: relative;
+      inset: auto;
+    }
+
+    body:has(.landing-hero) .landing-hero {
+      margin-top: 0;
+      padding-top: 0;
+    }
+
+    .government-stack-card {
+      width: calc(100% - var(--stagger-mobile));
+      margin-left: var(--stagger-mobile);
+    }
+  }
 }
 
 @layer utilities {
@@ -251,7 +273,7 @@
 
   body:has(.landing-hero) .landing-site-footer {
     border-top-width: 0;
-    background-color: transparent;
+    background-color: #fff1d6;
     background-image: none;
     -webkit-backdrop-filter: none;
     backdrop-filter: none;

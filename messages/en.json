@@ -52,7 +52,7 @@
       "commissioners_court": "Commissioners Court",
       "flood_control": "Flood Control District",
       "mud": "Utility district (MUD)",
-      "more": "And ones you've never heard of"
+      "more": "And ones you've never seen before..."
     },
     "suggestionsLabel": "Address suggestions",
     "suggestionsCount": "{count, plural, one {# suggestion} other {# suggestions}} available. Use the up and down arrow keys, then Enter to choose.",
@@ -439,6 +439,32 @@
     "hoaNeedsConfirmation": "Possible match; confirm with your association or county records.",
     "taxReceipt": "Estimate property taxes"
   },
+  "ResultsOnboarding": {
+    "stepCount": "Step {current} of {total}",
+    "progressLabel": "Onboarding steps",
+    "goToStep": "Go to step {step}",
+    "continueOn": "Continue from {title}",
+    "clickHighlighted": "Click the highlighted button or choose Next to continue.",
+    "next": "Next",
+    "skip": "Skip",
+    "done": "Done",
+    "dashboard": {
+      "title": "Your dashboard",
+      "body": "See what's coming up across the governments linked to your address."
+    },
+    "weekly": {
+      "title": "This week's news",
+      "body": "Read clear summaries of decisions your local governments are making."
+    },
+    "alerts": {
+      "title": "Get alerts",
+      "body": "Choose whether to get notices before important local votes."
+    },
+    "taxes": {
+      "title": "Estimate property taxes",
+      "body": "Explore an estimate based on the governments that cover your address."
+    }
+  },
   "BodyQuiz": {
     "eyebrow": "Quick check",
     "title": "Who did you think governs your area?",
@@ -593,7 +619,7 @@
       "updates": "Updates"
     },
     "account": {
-      "trigger": "Profile and interests",
+      "trigger": "Profile",
       "yourArea": "Your area",
       "governments": "{count, plural, one {# government} other {# governments}}",
       "signedIn": "Signed in with Google · saved to your account",
@@ -613,21 +639,40 @@
       "voter": "First-time voter"
     }
   },
-  "AppTour": {
-    "stepCount": "Step {current} of {total}",
-    "progressLabel": "Tour steps",
-    "goToStep": "Go to step {step}",
-    "next": "Next",
-    "skip": "Skip tour",
-    "done": "Done",
-    "homeTitle": "Your neighborhood at a glance",
-    "homeBody": "Start here to see the governments that serve your address and the decisions that need your attention.",
-    "briefTitle": "Your weekly brief",
-    "briefBody": "Open a story to understand a decision, check its official source, and see how you can take part.",
-    "timelineTitle": "Explore the full timeline",
-    "timelineBody": "Use these topic filters to find upcoming meetings, urgent items, and decisions already made.",
-    "speakTitle": "Get ready to speak up",
-    "speakBody": "Choose an agenda item, understand what it means, register to speak, and prepare your own words."
+  "Onboarding": {
+    "steps": { "address": "Address", "aboutYou": "About you", "ageAndName": "Age & name", "stack": "Your stack" },
+    "sidebarTitle": "A little at a time.",
+    "sidebarBody": "We’ll ask for your address, tailor explanations to you, and then show the governments connected to your neighborhood.",
+    "privacy": "We use your address to find your governments. Your street address is never saved to your account or on our servers.",
+    "step": "Step {current} of {total}",
+    "addressTitle": "Where do you live?",
+    "addressBody": "Your street address helps us find the school, city, county, and utility governments that serve you.",
+    "aboutTitle": "What describes you?",
+    "aboutBody": "Pick all that apply. We’ll explain decisions in terms of how they affect you.",
+    "pickPersona": "Pick at least one to continue.",
+    "personas": {
+      "student": { "label": "Student", "blurb": "High school or college" },
+      "parent": { "label": "Parent", "blurb": "Kids in local schools" },
+      "renter": { "label": "Renter", "blurb": "You rent your home" },
+      "homeowner": { "label": "Homeowner", "blurb": "You pay property tax directly" },
+      "voter": { "label": "First-time voter", "blurb": "New to voting here" }
+    },
+    "detailsTitle": "A couple quick details.",
+    "detailsBody": "These help us explain what matters to you. Your name is optional.",
+    "ageTitle": "How old are you?",
+    "ageBody": "Texas lets you register at 17 years 10 months if you’ll be 18 by Election Day.",
+    "pickAge": "Choose your age to continue.",
+    "nameLabel": "First name",
+    "optional": "(optional)",
+    "namePlaceholder": "Maya",
+    "stackTitle": "{count, plural, one {One government makes decisions for {area}.} other {# governments make decisions for {area}.}}",
+    "stackBody": "These are ordered from closest to home outward.",
+    "stepNavLabel": "Onboarding steps",
+    "stepLabel": "Step {step}: {label}",
+    "back": "Back",
+    "continue": "Continue",
+    "skip": "Skip",
+    "done": "Done"
   },
   "AppBrief": {
     "chip": "Weekly brief",

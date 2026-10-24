@@ -52,7 +52,7 @@
       "commissioners_court": "Corte de Comisionados",
       "flood_control": "Distrito de Control de Inundaciones",
       "mud": "Distrito de servicios (MUD)",
-      "more": "Y otros que nunca has oído mencionar"
+      "more": "Y otros que aún no has visto..."
     },
     "suggestionsLabel": "Sugerencias de dirección",
     "suggestionsCount": "{count, plural, one {# sugerencia disponible} other {# sugerencias disponibles}}. Usa las flechas arriba y abajo y Enter para elegir.",
@@ -439,6 +439,32 @@
     "hoaNeedsConfirmation": "Posible coincidencia; confirma con tu asociación o los registros del condado.",
     "taxReceipt": "Estimar impuestos de propiedad"
   },
+  "ResultsOnboarding": {
+    "stepCount": "Paso {current} de {total}",
+    "progressLabel": "Pasos de configuración",
+    "goToStep": "Ir al paso {step}",
+    "continueOn": "Continuar desde {title}",
+    "clickHighlighted": "Pulsa el botón resaltado o elige Siguiente para continuar.",
+    "next": "Siguiente",
+    "skip": "Omitir",
+    "done": "Listo",
+    "dashboard": {
+      "title": "Tu panel",
+      "body": "Mira lo que viene en los gobiernos vinculados a tu dirección."
+    },
+    "weekly": {
+      "title": "Noticias de esta semana",
+      "body": "Lee resúmenes claros de las decisiones de tus gobiernos locales."
+    },
+    "alerts": {
+      "title": "Recibe alertas",
+      "body": "Elige si quieres recibir avisos antes de votaciones locales importantes."
+    },
+    "taxes": {
+      "title": "Calcula tus impuestos a la propiedad",
+      "body": "Consulta un estimado según los gobiernos que cubren tu dirección."
+    }
+  },
   "BodyQuiz": {
     "eyebrow": "Pregunta rápida",
     "title": "¿Quién pensabas que gobierna tu zona?",
@@ -593,7 +619,7 @@
       "updates": "Novedades"
     },
     "account": {
-      "trigger": "Perfil e intereses",
+      "trigger": "Perfil",
       "yourArea": "Tu zona",
       "governments": "{count, plural, one {# gobierno} other {# gobiernos}}",
       "signedIn": "Sesión iniciada con Google · guardado en tu cuenta",
@@ -613,21 +639,40 @@
       "voter": "Votante por primera vez"
     }
   },
-  "AppTour": {
-    "stepCount": "Paso {current} de {total}",
-    "progressLabel": "Pasos del recorrido",
-    "goToStep": "Ir al paso {step}",
-    "next": "Siguiente",
-    "skip": "Omitir recorrido",
-    "done": "Listo",
-    "homeTitle": "Tu vecindario de un vistazo",
-    "homeBody": "Empieza aquí para ver los gobiernos que sirven a tu dirección y las decisiones que requieren tu atención.",
-    "briefTitle": "Tu resumen semanal",
-    "briefBody": "Abre una noticia para entender una decisión, consultar su fuente oficial y ver cómo participar.",
-    "timelineTitle": "Explora la cronología completa",
-    "timelineBody": "Usa estos filtros para encontrar próximas reuniones, puntos urgentes y decisiones ya tomadas.",
-    "speakTitle": "Prepárate para participar",
-    "speakBody": "Elige un punto de la agenda, entiende lo que significa, inscríbete para hablar y prepara tus propias palabras."
+  "Onboarding": {
+    "steps": { "address": "Dirección", "aboutYou": "Sobre ti", "ageAndName": "Edad y nombre", "stack": "Tus gobiernos" },
+    "sidebarTitle": "Paso a paso.",
+    "sidebarBody": "Te pediremos tu dirección, adaptaremos las explicaciones a ti y luego mostraremos los gobiernos de tu vecindario.",
+    "privacy": "Usamos tu dirección para encontrar tus gobiernos. Nunca guardamos tu dirección en tu cuenta ni en nuestros servidores.",
+    "step": "Paso {current} de {total}",
+    "addressTitle": "¿Dónde vives?",
+    "addressBody": "Tu dirección nos ayuda a encontrar los gobiernos escolares, municipales, del condado y de servicios que te corresponden.",
+    "aboutTitle": "¿Qué opciones te describen?",
+    "aboutBody": "Elige todas las que apliquen. Explicaremos cómo te afectan las decisiones.",
+    "pickPersona": "Elige al menos una opción para continuar.",
+    "personas": {
+      "student": { "label": "Estudiante", "blurb": "Preparatoria o universidad" },
+      "parent": { "label": "Madre o padre", "blurb": "Hijos en escuelas locales" },
+      "renter": { "label": "Inquilino", "blurb": "Rentas tu vivienda" },
+      "homeowner": { "label": "Propietario", "blurb": "Pagas directamente el impuesto a la propiedad" },
+      "voter": { "label": "Votante por primera vez", "blurb": "Es tu primera vez votando aquí" }
+    },
+    "detailsTitle": "Un par de datos rápidos.",
+    "detailsBody": "Nos ayudan a explicar lo que te importa. Tu nombre es opcional.",
+    "ageTitle": "¿Cuántos años tienes?",
+    "ageBody": "En Texas puedes registrarte a los 17 años y 10 meses si cumplirás 18 antes del día de las elecciones.",
+    "pickAge": "Elige tu edad para continuar.",
+    "nameLabel": "Nombre",
+    "optional": "(opcional)",
+    "namePlaceholder": "Maya",
+    "stackTitle": "{count, plural, one {Un gobierno toma decisiones para {area}.} other {# gobiernos toman decisiones para {area}.}}",
+    "stackBody": "Están ordenados desde los más cercanos a tu hogar hacia afuera.",
+    "stepNavLabel": "Pasos de configuración",
+    "stepLabel": "Paso {step}: {label}",
+    "back": "Atrás",
+    "continue": "Continuar",
+    "skip": "Omitir",
+    "done": "Listo"
   },
   "AppBrief": {
     "chip": "Resumen semanal",

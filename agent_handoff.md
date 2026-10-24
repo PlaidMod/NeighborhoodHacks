@@ -46,6 +46,23 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 - **Contract changes:** None.
 - **Checked:** The new tests failed first, then passed. `npm test` (875 Vitest + 72 P4), typecheck and build pass; lint fails only on `app-tour.tsx:44` (above). In a local production build with real data for 901 Bagby St 77002, English at 1280px and Spanish at 390px: three AI headlines (two decided, one coming up) flow as one paragraph with the AI label; Enter on a headline opens its story sheet; `/app/tldr` lands on `/app`; no sideways scroll. The first real-data check showed template headlines ("Vote Oct. 27: ORDINANCE…"), so AI headlines now come first.
 - **Open issues / next:** On the live landing page after 4fcf955 (measured in the browser): the transparent footer's About, Privacy and Terms links are about 1.1:1 against the grass at 1280px, well under 4.5:1; at 390px the "Your neighborhood, decoded" eyebrow sits under the header, and the last stack card's text ("And ones you've never heard of") is cut off. The landing photo is a 2.5 MB PNG, and `courthouse-hero.png`, `courthouse-hero-v2.png` and `calm-sea-hero.jpg` are unused. `npm run lint` fails on `components/prototype/app-tour.tsx:44` (setState in an effect). The dashboard home's other text is still English only.
+### 2026-10-23: Start the guide on the address results screen
+- **Who:** Marie Gary Blueberry · public experience
+- **Branch:** main
+- **What changed:** Added the four-step guide to the actual `/results` flow, spotlighting its dashboard, weekly news, alerts, and property tax actions with progress tabs, Skip, Next, and Done. Added English and Spanish copy; the guide starts automatically once per browser after results load.
+- **Files:** `app/(public)/results/page.tsx`, `components/home/ResultsOnboarding.tsx`, `messages/*.json`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `git diff --check` passed; browser check and tests not run.
+- **Open issues / next:** `/start` remains a separate prototype route and is not used by the public address lookup flow.
+
+### 2026-10-23: Tighten vertical spacing on address page
+- **Who:** Marie Gary Blueberry · public experience
+- **Branch:** main
+- **What changed:** Reduced the address page's top and bottom padding, the gap after its back link, the column gap, and the vertical padding around the government preview.
+- **Files:** `app/(public)/address/page.tsx`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `git diff --check` passed; browser check and tests not run.
+- **Open issues / next:** None.
 
 ### 2026-10-23: Give countdown units more breathing room
 - **Who:** Marie Gary Blueberry · public experience
@@ -54,6 +71,51 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 - **Files:** `app/(prototype)/app/timeline/page.tsx`, `agent_handoff.md`
 - **Contract changes:** None.
 - **Checked:** `git diff --check` passed; browser check and tests not run.
+- **Open issues / next:** None.
+
+### 2026-10-23: Fix landing page phone layout
+- **Who:** Marie Gary Blueberry · public experience
+- **Branch:** main
+- **What changed:** Put the landing header back in normal flow on phones so it cannot cover the hero eyebrow. Reduced the mobile preview staircase increments so all six cards remain visible, and updated the final label to “And ones you've never seen before...”
+- **Files:** `app/globals.css`, `components/home/GovernmentStack.tsx`, `messages/en.json`, `messages/es.json`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `git diff --check` passed; browser check and tests not run.
+- **Open issues / next:** None.
+
+### 2026-10-23: Guide users through setup in smaller onboarding steps
+- **Who:** Marie Gary Blueberry · public experience
+- **Branch:** main
+- **What changed:** Reworked `/start` into four focused steps, moving age and optional name to their own screen, with bottom progress tabs, Skip, and Done. Removed the separate tour that started after onboarding; finishing now opens the dashboard directly.
+- **Files:** `app/(prototype)/start/onboarding.tsx`, `components/prototype/app-shell.tsx`, `components/prototype/app-tour.tsx`, `messages/*.json`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `npx tsc --noEmit`, English/Spanish JSON parsing, and `git diff --check` passed; browser check and tests not run.
+- **Open issues / next:** None.
+
+### 2026-10-23: Make profile and sign-out easy to find
+- **Who:** Marie Gary Blueberry · public experience
+- **Branch:** main
+- **What changed:** Made the top-right profile menu visually explicit with a labeled trigger and dropdown chevron. Moved sign-out near the top of the menu and made it available for guest and signed-in sessions.
+- **Files:** `components/prototype/app-shell.tsx`, `messages/en.json`, `messages/es.json`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `git diff --check` passed; tests not run.
+- **Open issues / next:** None.
+
+### 2026-10-23: Vertically center the footer content
+- **Who:** Marie Gary Blueberry · public experience
+- **Branch:** main
+- **What changed:** Grouped the footer note with the main message and centered the text group and navigation vertically in a shared footer row; the note no longer sits on a separate lower row.
+- **Files:** `components/shell/SiteFooter.tsx`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `git diff --check` passed; browser visual check not run.
+- **Open issues / next:** None.
+
+### 2026-10-23: Restore the landing footer cream background
+- **Who:** Marie Gary Blueberry · public experience
+- **Branch:** main
+- **What changed:** Restored the landing footer's previous cream fill at the teammate's request, while keeping the stronger hero image treatment and removing the hard fade overlay.
+- **Files:** `app/globals.css`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `git diff --check` passed; browser visual check not run.
 - **Open issues / next:** None.
 
 ### 2026-10-23: Remove landing footer background band

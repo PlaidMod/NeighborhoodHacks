@@ -6,6 +6,7 @@ import { useTranslations } from 'next-intl'
 import { BodyIcon } from '@/components/civic'
 import { BodyQuiz } from '@/components/flow/BodyQuiz'
 import { useLookup } from '@/components/flow/LookupProvider'
+import { ResultsOnboarding } from '@/components/home/ResultsOnboarding'
 import { Button } from '@/components/ui/button'
 
 export default function ResultsPage() {
@@ -161,18 +162,19 @@ export default function ResultsPage() {
               <Button asChild size="lg" className="sm:px-3">
                 {/* /app/use remembers the bodies_token (body IDs only) so the dashboard shows these governments.
                     A plain <a>: it's a route handler that sets a cookie and redirects, not a page. */}
-                <a href={`/app/use?t=${encodeURIComponent(state.data.bodies_token)}`}>{t('dashboard')}</a>
+                <a data-onboarding="dashboard" href={`/app/use?t=${encodeURIComponent(state.data.bodies_token)}`}>{t('dashboard')}</a>
               </Button>
               <Button asChild size="lg" variant="outline" className="sm:px-3">
-                <Link href={`/weekly?t=${encodeURIComponent(state.data.bodies_token)}`}>{t('weekly')}</Link>
+                <Link data-onboarding="weekly" href={`/weekly?t=${encodeURIComponent(state.data.bodies_token)}`}>{t('weekly')}</Link>
               </Button>
               <Button asChild size="lg" variant="outline" className="sm:px-3">
-                <Link href={`/alerts?t=${encodeURIComponent(state.data.bodies_token)}`}>{t('alerts')}</Link>
+                <Link data-onboarding="alerts" href={`/alerts?t=${encodeURIComponent(state.data.bodies_token)}`}>{t('alerts')}</Link>
               </Button>
               <Button asChild size="lg" variant="outline" className="sm:px-3">
-                <Link href={`/tax-receipt?t=${encodeURIComponent(state.data.bodies_token)}`}>{t('taxReceipt')}</Link>
+                <Link data-onboarding="taxes" href={`/tax-receipt?t=${encodeURIComponent(state.data.bodies_token)}`}>{t('taxReceipt')}</Link>
               </Button>
             </div>
+            <ResultsOnboarding />
           </>
         )}
       </div>
