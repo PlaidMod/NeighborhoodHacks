@@ -33,6 +33,15 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-23: Give countdown units more breathing room
+- **Who:** Marie Gary Blueberry · public experience
+- **Branch:** main
+- **What changed:** Removed tight letter spacing from the Timeline deadline countdown and added consistent space around each time unit so the numbers and labels read separately.
+- **Files:** `app/(prototype)/app/timeline/page.tsx`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `git diff --check` passed; browser check and tests not run.
+- **Open issues / next:** None.
+
 ### 2026-10-23: Remove landing footer background band
 - **Who:** Marie Gary Blueberry · public experience
 - **Branch:** main
