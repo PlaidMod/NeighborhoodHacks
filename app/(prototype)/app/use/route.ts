@@ -17,7 +17,11 @@ export async function GET(req: Request) {
     res.cookies.delete(BODIES_COOKIE)
     return res
   }
-  const destination = url.searchParams.get('onboarding') === '1' ? '/app?onboarding=1' : '/app'
+  const onboarding = url.searchParams.get('onboarding') === '1'
+  const step = Number(url.searchParams.get('step'))
+  const destination = onboarding
+    ? `/app?onboarding=1&step=${Number.isInteger(step) && step >= 0 && step < 8 ? step : 1}`
+    : '/app'
   const res = NextResponse.redirect(new URL(destination, url))
   const token = url.searchParams.get('t') ?? ''
   // Without BODIES_TOKEN_SECRET (a local preview) the lookup can't sign, and P3's sample data is shown.

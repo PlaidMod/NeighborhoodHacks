@@ -7,6 +7,7 @@ import * as React from "react"
 import { cn } from "@/lib/utils"
 
 const STEPS = [
+  { target: "governmentCTA", page: "/results", copy: "governments" },
   { target: "dashboardOverview", page: "/app", copy: "home" },
   { target: "timelineMain", page: "/app/timeline", copy: "timeline" },
   { target: "briefMain", page: "/app/brief", copy: "brief" },
@@ -16,9 +17,10 @@ const STEPS = [
   { target: "alertsMain", page: "/app/alerts", copy: "alerts" },
 ] as const
 
-type TourState = { step: number }
+type TourState = { step: number; entryHref?: string }
 type Rect = { top: number; right: number; bottom: number; left: number; radius: number }
 const STORAGE_KEY = "showup.app-onboarding-tour.v1"
+const DISMISSED_KEY = `${STORAGE_KEY}.dismissed`
 
 export function AppOnboardingTour() {
   const t = useTranslations("AppOnboardingTour")
@@ -30,31 +32,66 @@ export function AppOnboardingTour() {
   const nextRef = React.useRef<HTMLButtonElement>(null)
 
   React.useEffect(() => {
-    let saved: TourState | null = null
-    const onboardingStarted = new URLSearchParams(window.location.search).get("onboarding") === "1"
-    if (onboardingStarted) {
-      saved = { step: 0 }
+    const params = new URLSearchParams(window.location.search)
+    if (params.get("onboarding") === "1") {
+      const requestedStep = Number(params.get("step"))
+      const saved: TourState = {
+        step: Number.isInteger(requestedStep) && requestedStep >= 0 && requestedStep < STEPS.length ? requestedStep : 1,
+      }
       try {
         window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify(saved))
+        window.sessionStorage.removeItem(DISMISSED_KEY)
       } catch {
         // The tour can still run for this visit if session storage is unavailable.
       }
-      router.replace("/app", { scroll: false })
-    } else {
-      try {
-        const value = window.sessionStorage.getItem(STORAGE_KEY)
-        if (value) {
-          const parsed = JSON.parse(value) as Partial<TourState>
-          if (Number.isInteger(parsed.step) && parsed.step! >= 0 && parsed.step! < STEPS.length) {
-            saved = parsed as TourState
-          }
-        }
-      } catch {
-        saved = null
-      }
+      setTour(saved)
+      router.replace(pathname, { scroll: false })
+      return
     }
-    setTour(saved)
-  }, [router])
+
+    try {
+      const value = window.sessionStorage.getItem(STORAGE_KEY)
+      if (value) {
+        const parsed = JSON.parse(value) as Partial<TourState>
+        if (Number.isInteger(parsed.step) && parsed.step! >= 0 && parsed.step! < STEPS.length) {
+          setTour(parsed as TourState)
+          return
+        }
+      }
+    } catch {
+      // Start a fresh tour when stored progress is unavailable or invalid.
+    }
+    setTour(null)
+  }, [pathname, router])
+
+  React.useEffect(() => {
+    if (pathname !== "/results" || tour) return
+    try {
+      if (window.sessionStorage.getItem(DISMISSED_KEY) === "1") return
+    } catch {
+      // Continue without a dismissal preference when storage is unavailable.
+    }
+
+    let started = false
+    const startIfReady = () => {
+      if (started) return
+      const target = document.querySelector<HTMLAnchorElement>('[data-onboarding="governmentCTA"]')
+      if (!target) return
+      started = true
+      const saved = { step: 0, entryHref: target.href }
+      try {
+        window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify(saved))
+      } catch {
+        // The guide can still run for this visit without stored progress.
+      }
+      setTour(saved)
+    }
+
+    startIfReady()
+    const observer = new MutationObserver(startIfReady)
+    observer.observe(document.body, { childList: true, subtree: true })
+    return () => observer.disconnect()
+  }, [pathname, tour])
 
   React.useEffect(() => {
     if (!tour) {
@@ -83,7 +120,7 @@ export function AppOnboardingTour() {
     const timer = window.setTimeout(measure, 250)
     window.addEventListener("resize", measure)
     window.addEventListener("scroll", measure, true)
-    const main = document.querySelector("main#main-content")
+    const main = document.querySelector("main#main-content, main#main")
     const observer = main ? new MutationObserver(measure) : null
     if (main) observer?.observe(main, { childList: true, subtree: true })
     return () => {
@@ -101,23 +138,38 @@ export function AppOnboardingTour() {
 
   if (!tour) return null
 
-  const saveTour = (next: TourState | null) => {
+  const saveTour = (next: TourState | null, dismissed = false) => {
     try {
       if (next) window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify(next))
       else window.sessionStorage.removeItem(STORAGE_KEY)
+      if (dismissed) window.sessionStorage.setItem(DISMISSED_KEY, "1")
     } catch {
       // Keep the tour usable when session storage is unavailable.
     }
     setTour(next)
   }
   const goToStep = (step: number) => {
-    saveTour({ step })
+    saveTour({ ...tour, step })
     if (STEPS[step].page !== pathname) router.push(STEPS[step].page)
   }
+  const continueFromGovernments = () => {
+    const target = document.querySelector<HTMLAnchorElement>('[data-onboarding="governmentCTA"]')
+    const href = target?.href ?? tour.entryHref
+    if (!href) return
+    saveTour({ ...tour, step: 1 })
+    const destination = new URL(href, window.location.origin)
+    destination.searchParams.set("onboarding", "1")
+    destination.searchParams.set("step", "1")
+    window.location.assign(destination.toString())
+  }
   const next = () => {
+    if (tour.step === 0) {
+      continueFromGovernments()
+      return
+    }
     if (tour.step === STEPS.length - 1) {
-      saveTour(null)
-      router.push("/app")
+      saveTour(null, true)
+      router.push("/?tour=complete")
       return
     }
     goToStep(tour.step + 1)
@@ -177,7 +229,7 @@ export function AppOnboardingTour() {
           {t(`${stepName}.title`)}
         </h2>
         <p className="mt-2 text-sm leading-relaxed text-muted-foreground sm:text-base">{t(`${stepName}.body`)}</p>
-        <p className="mt-2 text-xs font-semibold text-denim">{t("clickHighlighted")}</p>
+        <p className="mt-2 text-xs font-semibold text-denim">{t(tour.step === 0 ? "clickDashboard" : "clickHighlighted")}</p>
 
         <div className="mt-5 flex flex-wrap items-end justify-between gap-4 border-t border-border pt-4">
           <nav aria-label={t("progressLabel")} className="flex items-center gap-1.5">
@@ -207,7 +259,7 @@ export function AppOnboardingTour() {
             </button>
             <button
               type="button"
-              onClick={() => saveTour(null)}
+              onClick={() => saveTour(null, true)}
               className="inline-flex h-11 items-center rounded-full px-3 text-sm font-semibold text-muted-foreground hover:bg-muted hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-denim"
             >
               {t("skip")}

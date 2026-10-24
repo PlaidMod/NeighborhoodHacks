@@ -33,6 +33,15 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-24: Start the tab walkthrough from Your governments
+- **Who:** Marie Gary Blueberry · public experience
+- **Branch:** main
+- **What changed:** The persistent walkthrough now starts on completed `/results`, highlights the actual Open your dashboard button, and tells the user “Click Open your dashboard to continue.” Following it opens the dashboard and continues through all seven app sections; `/start` no longer launches this walkthrough, the progress controls remain mounted across routes, and the last Next returns to the normal homepage.
+- **Files:** `components/prototype/app-onboarding-tour.tsx`, `app/layout.tsx`, `components/prototype/app-shell.tsx`, `app/(public)/results/page.tsx`, `app/(prototype)/app/use/route.ts`, `app/(prototype)/start/onboarding.tsx`, `messages/*.json`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `PATH=/opt/homebrew/bin:$PATH npm run typecheck`, English/Spanish JSON parsing, and `git diff --check` passed; browser check and tests not run.
+- **Open issues / next:** Browser behavior and visual fit remain unverified.
+
 ### 2026-10-24: Keep the app tour inside onboarding
 - **Who:** Marie Gary Blueberry · public experience
 - **Branch:** main
