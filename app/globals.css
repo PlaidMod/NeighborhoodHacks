@@ -205,16 +205,6 @@
     backdrop-filter: blur(16px) saturate(140%);
   }
 
-  body:has(.landing-hero) .public-site-header {
-    position: absolute;
-    z-index: 30;
-    inset: 0 0 auto;
-    border-bottom-color: color-mix(in oklab, white 45%, transparent);
-    background-color: color-mix(in oklab, var(--paper) 38%, transparent);
-    -webkit-backdrop-filter: blur(14px) saturate(135%);
-    backdrop-filter: blur(14px) saturate(135%);
-  }
-
   body:has(.landing-hero) .landing-hero {
     margin-top: -4.5rem;
     padding-top: 4.5rem;
@@ -271,12 +261,119 @@
     background-attachment: fixed;
   }
 
+  /* Landing page: an editorial header that sits on the photo, no bar. */
+  body:has(.landing-hero) .public-site-header {
+    position: absolute;
+    z-index: 30;
+    inset: 0 0 auto;
+    border: 0 !important;
+    background: none !important;
+    box-shadow: none !important;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+  /* Same width and side padding as the hero, so the logo lines up with the headline. */
+  body:has(.landing-hero) .public-site-header > div,
+  body:has(.landing-hero) .landing-site-footer > div {
+    max-width: 1600px;
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+  @media (min-width: 768px) {
+    body:has(.landing-hero) .public-site-header > div,
+    body:has(.landing-hero) .landing-site-footer > div {
+      padding-left: 2.5rem;
+      padding-right: 2.5rem;
+    }
+  }
+  body:has(.landing-hero) .public-site-header > div {
+    padding-top: 1.4rem;
+    padding-bottom: 1.4rem;
+  }
+  body:has(.landing-hero) .public-site-header nav {
+    gap: 1.75rem;
+  }
+  body:has(.landing-hero) .site-nav-link {
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+  body:has(.landing-hero) .site-nav-link:hover {
+    text-decoration: none;
+    opacity: 0.7;
+  }
+  /* The call to action as an underlined small-caps link, not a filled pill. */
+  body:has(.landing-hero) .site-nav-cta {
+    height: auto;
+    padding: 0 0 3px;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+    color: var(--ink);
+    border-bottom: 1px solid currentColor;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  body:has(.landing-hero) .site-nav-cta:hover {
+    background: none;
+    opacity: 0.7;
+  }
+  /* Language: two quiet words with a hairline between, the current one bold. */
+  body:has(.landing-hero) .site-lang {
+    padding: 0;
+    background: none;
+    border-left: 1px solid color-mix(in oklab, var(--ink) 25%, transparent);
+    padding-left: 1.25rem;
+    border-radius: 0;
+  }
+  body:has(.landing-hero) .site-lang button {
+    height: auto;
+    padding: 0 0.4rem;
+    background: none;
+    box-shadow: none;
+    --tw-ring-shadow: 0 0 #0000;
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  body:has(.landing-hero) .site-lang button[aria-pressed="true"] {
+    color: var(--ink);
+    font-weight: 700;
+  }
+
+  /* Landing page: a slim line of small white text over a soft fade, no bar. */
   body:has(.landing-hero) .landing-site-footer {
+    position: relative;
+    z-index: 10;
+    margin-top: -4.5rem;
     border-top-width: 0;
-    background-color: #fff1d6;
-    background-image: none;
+    background: linear-gradient(to top, rgb(16 22 18 / 0.55), rgb(16 22 18 / 0));
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
+  }
+  body:has(.landing-hero) .landing-site-footer > div {
+    min-height: 4.5rem;
+  }
+  body:has(.landing-hero) .site-footer-neutral {
+    color: rgb(255 255 255 / 0.92);
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+  body:has(.landing-hero) .site-footer-project {
+    color: rgb(255 255 255 / 0.65);
+  }
+  body:has(.landing-hero) .site-footer-link {
+    color: rgb(255 255 255 / 0.85);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  body:has(.landing-hero) .site-footer-link:hover {
+    color: white;
+    text-decoration: none;
   }
 }
 

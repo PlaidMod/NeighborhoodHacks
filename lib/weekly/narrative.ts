@@ -20,7 +20,7 @@ const cache = new Map<string, { at: number; points: string[] }>()
 
 const SCHEMA = {
   type: "object",
-  properties: { points: { type: "array", items: { type: "string" }, minItems: 1, maxItems: 6 } },
+  properties: { points: { type: "array", items: { type: "string" }, minItems: 1, maxItems: 4 } },
   required: ["points"],
 }
 
@@ -43,7 +43,7 @@ export async function weeklyNarrative(edition: WeeklyEdition, lang: Lang): Promi
   if (decided.length + coming.length === 0) return null
 
   const key = createHash("sha1")
-    .update(lang)
+    .update(lang + ":v3")
     .update(JSON.stringify([...decided, ...coming].map((i) => [i.item_id, i.outcome?.vote_result ?? null])))
     .digest("hex")
   const hit = cache.get(key)
@@ -51,13 +51,14 @@ export async function weeklyNarrative(edition: WeeklyEdition, lang: Lang): Promi
 
   const language = lang === "es" ? "Spanish" : "English"
   const system = `You write the summary at the top of a neighborhood's weekly local-government brief in Houston.
-Write 3 to 6 short sentences in plain ${language} that a 12-year-old could follow, covering the most important things from the list below.
+Write 3 or 4 short sentences, each under 20 words, in plain ${language} that a 12-year-old could follow. Explain what is actually happening and why it matters to a neighbor, covering the most important things from the list below.
 - Start the first sentence with "This week" (or "Esta semana" in Spanish).
 - Say who did what: name the government (e.g. "Houston City Council", "the county commissioners").
 - Decided items happened: use past tense, and say if they passed or failed when a result is given. Coming items are upcoming votes: say what they will decide and when.
 - Group many similar routine items into one sentence (e.g. "the county also has 14 land and permit approvals on Oct. 29").
 - Use only facts in the list. Never give opinions, never say whether something is good or bad, never tell anyone what to do or how to vote.
-- No jargon: say "money" not "appropriation", "land" not "plat".`
+- No government jargon, ever. Translate it: "plat" or "replat" -> "plan to divide land for building", "interlocal agreement" -> "deal with another government", "Purchasing Agent" -> "the county's buying office", "appropriation" -> "money", "ordinance" -> "city law", "amendment to an agreement" -> "change to a contract", "TIRZ"/"redevelopment authority" -> "a neighborhood development fund".
+- Never copy an agenda title. Say what it does in everyday words.`
 
   try {
     const text = await openRouterJson({
@@ -77,7 +78,7 @@ Write 3 to 6 short sentences in plain ${language} that a 12-year-old could follo
     })
     const parsed = JSON.parse(text) as { points?: unknown }
     const points = Array.isArray(parsed.points)
-      ? parsed.points.filter((p): p is string => typeof p === "string" && p.trim().length > 0).map((p) => p.trim()).slice(0, 6)
+      ? parsed.points.filter((p): p is string => typeof p === "string" && p.trim().length > 0).map((p) => p.trim()).slice(0, 4)
       : []
     if (points.length === 0) return null
     cache.set(key, { at: Date.now(), points })

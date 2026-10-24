@@ -640,7 +640,12 @@
     }
   },
   "Onboarding": {
-    "steps": { "address": "Address", "aboutYou": "About you", "ageAndName": "Age & name", "stack": "Your stack" },
+    "steps": {
+      "address": "Address",
+      "aboutYou": "About you",
+      "ageAndName": "Age & name",
+      "stack": "Your stack"
+    },
     "sidebarTitle": "A little at a time.",
     "sidebarBody": "We’ll ask for your address, tailor explanations to you, and then show the governments connected to your neighborhood.",
     "privacy": "We use your address to find your governments. Your street address is never saved to your account or on our servers.",
@@ -651,11 +656,26 @@
     "aboutBody": "Pick all that apply. We’ll explain decisions in terms of how they affect you.",
     "pickPersona": "Pick at least one to continue.",
     "personas": {
-      "student": { "label": "Student", "blurb": "High school or college" },
-      "parent": { "label": "Parent", "blurb": "Kids in local schools" },
-      "renter": { "label": "Renter", "blurb": "You rent your home" },
-      "homeowner": { "label": "Homeowner", "blurb": "You pay property tax directly" },
-      "voter": { "label": "First-time voter", "blurb": "New to voting here" }
+      "student": {
+        "label": "Student",
+        "blurb": "High school or college"
+      },
+      "parent": {
+        "label": "Parent",
+        "blurb": "Kids in local schools"
+      },
+      "renter": {
+        "label": "Renter",
+        "blurb": "You rent your home"
+      },
+      "homeowner": {
+        "label": "Homeowner",
+        "blurb": "You pay property tax directly"
+      },
+      "voter": {
+        "label": "First-time voter",
+        "blurb": "New to voting here"
+      }
     },
     "detailsTitle": "A couple quick details.",
     "detailsBody": "These help us explain what matters to you. Your name is optional.",
@@ -708,7 +728,10 @@
     "signupTag": "Sign-up",
     "forItems": "for {count} items on this agenda",
     "summaryTitle": "This week, in short",
-    "summaryAi": "Written with AI from the official agendas. Open any story below for the details."
+    "summaryAi": "Written with AI from the official agendas. Open any story below for the details.",
+    "itemsShort": "{count, plural, one {# item} other {# items}}",
+    "signupBy": "Sign up to speak by {time}",
+    "startsAt": "Meeting starts {time}"
   },
   "AppTldr": {
     "short": "This week, in short",

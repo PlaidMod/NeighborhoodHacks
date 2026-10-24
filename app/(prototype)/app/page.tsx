@@ -182,7 +182,10 @@ function WeekInShort() {
       <h2 id="week-in-short" className="flex items-center gap-1.5 text-xs font-bold text-denim">
         <Zap aria-hidden className="size-3.5" /> {t("short")}
       </h2>
-      {shown.length === 0 ? (
+      {weekly?.summary?.length ? (
+        // The week in plain English, written with AI from the agendas.
+        <p className="mt-1.5 text-[1.02rem] leading-relaxed text-pretty text-ink">{weekly.summary.join(" ")}</p>
+      ) : shown.length === 0 ? (
         <p className="mt-1.5 text-[1.02rem] leading-relaxed text-muted-foreground">{t("quiet")}</p>
       ) : (
         <p className="mt-1.5 text-[1.02rem] leading-relaxed text-pretty text-ink">
@@ -200,7 +203,7 @@ function WeekInShort() {
           ))}
         </p>
       )}
-      {shown.some((u) => u.aiWritten) && <p className="mt-1.5 text-xs text-muted-foreground">{AI_LABEL[lang]}</p>}
+      {(weekly?.summary?.length || shown.some((u) => u.aiWritten)) && <p className="mt-1.5 text-xs text-muted-foreground">{AI_LABEL[lang]}</p>}
     </section>
   )
 }

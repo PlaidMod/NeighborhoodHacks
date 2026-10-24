@@ -12,15 +12,15 @@ export async function SiteHeader() {
         <Logo />
         <nav aria-label={t('navLabel')} className="flex items-center gap-3">
           {/* Hidden on phones: the header would scroll sideways at 390px, and the page itself offers this action. */}
-          <Button asChild size="sm" className="hidden rounded-full px-4 sm:inline-flex">
+          <Button asChild size="sm" className="site-nav-cta hidden rounded-full px-4 sm:inline-flex">
             <Link href="/address" transitionTypes={['nav-forward']}>
               {t('findGovernments')}
             </Link>
           </Button>
-          <Link href="/about" className="text-sm font-semibold text-ink underline-offset-4 hover:underline">
+          <Link href="/about" className="site-nav-link text-sm font-semibold text-ink underline-offset-4 hover:underline">
             {t('about')}
           </Link>
-          <LanguageToggle />
+          <LanguageToggle className="site-lang" />
         </nav>
       </div>
     </header>
