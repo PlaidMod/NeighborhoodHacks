@@ -140,20 +140,6 @@ export default function Brief() {
         <h1 className="mt-4 font-headline text-[2.6rem] leading-[1.02] font-black md:text-[3.6rem]">
           {t("title", { area: jurisdiction.area })}
         </h1>
-        {weekly?.summary && (
-          // The point of a weekly brief: what's happening, in plain sentences, up top.
-          <section aria-labelledby="week-in-short" className="mt-5 max-w-4xl rounded-[24px] bg-white p-5 md:p-6">
-            <h2 id="week-in-short" className="font-headline text-2xl font-black md:text-[1.75rem]">
-              {t("summaryTitle")}
-            </h2>
-            <div className="mt-3 space-y-2.5 text-[1.05rem] leading-relaxed md:text-lg">
-              {weekly.summary.map((point, i) => (
-                <p key={i}>{point}</p>
-              ))}
-            </div>
-            <p className="mt-3 text-xs text-muted-foreground">{t("summaryAi")}</p>
-          </section>
-        )}
         <p className="mt-3 max-w-2xl text-[1.02rem] text-muted-foreground">
           {weekly
             ? weekly.intro
@@ -400,31 +386,29 @@ function WeekCalendar({ days, bodies, onOpen }: { days: CalendarDay[]; bodies: B
   }
   const cell = (d: CalendarDay) => (
     <>
-      <span
-        className={cn(
-          "grid size-7 shrink-0 place-items-center rounded-full text-xs font-bold",
-          d.today ? "bg-brick text-white" : d.past ? "text-muted-foreground" : "text-ink",
-        )}
-      >
-        {d.day}
+      <span className="flex items-center gap-1.5">
+        <span
+          className={cn(
+            "grid size-7 shrink-0 place-items-center rounded-full text-xs font-bold",
+            d.today ? "bg-brick text-white" : d.past ? "text-muted-foreground" : "text-ink",
+          )}
+        >
+          {d.day}
+        </span>
+        {d.deadlines.length > 0 && <span aria-label={t("signupTag")} className="size-2 rounded-full bg-brick" />}
       </span>
-      {d.deadlines[0] && (
-        <span className="mt-1.5 flex items-center gap-1 rounded-md bg-brick-soft px-1.5 py-0.5 text-[10px] font-bold text-brick-deep">
-          <span aria-hidden className="size-1.5 shrink-0 rounded-full bg-brick" />
-          <span className="truncate">
-            {t("signupTag")} {fmtTime(d.deadlines[0].at)}
+      {d.items.length > 0 && (
+        <span className="mt-auto flex items-center gap-1.5 pt-2">
+          <span className="flex -space-x-1">
+            {byBody(d)
+              .slice(0, 3)
+              .map(({ body }) => (
+                <BodyIcon key={body!.id} kind={body!.kind} id={body!.id} className="size-4 rounded-full ring-2 ring-white" />
+              ))}
           </span>
+          <span className="text-[11px] font-semibold text-muted-foreground">{t("itemsShort", { count: d.items.length })}</span>
         </span>
       )}
-      {byBody(d)
-        .slice(0, 2)
-        .map(({ body, count }) => (
-          <span key={body!.id} className="mt-1.5 flex items-center gap-1.5 text-[11px] font-semibold text-ink">
-            <BodyIcon kind={body!.kind} id={body!.id} className="size-4 rounded-full" />
-            <span className="min-w-0 flex-1 truncate">{shortBody(body!.short)}</span>
-            <span className="text-muted-foreground">{count}</span>
-          </span>
-        ))}
     </>
   )
   return (
@@ -445,7 +429,7 @@ function WeekCalendar({ days, bodies, onOpen }: { days: CalendarDay[]; bodies: B
               onClick={() => setSelected(d.key)}
               aria-pressed={d.key === selected}
               className={cn(
-                "flex min-h-28 flex-col items-stretch justify-start border-line p-2 text-left transition-[background-color] duration-150 hover:bg-denim-soft/40",
+                "flex min-h-20 flex-col items-stretch justify-start border-line p-2 text-left transition-[background-color] duration-150 hover:bg-denim-soft/40",
                 i % 7 !== 6 && "border-r",
                 i < 7 && "border-b",
                 d.past && "bg-muted/60",
@@ -482,32 +466,40 @@ function WeekCalendar({ days, bodies, onOpen }: { days: CalendarDay[]; bodies: B
           ))}
       </div>
 
-      {/* The picked day */}
+      {/* The picked day: one line about it, then its top few items. */}
       <div className="mt-3 rounded-[24px] bg-white p-5">
-        <p className="text-sm font-bold">{day.label}</p>
+        <p className="text-sm font-bold">
+          {day.label}
+          {day.items.length > 0 && <span className="font-semibold text-muted-foreground"> · {t("itemsShort", { count: day.items.length })}</span>}
+        </p>
         {!busy(day) && <p className="mt-2 text-sm text-muted-foreground">{t("dayEmpty")}</p>}
-        <ul className="mt-3 space-y-2">
-          {/* Deadlines at the same time collapse into one line ("Sign-up closes 8:00 AM · 19 items"). */}
-          {deadlineGroups(day).map((g) => (
-            <li key={g.at}>
-              <button onClick={() => g.first && onOpen(g.first)} className="flex w-full flex-wrap items-center gap-x-3 gap-y-1 text-left text-sm">
-                <span className="shrink-0 rounded-md bg-brick-soft px-2 py-0.5 text-xs font-bold text-brick-deep">
-                  {t("signupShort")} {fmtTime(g.at)}
-                </span>
-                <span className="font-semibold text-muted-foreground">{g.count > 1 ? t("forItems", { count: g.count }) : g.title}</span>
-              </button>
-            </li>
-          ))}
-          {day.items.slice(0, 5).map((u) => (
-            <li key={u.id}>
-              <button onClick={() => onOpen(u)} className="flex w-full items-center gap-3 text-left text-sm">
-                <span className="w-16 shrink-0 text-xs font-semibold text-muted-foreground">{fmtTime(u.date)}</span>
-                <span className="min-w-0 flex-1 truncate font-semibold hover:text-denim">{u.title}</span>
-              </button>
-            </li>
-          ))}
-        </ul>
-        {day.items.length > 5 && (
+        {deadlineGroups(day)[0] && (
+          <p className="mt-1 flex items-center gap-1.5 text-sm font-semibold text-brick-deep">
+            <span aria-hidden className="size-2 rounded-full bg-brick" />
+            {t("signupBy", { time: fmtTime(deadlineGroups(day)[0].at) })}
+          </p>
+        )}
+        {(() => {
+          const shown = day.items.slice(0, 3)
+          // When everything starts together, say the time once instead of on every row.
+          const oneTime = shown.length > 0 && shown.every((u) => fmtTime(u.date) === fmtTime(shown[0].date))
+          return (
+            <>
+              {oneTime && <p className="mt-3 text-xs font-semibold text-muted-foreground">{t("startsAt", { time: fmtTime(shown[0].date) })}</p>}
+              <ul className={cn("space-y-1.5", oneTime ? "mt-1.5" : "mt-3")}>
+                {shown.map((u) => (
+                  <li key={u.id}>
+                    <button onClick={() => onOpen(u)} className="flex w-full items-center gap-3 text-left text-sm">
+                      {!oneTime && <span className="w-16 shrink-0 text-xs font-semibold text-muted-foreground">{fmtTime(u.date)}</span>}
+                      <span className="min-w-0 flex-1 truncate font-semibold hover:text-denim">{u.title}</span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )
+        })()}
+        {day.items.length > 3 && (
           <Link href="/app/timeline" className="mt-3 inline-block text-sm font-semibold text-denim hover:underline">
             {t("seeAll", { count: day.items.length })}
           </Link>

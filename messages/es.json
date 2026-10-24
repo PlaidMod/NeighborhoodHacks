@@ -640,7 +640,12 @@
     }
   },
   "Onboarding": {
-    "steps": { "address": "Dirección", "aboutYou": "Sobre ti", "ageAndName": "Edad y nombre", "stack": "Tus gobiernos" },
+    "steps": {
+      "address": "Dirección",
+      "aboutYou": "Sobre ti",
+      "ageAndName": "Edad y nombre",
+      "stack": "Tus gobiernos"
+    },
     "sidebarTitle": "Paso a paso.",
     "sidebarBody": "Te pediremos tu dirección, adaptaremos las explicaciones a ti y luego mostraremos los gobiernos de tu vecindario.",
     "privacy": "Usamos tu dirección para encontrar tus gobiernos. Nunca guardamos tu dirección en tu cuenta ni en nuestros servidores.",
@@ -651,11 +656,26 @@
     "aboutBody": "Elige todas las que apliquen. Explicaremos cómo te afectan las decisiones.",
     "pickPersona": "Elige al menos una opción para continuar.",
     "personas": {
-      "student": { "label": "Estudiante", "blurb": "Preparatoria o universidad" },
-      "parent": { "label": "Madre o padre", "blurb": "Hijos en escuelas locales" },
-      "renter": { "label": "Inquilino", "blurb": "Rentas tu vivienda" },
-      "homeowner": { "label": "Propietario", "blurb": "Pagas directamente el impuesto a la propiedad" },
-      "voter": { "label": "Votante por primera vez", "blurb": "Es tu primera vez votando aquí" }
+      "student": {
+        "label": "Estudiante",
+        "blurb": "Preparatoria o universidad"
+      },
+      "parent": {
+        "label": "Madre o padre",
+        "blurb": "Hijos en escuelas locales"
+      },
+      "renter": {
+        "label": "Inquilino",
+        "blurb": "Rentas tu vivienda"
+      },
+      "homeowner": {
+        "label": "Propietario",
+        "blurb": "Pagas directamente el impuesto a la propiedad"
+      },
+      "voter": {
+        "label": "Votante por primera vez",
+        "blurb": "Es tu primera vez votando aquí"
+      }
     },
     "detailsTitle": "Un par de datos rápidos.",
     "detailsBody": "Nos ayudan a explicar lo que te importa. Tu nombre es opcional.",
@@ -708,7 +728,10 @@
     "signupTag": "Inscripción",
     "forItems": "para {count} puntos de esta agenda",
     "summaryTitle": "Esta semana, en resumen",
-    "summaryAi": "Escrito con IA a partir de las agendas oficiales. Abra cualquier noticia abajo para ver los detalles."
+    "summaryAi": "Escrito con IA a partir de las agendas oficiales. Abra cualquier noticia abajo para ver los detalles.",
+    "itemsShort": "{count, plural, one {# asunto} other {# asuntos}}",
+    "signupBy": "Inscríbase para hablar antes de las {time}",
+    "startsAt": "La reunión empieza a las {time}"
   },
   "AppTldr": {
     "short": "Esta semana, en breve",

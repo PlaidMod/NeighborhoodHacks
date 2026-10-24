@@ -26,8 +26,8 @@ export async function loadLiveData(now: Date = new Date()): Promise<LiveData | n
   const lang = (await getLocale()) === 'es' ? 'es' : 'en'
   // The brief's sections and order come from P3's buildWeekly (plan §10), which applies its own 7-back/14-ahead window.
   const edition = buildWeekly({ items, bodies: resolved.bodies, stakes, now, lang })
-  // The week in plain sentences. Cached for hours, so this is usually instant; on a cold cache
-  // the page waits at most 8s, and the summary keeps generating for the next load.
+  // The home page's "This week, in short", in plain English. Cached for hours, so usually
+  // instant; on a cold cache the page waits at most 8s and it finishes for the next load.
   const summary = await Promise.race([
     weeklyNarrative(edition, lang),
     new Promise<null>((resolve) => setTimeout(() => resolve(null), 8_000)),
