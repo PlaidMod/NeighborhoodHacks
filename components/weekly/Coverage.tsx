@@ -46,7 +46,12 @@ export function Coverage({ coverage, className }: { coverage: CoverageData | nul
 
       {open && (
         <div id={panel} lang="en" className="mt-3 space-y-4 rounded-2xl bg-white p-4 text-sm ring-1 ring-border">
-          {locale === 'es' && <p className="text-xs font-semibold text-sand-deep">{t('englishOnly')}</p>}
+          {/* The panel is English, but this note is Spanish: lang="es" makes screen readers switch voices. */}
+          {locale === 'es' && (
+            <p lang="es" className="text-xs font-semibold text-sand-deep">
+              {t('englishOnly')}
+            </p>
+          )}
           {c.state === 'sources_only' && <p>{t('sourcesOnly')}</p>}
           {c.groups.map((g) => (
             <div key={g.label_en}>

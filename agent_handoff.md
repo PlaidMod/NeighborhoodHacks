@@ -33,6 +33,15 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-23: Screen readers read the news panel's Spanish note in Spanish
+- **Who:** PlaidMod · P5 Platform (fix in P3's news coverage panel)
+- **Branch:** main
+- **What changed:** On Spanish pages, the "What news coverage says" panel is English by design (perspectives spec N13) and is marked `lang="en"`. Its Spanish note, "Esta sección solo está disponible en inglés.", sat inside that marking, so screen readers read it with an English voice. The note now carries `lang="es"`. The panel's other text stays English, as the spec says (that includes `Coverage.sourcesOnly`, which only looks untranslated in `es.json`).
+- **Files:** `components/weekly/Coverage.tsx`, `tests/perspectives/coverageLang.test.ts` (new)
+- **Contract changes:** None
+- **Checked:** The new test renders the open panel in English and Spanish. It failed before the fix, passes with it, and fails again with the fix stashed. `npm test` (853 Vitest + 72 P4), typecheck, lint and build pass. Not checked in a browser or with a screen reader.
+- **Open issues / next:** None from this change.
+
 ### 2026-10-23: Alerts checkboxes aligned; merge note on the sidebar toggle
 - **Who:** sohankamsala · P3 Weekly News and Alerts
 - **Branch:** main
