@@ -21,6 +21,8 @@ export type LiveData = {
   /** The weekly brief in the plan's order (§10), as update IDs. Built by buildWeekly(). */
   weekly: {
     intro: string
+    /** "This week, in short": plain sentences about the week, written with AI. Null if unavailable. */
+    summary?: string[] | null
     leadId: string | null
     comingUpIds: string[]
     decidedIds: string[]
@@ -146,6 +148,7 @@ export function toLiveData(
   stakes: Stake[],
   edition: WeeklyEdition,
   lang: Lang = "en",
+  summary: string[] | null = null,
 ): LiveData {
   const mapped = bodies.map(toBody)
   const kinds = new Map(mapped.map((b) => [b.id, b.kind]))
@@ -160,6 +163,7 @@ export function toLiveData(
     personas: stakes.map((s) => PERSONAS[s]),
     weekly: {
       intro: edition.intro,
+      summary,
       leadId: edition.lead && mine(edition.lead) ? edition.lead.item_id : null,
       comingUpIds: edition.comingUp.filter(mine).map((i) => i.item_id),
       decidedIds: edition.decided.filter(mine).map((i) => i.item_id),

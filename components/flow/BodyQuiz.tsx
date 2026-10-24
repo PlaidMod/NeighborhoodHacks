@@ -60,7 +60,7 @@ export function BodyQuiz() {
   }
 
   return (
-    <section className="mt-12 rounded-[28px] bg-white p-6 ring-1 ring-border md:p-8" aria-labelledby="body-quiz-title">
+    <section className="mt-12 rounded-[28px] bg-white p-5 ring-1 ring-border md:p-8" aria-labelledby="body-quiz-title">
       <div className="max-w-2xl">
         <p className="text-xs font-bold uppercase tracking-[0.12em] text-muted-foreground">{t('eyebrow')}</p>
         <h2 id="body-quiz-title" className="mt-2 text-2xl font-extrabold tracking-tight text-ink">{t('title')}</h2>

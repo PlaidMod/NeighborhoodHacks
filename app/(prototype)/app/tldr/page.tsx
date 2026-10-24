@@ -88,7 +88,7 @@ export default function Tldr() {
           )}
 
           {next ? (
-            <section className="flex flex-col gap-5 rounded-[24px] bg-brick p-6 font-sans text-white md:flex-row md:items-center md:justify-between md:p-7">
+            <section className="flex flex-col gap-5 rounded-[24px] bg-brick p-5 font-sans text-white md:flex-row md:items-center md:justify-between md:p-7">
               <div className="flex items-start gap-4">
                 <Mic aria-hidden className="mt-1 size-6 shrink-0 text-white/80" />
                 <div>
@@ -103,7 +103,7 @@ export default function Tldr() {
               </Button>
             </section>
           ) : (
-            <section className="flex flex-col gap-4 rounded-[24px] bg-muted p-6 font-sans md:flex-row md:items-center md:justify-between">
+            <section className="flex flex-col gap-4 rounded-[24px] bg-muted p-5 font-sans md:flex-row md:items-center md:justify-between">
               <div>
                 <h2 className="text-sm font-bold text-muted-foreground">{t("next")}</h2>
                 <p className="mt-1 leading-relaxed font-semibold text-ink">{nextText}</p>

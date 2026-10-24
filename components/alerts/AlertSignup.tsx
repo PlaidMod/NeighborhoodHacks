@@ -77,7 +77,7 @@ export function AlertSignup({ token, preview }: { token: string | null; preview:
 
   if (step === 'done') {
     return (
-      <div role="status" className="flex gap-3 rounded-[24px] bg-sage-soft p-6 text-sage">
+      <div role="status" className="flex gap-3 rounded-[24px] bg-sage-soft p-5 text-sage">
         <CheckCircle2 aria-hidden className="mt-0.5 size-5 shrink-0" />
         <div>
           <p className="font-bold">{t('doneTitle')}</p>
@@ -89,7 +89,7 @@ export function AlertSignup({ token, preview }: { token: string | null; preview:
 
   if (step === 'preview') {
     return (
-      <div role="status" className="flex gap-3 rounded-[24px] bg-sand p-6 text-sand-deep">
+      <div role="status" className="flex gap-3 rounded-[24px] bg-sand p-5 text-sand-deep">
         <Info aria-hidden className="mt-0.5 size-5 shrink-0" />
         <div>
           <p className="font-bold">{t('previewTitle')}</p>
@@ -107,7 +107,7 @@ export function AlertSignup({ token, preview }: { token: string | null; preview:
 
   if (step === 'code') {
     return (
-      <form onSubmit={verify} className="space-y-4 rounded-[24px] bg-white p-6 ring-1 ring-border" noValidate>
+      <form onSubmit={verify} className="space-y-4 rounded-[24px] bg-white p-5 ring-1 ring-border" noValidate>
         <div>
           <label htmlFor={ids.code} className="text-sm font-bold">
             {t('codeLabel')}
@@ -142,7 +142,7 @@ export function AlertSignup({ token, preview }: { token: string | null; preview:
   }
 
   return (
-    <form onSubmit={sendCode} className="space-y-5 rounded-[24px] bg-white p-6 ring-1 ring-border" noValidate>
+    <form onSubmit={sendCode} className="space-y-5 rounded-[24px] bg-white p-5 ring-1 ring-border" noValidate>
       <div>
         <label htmlFor={ids.phone} className="text-sm font-bold">
           {t('phoneLabel')}

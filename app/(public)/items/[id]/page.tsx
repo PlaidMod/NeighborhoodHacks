@@ -97,7 +97,7 @@ export default async function ItemPage({
       </article>
 
       {upcoming && (
-        <div className="mt-8 flex w-full flex-col gap-3 rounded-[24px] bg-ink p-6 font-sans text-white sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-8 flex w-full flex-col gap-3 rounded-[24px] bg-ink p-5 font-sans text-white sm:flex-row sm:items-center sm:justify-between">
           <p className="font-semibold">
             {item.registration_closes_at ? tn('closes', { when: when(item.registration_closes_at) }) : tn('meeting', { when: when(item.meeting_date) })}
           </p>

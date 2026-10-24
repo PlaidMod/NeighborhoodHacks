@@ -52,7 +52,7 @@ export default function BodyPage() {
       {/* Hero */}
       <section
         className={cn(
-          "relative mt-4 overflow-hidden rounded-[28px] p-7 text-white md:p-10",
+          "relative mt-4 overflow-hidden rounded-[28px] p-5 text-white md:p-10",
           dark ? "bg-ink" : "bg-denim",
         )}
       >
@@ -111,7 +111,7 @@ export default function BodyPage() {
           </div>
         </Panel>
 
-        <div className="flex flex-col justify-between rounded-[24px] bg-brick p-6 text-white">
+        <div className="flex flex-col justify-between rounded-[24px] bg-brick p-5 text-white">
           <div>
             <Megaphone className="size-6 text-white/80" />
             <p className="mt-4 text-lg font-extrabold tracking-tight">How to speak at a meeting</p>

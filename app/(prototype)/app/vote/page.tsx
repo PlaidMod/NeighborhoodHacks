@@ -70,7 +70,7 @@ export default function VotePage() {
 
       <div className="mt-6 grid gap-4 xl:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
         {/* Eligibility */}
-        <section className="relative overflow-hidden rounded-[28px] bg-brick p-7 text-white md:p-9">
+        <section className="relative overflow-hidden rounded-[28px] bg-brick p-5 text-white md:p-9">
           <Flag className="absolute -right-8 -bottom-10 size-64 text-white/[0.07]" strokeWidth={1} />
           <Chip className="relative bg-white/15 text-white">Eligibility check</Chip>
           <h2 className="relative mt-4 max-w-lg text-[1.9rem] leading-[1.1] font-extrabold tracking-tight">
@@ -101,7 +101,7 @@ export default function VotePage() {
 
         {/* Election card */}
         <section className="flex flex-col gap-4">
-          <div className="rounded-[28px] bg-ink p-7 text-white">
+          <div className="rounded-[28px] bg-ink p-5 text-white">
             <p className="text-sm font-bold text-white/60">Next election</p>
             <p className="mt-1 text-2xl font-extrabold tracking-tight">Tuesday, November 3</p>
             <div className="mt-6 grid grid-cols-3 gap-2 text-center">

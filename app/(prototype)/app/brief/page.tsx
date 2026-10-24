@@ -140,6 +140,20 @@ export default function Brief() {
         <h1 className="mt-4 font-headline text-[2.6rem] leading-[1.02] font-black md:text-[3.6rem]">
           {t("title", { area: jurisdiction.area })}
         </h1>
+        {weekly?.summary && (
+          // The point of a weekly brief: what's happening, in plain sentences, up top.
+          <section aria-labelledby="week-in-short" className="mt-5 max-w-4xl rounded-[24px] bg-white p-5 md:p-6">
+            <h2 id="week-in-short" className="font-headline text-2xl font-black md:text-[1.75rem]">
+              {t("summaryTitle")}
+            </h2>
+            <div className="mt-3 space-y-2.5 text-[1.05rem] leading-relaxed md:text-lg">
+              {weekly.summary.map((point, i) => (
+                <p key={i}>{point}</p>
+              ))}
+            </div>
+            <p className="mt-3 text-xs text-muted-foreground">{t("summaryAi")}</p>
+          </section>
+        )}
         <p className="mt-3 max-w-2xl text-[1.02rem] text-muted-foreground">
           {weekly
             ? weekly.intro
@@ -174,7 +188,7 @@ export default function Brief() {
               aria-label={u.title}
               onClick={() => openStory(u)}
               className={cn(
-                "group relative flex flex-col justify-between gap-6 overflow-hidden rounded-[28px] p-6 text-left transition-transform motion-safe:hover:-translate-y-0.5",
+                "group relative flex flex-col justify-between gap-6 overflow-hidden rounded-[28px] p-5 text-left transition-transform motion-safe:hover:-translate-y-0.5",
                 tile.cls,
               )}
             >
@@ -290,7 +304,7 @@ export default function Brief() {
         )}
 
         {!weekly && mud && (
-          <div className="rounded-[28px] bg-white p-6 md:p-8">
+          <div className="rounded-[28px] bg-white p-5 md:p-8">
             <p className="text-xs font-bold tracking-[0.14em] text-muted-foreground uppercase">{t("byNumbers")}</p>
             <div className="mt-5 grid gap-6 sm:grid-cols-3">
               <div>
@@ -310,7 +324,7 @@ export default function Brief() {
         )}
 
         {commentable[0] && (
-          <div className="flex flex-col gap-5 rounded-[28px] bg-brick p-6 font-sans text-white md:flex-row md:items-center md:justify-between md:p-8">
+          <div className="flex flex-col gap-5 rounded-[28px] bg-brick p-5 font-sans text-white md:flex-row md:items-center md:justify-between md:p-8">
             <div className="flex items-start gap-4">
               <Mic aria-hidden className="mt-1 size-6 shrink-0 text-white/80" />
               <div>

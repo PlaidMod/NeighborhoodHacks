@@ -145,9 +145,9 @@ describe('fits small phones and meets 4.5:1 contrast (DESIGN.md §13)', () => {
 })
 
 describe('getting to it from the dashboard', () => {
-  it('has its own sidebar entry, right after the weekly brief', () => {
+  it('is not in the sidebar (the weekly brief has its own summary now)', () => {
     const shell = read('components', 'prototype', 'app-shell.tsx')
-    expect(shell).toMatch(/\{ href: "\/app\/brief", key: "brief",[^}]*\},\s*\{ href: "\/app\/tldr", key: "tldr",/)
+    expect(shell).not.toContain('href: "/app/tldr"')
   })
 
   it('is linked from the dashboard home', () => {

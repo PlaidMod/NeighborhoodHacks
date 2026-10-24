@@ -8,7 +8,7 @@ export default async function AddressPage() {
   const [t, home] = await Promise.all([getTranslations('AddressPage'), getTranslations('Home')])
 
   return (
-    <main id="main" className="mx-auto max-w-7xl px-4 pt-8 pb-16 md:px-8 md:pt-12 2xl:max-w-[1440px]">
+    <main id="main" className="mx-auto max-w-7xl px-4 pt-8 pb-8 md:px-8 md:pt-12 2xl:max-w-[1440px]">
       <Link href="/" className="inline-flex items-center gap-2 text-sm font-semibold text-denim underline-offset-4 hover:underline">
         <ArrowLeft aria-hidden className="size-4" size={16} strokeWidth={2} absoluteStrokeWidth />
         {t('back')}

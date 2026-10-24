@@ -276,7 +276,31 @@
     "glance": "Tus gobiernos de un vistazo",
     "upcomingCount": "{count, plural, =0 {Nada próximo} one {# punto próximo} other {# puntos próximos}}",
     "empty": "No hay nada en la agenda de tus gobiernos entre la semana pasada y las próximas dos semanas.",
-    "forYou": "Para ti"
+    "forYou": "Para ti",
+    "summaryTitle": "Esta semana, en resumen",
+    "sumComing": "{count, plural, =0 {Nada pendiente} one {# decisión pendiente} other {# decisiones pendientes}} en {bodies, plural, one {# de sus gobiernos} other {# de sus gobiernos}}.",
+    "sumBusiest": "Día más ocupado: {day}, cuando {body} trata {count} asuntos.",
+    "sumTopics": "Sobre todo: {topics}.",
+    "sumDeadline": "Próxima oportunidad de hablar: inscríbase antes del {when} para “{headline}”.",
+    "sumDecided": "{count, plural, one {# decisión tomada} other {# decisiones tomadas}}: {passed} aprobadas, {failed} rechazadas, {pending} aún sin resultado.",
+    "sumCancelled": "{count, plural, one {Se canceló # reunión} other {Se cancelaron # reuniones}}.",
+    "showMore": "Mostrar {count} más",
+    "moreDeadlines": "+ {count} más",
+    "topic": {
+      "tax": "impuestos",
+      "bond": "bonos",
+      "election": "elecciones",
+      "school": "escuelas",
+      "leader": "liderazgo",
+      "budget": "presupuesto y gastos",
+      "zoning": "zonificación",
+      "property": "terrenos y propiedades",
+      "transit": "transporte",
+      "water_rate": "tarifas de agua",
+      "personnel": "personal y contrataciones"
+    },
+    "sumDecidedPending": "{count, plural, one {# decisión tomada} other {# decisiones tomadas}}; los resultados aún no se publican.",
+    "summaryAi": "Escrito con IA a partir de las agendas oficiales. Abra cualquier asunto abajo para ver los detalles."
   },
   "Timeline": {
     "metaTitle": "Lo más reciente",
@@ -622,7 +646,9 @@
     "dayEmpty": "No hay nada en la agenda este día.",
     "seeAll": "Ver los {count} en la cronología",
     "signupTag": "Inscripción",
-    "forItems": "para {count} puntos de esta agenda"
+    "forItems": "para {count} puntos de esta agenda",
+    "summaryTitle": "Esta semana, en resumen",
+    "summaryAi": "Escrito con IA a partir de las agendas oficiales. Abra cualquier noticia abajo para ver los detalles."
   },
   "AppTldr": {
     "chip": "La versión corta",

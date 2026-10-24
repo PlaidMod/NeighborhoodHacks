@@ -170,7 +170,7 @@ function StatCard({
     <Link
       href={href}
       className={cn(
-        "group rise relative flex min-h-[144px] flex-col justify-between gap-4 overflow-hidden rounded-[24px] bg-white p-5 transition-transform motion-safe:hover:-translate-y-0.5 md:min-h-[168px] md:p-6",
+        "group rise relative flex min-h-[124px] flex-col justify-between gap-3 overflow-hidden rounded-[24px] bg-white p-4 transition-transform motion-safe:hover:-translate-y-0.5 md:min-h-[140px] md:p-5",
         hero && "col-span-2 bg-denim text-white sm:col-span-1",
       )}
     >
@@ -181,19 +181,19 @@ function StatCard({
         </>
       )}
       <div className="relative flex items-start justify-between gap-2">
-        <p className={cn("text-sm font-semibold", hero ? "text-white" : "text-muted-foreground")}>{label}</p>
+        <p className={cn("text-base leading-snug font-bold md:text-lg", hero ? "text-white" : "text-ink")}>{label}</p>
         <ArrowCircle className={hero ? "bg-white text-denim" : "hidden text-ink sm:grid"} />
       </div>
       <div className="relative">
         <p
           className={cn(
-            "text-[2.6rem] leading-none font-bold tracking-tight tabular",
+            "text-[3rem] leading-none font-bold tracking-tight tabular md:text-[3.4rem]",
             tone === "brick" && "text-brick",
           )}
         >
           {value}
         </p>
-        <p className={cn("mt-2 min-h-10 text-xs leading-relaxed sm:min-h-0", hero ? "text-white/80" : "text-muted-foreground")}>
+        <p className={cn("mt-1.5 text-sm leading-snug", hero ? "text-white/80" : "text-muted-foreground")}>
           {note}
         </p>
       </div>
@@ -222,7 +222,7 @@ function Countdown({ u }: { u?: Update }) {
   const b = u && bodies.find((x) => x.id === u.bodyId)
   const pad = (n: number) => String(n).padStart(2, "0")
   return (
-    <div className="relative flex min-h-[280px] flex-col justify-between overflow-hidden rounded-[24px] bg-ink p-6 text-white md:p-7">
+    <div className="relative flex min-h-[280px] flex-col justify-between overflow-hidden rounded-[24px] bg-ink p-5 text-white md:p-7">
       <svg className="pointer-events-none absolute inset-0 h-full w-full opacity-[0.12]" aria-hidden>
         {Array.from({ length: 9 }).map((_, i) => (
           <circle key={i} cx="105%" cy="110%" r={40 + i * 28} fill="none" stroke="white" strokeWidth="1" />
@@ -310,7 +310,7 @@ function PersonaCard() {
   }
 
   return (
-    <div className={cn("flex flex-col gap-4 rounded-[24px] p-6 md:flex-row md:items-center md:justify-between md:px-8", tone)}>
+    <div className={cn("flex flex-col gap-4 rounded-[24px] p-5 md:flex-row md:items-center md:justify-between md:px-8", tone)}>
       <p className="max-w-2xl text-[0.95rem] leading-relaxed font-semibold">{text}</p>
       <div className="shrink-0">{action}</div>
     </div>

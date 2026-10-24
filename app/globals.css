@@ -218,6 +218,14 @@
   body:has(.landing-hero) .landing-hero {
     margin-top: -4.5rem;
     padding-top: 4.5rem;
+    /* Stretch to the footer. Its fixed min-height left a strip of bare photo,
+       without the hero's tint, above the footer. */
+    flex: 1 1 auto;
+  }
+
+  body:has(.landing-hero) :has(> .landing-hero) {
+    display: flex;
+    flex-direction: column;
   }
 }
 

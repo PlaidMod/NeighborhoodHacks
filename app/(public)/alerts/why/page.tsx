@@ -23,7 +23,7 @@ export default async function WhyPage({ searchParams }: { searchParams: Promise<
       <div className="max-w-3xl">
       <h1 className="mt-8 text-[2rem] leading-tight font-extrabold tracking-tight text-ink">{t('whyTitle')}</h1>
       {known ? (
-        <div className="mt-6 rounded-[24px] bg-denim-soft p-6 text-denim-deep">
+        <div className="mt-6 rounded-[24px] bg-denim-soft p-5 text-denim-deep">
           <p className="text-lg font-bold">{known.title}</p>
           <p className="mt-2">{known.why}</p>
           {itemId && (

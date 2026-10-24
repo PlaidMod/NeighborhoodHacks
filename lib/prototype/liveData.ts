@@ -4,6 +4,7 @@ import { getLocale } from 'next-intl/server'
 import { buildWeekly } from '@/lib/weekly/build'
 import { STAKES_COOKIE, parseStakes } from '@/lib/stakes'
 import { loadItems, resolveBodies } from '@/lib/weekly/data'
+import { weeklyNarrative } from '@/lib/weekly/narrative'
 import { toLiveData, type LiveData } from './live'
 
 // The reader's real data for the /app screens. The bodies_token from the address lookup is
@@ -25,5 +26,11 @@ export async function loadLiveData(now: Date = new Date()): Promise<LiveData | n
   const lang = (await getLocale()) === 'es' ? 'es' : 'en'
   // The brief's sections and order come from P3's buildWeekly (plan §10), which applies its own 7-back/14-ahead window.
   const edition = buildWeekly({ items, bodies: resolved.bodies, stakes, now, lang })
-  return toLiveData(resolved.mode, resolved.bodies, items, stakes, edition, lang)
+  // The week in plain sentences. Cached for hours, so this is usually instant; on a cold cache
+  // the page waits at most 8s, and the summary keeps generating for the next load.
+  const summary = await Promise.race([
+    weeklyNarrative(edition, lang),
+    new Promise<null>((resolve) => setTimeout(() => resolve(null), 8_000)),
+  ])
+  return toLiveData(resolved.mode, resolved.bodies, items, stakes, edition, lang, summary)
 }

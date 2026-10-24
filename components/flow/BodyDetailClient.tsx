@@ -57,7 +57,7 @@ export function BodyDetailClient({ bodyId, token }: { bodyId: string; token: str
       {!body && !error && <p role="status" className="mt-6 text-muted-foreground">{t('loading')}</p>}
       {body && (
         <article className="mt-6">
-          <header className="rounded-[28px] bg-primary p-6 text-white md:p-8">
+          <header className="rounded-[28px] bg-primary p-5 text-white md:p-8">
             <div className="flex items-start gap-4">
               <BodyIcon type={isQuizBodyType(body.type) ? body.type : 'other'} id={body.id} />
               <div>

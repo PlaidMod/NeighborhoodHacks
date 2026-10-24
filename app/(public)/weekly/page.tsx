@@ -10,6 +10,8 @@ import { Button } from '@/components/ui/button'
 import type { BodyType } from '@/lib/contracts/bodyTypes'
 import { STAKES_COOKIE, parseStakes } from '@/lib/stakes'
 import { buildWeekly, type WeeklyItem } from '@/lib/weekly/build'
+import { summarizeWeek } from '@/lib/weekly/summary'
+import { weeklyNarrative } from '@/lib/weekly/narrative'
 import { loadItems, resolveBodies } from '@/lib/weekly/data'
 import { cn } from '@/lib/utils'
 
@@ -67,7 +69,11 @@ export default async function WeeklyPage({ searchParams }: { searchParams: Promi
   const day = (iso: string) => format.dateTime(new Date(iso), { month: 'short', day: 'numeric' })
   const itemHref = (i: WeeklyItem) => withToken(`/items/${i.item_id}`, token)
 
-  const tiles = [edition.lead, ...edition.comingUp].filter((i): i is WeeklyItem => !!i).slice(0, TILES.length)
+  // Fewer, bigger stories up top; the rest are a short list with "Show more".
+  const tiles = [edition.lead, ...edition.comingUp].filter((i): i is WeeklyItem => !!i).slice(0, 3)
+  const summary = summarizeWeek(edition, now)
+  const narrative = await weeklyNarrative(edition, lang)
+  const SHOWN = 5
   const moreComingUp = edition.comingUp.slice(Math.max(0, tiles.length - 1))
   const nothing = !edition.lead && edition.decided.length === 0
 
@@ -83,14 +89,64 @@ export default async function WeeklyPage({ searchParams }: { searchParams: Promi
           <span>{t('range', { from: day(edition.from), to: day(edition.to) })}</span>
         </p>
         <h1 className="mt-4 font-headline text-[2rem] leading-[1.06] font-black sm:text-[2.4rem] md:text-[3.4rem]">{t('title')}</h1>
-        <p className="mt-3 max-w-2xl text-[1.05rem] text-muted-foreground">{edition.intro}</p>
       </header>
+
+      {/* The point of a weekly brief: the main things happening, in a few lines. */}
+      {!nothing && (
+        <section aria-labelledby="week-summary" className="mt-6 rounded-[24px] bg-white p-5 md:p-6">
+          <h2 id="week-summary" className="font-headline text-2xl font-black md:text-3xl">{t('summaryTitle')}</h2>
+          {narrative ? (
+            <>
+              <div className="mt-4 space-y-3 font-sans text-[1.05rem] leading-relaxed md:text-lg">
+                {narrative.map((point, i) => (
+                  <p key={i}>{point}</p>
+                ))}
+              </div>
+              <p className="mt-4 font-sans text-xs text-muted-foreground">{t('summaryAi')}</p>
+            </>
+          ) : (
+          <ul className="mt-4 space-y-2.5 font-sans text-[1.05rem] leading-relaxed md:text-lg">
+            <li>
+              {t('sumComing', { count: summary.coming.count, bodies: summary.coming.bodies })}
+            </li>
+            {summary.busiest && (
+              <li>
+                {t('sumBusiest', { day: day(summary.busiest.date), body: summary.busiest.body_name, count: summary.busiest.count })}
+              </li>
+            )}
+            {summary.topics.length > 0 && (
+              <li>
+                {t('sumTopics', {
+                  topics: summary.topics.map((x) => `${t(`topic.${x.type}`)} (${x.count})`).join(', '),
+                })}
+              </li>
+            )}
+            {summary.nextDeadline && (
+              <li>
+                {t('sumDeadline', { when: when(summary.nextDeadline.at), headline: headline(summary.nextDeadline.item) })}{' '}
+                <Link href={`/speak-up/${summary.nextDeadline.item.item_id}`} className="font-semibold text-denim underline-offset-4 hover:underline">
+                  {tn('speakUp')}
+                </Link>
+              </li>
+            )}
+            {summary.decided.count > 0 && (
+              <li>
+                {summary.decided.passed + summary.decided.failed === 0
+                  ? t('sumDecidedPending', { count: summary.decided.count })
+                  : t('sumDecided', summary.decided)}
+              </li>
+            )}
+            {summary.cancelled > 0 && <li>{t('sumCancelled', { count: summary.cancelled })}</li>}
+          </ul>
+          )}
+        </section>
+      )}
 
       {nothing && <p className="py-10 text-muted-foreground">{t('empty')}</p>}
 
       {/* Bento: the lead story, then the next "coming up" items */}
       {tiles.length > 0 && (
-        <section aria-label={t('comingUp')} className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <section aria-label={t('comingUp')} className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {tiles.map((item, i) => {
             const tile = TILES[i]
             const s = story(item)
@@ -101,8 +157,10 @@ export default async function WeeklyPage({ searchParams }: { searchParams: Promi
                 key={item.item_id}
                 href={itemHref(item)}
                 className={cn(
-                  'group relative flex h-full flex-col justify-between overflow-hidden rounded-[28px] p-6 transition-transform focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none motion-safe:hover:-translate-y-1',
+                  'group relative flex h-full flex-col justify-between overflow-hidden rounded-[24px] p-5 transition-transform focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none motion-safe:hover:-translate-y-1',
                   tile.cls,
+                  // Three equal stories side by side on wide screens.
+                  'lg:col-span-1',
                 )}
               >
                 <div>
@@ -110,11 +168,11 @@ export default async function WeeklyPage({ searchParams }: { searchParams: Promi
                     {item.body_name}
                     {urgent && <span className={cn('ml-2', light ? 'text-brick' : 'text-white')}>● {tn('urgent')}</span>}
                   </p>
-                  <h2 className={cn('mt-2 line-clamp-5 font-headline leading-[1.12] font-bold', 'big' in tile && tile.big ? 'text-[1.4rem] sm:text-[1.7rem]' : 'text-[1.25rem]')}>
+                  <h2 className={cn('mt-2 line-clamp-3 font-headline leading-[1.12] font-bold', 'big' in tile && tile.big ? 'text-[1.4rem] sm:text-[1.7rem]' : 'text-[1.25rem]')}>
                     {headline(item)}
                   </h2>
-                  {s?.dek && (
-                    <p className={cn('mt-3 line-clamp-4 max-w-xl text-sm leading-relaxed', light ? 'text-ink/75' : 'text-white/80')}>
+                  {s?.dek && i === 0 && (
+                    <p className={cn('mt-3 line-clamp-3 max-w-xl text-sm leading-relaxed', light ? 'text-ink/75' : 'text-white/80')}>
                       {s.dek}
                     </p>
                   )}
@@ -139,7 +197,7 @@ export default async function WeeklyPage({ searchParams }: { searchParams: Promi
         </section>
       )}
 
-      <div className="mt-12 grid grid-cols-[minmax(0,1fr)] gap-10 lg:grid-cols-[minmax(0,1fr)_340px]">
+      <div className="mt-10 grid grid-cols-[minmax(0,1fr)] gap-10 lg:grid-cols-[minmax(0,1fr)_340px]">
         <div className="min-w-0 space-y-12">
           {/* The rest of "Coming up", with Speak up buttons */}
           {moreComingUp.length > 0 && (
@@ -147,16 +205,16 @@ export default async function WeeklyPage({ searchParams }: { searchParams: Promi
               <SectionRule>{t('comingUp')}</SectionRule>
               <ul className="divide-y divide-border">
                 {moreComingUp.map((item) => (
-                  <li key={item.item_id} className="flex flex-col gap-3 py-5 sm:flex-row sm:items-center sm:justify-between">
+                  <li key={item.item_id} className="flex flex-col gap-3 py-4 sm:flex-row sm:items-center sm:justify-between">
                     <div className="min-w-0">
                       <p className="text-xs font-bold text-denim">{item.body_name}</p>
-                      <Link href={itemHref(item)} className="font-headline text-[1.25rem] leading-snug font-bold hover:underline">
+                      <Link href={itemHref(item)} className="line-clamp-2 font-headline text-[1.15rem] leading-snug font-bold hover:underline">
                         {headline(item)}
                       </Link>
                       <p className="mt-1 text-sm text-muted-foreground">
                         {item.registration_closes_at ? tn('closes', { when: when(item.registration_closes_at) }) : tn('meeting', { when: when(item.meeting_date) })}
                       </p>
-                      <Coverage coverage={item.coverage} className="mt-2" />
+                      {item.coverage && item.coverage.state !== 'none' && <Coverage coverage={item.coverage} className="mt-2" />}
                     </div>
                     <Button asChild variant="outline" size="sm" className="shrink-0 font-sans">
                       <Link href={`/speak-up/${item.item_id}`}>
@@ -177,19 +235,19 @@ export default async function WeeklyPage({ searchParams }: { searchParams: Promi
                 {edition.decided.map((item) => {
                   const s = story(item)
                   return (
-                    <article key={item.item_id} className="grid gap-2 py-6 sm:grid-cols-[140px_minmax(0,1fr)]">
+                    <article key={item.item_id} className="grid gap-2 py-4 sm:grid-cols-[140px_minmax(0,1fr)]">
                       <div>
                         <p className="text-xs font-bold text-denim">{item.body_name}</p>
                         <p className="text-xs text-muted-foreground">{day(item.meeting_date)}</p>
                       </div>
                       <div className="min-w-0">
-                        <h3 className="font-headline text-[1.35rem] leading-snug font-bold">
+                        <h3 className="line-clamp-2 font-headline text-[1.15rem] leading-snug font-bold">
                           <Link href={itemHref(item)} className="hover:underline">
                             {headline(item)}
                           </Link>
                         </h3>
-                        {s?.dek && <p className="mt-2 leading-relaxed text-muted-foreground">{s.dek}</p>}
-                        <p className="mt-3 text-sm font-semibold">
+                        {s?.dek && <p className="mt-1 line-clamp-2 text-sm leading-relaxed text-muted-foreground">{s.dek}</p>}
+                        <p className="mt-2 text-sm font-semibold">
                           {item.outcomePending ? (
                             <span className="text-muted-foreground italic">{tn('outcomePending')}</span>
                           ) : item.outcome?.vote_result ? (
@@ -197,7 +255,7 @@ export default async function WeeklyPage({ searchParams }: { searchParams: Promi
                           ) : null}
                         </p>
                         <StorySource source={item.story_source} url={item.source_url} className="mt-2" />
-                        <Coverage coverage={item.coverage} className="mt-3" />
+                        {item.coverage && item.coverage.state !== 'none' && <Coverage coverage={item.coverage} className="mt-2" />}
                       </div>
                     </article>
                   )
@@ -223,13 +281,13 @@ export default async function WeeklyPage({ searchParams }: { searchParams: Promi
 
         {/* Sidebar */}
         <aside className="space-y-4 lg:sticky lg:top-4 lg:self-start">
-          <div className="rounded-[24px] bg-white p-6">
-            <h2 className="font-headline text-xl font-bold">{t('deadlines')}</h2>
+          <div className="rounded-[24px] bg-white p-5">
+            <h2 className="font-headline text-2xl font-bold">{t('deadlines')}</h2>
             {edition.deadlines.length === 0 ? (
               <p className="mt-3 text-sm text-muted-foreground">{t('noDeadlines')}</p>
             ) : (
               <ul className="mt-4 space-y-3">
-                {edition.deadlines.map((d) => (
+                {edition.deadlines.slice(0, SHOWN).map((d) => (
                   <li key={`${d.kind}-${d.item_id ?? d.at}`} className="border-l-2 border-brick pl-3">
                     <p className="text-xs font-bold text-brick">{when(d.at)}</p>
                     {d.item_id ? (
@@ -243,9 +301,12 @@ export default async function WeeklyPage({ searchParams }: { searchParams: Promi
                 ))}
               </ul>
             )}
+            {edition.deadlines.length > SHOWN && (
+              <p className="mt-3 font-sans text-sm font-semibold text-muted-foreground">{t('moreDeadlines', { count: edition.deadlines.length - SHOWN })}</p>
+            )}
           </div>
-          <div className="rounded-[24px] bg-white p-6">
-            <h2 className="font-headline text-xl font-bold">{t('glance')}</h2>
+          <div className="rounded-[24px] bg-white p-5">
+            <h2 className="font-headline text-2xl font-bold">{t('glance')}</h2>
             <ul className="mt-4 space-y-3">
               {edition.bodiesAtAGlance.map((b) => (
                 <li key={b.body_id} className="flex items-center gap-3">

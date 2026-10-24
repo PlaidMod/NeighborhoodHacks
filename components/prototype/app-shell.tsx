@@ -13,7 +13,6 @@ import {
   Search,
   Settings2,
   Vote,
-  Zap,
   type LucideIcon,
 } from "lucide-react"
 import Link from "next/link"
@@ -70,7 +69,6 @@ const MENU: NavLink[] = [
   { href: "/app", key: "home", icon: LayoutGrid },
   { href: "/app/timeline", key: "timeline", icon: Rows3 },
   { href: "/app/brief", key: "brief", icon: Newspaper },
-  { href: "/app/tldr", key: "tldr", icon: Zap },
   { href: "/app/districts", key: "districts", icon: Map },
   { href: "/app/speak", key: "speak", icon: Mic },
   { href: "/app/vote", key: "vote", icon: Vote },
@@ -125,7 +123,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </aside>
           <div className="min-w-0 flex-1 rounded-[28px] bg-transparent">
             <TopBar navToggle={immersive ? { open: navOpen, toggle: () => setOpenOn(navOpen ? null : path) } : undefined} />
-            <main id="main-content" className="px-4 pb-24 md:px-8">
+            <main id="main-content" className="px-4 pb-6 md:px-8">
               <NavOpenContext.Provider value={navOpen}>{children}</NavOpenContext.Provider>
             </main>
           </div>

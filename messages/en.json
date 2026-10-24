@@ -276,7 +276,31 @@
     "glance": "Your governments at a glance",
     "upcomingCount": "{count, plural, =0 {Nothing coming up} one {# item coming up} other {# items coming up}}",
     "empty": "Nothing is on the agenda for your governments between last week and the next two weeks.",
-    "forYou": "For you"
+    "forYou": "For you",
+    "summaryTitle": "This week, in short",
+    "sumComing": "{count, plural, =0 {Nothing coming up} one {# decision coming up} other {# decisions coming up}} across {bodies, plural, one {# of your governments} other {# of your governments}}.",
+    "sumBusiest": "Busiest day: {day}, when {body} takes up {count} items.",
+    "sumTopics": "Mostly about: {topics}.",
+    "sumDeadline": "Next chance to speak: sign up by {when} for “{headline}”.",
+    "sumDecided": "{count, plural, one {# decision} other {# decisions}} made: {passed} passed, {failed} failed, {pending} still waiting on results.",
+    "sumCancelled": "{count, plural, one {# meeting was} other {# meetings were}} cancelled.",
+    "showMore": "Show {count} more",
+    "moreDeadlines": "+ {count} more",
+    "topic": {
+      "tax": "taxes",
+      "bond": "bonds",
+      "election": "elections",
+      "school": "schools",
+      "leader": "leadership",
+      "budget": "budget and spending",
+      "zoning": "zoning",
+      "property": "land and property",
+      "transit": "transit",
+      "water_rate": "water rates",
+      "personnel": "staff and hiring"
+    },
+    "sumDecidedPending": "{count, plural, one {# decision} other {# decisions}} made; results aren't posted yet.",
+    "summaryAi": "Written with AI from the official agendas. Open any item below for the details."
   },
   "Timeline": {
     "metaTitle": "Latest",
@@ -622,7 +646,9 @@
     "dayEmpty": "Nothing on the agenda this day.",
     "seeAll": "See all {count} on the timeline",
     "signupTag": "Sign-up",
-    "forItems": "for {count} items on this agenda"
+    "forItems": "for {count} items on this agenda",
+    "summaryTitle": "This week, in short",
+    "summaryAi": "Written with AI from the official agendas. Open any story below for the details."
   },
   "AppTldr": {
     "chip": "The short version",
