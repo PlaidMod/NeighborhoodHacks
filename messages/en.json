@@ -22,11 +22,12 @@
   "Home": {
     "eyebrow": "Your neighborhood, decoded",
     "title": "Who governs your block?",
-    "lede": "Every day, local governments make decisions that shape your neighborhood. ShowUp helps you find out who they are and how to be heard.",
+    "lede": "Every day, local governments make decisions that shape your neighborhood. ShowUp HTX helps you find out who they are and how to be heard.",
     "benefitOne": "See every local government connected to your address.",
     "benefitTwo": "Understand the decisions coming up in your community.",
     "benefitThree": "Get clear ways to speak up before a vote.",
     "benefitsLabel": "What you can do with ShowUp",
+    "previewEyebrow": "Your local governments, in one view",
     "featureOneLabel": "Know who decides",
     "featureOneTitle": "Your local governments, in one place",
     "featureOneBody": "Find the boards, districts and elected officials whose decisions reach your neighborhood.",
@@ -912,6 +913,7 @@
     "failed": "Sign-in didn't finish. Try again, or continue as a guest.",
     "signInPrompt": "Want it on your phone too?",
     "signInLink": "Sign in with Google",
+    "signUpLink": "Sign up with Google",
     "welcome": "You're signed in. Look up your address once and ShowUp will remember it.",
     "or": "or"
   },

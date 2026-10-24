@@ -33,6 +33,240 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-23: Smooth the courthouse lawn and footer edge
+- **Who:** Marie Gary Blueberry · public experience
+- **Branch:** main
+- **What changed:** Replaced the landing background with a version whose left lawn transition is less stripe-like, and removed the footer's top border that emphasized the image boundary.
+- **Files:** `public/photos/courthouse-hero-v4.png`, `app/globals.css`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `npx tsc --noEmit` and `git diff --check` passed. Browser visual check not run.
+- **Open issues / next:** None.
+
+### 2026-10-23: Use the full ShowUp HTX name in the landing copy
+- **Who:** Marie Gary Blueberry · public experience
+- **Branch:** main
+- **What changed:** Updated the landing page description in English and Spanish to use the full product name, ShowUp HTX.
+- **Files:** `messages/en.json`, `messages/es.json`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `npx tsc --noEmit` and `git diff --check` passed.
+- **Open issues / next:** None.
+
+### 2026-10-23: Remove the foreground stripe and use the cream footer color
+- **Who:** Marie Gary Blueberry · public experience
+- **Branch:** main
+- **What changed:** Replaced the courthouse background with a version that uses continuous lawn instead of a hard foreground terrace line, and changed the landing footer to a solid warm cream sampled by eye from the supplied color reference.
+- **Files:** `public/photos/courthouse-hero-v2.png`, `app/globals.css`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `git diff --check` passed. Tests and browser visual check not run.
+- **Open issues / next:** Footer tone is a visual approximation of the supplied swatch.
+
+### 2026-10-23: Give the landing footer a compact cream glass surface
+- **Who:** Marie Gary Blueberry · public experience
+- **Branch:** main
+- **What changed:** Grouped the footer tagline and links into one row, moved the project note to a smaller second line, tightened padding, and added a translucent cream surface with blur and a subtle top border over the courthouse image.
+- **Files:** `components/shell/SiteFooter.tsx`, `app/globals.css`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `npx tsc --noEmit` and `git diff --check` passed. Browser visual check not run.
+- **Open issues / next:** None.
+
+### 2026-10-23: Move footer copy closer to the top
+- **Who:** Marie Gary Blueberry · public experience
+- **Branch:** main
+- **What changed:** Reduced the footer content's top padding so its text sits higher within the beach-backed footer.
+- **Files:** `components/shell/SiteFooter.tsx`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `git diff --check` passed. Tests and browser visual check not run.
+- **Open issues / next:** None.
+
+### 2026-10-23: Replace the beach with a courthouse hero background
+- **Who:** Marie Gary Blueberry · public experience
+- **Branch:** main
+- **What changed:** Generated a calm, cream-toned courthouse-at-sunrise background and switched the shared landing-page backdrop from the beach to the courthouse, including behind the footer.
+- **Files:** `public/photos/courthouse-hero.png`, `app/globals.css`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `git diff --check` passed. Tests and browser visual check not run.
+- **Open issues / next:** None.
+
+### 2026-10-23: Raise the landing footer further
+- **Who:** Marie Gary Blueberry · public experience
+- **Branch:** main
+- **What changed:** Shortened the landing hero by another 3rem so its footer begins higher on desktop.
+- **Files:** `app/(public)/page.tsx`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `git diff --check` passed. Tests and browser visual check not run.
+- **Open issues / next:** None.
+
+### 2026-10-23: Restore beach footer and raise it slightly
+- **Who:** Marie Gary Blueberry · public experience
+- **Branch:** main
+- **What changed:** Reverted the landing footer from navy to the beach background treatment and shortened the hero minimum height by 2rem so the footer starts slightly higher.
+- **Files:** `app/globals.css`, `app/(public)/page.tsx`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `git diff --check` passed. Tests and browser visual check not run.
+- **Open issues / next:** None.
+
+### 2026-10-23: Try a navy landing footer
+- **Who:** Marie Gary Blueberry · public experience
+- **Branch:** main
+- **What changed:** Changed the landing-page footer to navy with white links and primary copy, plus muted white project text.
+- **Files:** `app/globals.css`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `git diff --check` passed. Tests and browser visual check not run.
+- **Open issues / next:** None.
+
+### 2026-10-23: Blend the landing footer into the beach
+- **Who:** Marie Gary Blueberry · public experience
+- **Branch:** main
+- **What changed:** Continued the hero's cream overlays across the footer and removed its landing-only top border to eliminate the visible break at the bottom of the beach scene.
+- **Files:** `app/globals.css`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `git diff --check` passed. Tests and browser visual check not run.
+- **Open issues / next:** None.
+
+### 2026-10-23: Use one continuous beach background
+- **Who:** Marie Gary Blueberry · public experience
+- **Branch:** main
+- **What changed:** Removed the separate hero image layer so the fixed body beach background shows continuously behind the hero and transparent footer without restarting at the footer boundary.
+- **Files:** `app/(public)/page.tsx`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `npx tsc --noEmit` and `git diff --check` passed. Browser visual check not run.
+- **Open issues / next:** None.
+
+### 2026-10-23: Match the final stack label font size
+- **Who:** Marie Gary Blueberry · public experience
+- **Branch:** main
+- **What changed:** Set the “ones you've never heard of” label to the same 16px font size as the other stack labels, retaining its single-line layout.
+- **Files:** `components/home/GovernmentStack.tsx`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `git diff --check` passed. Tests and browser visual check not run.
+- **Open issues / next:** None.
+
+### 2026-10-23: Keep the beach behind the landing footer and widen the stack
+- **Who:** Marie Gary Blueberry · public experience
+- **Branch:** main
+- **What changed:** Expanded the government stack to 560px so the final label fits on one line at desktop sizes. Applied the sea image to the landing page's body background and made its footer transparent so the beach continues behind it.
+- **Files:** `components/home/GovernmentStack.tsx`, `components/shell/SiteFooter.tsx`, `app/globals.css`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `npx tsc --noEmit` and `git diff --check` passed. Browser visual check not run.
+- **Open issues / next:** On narrow screens, the final card's label shrinks via a responsive font size to stay on one line.
+
+### 2026-10-23: Increase the landing stack step size
+- **Who:** Marie Gary Blueberry · public experience
+- **Branch:** main
+- **What changed:** Increased the consistent rightward offset and matching width reduction from 6% to 8% per card, keeping heights and right edges uniform.
+- **Files:** `components/home/GovernmentStack.tsx`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `git diff --check` passed. Tests and browser visual check not run.
+- **Open issues / next:** None.
+
+### 2026-10-23: Keep landing stack card heights and steps uniform
+- **Who:** Marie Gary Blueberry · public experience
+- **Branch:** main
+- **What changed:** Set every government card to the same fixed height and restored matching icon and label sizes. Kept a constant 6% indent and width reduction per row for an even staircase.
+- **Files:** `components/home/GovernmentStack.tsx`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `npx tsc --noEmit` and `git diff --check` passed. Browser visual check not run.
+- **Open issues / next:** None.
+
+### 2026-10-23: Match footer to the regular canvas background
+- **Who:** Marie Gary Blueberry · public experience
+- **Branch:** main
+- **What changed:** Applied the shared canvas background treatment to the site footer so it matches the app's regular page backdrop.
+- **Files:** `components/shell/SiteFooter.tsx`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `git diff --check` passed. Tests and browser visual check not run.
+- **Open issues / next:** None.
+
+### 2026-10-23: Align the landing stack's right edges
+- **Who:** Marie Gary Blueberry · public experience
+- **Branch:** main
+- **What changed:** Matched each card's width reduction to its rightward offset so all right edges line up and the left edges form an even staircase. Kept the final card slightly shorter and its label smaller.
+- **Files:** `components/home/GovernmentStack.tsx`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `npx tsc --noEmit` and `git diff --check` passed. Browser visual check not run.
+- **Open issues / next:** None.
+
+### 2026-10-23: Set the landing stack's staircase alignment
+- **Who:** Marie Gary Blueberry · public experience
+- **Branch:** main
+- **What changed:** Made each card narrow faster than it shifts right, so the staircase steps inward on both its left and right edges instead of keeping a shared right edge.
+- **Files:** `components/home/GovernmentStack.tsx`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `npx tsc --noEmit` and `git diff --check` passed. Browser visual check not run.
+- **Open issues / next:** None.
+
+### 2026-10-23: Set steady descending stack dimensions
+- **Who:** Marie Gary Blueberry · public experience
+- **Branch:** main
+- **What changed:** Replaced scale transforms with direct per-card widths, heights, icon sizes, and label sizes to avoid uneven gaps. The cards now step down evenly through the final card.
+- **Files:** `components/home/GovernmentStack.tsx`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `npx tsc --noEmit` and `git diff --check` passed. Browser visual check not run.
+- **Open issues / next:** None.
+
+### 2026-10-23: Ease the landing stack taper
+- **Who:** Marie Gary Blueberry · public experience
+- **Branch:** main
+- **What changed:** Restored the government cards' larger base width, padding, icons, and labels, and reduced the per-card scale change so the final card remains readable while the stack still tapers.
+- **Files:** `components/home/GovernmentStack.tsx`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `git diff --check` passed. Tests and browser visual check not run.
+- **Open issues / next:** None.
+
+### 2026-10-23: Taper the full government stack
+- **Who:** Marie Gary Blueberry · public experience
+- **Branch:** main
+- **What changed:** Made each successive government card shrink in both width and height, with the last card smallest. The stack uses a shared rise animation that respects each card's scale.
+- **Files:** `components/home/GovernmentStack.tsx`, `app/globals.css`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `npx tsc --noEmit` and `git diff --check` passed. Browser visual check not run.
+- **Open issues / next:** None.
+
+### 2026-10-23: Tighten landing government stack sizing
+- **Who:** Marie Gary Blueberry · public experience
+- **Branch:** main
+- **What changed:** Reduced the stack width, card padding, icon size, type size, and vertical gaps together so the descending cards feel balanced and compact.
+- **Files:** `components/home/GovernmentStack.tsx`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `git diff --check` passed. Tests and browser visual check not run.
+- **Open issues / next:** None.
+
+### 2026-10-23: Continue the government stack size progression
+- **Who:** Marie Gary Blueberry · public experience
+- **Branch:** main
+- **What changed:** Continued the staggered card sizing for the final “ones you’ve never heard of” card, making it the smallest in the descending stack. Reduced its padding and type size so the label can wrap on narrow screens.
+- **Files:** `components/home/GovernmentStack.tsx`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `git diff --check` passed. Tests and browser visual check not run.
+- **Open issues / next:** None.
+
+### 2026-10-23: Remove the oversized landing preview frame
+- **Who:** Marie Gary Blueberry · public experience
+- **Branch:** main
+- **What changed:** Removed the large white framed panel and its header around the decorative government stack so the sea remains visible and the cards feel lighter.
+- **Files:** `app/(public)/page.tsx`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `git diff --check` passed. Tests and browser visual check not run.
+- **Open issues / next:** None.
+
+### 2026-10-23: Increase sea visibility on the landing page
+- **Who:** Marie Gary Blueberry · public experience
+- **Branch:** main
+- **What changed:** Reduced the cream overlays across the landing hero so the sea image is clearly visible behind the copy, while keeping a light gradient under the text for readability.
+- **Files:** `app/(public)/page.tsx`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `git diff --check` passed. Tests and browser visual check not run.
+- **Open issues / next:** None.
+
+### 2026-10-23: Simplify the landing page around a sea backdrop
+- **Who:** Marie Gary Blueberry · public experience
+- **Branch:** main
+- **What changed:** Removed the feature cards beneath the hero and rebuilt the top section around the headline, address action, prominent Google sign-up, and a glass government preview. Made the generated cream-toned sea backdrop more visible, extended it behind a translucent header, and removed the extra copy under the buttons. Preserved the latest account-deletion confirmation on the home page after pulling.
+- **Files:** `app/(public)/page.tsx`, `app/globals.css`, `components/shell/SiteHeader.tsx`, `messages/en.json`, `messages/es.json`, `public/photos/calm-sea-hero.jpg`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `npx tsc --noEmit` and `git diff --check` passed after the pull and visual adjustments. Tests not run.
+- **Open issues / next:** Browser visual check unavailable in this session.
+
 ### 2026-10-23: "Week in short", the weekly brief in one minute (`/app/tldr`)
 - **Who:** PlaidMod · P5 Platform
 - **Branch:** main

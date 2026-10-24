@@ -12,26 +12,33 @@ const LAYERS: { type: BodyType; id?: string }[] = [
   { type: 'flood_control', id: 'flood_control' },
   { type: 'mud' },
 ]
-
 export async function GovernmentStack() {
   const t = await getTranslations('Home.stack')
   const slip = 'rise rounded-2xl shadow-[0_12px_32px_-16px_rgb(27_38_59/0.25)]'
   return (
-    <div aria-hidden className="mx-auto w-full max-w-md select-none">
-      <ol className="space-y-3">
+    <div aria-hidden className="mx-auto w-full max-w-[560px] select-none">
+      <ol className="space-y-2">
         {LAYERS.map(({ type, id }, i) => (
           <li
             key={type}
-            className={`${slip} flex items-center gap-3 bg-white p-4 pr-5`}
-            style={{ marginLeft: `${i * 6}%`, animationDelay: `${i * 70}ms` }}
+            className={`${slip} flex h-[72px] items-center gap-3 bg-white/95 px-4 pr-5`}
+            style={{
+              width: `calc(100% - ${i * 8}%)`,
+              marginLeft: `${i * 8}%`,
+              animationDelay: `${i * 70}ms`,
+            }}
           >
             <BodyIcon type={type} id={id} />
             <span className="font-bold text-ink">{t(type)}</span>
           </li>
         ))}
         <li
-          className={`${slip} ml-0 w-full bg-ink px-5 py-4 text-[0.8125rem] font-bold whitespace-nowrap text-white sm:text-base`}
-          style={{ animationDelay: `${LAYERS.length * 70}ms` }}
+          className={`${slip} flex h-[72px] items-center bg-ink px-4 text-base font-bold whitespace-nowrap text-white`}
+          style={{
+            width: `calc(100% - ${LAYERS.length * 8}%)`,
+            marginLeft: `${LAYERS.length * 8}%`,
+            animationDelay: `${LAYERS.length * 70}ms`,
+          }}
         >
           {t('more')}
         </li>

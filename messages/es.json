@@ -22,11 +22,12 @@
   "Home": {
     "eyebrow": "Tu vecindario, explicado",
     "title": "¿Quién gobierna tu cuadra?",
-    "lede": "Cada día, los gobiernos locales toman decisiones que afectan tu vecindario. ShowUp te ayuda a conocerlos y a hacerte escuchar.",
+    "lede": "Cada día, los gobiernos locales toman decisiones que afectan tu vecindario. ShowUp HTX te ayuda a conocerlos y a hacerte escuchar.",
     "benefitOne": "Mira todos los gobiernos locales vinculados a tu dirección.",
     "benefitTwo": "Entiende las próximas decisiones de tu comunidad.",
     "benefitThree": "Encuentra formas claras de participar antes de una votación.",
     "benefitsLabel": "Lo que puedes hacer con ShowUp",
+    "previewEyebrow": "Tus gobiernos locales, de un vistazo",
     "featureOneLabel": "Conoce quién decide",
     "featureOneTitle": "Tus gobiernos locales, en un solo lugar",
     "featureOneBody": "Encuentra las juntas, distritos y funcionarios electos cuyas decisiones afectan tu vecindario.",
@@ -912,6 +913,7 @@
     "failed": "No se completó el inicio de sesión. Inténtalo de nuevo o continúa como invitado.",
     "signInPrompt": "¿Lo quieres también en tu teléfono?",
     "signInLink": "Inicia sesión con Google",
+    "signUpLink": "Regístrate con Google",
     "welcome": "Iniciaste sesión. Busca tu dirección una vez y ShowUp la recordará.",
     "or": "o"
   },
