@@ -440,6 +440,7 @@
     "taxReceipt": "Estimate property taxes"
   },
   "AppOnboardingTour": {
+    "startLabel": "Get started",
     "stepCount": "Step {current} of {total}",
     "progressLabel": "Onboarding steps",
     "goToStep": "Go to step {step}",
@@ -447,6 +448,7 @@
     "clickHighlighted": "Click the highlighted area or choose Next to continue.",
     "clickDashboard": "Click Open your dashboard to continue.",
     "next": "Next",
+    "done": "Done",
     "skip": "Skip",
     "governments": {
       "title": "Your governments",

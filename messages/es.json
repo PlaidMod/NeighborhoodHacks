@@ -440,6 +440,7 @@
     "taxReceipt": "Estimar impuestos de propiedad"
   },
   "AppOnboardingTour": {
+    "startLabel": "Comenzar",
     "stepCount": "Paso {current} de {total}",
     "progressLabel": "Pasos del recorrido",
     "goToStep": "Ir al paso {step}",
@@ -447,6 +448,7 @@
     "clickHighlighted": "Pulsa el área resaltada o elige Siguiente para continuar.",
     "clickDashboard": "Pulsa Abrir tu panel para continuar.",
     "next": "Siguiente",
+    "done": "Listo",
     "skip": "Omitir",
     "governments": {
       "title": "Tus gobiernos",

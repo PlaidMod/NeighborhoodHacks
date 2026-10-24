@@ -1,9 +1,9 @@
 'use client'
 
-import { ArrowRight, Loader2 } from 'lucide-react'
+import { Loader2 } from 'lucide-react'
 import Link from 'next/link'
 import { useTranslations } from 'next-intl'
-import { BodyIcon } from '@/components/civic'
+import { ArrowCircle, BodyIcon } from '@/components/civic'
 import { BodyQuiz } from '@/components/flow/BodyQuiz'
 import { useLookup } from '@/components/flow/LookupProvider'
 import { Button } from '@/components/ui/button'
@@ -78,9 +78,7 @@ export default function ResultsPage() {
                           className={`${cardClass} group w-full text-left motion-safe:transition-[background-color,box-shadow,scale] motion-safe:duration-150 motion-safe:ease-out hover:bg-denim-soft/30 hover:ring-denim/50 motion-safe:hover:scale-[1.01]`}
                         >
                           {card}
-                          <span aria-hidden className="grid size-8 shrink-0 place-items-center rounded-full border border-current/25 text-ink">
-                            <ArrowRight className="size-4" />
-                          </span>
+                          <ArrowCircle className="text-ink" />
                         </Link>
                       ) : (
                         <div className={cardClass}>{card}</div>
@@ -158,12 +156,12 @@ export default function ResultsPage() {
             <p className="mt-6 text-sm text-muted-foreground">{t('limits')}</p>
             <BodyQuiz />
             <div className="mt-8">
-              <Button asChild size="lg" className="gap-3 px-7">
+              <Button asChild size="lg" className="group gap-3 px-7">
                 {/* /app/use remembers the bodies_token (body IDs only) so the dashboard shows these governments.
                     A plain <a>: it's a route handler that sets a cookie and redirects, not a page. */}
                 <a data-onboarding="governmentCTA" href={`/app/use?t=${encodeURIComponent(state.data.bodies_token)}&onboarding=1&step=1`}>
                   {t('dashboard')}
-                  <ArrowRight aria-hidden className="size-5" />
+                  <ArrowCircle />
                 </a>
               </Button>
             </div>

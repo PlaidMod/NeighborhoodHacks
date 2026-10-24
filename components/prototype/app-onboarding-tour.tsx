@@ -16,6 +16,7 @@ const STEPS = [
   { target: "voteMain", page: "/app/vote", copy: "vote" },
   { target: "alertsMain", page: "/app/alerts", copy: "alerts" },
 ] as const
+const WALKTHROUGH_STEPS = STEPS.slice(1)
 
 type TourState = { step: number; entryHref?: string }
 type Rect = { top: number; right: number; bottom: number; left: number; radius: number }
@@ -169,7 +170,6 @@ export function AppOnboardingTour() {
     }
     if (tour.step === STEPS.length - 1) {
       saveTour(null, true)
-      router.push("/?tour=complete")
       return
     }
     goToStep(tour.step + 1)
@@ -223,7 +223,9 @@ export function AppOnboardingTour() {
         className="fixed right-4 bottom-4 z-[90] w-[min(500px,calc(100vw-2rem))] rounded-[28px] bg-white p-5 text-ink shadow-[0_24px_80px_rgb(9_19_37/0.3)] ring-1 ring-black/10 sm:right-6 sm:bottom-6 sm:p-6"
       >
         <p className="text-xs font-extrabold tracking-[0.14em] text-denim uppercase">
-          {t("stepCount", { current: tour.step + 1, total: STEPS.length })}
+          {tour.step === 0
+            ? t("startLabel")
+            : t("stepCount", { current: tour.step, total: WALKTHROUGH_STEPS.length })}
         </p>
         <h2 id="app-onboarding-tour-title" className="mt-2 text-xl font-extrabold tracking-tight sm:text-2xl">
           {t(`${stepName}.title`)}
@@ -233,19 +235,24 @@ export function AppOnboardingTour() {
 
         <div className="mt-5 flex flex-wrap items-end justify-between gap-4 border-t border-border pt-4">
           <nav aria-label={t("progressLabel")} className="flex items-center gap-1.5">
-            {STEPS.map((item, index) => (
+            {WALKTHROUGH_STEPS.map((item, index) => {
+              const step = index + 1
+              const isCurrent = step === tour.step
+              const isStarting = tour.step === 0 && index === 0
+              return (
               <button
                 key={item.target}
                 type="button"
-                aria-label={t("goToStep", { step: index + 1 })}
-                aria-current={index === tour.step ? "step" : undefined}
-                onClick={() => goToStep(index)}
+                aria-label={t("goToStep", { step })}
+                aria-current={isCurrent ? "step" : undefined}
+                onClick={() => goToStep(step)}
                 className={cn(
                   "h-2.5 rounded-full transition-[width,background-color] duration-200",
-                  index === tour.step ? "w-8 bg-denim" : "w-2.5 bg-denim/20 hover:bg-denim/40",
+                  isCurrent || isStarting ? "w-8 bg-denim" : "w-2.5 bg-denim/20 hover:bg-denim/40",
                 )}
               />
-            ))}
+              )
+            })}
           </nav>
           <div className="ml-auto flex items-center gap-2">
             <button
@@ -254,8 +261,8 @@ export function AppOnboardingTour() {
               onClick={next}
               className="inline-flex h-11 items-center gap-2 rounded-full bg-denim px-5 text-sm font-bold text-white hover:bg-denim-deep focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-denim"
             >
-              {t("next")}
-              <ArrowRight aria-hidden className="size-4" />
+              {tour.step === STEPS.length - 1 ? t("done") : t("next")}
+              {tour.step !== STEPS.length - 1 && <ArrowRight aria-hidden className="size-4" />}
             </button>
             <button
               type="button"

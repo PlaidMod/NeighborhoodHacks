@@ -33,6 +33,42 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-24: Standardize arrows on linked government cards
+- **Who:** Marie Gary Blueberry · public experience
+- **Branch:** main
+- **What changed:** Replaced the straight right arrows on linked government cards with the shared ArrowCircle treatment, matching the rest of the app: angled by default and straight right on hover.
+- **Files:** `app/(public)/results/page.tsx`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `PATH=/opt/homebrew/bin:$PATH npm run typecheck` and `git diff --check` passed.
+- **Open issues / next:** Browser behavior not manually checked.
+
+### 2026-10-24: Finish onboarding on the current app page
+- **Who:** Marie Gary Blueberry · public experience
+- **Branch:** main
+- **What changed:** The final onboarding action now closes the guide without navigating away from the last app section. It is labeled Done, correcting the earlier behavior that redirected to the landing page.
+- **Files:** `components/prototype/app-onboarding-tour.tsx`, `messages/*.json`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `PATH=/opt/homebrew/bin:$PATH npm run typecheck`, English/Spanish JSON parsing, and `git diff --check` passed.
+- **Open issues / next:** Browser behavior not manually checked.
+
+### 2026-10-24: Match the dashboard action arrow to app cards
+- **Who:** Marie Gary Blueberry · public experience
+- **Branch:** main
+- **What changed:** Reused the app’s ArrowCircle treatment on the Open your dashboard button. It points diagonally by default and rotates to point right when the button is hovered.
+- **Files:** `app/(public)/results/page.tsx`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `PATH=/opt/homebrew/bin:$PATH npm run typecheck` and `git diff --check` passed.
+- **Open issues / next:** Browser behavior not manually checked.
+
+### 2026-10-24: Count only the seven app walkthrough stops
+- **Who:** Marie Gary Blueberry · public experience
+- **Branch:** main
+- **What changed:** The Governments screen is now an unnumbered “Get started” prompt. The dashboard starts the actual walkthrough at Step 1 of 7, and the progress controls show only the seven app sections.
+- **Files:** `components/prototype/app-onboarding-tour.tsx`, `messages/*.json`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `PATH=/opt/homebrew/bin:$PATH npm run typecheck`, English/Spanish JSON parsing, and `git diff --check` passed; browser check and tests not run.
+- **Open issues / next:** Browser behavior and visual fit remain unverified.
+
 ### 2026-10-24: Keep the onboarding target sharp and simplify government actions
 - **Who:** Marie Gary Blueberry · public experience
 - **Branch:** main
