@@ -157,20 +157,14 @@ export default function ResultsPage() {
             )}
             <p className="mt-6 text-sm text-muted-foreground">{t('limits')}</p>
             <BodyQuiz />
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Button asChild size="lg" className="sm:px-3">
+            <div className="mt-8">
+              <Button asChild size="lg" className="gap-3 px-7">
                 {/* /app/use remembers the bodies_token (body IDs only) so the dashboard shows these governments.
                     A plain <a>: it's a route handler that sets a cookie and redirects, not a page. */}
-                <a data-onboarding="governmentCTA" href={`/app/use?t=${encodeURIComponent(state.data.bodies_token)}&onboarding=1&step=1`}>{t('dashboard')}</a>
-              </Button>
-              <Button asChild size="lg" variant="outline" className="sm:px-3">
-                <Link href={`/weekly?t=${encodeURIComponent(state.data.bodies_token)}`}>{t('weekly')}</Link>
-              </Button>
-              <Button asChild size="lg" variant="outline" className="sm:px-3">
-                <Link href={`/alerts?t=${encodeURIComponent(state.data.bodies_token)}`}>{t('alerts')}</Link>
-              </Button>
-              <Button asChild size="lg" variant="outline" className="sm:px-3">
-                <Link href={`/tax-receipt?t=${encodeURIComponent(state.data.bodies_token)}`}>{t('taxReceipt')}</Link>
+                <a data-onboarding="governmentCTA" href={`/app/use?t=${encodeURIComponent(state.data.bodies_token)}&onboarding=1&step=1`}>
+                  {t('dashboard')}
+                  <ArrowRight aria-hidden className="size-5" />
+                </a>
               </Button>
             </div>
           </>

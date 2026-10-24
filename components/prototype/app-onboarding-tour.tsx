@@ -186,7 +186,7 @@ export function AppOnboardingTour() {
     <>
       <svg
         aria-hidden="true"
-        className="pointer-events-none fixed inset-0 z-[80] size-full backdrop-blur-[1px]"
+        className="pointer-events-none fixed inset-0 z-[80] size-full"
         viewBox={`0 0 ${viewport.width} ${viewport.height}`}
         preserveAspectRatio="none"
       >

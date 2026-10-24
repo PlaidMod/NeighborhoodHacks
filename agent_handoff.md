@@ -33,6 +33,15 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-24: Keep the onboarding target sharp and simplify government actions
+- **Who:** Marie Gary Blueberry · public experience
+- **Branch:** main
+- **What changed:** Removed the backdrop blur from the walkthrough overlay so the highlighted control stays sharp. Replaced the separate news, alerts, and tax quick-action buttons on government results with one prominent Open your dashboard button and right arrow.
+- **Files:** `components/prototype/app-onboarding-tour.tsx`, `app/(public)/results/page.tsx`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `PATH=/opt/homebrew/bin:$PATH npm run typecheck`, English/Spanish JSON parsing, and `git diff --check` passed; browser check and tests not run.
+- **Open issues / next:** Browser behavior and visual fit remain unverified.
+
 ### 2026-10-24: Start the tab walkthrough from Your governments
 - **Who:** Marie Gary Blueberry · public experience
 - **Branch:** main
