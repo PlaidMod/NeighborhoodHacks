@@ -230,7 +230,7 @@ export default async function WeeklyPage({ searchParams }: { searchParams: Promi
 
           {/* Decided this week */}
           {edition.decided.length > 0 && (
-            <section data-onboarding={tiles.length === 0 ? 'weeklyStories' : undefined}>
+            <section>
               <SectionRule>{t('decided')}</SectionRule>
               <div className="divide-y divide-border">
                 {edition.decided.map((item, index) => {
