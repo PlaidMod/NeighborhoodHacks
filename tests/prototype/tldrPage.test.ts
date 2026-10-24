@@ -127,6 +127,23 @@ describe('/app/tldr, the weekly brief in short', () => {
   })
 })
 
+describe('fits small phones and meets 4.5:1 contrast (DESIGN.md §13)', () => {
+  it('lets the sign-up chip wrap, so the long Spanish date fits a 320px phone', () => {
+    const html = render('es', full)
+    const chip = html.match(/<span class="([^"]*)">La inscripción cierra el/)
+    expect(chip).not.toBeNull()
+    expect(chip![1]).toContain('whitespace-normal')
+    expect(chip![1]).not.toContain('whitespace-nowrap')
+  })
+
+  it('shows "Your next step" in solid white on red (faded white measured 4.31:1)', () => {
+    const heading = render('en', full).match(/<h2 class="([^"]*)">Your next step<\/h2>/)
+    expect(heading).not.toBeNull()
+    expect(heading![1]).toMatch(/\btext-white\b(?!\/)/)
+    expect(heading![1]).not.toMatch(/text-white\//)
+  })
+})
+
 describe('getting to it from the dashboard', () => {
   it('has its own sidebar entry, right after the weekly brief', () => {
     const shell = read('components', 'prototype', 'app-shell.tsx')

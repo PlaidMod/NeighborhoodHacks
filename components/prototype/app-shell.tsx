@@ -158,9 +158,12 @@ function SidebarBody({ onNavigate }: { onNavigate?: () => void }) {
         <m.icon className={cn("size-[1.15rem]", active ? "text-denim" : "")} strokeWidth={2} />
         {t(`nav.${m.key}`)}
         {m.href === "/app/timeline" && urgent > 0 && (
-          <span className="ml-auto grid h-5 min-w-5 place-items-center rounded-full bg-brick px-1.5 text-[10px] font-bold text-white">
-            {urgent}
-          </span>
+          <>
+            <span aria-hidden className="ml-auto grid h-5 min-w-5 place-items-center rounded-full bg-brick px-1.5 text-[10px] font-bold text-white">
+              {urgent}
+            </span>
+            <span className="sr-only">{t("nav.urgentCount", { count: urgent })}</span>
+          </>
         )}
       </Link>
     )
@@ -171,12 +174,16 @@ function SidebarBody({ onNavigate }: { onNavigate?: () => void }) {
       <div className="px-3 pt-2 pb-8">
         <Logo />
       </div>
-      <p className="px-4 pb-2 text-[11px] font-bold tracking-[0.12em] text-muted-foreground/70 uppercase">{t("sections.menu")}</p>
-      <nav className="space-y-1">{MENU.map(item)}</nav>
-      <p className="px-4 pt-7 pb-2 text-[11px] font-bold tracking-[0.12em] text-muted-foreground/70 uppercase">
+      <p className="px-4 pb-2 text-[11px] font-bold tracking-[0.12em] text-muted-foreground uppercase">{t("sections.menu")}</p>
+      <nav aria-label={t("sections.menu")} className="space-y-1">
+        {MENU.map(item)}
+      </nav>
+      <p className="px-4 pt-7 pb-2 text-[11px] font-bold tracking-[0.12em] text-muted-foreground uppercase">
         {t("sections.general")}
       </p>
-      <nav className="space-y-1">{GENERAL.map(item)}</nav>
+      <nav aria-label={t("sections.general")} className="space-y-1">
+        {GENERAL.map(item)}
+      </nav>
       <div className="mt-auto px-4 pt-10 pb-2">
         <p className="text-xs font-semibold text-ink">{t("footer.tagline")}</p>
         <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">

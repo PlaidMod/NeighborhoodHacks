@@ -33,6 +33,25 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-23: Accessibility fixes from a web interface guidelines review
+- **Who:** PlaidMod · P5 Platform
+- **Branch:** main
+- **What changed:** Fixed the top findings from a review of `/app/tldr`, the dashboard home and the app shell:
+  - On `/app/tldr`, the Spanish sign-up chip ran 54px past its card at 320px and made the page scroll sideways. It now wraps.
+  - Two text pairs were below 4.5:1. "Your next step" on red measured 4.31:1 and is now 5.85:1. The sidebar's "Menu" and "General" labels measured 3.14:1 and are now 6.05:1; the `/70` fading is gone.
+  - The two sidebar `<nav>`s are now named "Menu" and "General".
+  - The Timeline link's urgent badge now reads as "2 urgent" to screen readers (new `AppShell.nav.urgentCount`).
+  - The home status line says "1 thing", not "1 things".
+- **Files:** `app/(prototype)/app/tldr/page.tsx`, `components/prototype/app-shell.tsx`, `app/(prototype)/app/page.tsx`, `messages/*.json`, `tests/prototype/tldrPage.test.ts`, `tests/platform/appShellText.test.ts`, `tests/prototype/home.test.ts` (new)
+- **Contract changes:** None
+- **Checked:** The 6 new tests failed first, then passed. `npm test` (880 Vitest + 72 P4), typecheck, lint and build pass. In a local production build: no sideways scroll at 320px in Spanish, contrast measured from the rendered colors, and the accessibility tree shows "Timeline 2 urgent" and both nav names.
+- **Open issues / next:** Still open from the review:
+  - The dashboard home's text is English only (about 30 strings), and its election date "Tuesday, Nov 3" is typed by hand.
+  - Search renders every update with no cap (a downtown address can have about 760 items).
+  - The countdown reads letter by letter to screen readers.
+  - Headline buttons on `/app/tldr` could use `aria-haspopup="dialog"`, and its "Official source" links are small tap targets.
+  - Adding `aria-keyshortcuts` to the search button would announce Ctrl K.
+
 ### 2026-10-23: "Week in short", the weekly brief in one minute (`/app/tldr`)
 - **Who:** PlaidMod · P5 Platform
 - **Branch:** main
