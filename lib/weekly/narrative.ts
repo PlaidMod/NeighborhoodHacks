@@ -32,20 +32,32 @@ function line(item: WeeklyItem, lang: Lang, kind: "decided" | "coming") {
   return `- (${kind}, ${item.body_name}, ${item.meeting_date.slice(0, 10)}) ${head}${dek}${result}`
 }
 
+/** The items the summary is written from: up to 20 decided and 20 coming up. */
+function narrativeItems(edition: WeeklyEdition) {
+  const decided = edition.decided.slice(0, MAX_ITEMS / 2)
+  const coming = [edition.lead, ...edition.comingUp].filter((i): i is WeeklyItem => !!i).slice(0, MAX_ITEMS / 2)
+  return { decided, coming }
+}
+
+/** One key per week's items, their results and the language; null when there's nothing to summarize. */
+export function narrativeKey(edition: WeeklyEdition, lang: Lang): string | null {
+  const { decided, coming } = narrativeItems(edition)
+  if (decided.length + coming.length === 0) return null
+  return createHash("sha1")
+    .update(lang + ":v3")
+    .update(JSON.stringify([...decided, ...coming].map((i) => [i.item_id, i.outcome?.vote_result ?? null])))
+    .digest("hex")
+}
+
 export async function weeklyNarrative(edition: WeeklyEdition, lang: Lang): Promise<string[] | null> {
   const apiKey = openRouterKey()
   // Same model as the AI-written stories.
   const model = process.env.GEMINI_MODEL?.trim() || DEFAULT_GEMINI_MODEL
   if (!apiKey) return null
 
-  const decided = edition.decided.slice(0, MAX_ITEMS / 2)
-  const coming = [edition.lead, ...edition.comingUp].filter((i): i is WeeklyItem => !!i).slice(0, MAX_ITEMS / 2)
-  if (decided.length + coming.length === 0) return null
-
-  const key = createHash("sha1")
-    .update(lang + ":v3")
-    .update(JSON.stringify([...decided, ...coming].map((i) => [i.item_id, i.outcome?.vote_result ?? null])))
-    .digest("hex")
+  const { decided, coming } = narrativeItems(edition)
+  const key = narrativeKey(edition, lang)
+  if (!key) return null
   const hit = cache.get(key)
   if (hit && Date.now() - hit.at < TTL_MS) return hit.points
 
@@ -74,7 +86,9 @@ Write 3 or 4 short sentences, each under 20 words, in plain ${language} that a 1
       ].join("\n"),
       schema: SCHEMA,
       temperature: 0.2,
-      timeoutMs: 15_000,
+      // No page waits for this (pages fetch it from /api/weekly/summary after they show, which
+      // allows 60s), so the model gets time to finish; Spanish summaries often ran past 15s.
+      timeoutMs: 45_000,
     })
     const parsed = JSON.parse(text) as { points?: unknown }
     const points = Array.isArray(parsed.points)

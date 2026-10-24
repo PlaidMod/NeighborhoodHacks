@@ -33,6 +33,20 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-24: Pages no longer wait for the AI weekly summary
+- **Who:** PlaidMod · P5 Platform
+- **Branch:** main
+- **What changed:**
+  - Measured live before the change, after a lookup for 901 Bagby St 77002: `/app` and `/app/brief` took about 9 s to load (5 s to the first byte), `/weekly` about 16 s. The cause was the AI "This week, in short": every `/app` page waited up to 8 s for it, and `/weekly` waited with no limit (up to 15 s). A repeat visit still took about 1.5 s, mostly loading ~760 items.
+  - No page waits for the AI summary now. `/app` and `/weekly` render at once with the headline sentences or fact lines, then fetch the summary from the new `GET /api/weekly/summary?t=&lang=` (no `t` means the remembered lookup cookie) and swap it in when it arrives (`components/weekly/useWeeklySummary.ts`, `components/weekly/WeeklyNarrative.tsx`). The answer is `{ points }` or `{ points: null }`, never cached for other readers.
+  - The summary is kept in Next's shared cache (`unstable_cache`, 6 hours, `lib/weekly/narrativeCache.ts`), so any server can reuse it, and each server makes one AI call per summary at a time. Failed summaries aren't cached. The model now gets 45 s instead of 15 s: Spanish summaries often ran past 15 s and were dropped.
+  - A reader's governments and items are kept in each server's memory for 5 minutes (`lib/weekly/readerItems.ts`, up to 20 readers), and `loadItems` takes `storyLang` to load only the language being shown.
+  - `LiveData.weekly.summary` and `toLiveData`'s `summary` argument are gone; `loadLiveData` no longer touches the AI.
+- **Files:** `lib/prototype/liveData.ts`, `lib/prototype/live.ts`, `lib/weekly/{data,narrative,narrativeCache,readerItems}.ts`, `app/api/weekly/summary/route.ts` (new), `components/weekly/{useWeeklySummary.ts,WeeklyNarrative.tsx}` (new), `app/(prototype)/app/page.tsx`, `app/(public)/weekly/page.tsx`, tests (`tests/prototype/{liveData,home}.test.ts`, `tests/weekly/{narrative,narrativeCache}.test.ts`, `tests/api/weekly-summary-route.test.ts`), `DESIGN.md` §8
+- **Contract changes:** `loadItems` has a new optional `storyLang` (P3's file; without it nothing changes). New route `/api/weekly/summary`.
+- **Checked:** The new tests failed first, then passed. `npm test` (897 Vitest + 72 P4), typecheck and build pass; lint passes on the changed files. In a local production build (database reached from a laptop, so slower than Vercel): `/app` loads in 2.2 s on a first visit and 0.14 s on the next; `/weekly` in 1.0 s; the English AI summary appears about 18 s after a first visit and at once after that; the Spanish one now arrives (about 20 s) instead of being dropped. A first try streamed the summary with Suspense, but the browser kept loading until it arrived, so it was replaced by the fetch.
+- **Open issues / next:** Live timings after deploy are in the next entry or the push notes. Lint still flags teammates' code: two setState-in-effect calls in `app-onboarding-tour.tsx`, an unused `shortBody` in `app/(prototype)/app/brief/page.tsx`, and unused `index` arguments in `app/(public)/weekly/page.tsx` and `app/(public)/alerts/page.tsx`.
+
 ### 2026-10-24: One onboarding walkthrough, starting on the dashboard
 - **Who:** PlaidMod · P5 Platform
 - **Branch:** main

@@ -4,6 +4,10 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { createElement, type ComponentProps } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { NextIntlClientProvider } from 'next-intl'
+// The AI summary is fetched after the page shows; here the fetch "returns" whatever a test sets.
+const summary = vi.hoisted(() => ({ points: null as string[] | null }))
+vi.mock('@/components/weekly/useWeeklySummary', () => ({ useWeeklySummary: () => summary.points }))
+
 import Home from '@/app/(prototype)/app/page'
 import { StoryProvider } from '@/components/prototype/story-sheet'
 import type { LiveData } from '@/lib/prototype/live'
@@ -62,6 +66,7 @@ const render = (data: LiveData) =>
   )
 
 beforeEach(() => {
+  summary.points = null
   vi.useFakeTimers()
   vi.setSystemTime(NOW)
 })
@@ -107,5 +112,28 @@ describe('the week in short, on the dashboard itself', () => {
 
   it('says so plainly when nothing is new', () => {
     expect(render(week([]))).toContain('Nothing new from your local governments this week.')
+  })
+})
+
+describe('the AI summary arrives after the page, instead of holding it up', () => {
+  const week2 = () => week([decided, coming], { decidedIds: ['d'], comingUpIds: ['a'] })
+
+  it('shows the headline sentences until the summary arrives', () => {
+    const html = render(week2())
+    expect(html).toContain('Just decided:')
+    expect(html).toContain('HISD board approves new bus contracts.')
+  })
+
+  it('shows the AI summary, with its label, once it arrives', () => {
+    summary.points = ['This week, the HISD board approved new bus contracts.']
+    const html = render(week2())
+    expect(html).toContain('This week, the HISD board approved new bus contracts.')
+    expect(html).toContain('Written with AI from the official agenda')
+    expect(html).not.toContain('Just decided:')
+  })
+
+  it('keeps the headline sentences when no summary could be written', () => {
+    summary.points = []
+    expect(render(week2())).toContain('Just decided:')
   })
 })

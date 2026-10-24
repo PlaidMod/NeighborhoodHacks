@@ -6,12 +6,12 @@ import { getFormatter, getLocale, getTranslations } from 'next-intl/server'
 import { BodyIcon } from '@/components/civic'
 import { Coverage } from '@/components/weekly/Coverage'
 import { NeedAddress, NewsNav, SampleNotice, StorySource, withToken } from '@/components/weekly/NewsChrome'
+import { WeeklyNarrative } from '@/components/weekly/WeeklyNarrative'
 import { Button } from '@/components/ui/button'
 import type { BodyType } from '@/lib/contracts/bodyTypes'
 import { STAKES_COOKIE, parseStakes } from '@/lib/stakes'
 import { buildWeekly, type WeeklyItem } from '@/lib/weekly/build'
 import { summarizeWeek } from '@/lib/weekly/summary'
-import { weeklyNarrative } from '@/lib/weekly/narrative'
 import { loadItems, resolveBodies } from '@/lib/weekly/data'
 import { cn } from '@/lib/utils'
 
@@ -53,7 +53,7 @@ export default async function WeeklyPage({ searchParams }: { searchParams: Promi
 
   const stakes = parseStakes((await cookies()).get(STAKES_COOKIE)?.value)
   const now = new Date()
-  const items = await loadItems(resolved.mode, resolved.bodies, { now })
+  const items = await loadItems(resolved.mode, resolved.bodies, { now, storyLang: lang })
   const edition = buildWeekly({
     items,
     bodies: resolved.bodies.map((b) => ({ body_id: b.body_id, body_name: b.body_name })),
@@ -72,10 +72,46 @@ export default async function WeeklyPage({ searchParams }: { searchParams: Promi
   // Fewer, bigger stories up top; the rest are a short list with "Show more".
   const tiles = [edition.lead, ...edition.comingUp].filter((i): i is WeeklyItem => !!i).slice(0, 3)
   const summary = summarizeWeek(edition, now)
-  const narrative = await weeklyNarrative(edition, lang)
   const SHOWN = 5
   const moreComingUp = edition.comingUp.slice(Math.max(0, tiles.length - 1))
   const nothing = !edition.lead && edition.decided.length === 0
+
+  // The week in fact lines, worked out from the brief itself: shown until the AI summary arrives, and kept if it doesn't.
+  const facts = (
+        <ul className="mt-4 space-y-2.5 font-sans text-[1.05rem] leading-relaxed md:text-lg">
+          <li>
+            {t('sumComing', { count: summary.coming.count, bodies: summary.coming.bodies })}
+          </li>
+          {summary.busiest && (
+            <li>
+              {t('sumBusiest', { day: day(summary.busiest.date), body: summary.busiest.body_name, count: summary.busiest.count })}
+            </li>
+          )}
+          {summary.topics.length > 0 && (
+            <li>
+              {t('sumTopics', {
+                topics: summary.topics.map((x) => `${t(`topic.${x.type}`)} (${x.count})`).join(', '),
+              })}
+            </li>
+          )}
+          {summary.nextDeadline && (
+            <li>
+              {t('sumDeadline', { when: when(summary.nextDeadline.at), headline: headline(summary.nextDeadline.item) })}{' '}
+              <Link href={`/speak-up/${summary.nextDeadline.item.item_id}`} className="font-semibold text-denim underline-offset-4 hover:underline">
+                {tn('speakUp')}
+              </Link>
+            </li>
+          )}
+          {summary.decided.count > 0 && (
+            <li>
+              {summary.decided.passed + summary.decided.failed === 0
+                ? t('sumDecidedPending', { count: summary.decided.count })
+                : t('sumDecided', summary.decided)}
+            </li>
+          )}
+          {summary.cancelled > 0 && <li>{t('sumCancelled', { count: summary.cancelled })}</li>}
+        </ul>
+  )
 
   return (
     <main id="main" className="mx-auto max-w-7xl px-4 md:px-8 2xl:max-w-[1440px] pt-6 pb-8 font-news text-ink">
@@ -95,50 +131,10 @@ export default async function WeeklyPage({ searchParams }: { searchParams: Promi
       {!nothing && (
         <section aria-labelledby="week-summary" className="mt-6 rounded-[24px] bg-white p-5 md:p-6">
           <h2 id="week-summary" className="font-headline text-2xl font-black md:text-3xl">{t('summaryTitle')}</h2>
-          {narrative ? (
-            <>
-              <div className="mt-4 space-y-3 font-sans text-[1.05rem] leading-relaxed md:text-lg">
-                {narrative.map((point, i) => (
-                  <p key={i}>{point}</p>
-                ))}
-              </div>
-              <p className="mt-4 font-sans text-xs text-muted-foreground">{t('summaryAi')}</p>
-            </>
-          ) : (
-          <ul className="mt-4 space-y-2.5 font-sans text-[1.05rem] leading-relaxed md:text-lg">
-            <li>
-              {t('sumComing', { count: summary.coming.count, bodies: summary.coming.bodies })}
-            </li>
-            {summary.busiest && (
-              <li>
-                {t('sumBusiest', { day: day(summary.busiest.date), body: summary.busiest.body_name, count: summary.busiest.count })}
-              </li>
-            )}
-            {summary.topics.length > 0 && (
-              <li>
-                {t('sumTopics', {
-                  topics: summary.topics.map((x) => `${t(`topic.${x.type}`)} (${x.count})`).join(', '),
-                })}
-              </li>
-            )}
-            {summary.nextDeadline && (
-              <li>
-                {t('sumDeadline', { when: when(summary.nextDeadline.at), headline: headline(summary.nextDeadline.item) })}{' '}
-                <Link href={`/speak-up/${summary.nextDeadline.item.item_id}`} className="font-semibold text-denim underline-offset-4 hover:underline">
-                  {tn('speakUp')}
-                </Link>
-              </li>
-            )}
-            {summary.decided.count > 0 && (
-              <li>
-                {summary.decided.passed + summary.decided.failed === 0
-                  ? t('sumDecidedPending', { count: summary.decided.count })
-                  : t('sumDecided', summary.decided)}
-              </li>
-            )}
-            {summary.cancelled > 0 && <li>{t('sumCancelled', { count: summary.cancelled })}</li>}
-          </ul>
-          )}
+          {/* The AI summary is fetched after the page shows; the fact lines stay until it arrives. */}
+          <WeeklyNarrative token={token} lang={lang} aiLabel={t('summaryAi')}>
+            {facts}
+          </WeeklyNarrative>
         </section>
       )}
 

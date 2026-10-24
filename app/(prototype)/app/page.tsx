@@ -7,6 +7,7 @@ import * as React from "react"
 import { ArrowCircle, Panel, SectionTitle } from "@/components/prototype/civic"
 import { useStory } from "@/components/prototype/story-sheet"
 import { Button } from "@/components/ui/button"
+import { useWeeklySummary } from "@/components/weekly/useWeeklySummary"
 import type { Update } from "@/lib/prototype/types"
 import { ELECTION, relevance } from "@/lib/prototype/updates"
 import { daysFromNow, fmtDateTime, fmtTime, money, monthDay, relDayLower } from "@/lib/prototype/format"
@@ -151,9 +152,11 @@ export default function Home() {
 function WeekInShort() {
   const t = useTranslations("AppTldr")
   const lang = useLocale() === "es" ? "es" : "en"
-  const { updates, weekly, profile } = useProfile()
+  const { updates, weekly, bodies, profile } = useProfile()
   const openStory = useStory()
   const now = useNow()
+  // The AI summary is fetched after the page shows (it can take ~15s to write the first time).
+  const summary = useWeeklySummary({ enabled: !!weekly, lang, key: bodies.map((b) => b.id).join(",") })
   const tldr = buildTldr({ updates, weekly, personas: profile.personas, now })
   const { decided, coming } = tldrPick(tldr)
   const shown = [...decided, ...coming]
@@ -182,28 +185,36 @@ function WeekInShort() {
       <h2 id="week-in-short" className="flex items-center gap-1.5 text-xs font-bold text-denim">
         <Zap aria-hidden className="size-3.5" /> {t("short")}
       </h2>
-      {weekly?.summary?.length ? (
+      {summary?.length ? (
         // The week in plain English, written with AI from the agendas.
-        <p className="mt-1.5 text-[1.02rem] leading-relaxed text-pretty text-ink">{weekly.summary.join(" ")}</p>
-      ) : shown.length === 0 ? (
-        <p className="mt-1.5 text-[1.02rem] leading-relaxed text-muted-foreground">{t("quiet")}</p>
+        <>
+          <p className="mt-1.5 text-[1.02rem] leading-relaxed text-pretty text-ink">{summary.join(" ")}</p>
+          <p className="mt-1.5 text-xs text-muted-foreground">{AI_LABEL[lang]}</p>
+        </>
       ) : (
-        <p className="mt-1.5 text-[1.02rem] leading-relaxed text-pretty text-ink">
-          {decided.length > 0 && <strong>{t("decidedLead")} </strong>}
-          {decided.map((u) => (
-            <React.Fragment key={u.id}>{headline(u, asSentence(u.title))} </React.Fragment>
-          ))}
-          {coming.length > 0 && <strong>{t("comingLead")} </strong>}
-          {coming.map((u) => (
-            <React.Fragment key={u.id}>
-              {headline(u, u.title.trim().replace(/\.+$/, ""))}
-              {` (${relDayLower(u.date)}). `}
-              {tldr.next?.id === u.id && `${t("closes", { when: fmtDateTime(u.comment!.deadline) })} `}
-            </React.Fragment>
-          ))}
-        </p>
+        // The headline sentences: on screen at once, and kept when no AI summary could be written.
+        <>
+          {shown.length === 0 ? (
+            <p className="mt-1.5 text-[1.02rem] leading-relaxed text-muted-foreground">{t("quiet")}</p>
+          ) : (
+            <p className="mt-1.5 text-[1.02rem] leading-relaxed text-pretty text-ink">
+              {decided.length > 0 && <strong>{t("decidedLead")} </strong>}
+              {decided.map((u) => (
+                <React.Fragment key={u.id}>{headline(u, asSentence(u.title))} </React.Fragment>
+              ))}
+              {coming.length > 0 && <strong>{t("comingLead")} </strong>}
+              {coming.map((u) => (
+                <React.Fragment key={u.id}>
+                  {headline(u, u.title.trim().replace(/\.+$/, ""))}
+                  {` (${relDayLower(u.date)}). `}
+                  {tldr.next?.id === u.id && `${t("closes", { when: fmtDateTime(u.comment!.deadline) })} `}
+                </React.Fragment>
+              ))}
+            </p>
+          )}
+          {shown.some((u) => u.aiWritten) && <p className="mt-1.5 text-xs text-muted-foreground">{AI_LABEL[lang]}</p>}
+        </>
       )}
-      {(weekly?.summary?.length || shown.some((u) => u.aiWritten)) && <p className="mt-1.5 text-xs text-muted-foreground">{AI_LABEL[lang]}</p>}
     </section>
   )
 }

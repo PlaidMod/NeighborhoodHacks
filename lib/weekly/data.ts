@@ -120,19 +120,22 @@ function toWeeklyItem(row: ItemRow, bodies: Map<string, WeeklyBody>): WeeklyItem
 export async function loadItems(
   mode: DataMode,
   bodies: WeeklyBody[],
-  opts: { now?: Date; fromDays?: number; toDays?: number } = {},
+  opts: { now?: Date; fromDays?: number; toDays?: number; storyLang?: 'en' | 'es' } = {},
 ): Promise<WeeklyItem[]> {
   const now = opts.now ?? new Date()
   if (mode === 'sample') return sampleItems(now)
   if (!bodies.length) return []
   const from = new Date(now.getTime() - (opts.fromDays ?? 7) * DAY).toISOString()
   const to = new Date(now.getTime() + (opts.toDays ?? 14) * DAY).toISOString()
+  // With storyLang, only that language's story comes back (the other stays null): the stories
+  // are most of each row, so this roughly halves what a page loads.
+  const columns = opts.storyLang ? ITEM_COLUMNS.replace(opts.storyLang === 'en' ? 'story_es, ' : 'story_en, ', '') : ITEM_COLUMNS
   // Every matching row, page by page: one Commissioners Court meeting can have 500+ items,
   // and a single capped query would silently drop other bodies' items.
   const data = await fetchAllPages((start, end) =>
     db()
       .from('items')
-      .select(ITEM_COLUMNS)
+      .select(columns as typeof ITEM_COLUMNS)
       .in(
         'body_id',
         bodies.map((b) => b.body_id),
