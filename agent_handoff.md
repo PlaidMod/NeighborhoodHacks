@@ -33,6 +33,15 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-23: Tighten the results onboarding spotlight
+- **Who:** Marie Gary Blueberry · public experience
+- **Branch:** main
+- **What changed:** The spotlight now cuts out the target's measured border radius. The guide stays mounted across route changes, advances from the results dashboard link through dashboard, weekly, alerts and tax pages, and the final Next returns to the landing page. Progress is kept in session storage for route transitions.
+- **Files:** `components/home/ResultsOnboarding.tsx`, `app/layout.tsx`, `app/(public)/results/page.tsx`, `app/(prototype)/app/page.tsx`, `app/(public)/page.tsx`, `components/weekly/NewsChrome.tsx`, `app/(public)/alerts/page.tsx`, `components/flow/TaxReceiptClient.tsx`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `PATH=/opt/homebrew/bin:$PATH npm run typecheck` and `git diff --check` passed; browser check and tests not run.
+- **Open issues / next:** Browser behavior and visual fit remain unverified.
+
 ### 2026-10-23: The week in short moves onto the dashboard as a few sentences
 - **Who:** PlaidMod · P5 Platform
 - **Branch:** main
@@ -49,7 +58,7 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 ### 2026-10-23: Start the guide on the address results screen
 - **Who:** Marie Gary Blueberry · public experience
 - **Branch:** main
-- **What changed:** Added the four-step guide to the actual `/results` flow, spotlighting its dashboard, weekly news, alerts, and property tax actions with progress tabs, Skip, Next, and Done. Added English and Spanish copy; the guide starts automatically once per browser after results load.
+- **What changed:** Added the four-step guide to the actual `/results` flow, spotlighting its dashboard, weekly news, alerts, and property tax actions with progress tabs, Skip, Next, and Done. Added English and Spanish copy; the guide starts automatically whenever a completed lookup opens results, and closing it dismisses it only for that visit.
 - **Files:** `app/(public)/results/page.tsx`, `components/home/ResultsOnboarding.tsx`, `messages/*.json`, `agent_handoff.md`
 - **Contract changes:** None.
 - **Checked:** `git diff --check` passed; browser check and tests not run.

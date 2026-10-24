@@ -63,7 +63,7 @@ export default async function AlertsPage({ searchParams }: { searchParams: Promi
             <p className="mt-3 max-w-2xl text-lg text-muted-foreground">{t('lede')}</p>
           </header>
 
-          <div className="rounded-[24px] bg-white p-5 ring-1 ring-border">
+          <div data-onboarding="alerts" className="rounded-[24px] bg-white p-5 ring-1 ring-border">
             <PushSignup token={token ?? null} vapidKey={vapidPublicKey()} />
           </div>
 

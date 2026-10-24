@@ -47,6 +47,7 @@ export async function NewsNav({
           <Link
             key={l.key}
             href={l.href}
+            data-onboarding={active === 'weekly' && l.key === 'weekly' ? 'weekly' : undefined}
             aria-current={active === l.key ? 'page' : undefined}
             className={cn(
               'relative -mb-px border-b-[3px] border-transparent pb-2.5 text-muted-foreground hover:text-ink',

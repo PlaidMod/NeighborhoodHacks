@@ -4,6 +4,7 @@ import { NextIntlClientProvider } from 'next-intl'
 import { getLocale, getTranslations } from 'next-intl/server'
 import { Toaster } from '@/components/ui/sonner'
 import { TooltipProvider } from '@/components/ui/tooltip'
+import { ResultsOnboarding } from '@/components/home/ResultsOnboarding'
 import './globals.css'
 
 // App UI: a clean neo-grotesk (the teammate picked it from the Lisso dashboard reference).
@@ -20,7 +21,10 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
     <html lang={locale} className={`${geist.variable} h-full antialiased`}>
       <body className="min-h-full">
         <NextIntlClientProvider>
-          <TooltipProvider delayDuration={200}>{children}</TooltipProvider>
+          <TooltipProvider delayDuration={200}>
+            {children}
+            <ResultsOnboarding />
+          </TooltipProvider>
         </NextIntlClientProvider>
         <Toaster position="top-center" />
       </body>

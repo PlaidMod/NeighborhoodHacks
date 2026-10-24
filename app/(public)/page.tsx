@@ -6,10 +6,10 @@ import { GovernmentStack } from '@/components/home/GovernmentStack'
 import { Button } from '@/components/ui/button'
 import { getAccount, googleEnabled, hasRememberedGovernments } from '@/lib/account'
 
-export default async function Home({ searchParams }: { searchParams: Promise<{ change?: string; welcome?: string; deleted?: string }> }) {
-  const { change, welcome, deleted } = await searchParams
+export default async function Home({ searchParams }: { searchParams: Promise<{ change?: string; welcome?: string; deleted?: string; tour?: string }> }) {
+  const { change, welcome, deleted, tour } = await searchParams
   // Returning readers go straight to their dashboard. Address changes happen at /address.
-  if (change === undefined && welcome === undefined && deleted === undefined && (await hasRememberedGovernments())) redirect('/app')
+  if (change === undefined && welcome === undefined && deleted === undefined && tour === undefined && (await hasRememberedGovernments())) redirect('/app')
   const [t, ta, td, account, google] = await Promise.all([
     getTranslations('Home'),
     getTranslations('Account'),

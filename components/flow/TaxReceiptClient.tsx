@@ -68,7 +68,7 @@ export function TaxReceiptClient({ token }: { token: string }) {
       <h1 className="mt-2 text-3xl font-extrabold tracking-tight text-ink">{t('title')}</h1>
       <p className="mt-3 max-w-2xl text-muted-foreground">{t('intro')}</p>
 
-      <form className="mt-7 flex flex-wrap items-end gap-3" onSubmit={(event) => { event.preventDefault(); void loadReceipt(value) }}>
+      <form data-onboarding="taxes" className="mt-7 flex flex-wrap items-end gap-3" onSubmit={(event) => { event.preventDefault(); void loadReceipt(value) }}>
         <label className="grid gap-2 text-sm font-semibold text-ink">
           {t('valueLabel')}
           <span className="flex items-center rounded-xl border border-border bg-white px-3">

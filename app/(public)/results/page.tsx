@@ -6,7 +6,6 @@ import { useTranslations } from 'next-intl'
 import { BodyIcon } from '@/components/civic'
 import { BodyQuiz } from '@/components/flow/BodyQuiz'
 import { useLookup } from '@/components/flow/LookupProvider'
-import { ResultsOnboarding } from '@/components/home/ResultsOnboarding'
 import { Button } from '@/components/ui/button'
 
 export default function ResultsPage() {
@@ -174,7 +173,6 @@ export default function ResultsPage() {
                 <Link data-onboarding="taxes" href={`/tax-receipt?t=${encodeURIComponent(state.data.bodies_token)}`}>{t('taxReceipt')}</Link>
               </Button>
             </div>
-            <ResultsOnboarding />
           </>
         )}
       </div>

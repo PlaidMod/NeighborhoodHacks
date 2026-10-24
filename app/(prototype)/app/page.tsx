@@ -62,6 +62,7 @@ export default function Home() {
         <StatCard
           href="/app/districts"
           hero
+          dataOnboarding="dashboard"
           label="Your local governments"
           value={bodies.length}
           note={mud ? `Including ${mud.short}, a utility district` : "See what each one controls"}
@@ -211,6 +212,7 @@ function StatCard({
   href,
   hero,
   tone,
+  dataOnboarding,
 }: {
   label: string
   value: React.ReactNode
@@ -218,10 +220,12 @@ function StatCard({
   href: string
   hero?: boolean
   tone?: "brick"
+  dataOnboarding?: string
 }) {
   return (
     <Link
       href={href}
+      data-onboarding={dataOnboarding}
       className={cn(
         "group rise relative flex min-h-[124px] flex-col justify-between gap-3 overflow-hidden rounded-[24px] bg-white p-4 transition-transform motion-safe:hover:-translate-y-0.5 md:min-h-[140px] md:p-5",
         hero && "col-span-2 bg-denim text-white sm:col-span-1",
