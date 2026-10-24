@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { LiveData } from '@/lib/prototype/live'
 import type { Update } from '@/lib/prototype/types'
-import { TLDR_COMING, TLDR_DECIDED, buildTldr, readMinutes, tldrFootnote, tldrLine } from '@/lib/prototype/tldr'
+import { TLDR_COMING, TLDR_DECIDED, asSentence, buildTldr, tldrPick } from '@/lib/prototype/tldr'
 
 // Friday Oct 23, 2026, noon in Houston.
 const NOW = new Date('2026-10-23T17:00:00Z')
@@ -110,39 +110,45 @@ describe('buildTldr with the demo (no weekly order)', () => {
   })
 })
 
-describe('tldrLine, the one line under each headline', () => {
-  const u = upd('a', { summary: 'What is happening', why: { default: 'Renters can weigh in too.', student: 'Decides when your summer ends.' } })
+describe('tldrPick, the headlines in the dashboard paragraph', () => {
+  const c = [1, 2, 3, 4].map((n) => upd(`c${n}`))
+  const d = [1, 2, 3].map((n) => upd(`d${n}`, { type: 'decision' }))
 
-  it("uses the line written for the reader's own role first", () => {
-    expect(tldrLine(u, ['renter', 'student'])).toBe('Decides when your summer ends.')
+  it('takes up to two decisions and fills to three headlines with what is coming up', () => {
+    const pick = tldrPick({ coming: c, decided: d })
+    expect(pick.decided.map((u) => u.id)).toEqual(['d1', 'd2'])
+    expect(pick.coming.map((u) => u.id)).toEqual(['c1'])
   })
 
-  it("otherwise uses the story's summary, not the general note (real stories' general note is the renter line)", () => {
-    expect(tldrLine(u, [])).toBe('What is happening')
-    expect(tldrLine(u, ['parent'])).toBe('What is happening')
+  it('uses all three for one kind when the other is empty', () => {
+    expect(tldrPick({ coming: c, decided: [] }).coming.map((u) => u.id)).toEqual(['c1', 'c2', 'c3'])
+    expect(tldrPick({ coming: [], decided: d }).decided.map((u) => u.id)).toEqual(['d1', 'd2', 'd3'])
   })
 
-  it('falls back to the general note, then to nothing', () => {
-    expect(tldrLine(upd('b', { why: { default: 'General note' } }), [])).toBe('General note')
-    expect(tldrLine(upd('c'), [])).toBe('')
+  it('prefers items with a written story over bare agenda titles, keeping order otherwise', () => {
+    const bare = upd('bare', { title: 'Vote Oct. 27: ORDINANCE finding and determining that public convenience…' })
+    const told = (id: string) => upd(id, { summary: 'A plain-language summary.' })
+    const pick = tldrPick({ coming: [bare, told('t1'), told('t2'), told('t3')], decided: [] })
+    expect(pick.coming.map((u) => u.id)).toEqual(['t1', 't2', 't3'])
+    expect(tldrPick({ coming: [bare], decided: [] }).coming.map((u) => u.id)).toEqual(['bare'])
+  })
+
+  it('puts plain-language AI headlines ahead of template stories that repeat the agenda title', () => {
+    const template = upd('template', { title: 'Vote Oct. 27: ORDINANCE relating to Fiscal Affairs', summary: 'Council votes Oct. 27.' })
+    const ai = upd('ai', { title: 'City Council to consider $1.7 million for dispatch upgrades', summary: 'A summary.', aiWritten: true })
+    expect(tldrPick({ coming: [template, ai], decided: [] }).coming.map((u) => u.id)).toEqual(['ai', 'template'])
+  })
+
+  it('skips placeholder headlines that only say the outcome is not posted', () => {
+    const placeholder = upd('p', { type: 'decision', title: 'Outcome not posted yet: Request for approval of a lease' })
+    expect(tldrPick({ coming: [], decided: [placeholder, d[0]!] }).decided.map((u) => u.id)).toEqual(['d1'])
   })
 })
 
-describe('readMinutes', () => {
-  it('rounds the words shown to whole minutes at 200 words a minute, never below 1', () => {
-    expect(readMinutes([])).toBe(1)
-    expect(readMinutes(['one two three'])).toBe(1)
-    expect(readMinutes([Array(500).fill('word').join(' ')])).toBe(3)
-  })
-})
-
-describe('tldrFootnote', () => {
-  it('uses the AI label when any summary shown was written with AI', () => {
-    expect(tldrFootnote([upd('a'), upd('b', { aiWritten: true })], 'db')).toBe('ai')
-  })
-  it('otherwise says where the items come from', () => {
-    expect(tldrFootnote([upd('a')], 'db')).toBe('real')
-    expect(tldrFootnote([upd('a')], 'sample')).toBe('sample')
-    expect(tldrFootnote([upd('a')], 'demo')).toBe('sample')
+describe('asSentence', () => {
+  it('ends a headline with a period unless it already ends a sentence', () => {
+    expect(asSentence('County approves $1.4 million for repairs')).toBe('County approves $1.4 million for repairs.')
+    expect(asSentence('  Who pays for the bond? ')).toBe('Who pays for the bond?')
+    expect(asSentence('Board votes Tuesday.')).toBe('Board votes Tuesday.')
   })
 })

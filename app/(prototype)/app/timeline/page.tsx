@@ -135,7 +135,7 @@ export default function Timeline() {
           )}
         </div>
         <Reveal delay={300}>
-          <div role="group" aria-label={t("topicsLabel")} className="scrollbar-none -mr-4 mt-8 flex gap-2 overflow-x-auto pr-4 xl:mr-0 xl:flex-wrap xl:overflow-visible xl:pr-0">
+          <div data-tour="timeline-topics" role="group" aria-label={t("topicsLabel")} className="scrollbar-none -mr-4 mt-8 flex gap-2 overflow-x-auto pr-4 xl:mr-0 xl:flex-wrap xl:overflow-visible xl:pr-0">
             <TopicChip on={!topic} onClick={() => change(() => setTopic(null))}>
               {t("tabs.all")}
             </TopicChip>
@@ -454,11 +454,11 @@ function Countdown({ u }: { u: Update | undefined }) {
   const h = Math.floor((left % 86_400_000) / 3_600_000)
   const m = Math.floor((left % 3_600_000) / 60_000)
   const s = Math.floor((left % 60_000) / 1000)
-  const unit = "mr-1.5 ml-0.5 text-[1.15rem] font-semibold text-white/40"
+  const unit = "mx-2 inline-block text-[1.15rem] font-semibold text-white/40"
   return (
     <div className={cn("rounded-[22px] bg-ink p-5 text-white", LIFT)}>
       <p className="text-sm font-semibold text-white/60">{t("nextDeadline")}</p>
-      <p className="mt-2 text-[2.2rem] leading-none font-bold tracking-[-0.05em] tabular-nums" aria-live="off">
+      <p className="mt-2 text-[2.2rem] leading-none font-bold tracking-normal tabular-nums" aria-live="off">
         {d > 0 && (
           <>
             {d}

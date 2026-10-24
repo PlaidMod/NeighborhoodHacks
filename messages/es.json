@@ -556,7 +556,6 @@
       "home": "Inicio",
       "timeline": "Cronología",
       "brief": "Resumen semanal",
-      "tldr": "Semana en breve",
       "districts": "Mis distritos",
       "speak": "Hazte escuchar",
       "vote": "Votar",
@@ -614,6 +613,22 @@
       "voter": "Votante por primera vez"
     }
   },
+  "AppTour": {
+    "stepCount": "Paso {current} de {total}",
+    "progressLabel": "Pasos del recorrido",
+    "goToStep": "Ir al paso {step}",
+    "next": "Siguiente",
+    "skip": "Omitir recorrido",
+    "done": "Listo",
+    "homeTitle": "Tu vecindario de un vistazo",
+    "homeBody": "Empieza aquí para ver los gobiernos que sirven a tu dirección y las decisiones que requieren tu atención.",
+    "briefTitle": "Tu resumen semanal",
+    "briefBody": "Abre una noticia para entender una decisión, consultar su fuente oficial y ver cómo participar.",
+    "timelineTitle": "Explora la cronología completa",
+    "timelineBody": "Usa estos filtros para encontrar próximas reuniones, puntos urgentes y decisiones ya tomadas.",
+    "speakTitle": "Prepárate para participar",
+    "speakBody": "Elige un punto de la agenda, entiende lo que significa, inscríbete para hablar y prepara tus propias palabras."
+  },
   "AppBrief": {
     "chip": "Resumen semanal",
     "minRead": "{count} min de lectura",
@@ -651,28 +666,11 @@
     "summaryAi": "Escrito con IA a partir de las agendas oficiales. Abra cualquier noticia abajo para ver los detalles."
   },
   "AppTldr": {
-    "chip": "La versión corta",
-    "minRead": "{count} min de lectura",
-    "title": "Tu semana, en breve",
-    "gist": "{coming, plural, =0 {Nada próximo} one {# asunto próximo} other {# asuntos próximos}}, {open, plural, =0 {ninguno abierto a comentarios del público} one {# abierto a comentarios del público} other {# abiertos a comentarios del público}} y {decided, plural, =0 {ninguna decisión nueva} one {# decisión nueva} other {# decisiones nuevas}}.",
-    "coming": "Próximamente",
-    "decided": "Recién decidido",
-    "next": "Tu siguiente paso",
-    "nextSpeak": "La inscripción para hablar sobre “{title}” cierra el {when}",
-    "draft": "Escribir mi comentario",
-    "noneOpen": "Ahora no hay periodos abiertos para comentar. Activa las alertas para saber cuándo se abra uno.",
-    "alerts": "Activar alertas",
-    "signup": "La inscripción cierra el {when}",
-    "source": "Fuente oficial",
-    "sourceLabel": "Fuente oficial de “{title}”, se abre en una pestaña nueva",
-    "more": "{count, plural, one {# más en la cronología} other {# más en la cronología}}",
-    "fullBrief": "Leer el resumen completo",
-    "empty": "No hay nada en las agendas de tus gobiernos esta semana.",
-    "emptyHint": "La cronología tiene todo lo del último mes y lo que viene después.",
-    "openTimeline": "Abrir la cronología",
-    "footReal": "De las agendas oficiales. Revísalas siempre antes de una reunión.",
-    "footSample": "Datos de muestra. Revisa siempre la agenda oficial antes de una reunión.",
-    "homeLink": "¿Poco tiempo? Lee tu semana en breve"
+    "short": "Esta semana, en breve",
+    "decidedLead": "Recién decidido:",
+    "comingLead": "Próximamente:",
+    "closes": "La inscripción para hablar cierra el {when}.",
+    "quiet": "Nada nuevo de tus gobiernos locales esta semana."
   },
   "AppTimeline": {
     "title": "Cronología",

@@ -16,7 +16,7 @@ export default async function AddressPage() {
       <section className="mt-8 grid items-center gap-12 lg:grid-cols-[1.05fr_0.95fr] xl:gap-20">
         <div>
           <p className="mb-4 text-xs font-extrabold tracking-[0.16em] text-denim uppercase">{t('eyebrow')}</p>
-          <h1 className="max-w-[14ch] text-4xl text-balance leading-tight font-extrabold tracking-[-0.035em] text-ink md:text-5xl">{t('title')}</h1>
+          <h1 className="max-w-none text-4xl text-balance leading-tight font-extrabold tracking-[-0.035em] text-ink md:text-5xl">{t('title')}</h1>
           <p className="mt-4 max-w-[38rem] text-lg leading-relaxed text-muted-foreground">{t('lede')}</p>
           <AddressForm className="mt-8 max-w-[42rem]" />
           <p className="mt-3 text-sm text-muted-foreground">{home('coverage')}</p>

@@ -556,7 +556,6 @@
       "home": "Home",
       "timeline": "Timeline",
       "brief": "Weekly brief",
-      "tldr": "Week in short",
       "districts": "My districts",
       "speak": "Speak up",
       "vote": "Vote",
@@ -614,6 +613,22 @@
       "voter": "First-time voter"
     }
   },
+  "AppTour": {
+    "stepCount": "Step {current} of {total}",
+    "progressLabel": "Tour steps",
+    "goToStep": "Go to step {step}",
+    "next": "Next",
+    "skip": "Skip tour",
+    "done": "Done",
+    "homeTitle": "Your neighborhood at a glance",
+    "homeBody": "Start here to see the governments that serve your address and the decisions that need your attention.",
+    "briefTitle": "Your weekly brief",
+    "briefBody": "Open a story to understand a decision, check its official source, and see how you can take part.",
+    "timelineTitle": "Explore the full timeline",
+    "timelineBody": "Use these topic filters to find upcoming meetings, urgent items, and decisions already made.",
+    "speakTitle": "Get ready to speak up",
+    "speakBody": "Choose an agenda item, understand what it means, register to speak, and prepare your own words."
+  },
   "AppBrief": {
     "chip": "Weekly brief",
     "minRead": "{count} min read",
@@ -651,28 +666,11 @@
     "summaryAi": "Written with AI from the official agendas. Open any story below for the details."
   },
   "AppTldr": {
-    "chip": "The short version",
-    "minRead": "{count} min read",
-    "title": "Your week, in short",
-    "gist": "{coming, plural, =0 {Nothing coming up} one {# thing coming up} other {# things coming up}}, {open, plural, =0 {none open for public comment} one {# open for public comment} other {# open for public comment}}, and {decided, plural, =0 {no new decisions} one {# new decision} other {# new decisions}}.",
-    "coming": "Coming up",
-    "decided": "Just decided",
-    "next": "Your next step",
-    "nextSpeak": "Sign-up to speak on “{title}” closes {when}",
-    "draft": "Draft my comment",
-    "noneOpen": "No open comment windows right now. Turn on alerts to hear when one opens.",
-    "alerts": "Turn on alerts",
-    "signup": "Sign-up closes {when}",
-    "source": "Official source",
-    "sourceLabel": "Official source for “{title}”, opens in a new tab",
-    "more": "{count, plural, one {# more on the timeline} other {# more on the timeline}}",
-    "fullBrief": "Read the full brief",
-    "empty": "Nothing is on your governments' agendas this week.",
-    "emptyHint": "The timeline has everything from the last month and what's coming up later.",
-    "openTimeline": "Open the timeline",
-    "footReal": "From the official agendas. Always check them before a meeting.",
-    "footSample": "Sample data. Always check the official agenda before a meeting.",
-    "homeLink": "Short on time? Read your week in short"
+    "short": "This week, in short",
+    "decidedLead": "Just decided:",
+    "comingLead": "Coming up:",
+    "closes": "Sign-up to speak closes {when}.",
+    "quiet": "Nothing new from your local governments this week."
   },
   "AppTimeline": {
     "title": "Timeline",

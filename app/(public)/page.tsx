@@ -20,10 +20,10 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ c
 
   return (
     <main id="main" className="landing-hero relative isolate min-h-[calc(100svh-5rem)] overflow-hidden bg-transparent">
-      <div aria-hidden className="absolute inset-0 bg-gradient-to-r from-paper/55 via-paper/25 to-transparent" />
+      <div aria-hidden className="absolute inset-0 bg-gradient-to-r from-paper/30 via-paper/10 to-transparent" />
       <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-sand/5 via-transparent to-white/5" />
 
-      <div className="relative mx-auto grid min-h-[calc(100svh-5rem)] max-w-[1600px] items-center gap-10 px-5 py-20 md:px-10 md:py-24 lg:grid-cols-[0.88fr_1.12fr] lg:gap-12 xl:gap-20">
+      <div className="relative z-10 mx-auto grid min-h-[calc(100svh-5rem)] max-w-[1600px] items-center gap-10 px-5 py-20 md:px-10 md:py-24 lg:grid-cols-[0.88fr_1.12fr] lg:gap-12 xl:gap-20">
         <section className="max-w-2xl">
           {welcome !== undefined && account && (
             <p role="status" className="status-in mb-6 max-w-[34rem] rounded-2xl bg-sage-soft px-4 py-3 text-sm font-semibold text-sage">

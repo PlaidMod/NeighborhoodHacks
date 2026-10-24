@@ -251,7 +251,7 @@
 
   body:has(.landing-hero) .landing-site-footer {
     border-top-width: 0;
-    background-color: #fff1d6;
+    background-color: transparent;
     background-image: none;
     -webkit-backdrop-filter: none;
     backdrop-filter: none;

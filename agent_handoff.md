@@ -33,6 +33,74 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-23: The week in short moves onto the dashboard as a few sentences
+- **Who:** PlaidMod · P5 Platform
+- **Branch:** main
+- **What changed:**
+  - The dashboard home now opens with "This week, in short" under the greeting, in place of the status line and the link to `/app/tldr`. It's a short paragraph, not a list: "Just decided:" and "Coming up:" followed by up to three headlines in all (at most two decisions), each upcoming one with its day, then when sign-up to speak closes for the soonest one shown. Each headline opens its story sheet, which links to the official source.
+  - It uses the items' own headlines and writes no new text. Template "Outcome not posted yet" headlines are skipped. The AI label shows when any headline was written with AI. With nothing to show it says "Nothing new from your local governments this week."
+  - `/app/tldr` now forwards to `/app`, and "Week in short" left the sidebar. The page-only helpers (`tldrLine`, `readMinutes`, `tldrFootnote`) and their `AppTldr` messages are gone.
+  - Deploy: Vercel blocked the automatic and CLI deploys of Marie Gary Blueberry's commits through 4fcf955 (private repo; a CLI deploy that carries the teammate's commit is blocked too). PlaidMod deployed 4fcf955 with `vercel deploy --prod` from a `git archive` copy. CLAUDE.md now says so.
+  - Restored my "Accessibility fixes" entry below, which a merge had shortened to one line.
+- **Files:** `app/(prototype)/app/page.tsx`, `app/(prototype)/app/tldr/page.tsx` (redirect), `lib/prototype/tldr.ts` (`tldrPick`, `asSentence`), `components/prototype/app-shell.tsx`, `messages/*.json`, `tests/prototype/{home,tldr,tldrRedirect}.test.ts` (`tldrPage.test.ts` removed), `DESIGN.md` §8, `CLAUDE.md`
+- **Contract changes:** None.
+- **Checked:** The new tests failed first, then passed. `npm test` (875 Vitest + 72 P4), typecheck and build pass; lint fails only on `app-tour.tsx:44` (above). In a local production build with real data for 901 Bagby St 77002, English at 1280px and Spanish at 390px: three AI headlines (two decided, one coming up) flow as one paragraph with the AI label; Enter on a headline opens its story sheet; `/app/tldr` lands on `/app`; no sideways scroll. The first real-data check showed template headlines ("Vote Oct. 27: ORDINANCE…"), so AI headlines now come first.
+- **Open issues / next:** On the live landing page after 4fcf955 (measured in the browser): the transparent footer's About, Privacy and Terms links are about 1.1:1 against the grass at 1280px, well under 4.5:1; at 390px the "Your neighborhood, decoded" eyebrow sits under the header, and the last stack card's text ("And ones you've never heard of") is cut off. The landing photo is a 2.5 MB PNG, and `courthouse-hero.png`, `courthouse-hero-v2.png` and `calm-sea-hero.jpg` are unused. `npm run lint` fails on `components/prototype/app-tour.tsx:44` (setState in an effect). The dashboard home's other text is still English only.
+
+### 2026-10-23: Give countdown units more breathing room
+- **Who:** Marie Gary Blueberry · public experience
+- **Branch:** main
+- **What changed:** Removed tight letter spacing from the Timeline deadline countdown and added consistent space around each time unit so the numbers and labels read separately.
+- **Files:** `app/(prototype)/app/timeline/page.tsx`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `git diff --check` passed; browser check and tests not run.
+- **Open issues / next:** None.
+
+### 2026-10-23: Remove landing footer background band
+- **Who:** Marie Gary Blueberry · public experience
+- **Branch:** main
+- **What changed:** Removed the hero's cream fade overlay that created a distinct horizontal grass bar and made the landing footer transparent so the courthouse background continues behind it. Reduced the cream wash over the hero to make the image more visible.
+- **Files:** `app/(public)/page.tsx`, `app/globals.css`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `git diff --check` passed; visual browser check not run.
+- **Open issues / next:** None.
+
+### 2026-10-23: Add a four-step app tour after onboarding
+- **Who:** Marie Gary Blueberry · public experience
+- **Branch:** main
+- **What changed:** Limited the weekly brief's lead grid to four cards and clamped their headlines to two lines. Kept the existing onboarding, then added an English/Spanish spotlight tour through Home, Weekly brief, Timeline, and Speak up, with bottom progress tabs, Skip, and a final Done action.
+- **Files:** `app/(prototype)/app/brief/page.tsx`, `app/(prototype)/app/page.tsx`, `app/(prototype)/app/timeline/page.tsx`, `app/(prototype)/app/speak/speak.tsx`, `app/(prototype)/start/onboarding.tsx`, `components/prototype/app-shell.tsx`, `components/prototype/app-tour.tsx`, `messages/*.json`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `npx tsc --noEmit`, message JSON parsing, and `git diff --check` passed. Browser visual check not run because Chrome access was not approved.
+- **Open issues / next:** None.
+
+### 2026-10-23: Enlarge weekly news article cards
+- **Who:** Marie Gary Blueberry · public experience
+- **Branch:** main
+- **What changed:** Widened the weekly brief content area, increased the article tile minimum heights, and modestly enlarged headline type so cards read more clearly.
+- **Files:** `app/(prototype)/app/brief/page.tsx`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `git diff --check` passed. Browser visual check not run.
+- **Open issues / next:** None.
+
+### 2026-10-23: Widen the address page headline
+- **Who:** Marie Gary Blueberry · public experience
+- **Branch:** main
+- **What changed:** Removed the narrow 14-character headline cap so the address page title can use its full content column and wrap into two lines on desktop.
+- **Files:** `app/(public)/address/page.tsx`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `git diff --check` passed. Browser visual check not run.
+- **Open issues / next:** None.
+
+### 2026-10-23: Fade the grass band into the landing footer
+- **Who:** Marie Gary Blueberry · public experience
+- **Branch:** main
+- **What changed:** Restored the footer's left/right layout with vertical alignment, and added a fade from the background image into the footer cream to soften the visible grass band at the bottom of the hero.
+- **Files:** `components/shell/SiteFooter.tsx`, `app/globals.css`, `app/(public)/page.tsx`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `npx tsc --noEmit` and `git diff --check` passed.
+- **Open issues / next:** None.
+
 ### 2026-10-23: Center the landing footer content
 - **Who:** Marie Gary Blueberry · public experience
 - **Branch:** main
@@ -54,11 +122,21 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 ### 2026-10-23: Accessibility fixes from a web interface guidelines review
 - **Who:** PlaidMod · P5 Platform
 - **Branch:** main
-- **What changed:** Fixed small-phone overflow on `/app/tldr`, raised low-contrast labels, named the sidebar navigation regions, added an urgent-count label for screen readers, and corrected singular grammar on the dashboard home.
-- **Files:** `app/(prototype)/app/tldr/page.tsx`, `components/prototype/app-shell.tsx`, `app/(prototype)/app/page.tsx`, `messages/*.json`, related tests
-- **Contract changes:** None.
-- **Checked:** The teammate reports tests, typecheck, lint, build, and local responsive/accessibility checks passed.
-- **Open issues / next:** Remaining review findings are listed in the teammate's original handoff entry on `origin/main`.
+- **What changed:** Fixed the top findings from a review of `/app/tldr`, the dashboard home and the app shell:
+  - On `/app/tldr`, the Spanish sign-up chip ran 54px past its card at 320px and made the page scroll sideways. It now wraps.
+  - Two text pairs were below 4.5:1. "Your next step" on red measured 4.31:1 and is now 5.85:1. The sidebar's "Menu" and "General" labels measured 3.14:1 and are now 6.05:1; the `/70` fading is gone.
+  - The two sidebar `<nav>`s are now named "Menu" and "General".
+  - The Timeline link's urgent badge now reads as "2 urgent" to screen readers (new `AppShell.nav.urgentCount`).
+  - The home status line says "1 thing", not "1 things".
+- **Files:** `app/(prototype)/app/tldr/page.tsx`, `components/prototype/app-shell.tsx`, `app/(prototype)/app/page.tsx`, `messages/*.json`, `tests/prototype/tldrPage.test.ts`, `tests/platform/appShellText.test.ts`, `tests/prototype/home.test.ts` (new)
+- **Contract changes:** None
+- **Checked:** The 6 new tests failed first, then passed. `npm test` (880 Vitest + 72 P4), typecheck, lint and build pass. In a local production build: no sideways scroll at 320px in Spanish, contrast measured from the rendered colors, and the accessibility tree shows "Timeline 2 urgent" and both nav names.
+- **Open issues / next:** Still open from the review:
+  - The dashboard home's text is English only (about 30 strings), and its election date "Tuesday, Nov 3" is typed by hand.
+  - Search renders every update with no cap (a downtown address can have about 760 items).
+  - The countdown reads letter by letter to screen readers.
+  - Headline buttons on `/app/tldr` could use `aria-haspopup="dialog"`, and its "Official source" links are small tap targets.
+  - Adding `aria-keyshortcuts` to the search button would announce Ctrl K.
 
 ### 2026-10-23: Use the full ShowUp HTX name in the landing copy
 - **Who:** Marie Gary Blueberry · public experience
