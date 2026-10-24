@@ -44,8 +44,17 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
   - Restored my "Accessibility fixes" entry below, which a merge had shortened to one line.
 - **Files:** `app/(prototype)/app/page.tsx`, `app/(prototype)/app/tldr/page.tsx` (redirect), `lib/prototype/tldr.ts` (`tldrPick`, `asSentence`), `components/prototype/app-shell.tsx`, `messages/*.json`, `tests/prototype/{home,tldr,tldrRedirect}.test.ts` (`tldrPage.test.ts` removed), `DESIGN.md` §8, `CLAUDE.md`
 - **Contract changes:** None.
-- **Checked:** The new tests failed first, then passed. Full checks are in the commit that ships this.
+- **Checked:** The new tests failed first, then passed. `npm test` (875 Vitest + 72 P4), typecheck and build pass; lint fails only on `app-tour.tsx:44` (above). In a local production build with real data for 901 Bagby St 77002, English at 1280px and Spanish at 390px: three AI headlines (two decided, one coming up) flow as one paragraph with the AI label; Enter on a headline opens its story sheet; `/app/tldr` lands on `/app`; no sideways scroll. The first real-data check showed template headlines ("Vote Oct. 27: ORDINANCE…"), so AI headlines now come first.
 - **Open issues / next:** On the live landing page after 4fcf955 (measured in the browser): the transparent footer's About, Privacy and Terms links are about 1.1:1 against the grass at 1280px, well under 4.5:1; at 390px the "Your neighborhood, decoded" eyebrow sits under the header, and the last stack card's text ("And ones you've never heard of") is cut off. The landing photo is a 2.5 MB PNG, and `courthouse-hero.png`, `courthouse-hero-v2.png` and `calm-sea-hero.jpg` are unused. `npm run lint` fails on `components/prototype/app-tour.tsx:44` (setState in an effect). The dashboard home's other text is still English only.
+
+### 2026-10-23: Give countdown units more breathing room
+- **Who:** Marie Gary Blueberry · public experience
+- **Branch:** main
+- **What changed:** Removed tight letter spacing from the Timeline deadline countdown and added consistent space around each time unit so the numbers and labels read separately.
+- **Files:** `app/(prototype)/app/timeline/page.tsx`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `git diff --check` passed; browser check and tests not run.
+- **Open issues / next:** None.
 
 ### 2026-10-23: Remove landing footer background band
 - **Who:** Marie Gary Blueberry · public experience
