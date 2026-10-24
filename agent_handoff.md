@@ -33,6 +33,15 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-23: Center the landing footer content
+- **Who:** Marie Gary Blueberry · public experience
+- **Branch:** main
+- **What changed:** Centered the tagline and footer links as one compact group and centered the student-project line beneath them.
+- **Files:** `components/shell/SiteFooter.tsx`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `npx tsc --noEmit` and `git diff --check` passed.
+- **Open issues / next:** None.
+
 ### 2026-10-23: Smooth the courthouse lawn and footer edge
 - **Who:** Marie Gary Blueberry · public experience
 - **Branch:** main
