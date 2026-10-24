@@ -83,7 +83,7 @@ export default async function WeeklyPage({ searchParams }: { searchParams: Promi
       {resolved.mode === 'sample' && <SampleNotice className="mt-4" />}
 
       {/* Masthead */}
-      <header className="border-b border-border py-6">
+      <header data-onboarding={nothing ? 'weeklySummary' : undefined} className="border-b border-border py-6">
         <p className="flex flex-wrap items-center gap-2 text-xs font-bold text-muted-foreground">
           <span className="rounded-full bg-brick-soft px-2.5 py-1 text-brick-deep">{t('kicker')}</span>
           <span>{t('range', { from: day(edition.from), to: day(edition.to) })}</span>
@@ -93,7 +93,7 @@ export default async function WeeklyPage({ searchParams }: { searchParams: Promi
 
       {/* The point of a weekly brief: the main things happening, in a few lines. */}
       {!nothing && (
-        <section aria-labelledby="week-summary" className="mt-6 rounded-[24px] bg-white p-5 md:p-6">
+        <section data-onboarding="weeklySummary" aria-labelledby="week-summary" className="mt-6 rounded-[24px] bg-white p-5 md:p-6">
           <h2 id="week-summary" className="font-headline text-2xl font-black md:text-3xl">{t('summaryTitle')}</h2>
           {narrative ? (
             <>
@@ -142,7 +142,7 @@ export default async function WeeklyPage({ searchParams }: { searchParams: Promi
         </section>
       )}
 
-      {nothing && <p className="py-10 text-muted-foreground">{t('empty')}</p>}
+      {nothing && <p data-onboarding="weeklyStories" className="py-10 text-muted-foreground">{t('empty')}</p>}
 
       {/* Bento: the lead story, then the next "coming up" items */}
       {tiles.length > 0 && (
@@ -156,6 +156,7 @@ export default async function WeeklyPage({ searchParams }: { searchParams: Promi
               <Link
                 key={item.item_id}
                 href={itemHref(item)}
+                data-onboarding={i === 0 ? 'weeklyStories' : undefined}
                 className={cn(
                   'group relative flex h-full flex-col justify-between overflow-hidden rounded-[24px] p-5 transition-transform focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none motion-safe:hover:-translate-y-1',
                   tile.cls,
@@ -229,13 +230,13 @@ export default async function WeeklyPage({ searchParams }: { searchParams: Promi
 
           {/* Decided this week */}
           {edition.decided.length > 0 && (
-            <section>
+            <section data-onboarding={tiles.length === 0 ? 'weeklyStories' : undefined}>
               <SectionRule>{t('decided')}</SectionRule>
               <div className="divide-y divide-border">
-                {edition.decided.map((item) => {
+                {edition.decided.map((item, index) => {
                   const s = story(item)
                   return (
-                    <article key={item.item_id} className="grid gap-2 py-4 sm:grid-cols-[140px_minmax(0,1fr)]">
+                    <article key={item.item_id} data-onboarding={tiles.length === 0 && index === 0 ? 'weeklyStories' : undefined} className="grid gap-2 py-4 sm:grid-cols-[140px_minmax(0,1fr)]">
                       <div>
                         <p className="text-xs font-bold text-denim">{item.body_name}</p>
                         <p className="text-xs text-muted-foreground">{day(item.meeting_date)}</p>

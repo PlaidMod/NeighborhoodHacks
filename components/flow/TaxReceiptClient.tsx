@@ -68,7 +68,7 @@ export function TaxReceiptClient({ token }: { token: string }) {
       <h1 className="mt-2 text-3xl font-extrabold tracking-tight text-ink">{t('title')}</h1>
       <p className="mt-3 max-w-2xl text-muted-foreground">{t('intro')}</p>
 
-      <form data-onboarding="taxes" className="mt-7 flex flex-wrap items-end gap-3" onSubmit={(event) => { event.preventDefault(); void loadReceipt(value) }}>
+      <form data-onboarding="taxesForm" className="mt-7 flex flex-wrap items-end gap-3" onSubmit={(event) => { event.preventDefault(); void loadReceipt(value) }}>
         <label className="grid gap-2 text-sm font-semibold text-ink">
           {t('valueLabel')}
           <span className="flex items-center rounded-xl border border-border bg-white px-3">
@@ -89,10 +89,11 @@ export function TaxReceiptClient({ token }: { token: string }) {
         <Button type="submit" disabled={busy}>{busy ? t('loading') : t('update')}</Button>
       </form>
 
-      {error && <p role="alert" className="mt-5 font-semibold text-brick">{t('error')}</p>}
-      {receipt && (
-        <section className="mt-8" aria-live="polite">
-          <div className="rounded-[26px] bg-primary p-6 text-white md:p-8">
+      <section className={receipt || error ? 'mt-8' : ''} aria-live="polite">
+        {error && <p role="alert" className="font-semibold text-brick">{t('error')}</p>}
+        {receipt && (
+          <>
+          <div data-onboarding="taxesBreakdown" className="rounded-[26px] bg-primary p-6 text-white md:p-8">
             <p className="text-sm font-semibold text-white/80">{receipt.partial ? t('partial') : t('total')}</p>
             <p className="mt-2 text-4xl font-extrabold tabular">{money(receipt.total)}<span className="ml-2 text-base font-semibold text-white/80">{t('perYear')}</span></p>
             <p className="mt-3 text-sm text-white/75">{t('estimateFor', { value: money(receipt.value) })}</p>
@@ -127,8 +128,9 @@ export function TaxReceiptClient({ token }: { token: string }) {
             ))}
           </ul>
           <p className="mt-4 text-xs text-muted-foreground">{t('caveat')}</p>
-        </section>
-      )}
+          </>
+        )}
+      </section>
     </main>
   )
 }

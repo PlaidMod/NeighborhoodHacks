@@ -6,11 +6,21 @@ import { usePathname, useRouter } from "next/navigation"
 import * as React from "react"
 import { cn } from "@/lib/utils"
 
-const STEPS = ["dashboard", "weekly", "alerts", "taxes"] as const
-type Step = (typeof STEPS)[number]
+const STEPS = [
+  { target: "dashboardOverview", page: "dashboard", copy: "dashboardOverview" },
+  { target: "dashboardSummary", page: "dashboard", copy: "dashboardSummary" },
+  { target: "dashboardUpcoming", page: "dashboard", copy: "dashboardUpcoming" },
+  { target: "weeklySummary", page: "weekly", copy: "weeklySummary" },
+  { target: "weeklyStories", page: "weekly", copy: "weeklyStories" },
+  { target: "alertsSignup", page: "alerts", copy: "alertsSignup" },
+  { target: "alertsRules", page: "alerts", copy: "alertsRules" },
+  { target: "taxesForm", page: "taxes", copy: "taxesForm" },
+  { target: "taxesBreakdown", page: "taxes", copy: "taxesBreakdown" },
+] as const
+type TourPage = (typeof STEPS)[number]["page"]
 type Rect = { top: number; right: number; bottom: number; left: number; radius: number }
 type TourState = { step: number; token: string }
-const STORAGE_KEY = "showup.results-onboarding.v1"
+const STORAGE_KEY = "showup.results-onboarding.v2"
 
 export function ResultsOnboarding() {
   const t = useTranslations("ResultsOnboarding")
@@ -25,13 +35,18 @@ export function ResultsOnboarding() {
     let saved: TourState | null = null
     try {
       const value = window.sessionStorage.getItem(STORAGE_KEY)
-      if (value) saved = JSON.parse(value) as TourState
+      if (value) {
+        const parsed = JSON.parse(value) as Partial<TourState>
+        if (Number.isInteger(parsed.step) && parsed.step! >= 0 && parsed.step! < STEPS.length && typeof parsed.token === "string") {
+          saved = parsed as TourState
+        }
+      }
     } catch {
       saved = null
     }
 
     const startFromResults = () => {
-      const dashboard = document.querySelector<HTMLAnchorElement>('[data-onboarding="dashboard"]')
+      const dashboard = document.querySelector<HTMLAnchorElement>('[data-onboarding="dashboardOverview"]')
       const token = dashboard ? new URL(dashboard.href).searchParams.get("t") : null
       if (!dashboard || !token) return false
       saved = { step: 0, token }
@@ -58,10 +73,10 @@ export function ResultsOnboarding() {
       setTargetRect(null)
       return
     }
-    const target = document.querySelector<HTMLElement>(`[data-onboarding="${STEPS[tour.step]}"]`)
+    const target = document.querySelector<HTMLElement>(`[data-onboarding="${STEPS[tour.step].target}"]`)
     const measure = () => {
       setViewport({ width: window.innerWidth, height: window.innerHeight })
-      const current = document.querySelector<HTMLElement>(`[data-onboarding="${STEPS[tour.step]}"]`)
+      const current = document.querySelector<HTMLElement>(`[data-onboarding="${STEPS[tour.step].target}"]`)
       if (!current) return setTargetRect(null)
       const r = current.getBoundingClientRect()
       const radiusValue = getComputedStyle(current).borderTopLeftRadius
@@ -76,11 +91,15 @@ export function ResultsOnboarding() {
     const timer = window.setTimeout(measure, 250)
     window.addEventListener("resize", measure)
     window.addEventListener("scroll", measure, true)
+    const content = document.querySelector("main#main") ?? document.querySelector("main")
+    const observer = content ? new MutationObserver(measure) : null
+    observer?.observe(content!, { childList: true, subtree: true })
     return () => {
       cancelAnimationFrame(frame)
       clearTimeout(timer)
       window.removeEventListener("resize", measure)
       window.removeEventListener("scroll", measure, true)
+      observer?.disconnect()
     }
   }, [pathname, tour])
 
@@ -101,14 +120,24 @@ export function ResultsOnboarding() {
   }
   const routeFor = (step: number) => {
     const query = `?t=${encodeURIComponent(tour.token)}`
-    if (step === 0) return `/app/use${query}`
-    if (step === 1) return `/weekly${query}`
-    if (step === 2) return `/alerts${query}`
+    const page: TourPage = STEPS[step].page
+    if (page === "dashboard") return `/app/use${query}`
+    if (page === "weekly") return `/weekly${query}`
+    if (page === "alerts") return `/alerts${query}`
     return `/tax-receipt${query}`
   }
   const goToStep = (step: number) => {
     saveTour({ ...tour, step })
-    router.push(routeFor(step))
+    const currentPage: TourPage | "results" = pathname === "/results"
+      ? "results"
+      : pathname === "/app"
+        ? "dashboard"
+        : pathname === "/weekly"
+          ? "weekly"
+          : pathname === "/alerts"
+            ? "alerts"
+            : "taxes"
+    if (STEPS[step].page !== currentPage) router.push(routeFor(step))
   }
   const next = () => {
     if (tour.step === 0 && pathname === "/results") {
@@ -125,7 +154,7 @@ export function ResultsOnboarding() {
   }
   const clickHighlight = () => {
     if (tour.step === 0 && pathname === "/results") {
-      const target = document.querySelector<HTMLAnchorElement>('[data-onboarding="dashboard"]')
+      const target = document.querySelector<HTMLAnchorElement>('[data-onboarding="dashboardOverview"]')
       if (target) {
         try {
           window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify(tour))
@@ -142,7 +171,7 @@ export function ResultsOnboarding() {
   const top = Math.max(0, targetRect?.top ?? 0)
   const right = Math.min(viewport.width, targetRect?.right ?? 0)
   const bottom = Math.min(viewport.height, targetRect?.bottom ?? 0)
-  const stepName = STEPS[tour.step] as Step
+  const stepName = STEPS[tour.step].copy
   const spotlightRadius = Math.min(targetRect?.radius ?? 0, (bottom - top) / 2, (right - left) / 2)
 
   return (
@@ -216,7 +245,7 @@ export function ResultsOnboarding() {
           <nav aria-label={t("progressLabel")} className="flex items-center gap-1.5">
             {STEPS.map((item, index) => (
               <button
-                key={item}
+                key={item.target}
                 type="button"
                 aria-label={t("goToStep", { step: index + 1 })}
                 aria-current={index === tour.step ? "step" : undefined}

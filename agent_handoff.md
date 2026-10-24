@@ -36,8 +36,8 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 ### 2026-10-23: Tighten the results onboarding spotlight
 - **Who:** Marie Gary Blueberry · public experience
 - **Branch:** main
-- **What changed:** The spotlight now cuts out the target's measured border radius. The guide stays mounted across route changes, advances from the results dashboard link through dashboard, weekly, alerts and tax pages, and the final Next returns to the landing page. Progress is kept in session storage for route transitions.
-- **Files:** `components/home/ResultsOnboarding.tsx`, `app/layout.tsx`, `app/(public)/results/page.tsx`, `app/(prototype)/app/page.tsx`, `app/(public)/page.tsx`, `components/weekly/NewsChrome.tsx`, `app/(public)/alerts/page.tsx`, `components/flow/TaxReceiptClient.tsx`, `agent_handoff.md`
+- **What changed:** The spotlight follows each target's measured radius. The persistent tour now has nine stops across the dashboard overview, weekly summary and upcoming items, alert signup and rules, and tax input and estimate. Progress stays visible across routes; the final Next returns to the landing page. English and Spanish copy covers each stop.
+- **Files:** `components/home/ResultsOnboarding.tsx`, `app/layout.tsx`, `app/(public)/results/page.tsx`, `app/(prototype)/app/page.tsx`, `app/(public)/weekly/page.tsx`, `app/(public)/alerts/page.tsx`, `app/(public)/page.tsx`, `components/weekly/NewsChrome.tsx`, `components/flow/TaxReceiptClient.tsx`, `messages/en.json`, `messages/es.json`, `agent_handoff.md`
 - **Contract changes:** None.
 - **Checked:** `PATH=/opt/homebrew/bin:$PATH npm run typecheck` and `git diff --check` passed; browser check and tests not run.
 - **Open issues / next:** Browser behavior and visual fit remain unverified.

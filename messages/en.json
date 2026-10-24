@@ -444,25 +444,45 @@
     "progressLabel": "Onboarding steps",
     "goToStep": "Go to step {step}",
     "continueOn": "Continue from {title}",
-    "clickHighlighted": "Click the highlighted button or choose Next to continue.",
+    "clickHighlighted": "Click the highlighted area or choose Next to continue.",
     "next": "Next",
     "skip": "Skip",
     "done": "Done",
-    "dashboard": {
-      "title": "Your dashboard",
-      "body": "See what's coming up across the governments linked to your address."
+    "dashboardOverview": {
+      "title": "Your local governments",
+      "body": "Start with the overview cards to see which governments cover your address and what needs attention."
     },
-    "weekly": {
-      "title": "This week's news",
-      "body": "Read clear summaries of decisions your local governments are making."
+    "dashboardSummary": {
+      "title": "This week, in short",
+      "body": "Scan a few plain-language headlines about recent decisions and what's coming up."
     },
-    "alerts": {
-      "title": "Get alerts",
-      "body": "Choose whether to get notices before important local votes."
+    "dashboardUpcoming": {
+      "title": "Coming up",
+      "body": "See upcoming meetings, votes, and comment deadlines, then open an item for more detail."
     },
-    "taxes": {
-      "title": "Estimate property taxes",
-      "body": "Explore an estimate based on the governments that cover your address."
+    "weeklySummary": {
+      "title": "Weekly overview",
+      "body": "Start with the short summary of decisions, topics, and deadlines for this week."
+    },
+    "weeklyStories": {
+      "title": "Featured agenda items",
+      "body": "Open a story to read its summary, check the official source, or find ways to respond."
+    },
+    "alertsSignup": {
+      "title": "Choose your alerts",
+      "body": "Turn on browser notifications if you want notices before important local votes."
+    },
+    "alertsRules": {
+      "title": "What alerts cover",
+      "body": "Review the rules to see which votes and deadlines can trigger an alert."
+    },
+    "taxesForm": {
+      "title": "Enter a home value",
+      "body": "Adjust the sample home value to estimate the local property taxes shown below."
+    },
+    "taxesBreakdown": {
+      "title": "Review the estimate",
+      "body": "See the combined yearly estimate and how each taxing body contributes."
     }
   },
   "BodyQuiz": {
