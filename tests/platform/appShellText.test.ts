@@ -38,6 +38,20 @@ describe('app shell text (sidebar, banners, account menu, search)', () => {
     expect(src).toMatch(/<main id="main-content"/)
   })
 
+  it('names each sidebar <nav>, so screen readers can tell the two apart', () => {
+    expect(src).toMatch(/<nav aria-label=\{t\("sections\.menu"\)\}/)
+    expect(src).toMatch(/<nav aria-label=\{t\("sections\.general"\)\}/)
+    expect(src).not.toMatch(/<nav className/)
+  })
+
+  it('shows the "Menu" and "General" labels at full strength (faded, they measured 3.14:1)', () => {
+    expect(src).not.toMatch(/text-muted-foreground\/\d+[^"]*uppercase/)
+  })
+
+  it('says what the number on the Timeline link means to screen readers', () => {
+    expect(src).toMatch(/<span className="sr-only">\{t\("nav\.urgentCount", \{ count: urgent \}\)\}<\/span>/)
+  })
+
   it('has every string in English and Spanish, and the Spanish is translated', () => {
     const en = flatten((JSON.parse(read('messages', 'en.json')) as Tree).AppShell as Tree)
     const es = flatten((JSON.parse(read('messages', 'es.json')) as Tree).AppShell as Tree)

@@ -537,7 +537,8 @@
       "speak": "Speak up",
       "vote": "Vote",
       "alerts": "Alerts",
-      "changeAddress": "Change address"
+      "changeAddress": "Change address",
+      "urgentCount": "{count} urgent"
     },
     "sections": {
       "menu": "Menu",

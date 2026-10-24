@@ -49,7 +49,7 @@ export default function Home() {
             {greeting()}{profile.name && `, ${profile.name}`}
           </h1>
           <p className="mt-1 text-[0.95rem] text-muted-foreground">
-            Your neighborhood at a glance. {thisWeek.length} things coming up this week.
+            Your neighborhood at a glance. {thisWeek.length} {thisWeek.length === 1 ? "thing" : "things"} coming up this week.
           </p>
           {/* A link, not another panel: DESIGN.md §8 keeps home to its three rows. */}
           <Link

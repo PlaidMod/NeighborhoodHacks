@@ -76,7 +76,10 @@ export default function Tldr() {
                 {coming.map((u) => (
                   <Row key={u.id} u={u} body={bodyOf(u)} line={line(u)} onOpen={openStory}>
                     {u.comment && +new Date(u.comment.deadline) > now && (
-                      <Chip tone="brick">{t("signup", { when: fmtDateTime(u.comment.deadline) })}</Chip>
+                      // Wraps: in Spanish the date runs past a 320px phone's card on one line.
+                      <Chip tone="brick" className="h-auto min-h-6 py-0.5 whitespace-normal">
+                        {t("signup", { when: fmtDateTime(u.comment.deadline) })}
+                      </Chip>
                     )}
                   </Row>
                 ))}
@@ -89,7 +92,7 @@ export default function Tldr() {
               <div className="flex items-start gap-4">
                 <Mic aria-hidden className="mt-1 size-6 shrink-0 text-white/80" />
                 <div>
-                  <h2 className="text-sm font-bold text-white/80">{t("next")}</h2>
+                  <h2 className="text-sm font-bold text-white">{t("next")}</h2>
                   <p className="mt-1 text-lg leading-snug font-extrabold tracking-tight text-pretty">{nextText}</p>
                 </div>
               </div>

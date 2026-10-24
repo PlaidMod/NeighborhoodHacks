@@ -537,7 +537,8 @@
       "speak": "Hazte escuchar",
       "vote": "Votar",
       "alerts": "Alertas",
-      "changeAddress": "Cambiar dirección"
+      "changeAddress": "Cambiar dirección",
+      "urgentCount": "{count, plural, one {# urgente} other {# urgentes}}"
     },
     "sections": {
       "menu": "Menú",

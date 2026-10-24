@@ -42,6 +42,15 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 - **Checked:** `npx tsc --noEmit` and `git diff --check` passed. Browser visual check not run.
 - **Open issues / next:** None.
 
+### 2026-10-23: Accessibility fixes from a web interface guidelines review
+- **Who:** PlaidMod · P5 Platform
+- **Branch:** main
+- **What changed:** Fixed small-phone overflow on `/app/tldr`, raised low-contrast labels, named the sidebar navigation regions, added an urgent-count label for screen readers, and corrected singular grammar on the dashboard home.
+- **Files:** `app/(prototype)/app/tldr/page.tsx`, `components/prototype/app-shell.tsx`, `app/(prototype)/app/page.tsx`, `messages/*.json`, related tests
+- **Contract changes:** None.
+- **Checked:** The teammate reports tests, typecheck, lint, build, and local responsive/accessibility checks passed.
+- **Open issues / next:** Remaining review findings are listed in the teammate's original handoff entry on `origin/main`.
+
 ### 2026-10-23: Use the full ShowUp HTX name in the landing copy
 - **Who:** Marie Gary Blueberry · public experience
 - **Branch:** main
