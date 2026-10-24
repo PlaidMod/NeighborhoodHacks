@@ -33,6 +33,15 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-23: Final deploys before submission
+- **Who:** PlaidMod · P5 Platform
+- **Branch:** main
+- **What changed:** No code. Vercel blocks deploys of teammates' commits (private repo), so PlaidMod deployed them by hand tonight with `vercel deploy --prod` from `git archive` copies: 4fcf955, 7c85471 and 2127d88. This push deploys the rest, through b976e55 ("Keep onboarding progress across guided pages").
+- **Files:** `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** On 2127d88: `npm test` (875 Vitest + 72 P4) and typecheck pass; Vercel's build passed and the main pages returned 200 live. `npm run lint` has two errors in teammates' code: an unused `shortBody` and a setState-in-effect in `ResultsOnboarding.tsx`.
+- **Open issues / next:** `lib/prototype/liveData.ts` still waits up to 8s for the AI weekly summary on a cold cache, so the first `/app` load after a lookup can be slow. The landing-page findings in my earlier entry may be out of date after the new header and footer; they weren't rechecked.
+
 ### 2026-10-23: Tighten the results onboarding spotlight
 - **Who:** Marie Gary Blueberry · public experience
 - **Branch:** main
