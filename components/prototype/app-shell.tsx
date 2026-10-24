@@ -13,6 +13,7 @@ import {
   Search,
   Settings2,
   Vote,
+  Zap,
   type LucideIcon,
 } from "lucide-react"
 import Link from "next/link"
@@ -69,6 +70,7 @@ const MENU: NavLink[] = [
   { href: "/app", key: "home", icon: LayoutGrid },
   { href: "/app/timeline", key: "timeline", icon: Rows3 },
   { href: "/app/brief", key: "brief", icon: Newspaper },
+  { href: "/app/tldr", key: "tldr", icon: Zap },
   { href: "/app/districts", key: "districts", icon: Map },
   { href: "/app/speak", key: "speak", icon: Mic },
   { href: "/app/vote", key: "vote", icon: Vote },

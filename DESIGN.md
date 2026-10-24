@@ -347,7 +347,7 @@ Use `toast.success("Comment copied")` from `sonner` for confirmations of quiet a
 
 ### A · Dashboard (`/app`)
 
-- Location eyebrow, greeting headline, then a one-line status sentence, with one main action on the right.
+- Location eyebrow, greeting headline, then a one-line status sentence, with one main action on the right. Under the status sentence, one text link to the brief in short (`/app/tldr`).
 - Three rows: 3 stat cards; then "Coming up" (4 items) and the countdown; then one slim persona feature. Rows wrap titles instead of truncating them. Secondary row text stays regular weight; numbers carry the hierarchy.
 - **Don't add a fourth row or squeeze in another panel.** If something new belongs on home, it replaces something. Decorative charts and gamified scores were removed on purpose.
 - **The persona feature changes based on who's viewing**: a quiet denim-tint voter-registration prompt for students, the MUD story for MUD residents, and the brief promo otherwise. General eligibility information does not use an urgent red fill. Add a branch here rather than another card.
@@ -365,6 +365,12 @@ Use `toast.success("Comment copied")` from `sonner` for confirmations of quiet a
 - Masthead: a `Weekly brief` brick chip, the date range, read time, a giant headline, and a one-line summary.
 - **Exactly 5 tiles** in this order: denim (wide), ink (tall), brick (tall), sand, denim-soft. Each tile has the body name, a headline, and a white pill CTA ("Read more ›", or "Read and respond ›" if comment is open).
 - Below that: "Also decided" as newspaper-style articles (a date column plus the article), with a sticky calendar rail and one brick "One thing you can do" card.
+
+### Brief in short (`/app/tldr`)
+
+- The weekly brief for readers short on time, in a single narrow column: a `The short version` chip with the read time, the headline, and one sentence of counts (coming up, open for comment, decided).
+- "Coming up" (up to 5) and "Just decided" (up to 3), each item as body · day, the headline (opens the story sheet), one line on what it means, then its chips and an "Official source" link. Between them, one brick "Your next step" card for the soonest sign-up deadline.
+- It picks from the same data and order as the brief (`lib/prototype/tldr.ts`) and writes no new text. It ends with the AI label when any summary shown was written with AI, and a link to the full brief.
 
 ### Detail pages (`/app/districts/[id]`)
 

@@ -1,6 +1,7 @@
 "use client"
 
-import { ArrowRight, ChevronRight, Clock, MapPin, Mic } from "lucide-react"
+import { ArrowRight, ChevronRight, Clock, MapPin, Mic, Zap } from "lucide-react"
+import { useTranslations } from "next-intl"
 import Link from "next/link"
 import * as React from "react"
 import { ArrowCircle, Panel, SectionTitle } from "@/components/prototype/civic"
@@ -21,6 +22,7 @@ export default function Home() {
   const { profile, jurisdiction, bodies, updates } = useProfile()
   const openStory = useStory()
   const now = useNow()
+  const tt = useTranslations("AppTldr")
 
   const mine = updates.filter((u) => relevance(u, profile.personas) > 0)
   const upcoming = mine
@@ -49,6 +51,13 @@ export default function Home() {
           <p className="mt-1 text-[0.95rem] text-muted-foreground">
             Your neighborhood at a glance. {thisWeek.length} things coming up this week.
           </p>
+          {/* A link, not another panel: DESIGN.md §8 keeps home to its three rows. */}
+          <Link
+            href="/app/tldr"
+            className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-denim underline-offset-4 hover:underline"
+          >
+            <Zap aria-hidden className="size-4" /> {tt("homeLink")}
+          </Link>
         </div>
         <Button asChild>
           <Link href="/app/speak">
