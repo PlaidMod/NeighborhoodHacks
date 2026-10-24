@@ -590,6 +590,22 @@
       "voter": "Votante por primera vez"
     }
   },
+  "AppTour": {
+    "stepCount": "Paso {current} de {total}",
+    "progressLabel": "Pasos del recorrido",
+    "goToStep": "Ir al paso {step}",
+    "next": "Siguiente",
+    "skip": "Omitir recorrido",
+    "done": "Listo",
+    "homeTitle": "Tu vecindario de un vistazo",
+    "homeBody": "Empieza aquí para ver los gobiernos que sirven a tu dirección y las decisiones que requieren tu atención.",
+    "briefTitle": "Tu resumen semanal",
+    "briefBody": "Abre una noticia para entender una decisión, consultar su fuente oficial y ver cómo participar.",
+    "timelineTitle": "Explora la cronología completa",
+    "timelineBody": "Usa estos filtros para encontrar próximas reuniones, puntos urgentes y decisiones ya tomadas.",
+    "speakTitle": "Prepárate para participar",
+    "speakBody": "Elige un punto de la agenda, entiende lo que significa, inscríbete para hablar y prepara tus propias palabras."
+  },
   "AppBrief": {
     "chip": "Resumen semanal",
     "minRead": "{count} min de lectura",

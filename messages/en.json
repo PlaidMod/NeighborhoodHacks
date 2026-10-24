@@ -590,6 +590,22 @@
       "voter": "First-time voter"
     }
   },
+  "AppTour": {
+    "stepCount": "Step {current} of {total}",
+    "progressLabel": "Tour steps",
+    "goToStep": "Go to step {step}",
+    "next": "Next",
+    "skip": "Skip tour",
+    "done": "Done",
+    "homeTitle": "Your neighborhood at a glance",
+    "homeBody": "Start here to see the governments that serve your address and the decisions that need your attention.",
+    "briefTitle": "Your weekly brief",
+    "briefBody": "Open a story to understand a decision, check its official source, and see how you can take part.",
+    "timelineTitle": "Explore the full timeline",
+    "timelineBody": "Use these topic filters to find upcoming meetings, urgent items, and decisions already made.",
+    "speakTitle": "Get ready to speak up",
+    "speakBody": "Choose an agenda item, understand what it means, register to speak, and prepare your own words."
+  },
   "AppBrief": {
     "chip": "Weekly brief",
     "minRead": "{count} min read",

@@ -33,6 +33,51 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-23: Remove landing footer background band
+- **Who:** Marie Gary Blueberry · public experience
+- **Branch:** main
+- **What changed:** Removed the hero's cream fade overlay that created a distinct horizontal grass bar and made the landing footer transparent so the courthouse background continues behind it. Reduced the cream wash over the hero to make the image more visible.
+- **Files:** `app/(public)/page.tsx`, `app/globals.css`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `git diff --check` passed; visual browser check not run.
+- **Open issues / next:** None.
+
+### 2026-10-23: Add a four-step app tour after onboarding
+- **Who:** Marie Gary Blueberry · public experience
+- **Branch:** main
+- **What changed:** Limited the weekly brief's lead grid to four cards and clamped their headlines to two lines. Kept the existing onboarding, then added an English/Spanish spotlight tour through Home, Weekly brief, Timeline, and Speak up, with bottom progress tabs, Skip, and a final Done action.
+- **Files:** `app/(prototype)/app/brief/page.tsx`, `app/(prototype)/app/page.tsx`, `app/(prototype)/app/timeline/page.tsx`, `app/(prototype)/app/speak/speak.tsx`, `app/(prototype)/start/onboarding.tsx`, `components/prototype/app-shell.tsx`, `components/prototype/app-tour.tsx`, `messages/*.json`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `npx tsc --noEmit`, message JSON parsing, and `git diff --check` passed. Browser visual check not run because Chrome access was not approved.
+- **Open issues / next:** None.
+
+### 2026-10-23: Enlarge weekly news article cards
+- **Who:** Marie Gary Blueberry · public experience
+- **Branch:** main
+- **What changed:** Widened the weekly brief content area, increased the article tile minimum heights, and modestly enlarged headline type so cards read more clearly.
+- **Files:** `app/(prototype)/app/brief/page.tsx`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `git diff --check` passed. Browser visual check not run.
+- **Open issues / next:** None.
+
+### 2026-10-23: Widen the address page headline
+- **Who:** Marie Gary Blueberry · public experience
+- **Branch:** main
+- **What changed:** Removed the narrow 14-character headline cap so the address page title can use its full content column and wrap into two lines on desktop.
+- **Files:** `app/(public)/address/page.tsx`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `git diff --check` passed. Browser visual check not run.
+- **Open issues / next:** None.
+
+### 2026-10-23: Fade the grass band into the landing footer
+- **Who:** Marie Gary Blueberry · public experience
+- **Branch:** main
+- **What changed:** Restored the footer's left/right layout with vertical alignment, and added a fade from the background image into the footer cream to soften the visible grass band at the bottom of the hero.
+- **Files:** `components/shell/SiteFooter.tsx`, `app/globals.css`, `app/(public)/page.tsx`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `npx tsc --noEmit` and `git diff --check` passed.
+- **Open issues / next:** None.
+
 ### 2026-10-23: Center the landing footer content
 - **Who:** Marie Gary Blueberry · public experience
 - **Branch:** main

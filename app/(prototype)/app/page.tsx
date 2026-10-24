@@ -67,7 +67,7 @@ export default function Home() {
       </div>
 
       {/* Stat cards */}
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:gap-4">
+      <div data-tour="home-overview" className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:gap-4">
         <StatCard
           href="/app/districts"
           hero

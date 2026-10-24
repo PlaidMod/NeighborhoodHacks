@@ -135,7 +135,7 @@ export default function Timeline() {
           )}
         </div>
         <Reveal delay={300}>
-          <div role="group" aria-label={t("topicsLabel")} className="scrollbar-none -mr-4 mt-8 flex gap-2 overflow-x-auto pr-4 xl:mr-0 xl:flex-wrap xl:overflow-visible xl:pr-0">
+          <div data-tour="timeline-topics" role="group" aria-label={t("topicsLabel")} className="scrollbar-none -mr-4 mt-8 flex gap-2 overflow-x-auto pr-4 xl:mr-0 xl:flex-wrap xl:overflow-visible xl:pr-0">
             <TopicChip on={!topic} onClick={() => change(() => setTopic(null))}>
               {t("tabs.all")}
             </TopicChip>

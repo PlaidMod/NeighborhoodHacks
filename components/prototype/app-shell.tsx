@@ -22,6 +22,7 @@ import { useTranslations } from "next-intl"
 import * as React from "react"
 import { BodyIcon, Logo } from "@/components/prototype/civic"
 import { StoryProvider, useStory } from "@/components/prototype/story-sheet"
+import { AppTour } from "@/components/prototype/app-tour"
 import { Button } from "@/components/ui/button"
 import {
   Command,
@@ -131,6 +132,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </div>
         </div>
       </div>
+      <React.Suspense fallback={null}>
+        <AppTour />
+      </React.Suspense>
     </StoryProvider>
   )
 }

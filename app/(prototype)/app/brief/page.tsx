@@ -56,7 +56,7 @@ export default function Brief() {
   if (weekly) {
     // Lead story first, then "Coming up: you can still act" (plan §10).
     const comingUp = pick([...(weekly.leadId ? [weekly.leadId] : []), ...weekly.comingUpIds])
-    top = comingUp.slice(0, 5)
+    top = comingUp.slice(0, 4)
     decided = pick(weekly.decidedIds)
     calendar = [...comingUp].sort((a, b) => +new Date(a.date) - +new Date(b.date))
   } else {
@@ -67,7 +67,7 @@ export default function Brief() {
     top = [...inRange]
       .filter((u) => u.tier !== "timeline")
       .sort((a, b) => score(b, profile.personas) - score(a, profile.personas))
-      .slice(0, 5)
+      .slice(0, 4)
     decided = updates
       .filter((u) => u.type === "decision" && daysFromNow(u.date) >= -8 && daysFromNow(u.date) <= 0)
       .filter((u) => !top.includes(u))
@@ -124,7 +124,7 @@ export default function Brief() {
   const mud = bodies.find((b) => b.kind === "mud" && b.lastTurnout)
 
   return (
-    <div className="mx-auto max-w-[1120px] pt-4 font-news">
+    <div className="mx-auto max-w-[1280px] pt-4 font-news">
       {/* Masthead */}
       <header className="border-b border-border pb-6">
         <div className="flex flex-wrap items-center gap-2 text-xs font-bold text-muted-foreground">
@@ -163,7 +163,7 @@ export default function Brief() {
       )}
 
       {/* Bento */}
-      <section className="mt-8 grid auto-rows-[minmax(220px,auto)] gap-4 sm:grid-cols-2 xl:auto-rows-[minmax(300px,auto)] xl:grid-cols-4">
+      <section className="mt-8 grid auto-rows-[minmax(240px,auto)] gap-4 sm:grid-cols-2 xl:auto-rows-[minmax(320px,auto)] xl:grid-cols-4">
         {top.map((u, i) => {
           const tile = TILES[i]!
           const b = bodies.find((x) => x.id === u.bodyId)!
@@ -172,6 +172,7 @@ export default function Brief() {
             <button
               key={u.id}
               aria-label={u.title}
+              data-tour={i === 0 ? "brief-articles" : undefined}
               onClick={() => openStory(u)}
               className={cn(
                 "group relative flex flex-col justify-between gap-6 overflow-hidden rounded-[28px] p-6 text-left transition-transform motion-safe:hover:-translate-y-0.5",
@@ -202,10 +203,8 @@ export default function Brief() {
                     "mt-2 font-headline leading-[1.1] font-bold",
                     // Real headlines run long: clamp so the tile's button always shows (the full title is its aria-label).
                     tile.big
-                      ? "line-clamp-3 max-w-[24ch] text-[1.5rem] xl:line-clamp-2 xl:text-[1.75rem]"
-                      : i === 1 || i === 2
-                        ? "line-clamp-4 text-[1.3rem]"
-                        : "line-clamp-3 text-[1.3rem]",
+                      ? "line-clamp-2 max-w-[24ch] text-[1.6rem] xl:text-[1.875rem]"
+                      : "line-clamp-2 text-[1.4rem]",
                   )}
                 >
                   {u.title}

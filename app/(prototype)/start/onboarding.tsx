@@ -64,7 +64,7 @@ export function Onboarding() {
       personas,
       age,
     })
-    router.push("/app")
+    router.push("/app?tour=1&tourStep=0")
   }
 
   return (
