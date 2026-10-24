@@ -12,11 +12,13 @@ import { verifyBodiesToken } from '@/lib/tokens'
 
 export async function GET(req: Request) {
   const url = new URL(req.url)
-  const res = NextResponse.redirect(new URL('/app', url))
   if (url.searchParams.has('forget')) {
+    const res = NextResponse.redirect(new URL('/app', url))
     res.cookies.delete(BODIES_COOKIE)
     return res
   }
+  const destination = url.searchParams.get('onboarding') === '1' ? '/app?onboarding=1' : '/app'
+  const res = NextResponse.redirect(new URL(destination, url))
   const token = url.searchParams.get('t') ?? ''
   // Without BODIES_TOKEN_SECRET (a local preview) the lookup can't sign, and P3's sample data is shown.
   const ids = getOptionalEnv('BODIES_TOKEN_SECRET') ? verifyBodiesToken(token) : token === 'unsigned-preview' ? [] : null
