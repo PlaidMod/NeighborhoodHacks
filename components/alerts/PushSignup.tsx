@@ -194,7 +194,7 @@ export function PushSignup({ token, vapidKey }: { token: string | null; vapidKey
           <span className="text-muted-foreground">{t('consent')}</span>
         </label>
 
-        <div className="space-y-3 rounded-2xl bg-surface p-4">
+        <div className="space-y-3">
           <label htmlFor={ids.minor} className="flex items-center gap-3 text-sm font-semibold">
             <input
               id={ids.minor}
