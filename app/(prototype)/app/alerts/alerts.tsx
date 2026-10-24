@@ -11,7 +11,8 @@ import { Chip, Panel } from "@/components/prototype/civic"
 import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
 import { relevance } from "@/lib/prototype/updates"
-import { itemAlertText, reminderText } from "@/lib/sms/message"
+import { itemNotice, reminderNotice, type PushNotice } from "@/lib/push/message"
+import { fmtDate } from "@/lib/prototype/format"
 import { useNow, useProfile } from "@/lib/prototype/profile"
 import { cn } from "@/lib/utils"
 
@@ -48,24 +49,6 @@ export function Alerts({ token, preview, vapidKey }: { token: string | null; pre
   // The preview is built by the same code that sends the texts (lib/sms/message.ts, plan §11).
   // A placeholder short link; real texts carry the site's own link.
   const link = (u: { id: string }) => `showup.example/s/${(updates.indexOf(u as (typeof updates)[number]) + 1).toString(36)}`
-  const itemText =
-    sample &&
-    itemAlertText(
-      {
-        body: sampleBody?.short ?? "",
-        headline: sample.title,
-        deadline: { meeting_at: sample.date, registration_closes_at: sample.comment?.deadline ?? null },
-        link: link(sample),
-      },
-      lang,
-    )
-  const reminderPreview =
-    reminder &&
-    reminderText(
-      "registration_closes",
-      { body: bodies.find((b) => b.id === reminder.bodyId)?.short ?? "", title: reminder.title, at: reminder.comment!.deadline, link: link(reminder) },
-      lang,
-    )
   const status = !sms ? "off" : minor && sms.parentConsent !== "granted" ? "pending" : "on"
 
   function submit(e: React.FormEvent) {
@@ -246,26 +229,36 @@ export function Alerts({ token, preview, vapidKey }: { token: string | null; pre
           </ul>
         </div>
 
-        {/* Phone preview */}
+        {/* Phone preview: an iPhone lock screen with the notifications this reader would get. */}
         <div className="xl:sticky xl:top-4 xl:self-start">
-          <div className="mx-auto w-full max-w-[360px] rounded-[44px] bg-ink p-3 shadow-[0_30px_60px_-30px_rgb(27_38_59/0.6)]">
-            <div className="overflow-hidden rounded-[34px] bg-surface">
-              <div className="flex flex-col items-center border-b border-black/5 bg-white/80 pt-3 pb-3">
-                <div className="mb-3 h-5 w-24 rounded-full bg-ink" />
-                <LogoMark className="size-10 rounded-full text-[1.25rem]" />
-                <p className="mt-1 text-xs font-bold">ShowUp HTX</p>
-              </div>
-              <div className="space-y-3 p-4 text-[13px] leading-snug">
-                <p className="text-center text-[10px] font-semibold text-muted-foreground">{t("previewDay")}</p>
-                {itemText && urgent && <Bubble>{itemText}</Bubble>}
-                {reminders && reminderPreview && <Bubble>{reminderPreview}</Bubble>}
-                <div className="ml-auto w-fit max-w-[70%] rounded-[18px] rounded-br-md bg-denim px-3.5 py-2 text-white">
-                  {t("reply")}
-                </div>
-              </div>
-            </div>
-          </div>
-          <p className="mx-auto mt-4 max-w-[360px] text-center text-xs text-muted-foreground">
+          <LockScreen
+            notices={[
+              ...(urgent && sample
+                ? [
+                    itemNotice(
+                      {
+                        body: sampleBody?.short ?? "",
+                        headline: sample.title,
+                        deadline: { meeting_at: sample.date, registration_closes_at: sample.comment?.deadline ?? null },
+                        link: link(sample),
+                        tag: sample.id,
+                      },
+                      lang,
+                    ),
+                  ]
+                : []),
+              ...(reminders && reminder
+                ? [
+                    reminderNotice(
+                      "registration_closes",
+                      { body: bodies.find((b) => b.id === reminder.bodyId)?.short ?? "", title: reminder.title, at: reminder.comment!.deadline, link: link(reminder), tag: reminder.id },
+                      lang,
+                    ),
+                  ]
+                : []),
+            ]}
+          />
+          <p className="mx-auto mt-4 max-w-[320px] text-center text-xs text-muted-foreground">
             {source === "demo" ? t("previewSample") : t("previewReal")}
           </p>
         </div>
@@ -274,8 +267,53 @@ export function Alerts({ token, preview, vapidKey }: { token: string | null; pre
   )
 }
 
-function Bubble({ children }: { children: React.ReactNode }) {
-  return <div className="w-fit max-w-[85%] rounded-[18px] rounded-bl-md bg-white px-3.5 py-2.5 shadow-sm">{children}</div>
+/** A phone lock screen showing push notifications as iOS draws them. Decorative: the same text is the caption's subject. */
+function LockScreen({ notices }: { notices: PushNotice[] }) {
+  const t = useTranslations("AppAlerts")
+  const [now] = React.useState(() => new Date().toISOString())
+  return (
+    <div className="mx-auto w-full max-w-[320px]">
+      <div className="relative aspect-[9/19] rounded-[52px] bg-ink p-[9px] shadow-[0_1px_2px_rgb(27_38_59/0.1),0_40px_70px_-36px_rgb(27_38_59/0.55)]">
+        <div className="relative flex h-full flex-col overflow-hidden rounded-[44px] bg-linear-to-b from-denim via-ink to-ink px-3 text-white">
+          {/* Status bar and Dynamic Island */}
+          <div className="relative flex items-center justify-between px-4 pt-3.5 text-[13px] font-semibold">
+            <span>9:41</span>
+            <span aria-hidden className="absolute top-2.5 left-1/2 h-7 w-24 -translate-x-1/2 rounded-full bg-ink ring-1 ring-white/5" />
+            <span aria-hidden className="flex items-center gap-1">
+              <svg viewBox="0 0 18 12" className="h-3 w-[18px] fill-current"><rect x="0" y="8" width="3" height="4" rx="1" /><rect x="5" y="5.5" width="3" height="6.5" rx="1" /><rect x="10" y="3" width="3" height="9" rx="1" /><rect x="15" y="0" width="3" height="12" rx="1" /></svg>
+              <svg viewBox="0 0 26 12" className="h-3 w-[26px]"><rect x="0.5" y="0.5" width="22" height="11" rx="3.5" className="fill-none stroke-current opacity-50" /><rect x="2.5" y="2.5" width="15" height="7" rx="2" className="fill-current" /><rect x="24" y="4" width="1.5" height="4" rx="0.75" className="fill-current opacity-50" /></svg>
+            </span>
+          </div>
+          {/* Date and clock */}
+          <p className="mt-8 text-center text-[15px] font-semibold text-white/85">{fmtDate(now, { weekday: "long", month: "long", day: "numeric" })}</p>
+          <p className="text-center text-[5rem] leading-none font-semibold tracking-[-0.04em] tabular-nums">9:41</p>
+          {/* Notifications, newest on top */}
+          <div className="mt-auto mb-3 space-y-2">
+            {notices.map((n, i) => (
+              <div key={n.tag + i} className="rounded-[22px] bg-white/80 p-3 text-ink shadow-[0_8px_24px_-12px_rgb(0_0_0/0.35)] backdrop-blur-xl">
+                <div className="flex gap-2.5">
+                  <LogoMark className="size-9 rounded-[10px] text-[1.05rem]" />
+                  <div className="min-w-0 flex-1">
+                    <p className="flex items-baseline justify-between gap-2">
+                      <span className="truncate text-[13px] font-bold">{n.title}</span>
+                      <span className="shrink-0 text-[11px] text-ink/50">{i === 0 ? t("lockNow") : t("lockEarlier")}</span>
+                    </p>
+                    <p className="mt-0.5 line-clamp-4 text-[12.5px] leading-snug text-ink/85">{n.body}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          {/* Flashlight, camera and the home bar */}
+          <div aria-hidden className="mb-2 flex items-center justify-between px-3">
+            <span className="grid size-11 place-items-center rounded-full bg-white/15 backdrop-blur"><svg viewBox="0 0 24 24" className="size-5 fill-none stroke-current" strokeWidth="1.8"><path d="M8 2h8v4l-2 4v11a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1V10L8 6z" /></svg></span>
+            <span className="grid size-11 place-items-center rounded-full bg-white/15 backdrop-blur"><svg viewBox="0 0 24 24" className="size-5 fill-none stroke-current" strokeWidth="1.8"><path d="M4 8h3l2-3h6l2 3h3v11H4z" /><circle cx="12" cy="13" r="3.5" /></svg></span>
+          </div>
+          <span aria-hidden className="mx-auto mb-2 h-1 w-28 rounded-full bg-white/80" />
+        </div>
+      </div>
+    </div>
+  )
 }
 
 function Toggle({

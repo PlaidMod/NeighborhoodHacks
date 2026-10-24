@@ -536,7 +536,8 @@
     "signupShort": "Cierra inscripción",
     "dayEmpty": "No hay nada en la agenda este día.",
     "seeAll": "Ver los {count} en la cronología",
-    "signupTag": "Inscripción"
+    "signupTag": "Inscripción",
+    "forItems": "para {count} puntos de esta agenda"
   },
   "AppTimeline": {
     "title": "Cronología",
@@ -589,7 +590,7 @@
     "why": "Por qué te importa",
     "result": "Resultado",
     "canSpeak": "Puedes hablar sobre esto",
-    "signupCloses": "La inscripción cierra {when}. {minutes} minutos por orador.",
+    "signupCloses": "La inscripción cierra {when}. {minutes, plural, one {# minuto} other {# minutos}} por orador.",
     "draft": "Escribir mi comentario de {minutes} minutos",
     "source": "Fuente oficial",
     "share": "Compartir",
@@ -599,7 +600,11 @@
     "footSample": "Datos de muestra. Revisa siempre la agenda oficial antes de una reunión.",
     "signupClosesUnknown": "La inscripción cierra el {when}. Verifica el límite oficial para hablar.",
     "draftUnknown": "Preparar mi comentario",
-    "officialText": "Texto oficial de la agenda"
+    "officialText": "Texto oficial de la agenda",
+    "plainWords": "Resumen con IA",
+    "explaining": "Resumiendo con IA",
+    "aiExplained": "Explicado con IA a partir de la agenda oficial — revisa la fuente.",
+    "localExplained": "Una lista sencilla a partir de los detalles de la agenda, no una explicación de IA."
   },
   "AppAlerts": {
     "title": "Alertas",
@@ -642,7 +647,9 @@
     "reply": "gracias, me inscribo ahora",
     "previewReal": "Vista previa de los mensajes que recibirías, escritos por el mismo código que los envía, con puntos de tus gobiernos.",
     "previewSample": "Vista previa de los mensajes que recibirías, con puntos de muestra.",
-    "textsTitle": "Mensajes de texto"
+    "textsTitle": "Mensajes de texto",
+    "lockNow": "ahora",
+    "lockEarlier": "hace 1 h"
   },
   "speak": {
     "title": "Hazte escuchar",

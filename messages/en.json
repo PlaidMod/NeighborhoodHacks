@@ -536,7 +536,8 @@
     "signupShort": "Sign-up closes",
     "dayEmpty": "Nothing on the agenda this day.",
     "seeAll": "See all {count} on the timeline",
-    "signupTag": "Sign-up"
+    "signupTag": "Sign-up",
+    "forItems": "for {count} items on this agenda"
   },
   "AppTimeline": {
     "title": "Timeline",
@@ -589,7 +590,7 @@
     "why": "Why it matters to you",
     "result": "Result",
     "canSpeak": "You can speak on this",
-    "signupCloses": "Sign-up closes {when}. {minutes} minutes per speaker.",
+    "signupCloses": "Sign-up closes {when}. {minutes, plural, one {# minute} other {# minutes}} per speaker.",
     "draft": "Draft my {minutes}-minute comment",
     "source": "Official source",
     "share": "Share",
@@ -599,7 +600,11 @@
     "footSample": "Sample data. Always check the official agenda before a meeting.",
     "signupClosesUnknown": "Sign-up closes {when}. Check the official speaking limit.",
     "draftUnknown": "Prepare my comment",
-    "officialText": "Official agenda text"
+    "officialText": "Official agenda text",
+    "plainWords": "AI summary",
+    "explaining": "Summarizing with AI",
+    "aiExplained": "Explained with AI from the official agenda — check the source.",
+    "localExplained": "A plain checklist from the agenda details, not an AI explanation."
   },
   "AppAlerts": {
     "title": "Alerts",
@@ -642,7 +647,9 @@
     "reply": "thanks, signing up now",
     "previewReal": "Preview of the texts you'd get, written by the same code that sends them, using items from your governments.",
     "previewSample": "Preview of the texts you'd get, using sample items.",
-    "textsTitle": "Text messages"
+    "textsTitle": "Text messages",
+    "lockNow": "now",
+    "lockEarlier": "1h ago"
   },
   "speak": {
     "title": "Speak up",

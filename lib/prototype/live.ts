@@ -120,7 +120,8 @@ export function toUpdate(i: WeeklyItem, kind: BodyKind = "county", lang: Lang = 
     docKind: raw?.kind ?? undefined,
     detail: story?.body_paragraphs,
     // The story's renter line is its "why it matters"; without a story there's nothing to say yet.
-    why: { default: story?.renter_line ?? (lang === "es" ? "El punto de la agenda está enlazado abajo." : "The agenda item is linked below.") },
+    // Without a story there's no "why it matters" yet; the story sheet asks the AI coach to explain instead.
+    why: { default: story?.renter_line ?? "" },
     audiences: [],
     vote: i.outcome?.vote_result ? (lang === "es" ? VOTE_ES : VOTE)[i.outcome.vote_result] : undefined,
     outcomePending: i.status === "awaiting_result",

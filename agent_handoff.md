@@ -33,6 +33,25 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-23: AI summaries on click, a shorter calendar day list, an iPhone lock-screen preview
+- **Who:** sohankamsala · P3 Weekly News and Alerts (reuses P4's coach)
+- **Branch:** main (local commit; not pushed)
+- **What changed:**
+  - **AI summary:** opening an item that has no written story now shows an "AI summary" block in the story sheet, using P4's `/api/coach` explain mode (the same as Speak up's "Explain this item"). It shows a plain summary plus who it affects, a "Summarizing with AI" state with bouncing dots while it loads, and the AI label.
+    - Answers are cached in sessionStorage per item and language, so reopening costs nothing.
+    - If the coach can't explain an item (for example, a decided one), the block hides.
+    - The "Why it matters: The agenda item is linked below." placeholder is gone: `why` is empty without a story, and the brief's "For you" line hides too.
+  - **Calendar day panel:** deadlines at the same time collapse into one line ("Sign-up closes 8:00 AM · for 18 items"). The panel shows at most 5 items, then "See all N on the timeline".
+  - **Alerts preview:** the chat-bubble mockup is now an iPhone lock screen (Dynamic Island, clock, frosted notification banners, flashlight and camera). Its text comes from `lib/push/message.ts` (`itemNotice`, `reminderNotice`), the same code that sends notifications.
+  - **Grammar:** "1 minutes per speaker" is now an ICU plural (`AppStory.signupCloses`).
+- **Files:** `components/prototype/story-sheet.tsx`, `lib/prototype/live.ts`, `app/(prototype)/app/brief/page.tsx`, `app/(prototype)/app/alerts/alerts.tsx`, `messages/*.json`
+- **Contract changes:** None.
+- **Checked:**
+  - `npm test`, lint and typecheck pass.
+  - In the browser on real data: a real AI summary loaded for a Commissioners Court item (the loading state was checked with a 3-second delay), the day panel is collapsed, and the lock screen renders. No console errors.
+- **Open issues / next:**
+  - **AI summaries and the coach's limit:** each summary uses one coach call. Without `COACH_TRUSTED_IP_HEADER`, all visitors share 20 calls an hour, so set it on Vercel (`x-real-ip`) if it isn't set yet.
+
 ### 2026-10-23: Weekly brief: real calendar, compact deadlines, no empty column
 - **Who:** sohankamsala · P3 Weekly News and Alerts
 - **Branch:** main (local commit; not pushed)

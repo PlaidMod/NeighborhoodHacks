@@ -265,9 +265,11 @@ export default function Brief() {
                         <h3 className="font-headline text-[1.4rem] leading-snug font-bold group-hover:text-denim">{u.title}</h3>
                       </button>
                       {u.summary && <p className="mt-2 leading-relaxed text-muted-foreground">{u.summary}</p>}
-                      <p className="mt-3 rounded-2xl bg-white px-4 py-3 text-sm">
-                        <b>{t("forYou")}</b> {whyFor(u, profile.personas)}
-                      </p>
+                      {whyFor(u, profile.personas) && (
+                        <p className="mt-3 rounded-2xl bg-white px-4 py-3 text-sm">
+                          <b>{t("forYou")}</b> {whyFor(u, profile.personas)}
+                        </p>
+                      )}
                       {u.vote && (
                         <Chip tone="sage" className="mt-3">
                           {u.vote}
@@ -349,6 +351,16 @@ type CalendarDay = {
   past: boolean
   items: Update[]
   deadlines: { key: string; at: string; title: string; update?: Update }[]
+}
+
+function deadlineGroups(d: CalendarDay) {
+  const groups = new Map<string, { at: string; count: number; title: string; first?: Update }>()
+  for (const x of d.deadlines) {
+    const g = groups.get(x.at)
+    if (g) g.count += 1
+    else groups.set(x.at, { at: x.at, count: 1, title: x.title, first: x.update })
+  }
+  return [...groups.values()]
 }
 
 /** "Harris County Commissioners Court" -> "Commissioners Court", so a calendar cell fits one line. */
@@ -462,17 +474,18 @@ function WeekCalendar({ days, bodies, onOpen }: { days: CalendarDay[]; bodies: B
         <p className="text-sm font-bold">{day.label}</p>
         {!busy(day) && <p className="mt-2 text-sm text-muted-foreground">{t("dayEmpty")}</p>}
         <ul className="mt-3 space-y-2">
-          {day.deadlines.map((d) => (
-            <li key={d.key}>
-              <button onClick={() => d.update && onOpen(d.update)} className="flex w-full flex-col items-start gap-1 text-left text-sm sm:flex-row sm:items-center sm:gap-3">
+          {/* Deadlines at the same time collapse into one line ("Sign-up closes 8:00 AM · 19 items"). */}
+          {deadlineGroups(day).map((g) => (
+            <li key={g.at}>
+              <button onClick={() => g.first && onOpen(g.first)} className="flex w-full flex-wrap items-center gap-x-3 gap-y-1 text-left text-sm">
                 <span className="shrink-0 rounded-md bg-brick-soft px-2 py-0.5 text-xs font-bold text-brick-deep">
-                  {t("signupShort")} {fmtTime(d.at)}
+                  {t("signupShort")} {fmtTime(g.at)}
                 </span>
-                <span className="line-clamp-2 min-w-0 font-semibold hover:text-denim sm:truncate">{d.title}</span>
+                <span className="font-semibold text-muted-foreground">{g.count > 1 ? t("forItems", { count: g.count }) : g.title}</span>
               </button>
             </li>
           ))}
-          {day.items.slice(0, 8).map((u) => (
+          {day.items.slice(0, 5).map((u) => (
             <li key={u.id}>
               <button onClick={() => onOpen(u)} className="flex w-full items-center gap-3 text-left text-sm">
                 <span className="w-16 shrink-0 text-xs font-semibold text-muted-foreground">{fmtTime(u.date)}</span>
@@ -481,7 +494,7 @@ function WeekCalendar({ days, bodies, onOpen }: { days: CalendarDay[]; bodies: B
             </li>
           ))}
         </ul>
-        {day.items.length > 8 && (
+        {day.items.length > 5 && (
           <Link href="/app/timeline" className="mt-3 inline-block text-sm font-semibold text-denim hover:underline">
             {t("seeAll", { count: day.items.length })}
           </Link>
