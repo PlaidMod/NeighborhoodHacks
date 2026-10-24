@@ -89,7 +89,7 @@ The look and the content rules are in the root `DESIGN.md`. Read it before UI wo
   - Every story and item links to its source, and AI-written stories carry their label.
 - **The AI coach never ghostwrites** (tech plan §14). Its output has no field for replacement text, and any quote it returns must be an exact substring of the user's draft.
 - **Privacy** (tech plan §19; scraper spec §5.4):
-  - No addresses or comment drafts in the DB or logs.
+  - No addresses or comment drafts in the DB, server cookies, accounts, links or logs. Since Oct 23 the street address may stay only in the reader's browser profile (`showup.profile.v1`), and every sign-out button uses `SignOutForm`, so signing out clears it.
   - `bodies_token` carries body IDs only.
   - Personnel and closed-session items never store or show the private person's name ("an employee" instead).
   - The service-role key stays server-only, with RLS on every table and no `anon` policies.

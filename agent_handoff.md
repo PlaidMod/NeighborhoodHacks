@@ -33,6 +33,17 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-10-23: Alerts checkboxes aligned; merge note on the sidebar toggle
+- **Who:** sohankamsala · P3 Weekly News and Alerts
+- **Branch:** main
+- **What changed:**
+  - **Checkboxes:** in both alerts sign-up forms (`PushSignup`, `AlertSignup`), the "I'm under 18" checkbox sat in a padded `bg-surface` panel. That panel is invisible on the white UI, so the box looked indented; the padding is removed so every checkbox lines up.
+  - **Merge:** while merging origin/main, I kept the teammate's translated toggle labels and the visible "Sidebar" word (now `AppShell.toggle.label`). I changed `toggle.show` and `toggle.hide` to "Show sidebar" and "Hide sidebar" (Spanish: "Mostrar/Ocultar el menú lateral"), so the accessible name contains the visible word.
+- **Files:** `components/alerts/{PushSignup,AlertSignup}.tsx`, `components/prototype/app-shell.tsx`, `messages/*.json`
+- **Contract changes:** None.
+- **Checked:** See the merge commit: `npm test`, lint and typecheck were run after the merge.
+- **Open issues / next:** None.
+
 ### 2026-10-23: AI summaries on click, a shorter calendar day list, an iPhone lock-screen preview
 - **Who:** sohankamsala · P3 Weekly News and Alerts (reuses P4's coach)
 - **Branch:** main (local commit; not pushed)
@@ -120,6 +131,192 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
   - Gutters are now 64px, the side columns are narrower (left 240px, right 272px), and the center tiles are 86% wide.
   - Everything is scaled down: the count (4.5–5.5rem), memo, chips, title, tile headlines (clamped to 3 lines), photos (150–170px tall), countdown and quick actions.
 - **Open issues / next:** The `AppTimeline.tabs.*` and `qBrief` message keys are unused now.
+### 2026-10-23: Search in /app no longer crashes the page; landing page leftovers fixed
+- **Who:** PlaidMod · P5 Platform
+- **Branch:** main
+- **What changed:**
+  - **Search crash (live bug):** opening search in `/app` (the search box or Ctrl/⌘K) replaced the whole page with "This page couldn't load". The app's shadcn `CommandDialog` doesn't wrap its children in cmdk's `<Command>` root, and the search panel put `CommandInput` and `CommandList` straight inside it, so cmdk found no store ("reading 'subscribe'"). The search panel now wraps them in `<Command>`, with a translated dialog title and description. This has likely been broken since the screens moved to the root app (Oct 20).
+  - **Landing page leftovers** from the UI polish entry below:
+    - The two hero buttons are now the same size (56px, 16px text).
+    - `/address` uses `bg-muted` instead of the hex `#f4f6f9`.
+    - Icons beside semibold text on `/`, `/address` and the address form render a 2px stroke. Lucide's `absoluteStrokeWidth` needs the `size` prop; a CSS size class alone leaves it at 2 units.
+  - **Correction to my guideline review below:** the search list's dates were never English-only. `relDay()` already reads `<html lang>` and formats in Central time; in Spanish they read "1 nov", "Jueves", "Hace 4 días".
+- **Files:** `components/prototype/app-shell.tsx`, `app/(public)/page.tsx`, `app/(public)/address/page.tsx`, `components/home/AddressForm.tsx`, `messages/*.json` (`AppShell.search.description`), `tests/platform/appShellText.test.ts`
+- **Contract changes:** None. Any other `CommandDialog` must also wrap its contents in `<Command>`.
+- **Checked:**
+  - Live before the fix: clicking Search on `/app` showed "This page couldn't load" with the same error.
+  - The new test failed first, passes with the fix, and fails again with the fix stashed. `npm test` (850 Vitest + 72 P4), typecheck, lint and build pass.
+  - Local Chromium, English and Spanish: search opens from the button and from Ctrl K, filters as you type, shows translated headings and dates, with no page errors. Hero buttons are both 56px at 1280px and 390px. Icon strokes are 3 at 16px and 2.4 at 20px (2px rendered).
+- **Open issues / next:** The app's colors in `app/manifest.ts` are still the old cream and brick. Lucide icons elsewhere in the app still use the default stroke.
+
+### 2026-10-23: "Delete my account", the app shell in Spanish, and a skip link in /app
+- **Who:** PlaidMod · P5 Platform
+- **Branch:** main
+- **What changed:**
+  - **Delete my account:** signed-in readers get "Delete my account" in the account menu. It opens `/account/delete`, which explains what's deleted and asks to confirm.
+    - The button posts to `/auth/delete` through `DeleteAccountForm`, which clears the saved address first.
+    - The route refuses posts from other sites (Origin and Sec-Fetch-Site checks), guests and team admin accounts (the team removes those by hand).
+    - It deletes the Supabase user, whose `account_profiles` row goes with it (on delete cascade). Then it signs out, clears the government and role cookies, and lands on `/?deleted=1`, which shows "Your account is deleted".
+    - The privacy page (en/es) now points to the button instead of "ask us on our project page".
+    - The menu's sign-out also shows for a signed-in reader before their first lookup.
+  - **App shell in Spanish:** the sidebar, sample-data banners, search, account menu and role names now come from the new `AppShell` messages in English and Spanish. Spanish matches existing wording ("Hazte escuchar", "Datos de muestra", "Cerrar sesión").
+  - **Motion and guideline pass:**
+    - The "signed in" and "account deleted" confirmations on the home page rise in once (`.status-in`: 250ms with the new `--ease-out-strong`; a 200ms fade under reduced motion).
+    - `/app` gets the same "Skip to content" link as the public pages.
+    - Page headings use balanced wrapping, and the avatar has explicit width and height.
+  - **Three small guideline fixes:**
+    - The search hint shows ⌘K on Apple devices and Ctrl K elsewhere (`lib/prototype/shortcut.ts`), after hydration.
+    - The delete button shows "Deleting your account…" with a spinner once pressed, and ignores a second press.
+    - The address placeholder shows an example: "e.g. 901 Bagby St, Houston, TX 77002…".
+- **Files:** `app/auth/delete/route.ts`, `app/(public)/account/delete/page.tsx`, `lib/accountDeletion.ts` (new); `components/prototype/{app-shell,sign-out-form}.tsx`, `app/(public)/page.tsx`, `messages/*.json`, `docs/testing-checklist.md`, `app/globals.css`, `app/(public)/address/page.tsx`; tests `accountDeletion`, `appShellText` (new), `signOut`, `messages`
+- **Contract changes:** None to the schema. Privacy (§19): readers can now delete their own account. Tech plan §16 and §19 still don't mention `account_profiles` or deletion; not edited, since no teammate asked for a plan change. Every form posting to `/auth/delete` must use `DeleteAccountForm` (a test checks).
+- **Checked:**
+  - Tests: the new tests failed first, then passed; `npm test` (844 Vitest + 72 P4), typecheck and lint pass.
+  - Refusals (local): a post with no Origin, or from another site, goes to `?error=cross_site`; a signed-out post goes to `/signin`.
+  - End to end with a throwaway `@example.com` user with a saved profile, in local Chromium: menu, confirm page, deletion, then the home page message, an empty profile and no cookies. In Supabase, the user and its row were gone, with no leftover test users or orphaned rows.
+  - Spanish shell in Chromium: no English left in the shell, and no sideways scroll at 390px.
+  - Also in Chromium: the confirmation uses `status-rise` normally and `status-fade` under reduced motion. The first Tab in `/app` shows the skip link, and the next Tab after it lands inside the main content. With a second throwaway user: one press sends one request; the button reads "Deleting your account…" with a spinner, and a second press is blocked. The flow still ends deleted. The search hint reads Ctrl K on Windows. No leftover test users or orphaned rows.
+- **Open issues / next:** Dates in the search list (`relDay`) and the dashboards' own text are still English (UI owner). Push subscriptions aren't tied to accounts, so deleting an account leaves browser alerts on; turn them off on the Alerts page.
+
+### 2026-10-23: UI polish pass: focus rings, hover tints and shadows work again under the glass style
+- **Who:** PlaidMod · P5 Platform
+- **Branch:** main
+- **What changed:**
+  - Marie Gary Blueberry's glass style (below) sat outside every CSS layer, so it beat Tailwind's utilities. The address box and buttons lost their focus rings, white buttons lost their hover tint (the Google button), and cards lost their own shadows (the sign-in card). The edge, depth and blur now live in `@layer components`, and the see-through fill in `@layer utilities`. The glass look stays, and an element's own utilities win. The glass edge is now a shadow ring over a transparent border, so forced-colors mode still draws it.
+  - The landing page's feature labels showed raw keys (`Home.feature1Label`); it now uses the existing `featureOneLabel` keys.
+  - The header's new "Find my governments" button made every public page scroll sideways at 390px. It now shows from 640px up; the page itself offers the action on phones.
+  - `/address` showed the privacy sentence twice; the address form already shows it.
+  - Polish: menus, the search list and address suggestions no longer scroll the page behind them. The switch names its transition properties. The results cards' hover zoom animates instead of jumping. The Google avatar gets a faint outline.
+- **Files:** `app/globals.css`, `app/(public)/{page,address/page,results/page}.tsx`, `components/shell/SiteHeader.tsx`, `components/home/AddressForm.tsx`, `components/prototype/app-shell.tsx`, `components/ui/{dropdown-menu,command,switch}.tsx`, `tests/platform/cssLayers.test.ts` (new)
+- **Contract changes:** None. New rule: don't set box-shadow, border, outline or background in CSS outside a layer; `cssLayers.test.ts` fails if you do.
+- **Checked:**
+  - Tests and build: the new test failed first, then passed; `npm test` (832 Vitest + 72 P4), typecheck, lint and build pass.
+  - Local Chromium: focus rings on the address box and the primary and Google buttons; the Google hover tint; the sign-in card shadow; glass fill and blur on cards.
+  - No sideways scroll at 390, 640 and 1280px on `/`, `/address`, `/about` and `/privacy` in English, or at 390px in Spanish (`/signin` included).
+- **Open issues / next (left for the landing page's owner):** The hero's two buttons are different sizes (main action 56px, Google 64px), so the secondary outweighs the main one. `/address` uses a hex background (`bg-[#f4f6f9]`), but the rules say tokens only. Lucide icons keep their default stroke beside semibold text.
+
+### 2026-10-23: Apply a shared glass surface style
+- **Who:** Marie Gary Blueberry · app-wide visual system
+- **Branch:** main
+- **What changed:** Added a soft tinted canvas and translucent, blurred treatment to white and surface panels across public and app routes. Added a restrained highlight and depth to denim, ink and brick surfaces while preserving their palette colors and text contrast intent.
+- **Files:** `app/globals.css`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `npx tsc --noEmit` and `git diff --check`; tests not run.
+- **Open issues / next:** Browser visual check unavailable in this session.
+
+### 2026-10-23: Refresh the landing page and smooth route changes
+- **Who:** Marie Gary Blueberry · public experience
+- **Branch:** main
+- **What changed:** Reworked the landing page around a centered hero, large actions and a rounded product preview built from ShowUp's real government stack and existing copy. Added a localized address CTA to the header and a short fade for route changes, disabled for reduced-motion preferences.
+- **Files:** `app/(public)/page.tsx`, `app/template.tsx`, `app/globals.css`, `components/shell/SiteHeader.tsx`, `messages/en.json`, `messages/es.json`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `npx tsc --noEmit` and `git diff --check` passed. `npm run build` could not fetch Geist from Google Fonts due unavailable network access; tests not run.
+- **Open issues / next:** Browser visual check unavailable in this session; validate the new landing page and route fade when browser access is available.
+
+### 2026-10-23: Enlarge sign-in and align the stack label
+- **Who:** Marie Gary Blueberry · public landing page
+- **Branch:** main
+- **What changed:** Enlarged the Google sign-in action with a wider desktop target and full-width mobile button. Reset the final government-stack label to full width, aligning it with the first card and the stack's shared right edge; this supersedes the prior desktop inset adjustment.
+- **Files:** `app/(public)/page.tsx`, `components/home/GovernmentStack.tsx`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `npx tsc --noEmit`, `git diff --check`, and local homepage request (200); tests not run.
+- **Open issues / next:** Browser visual check unavailable in this session.
+
+### 2026-10-23: Align the final government-stack label
+- **Who:** Marie Gary Blueberry · home page layout
+- **Branch:** main
+- **What changed:** Matched the “ones you’ve never heard of” label’s desktop inset to the last government card so the stack continues its stagger consistently. Mobile remains flush with the stack edge.
+- **Files:** `components/home/GovernmentStack.tsx`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `npx tsc --noEmit` and `git diff --check` passed; tests not run.
+- **Open issues / next:** Browser visual check unavailable in this session.
+
+### 2026-10-23: Anchor and compact the public footer
+- **Who:** Marie Gary Blueberry · public site layout
+- **Branch:** main
+- **What changed:** Made the public shell fill at least the viewport height so the footer sits at the bottom instead of leaving unused space beneath it. Tightened the footer's vertical padding and internal gaps. The planning stress test was skipped for this fix at the teammate's request.
+- **Files:** `app/(public)/layout.tsx`, `components/shell/SiteFooter.tsx`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `npx tsc --noEmit`, `git diff --check`, and local homepage request (200); tests not run.
+- **Open issues / next:** Browser visual check unavailable in this session.
+
+### 2026-10-23: Split the landing page from address lookup
+- **Who:** Marie Gary Blueberry · public experience
+- **Branch:** main
+- **What changed:** Made `/` a full ShowUp landing page with a product hero, clear address lookup and Google sign-in actions, and three feature summaries. Added `/address` for address entry and moved the app's change-address links there.
+- **Files:** `app/(public)/page.tsx`, `app/(public)/address/page.tsx`, `components/prototype/app-shell.tsx`, `messages/en.json`, `messages/es.json`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `npx tsc --noEmit`, `git diff --check`, and local requests to `/` and `/address` (both 200); tests not run.
+- **Open issues / next:** Browser visual check unavailable in this session.
+
+### 2026-10-23: Make Google sign-in prominent on the landing page
+- **Who:** Marie Gary Blueberry · public landing page
+- **Branch:** main
+- **What changed:** Replaced the small inline Google sign-in link with a larger outlined button and Google icon. The button goes directly to the Google sign-in route and fills the available width on mobile.
+- **Files:** `app/(public)/page.tsx`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `git diff --check` and `npx tsc --noEmit` passed; tests not run.
+- **Open issues / next:** Browser visual check wasn't available.
+
+### 2026-10-23: Enlarge Weekly section headers
+- **Who:** Marie Gary Blueberry · P3 News and Alerts
+- **Branch:** main
+- **What changed:** Increased the Weekly section-rule heading from 12px to 16px, scaling to 18px on desktop, and eased letter spacing so the label is easier to read.
+- **Files:** `app/(public)/weekly/page.tsx`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `git diff --check` and `npx tsc --noEmit` passed; tests not run.
+- **Open issues / next:** Browser visual check wasn't available.
+
+### 2026-10-23: Align Weekly story cards within each row
+- **Who:** Marie Gary Blueberry · P3 News and Alerts
+- **Branch:** main
+- **What changed:** Weekly cards now stretch to the same height as their row, with action buttons and sign-up deadlines aligned along the bottom. This removes the uneven card edges and staggered action spacing.
+- **Files:** `app/(public)/weekly/page.tsx`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `git diff --check` and `npx tsc --noEmit` passed; tests not run.
+- **Open issues / next:** Browser visual check wasn't available.
+
+### 2026-10-23: Show two more stories in the Weekly tile grid
+- **Who:** Marie Gary Blueberry · P3 News and Alerts
+- **Branch:** main
+- **What changed:** Expanded the Weekly tile set from five to seven using two more palette styles. The grid now fills its second desktop row with the next two available upcoming stories.
+- **Files:** `app/(public)/weekly/page.tsx`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `git diff --check` and `npx tsc --noEmit` passed; tests not run.
+- **Open issues / next:** Browser visual check wasn't available.
+
+### 2026-10-23: Signing out clears the saved address; Google sign-in is on
+- **Who:** PlaidMod · P5 Platform
+- **Branch:** main
+- **What changed:**
+  - Marie Gary Blueberry's change below ("Remember addresses in this browser only") keeps the street address in `showup.profile.v1`. But "Sign out and forget this browser" left the address there, so the next person on a shared computer saw it. Every sign-out button now uses `SignOutForm`, which clears the profile before posting to `/auth/signout`. The menu also shows the button whenever an address is saved.
+  - The sample-data banner told every new visitor "Your address is saved in this browser", because the sample profile (Maya) has an address. It now checks `hasSavedAddress()`.
+  - The privacy page (en/es) says signing out removes the saved address. Docs updated at the owner's request: tech plan §3 and §19, DESIGN.md, CLAUDE.md, the testing checklist and readiness.
+- **Files:** `components/prototype/sign-out-form.tsx` (new), `components/prototype/app-shell.tsx`, `lib/prototype/profile-storage.ts`, `messages/*.json`, `tests/platform/signOut.test.ts` (new), `tests/platform/messages.test.ts`, the docs above
+- **Contract changes:** Privacy (§3, §19): signing out now clears the browser's saved address. New sign-out buttons must use `SignOutForm`; a test fails on any page or component that posts to `/auth/signout` directly.
+- **Checked:**
+  - Tests and build: the new tests failed first, then passed; `npm test` (830 Vitest + 72 P4), typecheck, lint and build all pass.
+  - Local Chromium: banner text for a new visitor and for a saved address; sign-out by mouse and by keyboard lands on `/` with the profile gone.
+  - Google sign-in: PlaidMod turned it on (Google Cloud client; Supabase provider; Site URL `https://showup-htx-six.vercel.app`; redirect URLs for `/auth/callback` on the live site and localhost:3000). The live button reaches Google's login screen with Supabase's callback, and a bad code returns to `/signin?error=failed`. A live sign-in created one Google user. Its `account_profiles` row is written after the first signed-in lookup, as designed.
+- **Open issues / next:** The app shell's banner and menu text are still English only. Account deletion is still by request. This push also deploys 7c1fd1e, which Vercel had blocked as a teammate commit.
+
+### 2026-10-23: Fill the public weekly story cards with story summaries
+- **Who:** Marie Gary Blueberry · P3 News and Alerts
+- **Branch:** main
+- **What changed:** The previous tile adjustment affected the prototype brief, while the reported screen is the public Weekly page. Public cards now show each available story dek, place the action beneath the text, and use content-sized rows without the extra tall spans.
+- **Files:** `app/(public)/weekly/page.tsx`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** `git diff --check` and `npx tsc --noEmit` passed; tests not run.
+- **Open issues / next:** Browser visual check wasn't available.
+
+### 2026-10-23: Repair Harris County meeting information link
+- **Who:** Marie Gary Blueberry · government details
+- **Branch:** main
+- **What changed:** Replaced the retired Commissioners Court URL with Harris County's current agenda portal and added a detail-page fallback so existing database rows with the old URL work immediately. The catalog's source now points to the county's current Office of County Administration meeting-information page.
+- **Files:** `data/bodies.yaml`, `components/flow/BodyDetailClient.tsx`, `agent_handoff.md`
+- **Contract changes:** None.
+- **Checked:** Official Harris County agenda and meeting-information pages verified; `git diff --check` and `npx tsc --noEmit` passed.
+- **Open issues / next:** The existing database catalog row can be refreshed with `npm run seed:bodies -- --apply`; the page fallback covers it in the meantime.
 
 ### 2026-10-23: Improve government card hover and return navigation
 - **Who:** Marie Gary Blueberry · public lookup and government details

@@ -75,7 +75,7 @@ export default function ResultsPage() {
                       {inToken ? (
                         <Link
                           href={detailsHref}
-                          className={`${cardClass} group w-full text-left motion-safe:transition-[background-color,box-shadow,transform] motion-safe:duration-200 hover:bg-denim-soft/30 hover:ring-denim/50 motion-safe:hover:scale-[1.01]`}
+                          className={`${cardClass} group w-full text-left motion-safe:transition-[background-color,box-shadow,scale] motion-safe:duration-150 motion-safe:ease-out hover:bg-denim-soft/30 hover:ring-denim/50 motion-safe:hover:scale-[1.01]`}
                         >
                           {card}
                           <span aria-hidden className="grid size-8 shrink-0 place-items-center rounded-full border border-current/25 text-ink">

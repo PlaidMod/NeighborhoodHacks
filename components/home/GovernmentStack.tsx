@@ -30,7 +30,7 @@ export async function GovernmentStack() {
           </li>
         ))}
         <li
-          className={`${slip} ml-0 bg-ink px-5 py-4 text-[0.8125rem] font-bold whitespace-nowrap text-white sm:ml-[10%] sm:text-base`}
+          className={`${slip} ml-0 w-full bg-ink px-5 py-4 text-[0.8125rem] font-bold whitespace-nowrap text-white sm:text-base`}
           style={{ animationDelay: `${LAYERS.length * 70}ms` }}
         >
           {t('more')}

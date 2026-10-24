@@ -33,6 +33,9 @@ export function BodyDetailClient({ bodyId, token }: { bodyId: string; token: str
   const locale = useLocale()
   const [body, setBody] = useState<Detail | null>(null)
   const [error, setError] = useState(false)
+  const meetingInfoUrl = body?.id === 'commissioners_court'
+    ? 'https://agenda.harriscountytx.gov/'
+    : body?.meeting_info_url
 
   useEffect(() => {
     let active = true
@@ -75,7 +78,7 @@ export function BodyDetailClient({ bodyId, token }: { bodyId: string; token: str
           </div>
           {body.tax_rate !== null && <p className="mt-3 text-xs text-muted-foreground">{t('taxCaveat')}</p>}
           <div className="mt-5 flex flex-wrap gap-4 text-sm font-semibold text-primary">
-            {body.meeting_info_url && <a href={body.meeting_info_url} target="_blank" rel="noreferrer" className="underline">{t('meetings')}</a>}
+            {meetingInfoUrl && <a href={meetingInfoUrl} target="_blank" rel="noreferrer" className="underline">{t('meetings')}</a>}
             {body.tax_source_url && <a href={body.tax_source_url} target="_blank" rel="noreferrer" className="underline">{t('taxSource')}</a>}
             {body.latest_election?.source_url && <a href={body.latest_election.source_url} target="_blank" rel="noreferrer" className="underline">{t('electionSource')}</a>}
           </div>

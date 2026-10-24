@@ -8,6 +8,7 @@
     "navLabel": "Principal",
     "home": "Inicio",
     "about": "Acerca de",
+    "findGovernments": "Buscar mis gobiernos",
     "language": "Idioma",
     "neutral": "Resumimos. Nunca recomendamos.",
     "footerNavLabel": "Información del sitio",
@@ -19,10 +20,24 @@
     "urgent": "Urgente"
   },
   "Home": {
+    "eyebrow": "Tu vecindario, explicado",
     "title": "¿Quién gobierna tu cuadra?",
-    "lede": "Escribe tu dirección para ver cada gobierno local que te afecta, incluso los que nunca has oído mencionar, y cómo hablar antes de que voten.",
+    "lede": "Cada día, los gobiernos locales toman decisiones que afectan tu vecindario. ShowUp te ayuda a conocerlos y a hacerte escuchar.",
+    "benefitOne": "Mira todos los gobiernos locales vinculados a tu dirección.",
+    "benefitTwo": "Entiende las próximas decisiones de tu comunidad.",
+    "benefitThree": "Encuentra formas claras de participar antes de una votación.",
+    "benefitsLabel": "Lo que puedes hacer con ShowUp",
+    "featureOneLabel": "Conoce quién decide",
+    "featureOneTitle": "Tus gobiernos locales, en un solo lugar",
+    "featureOneBody": "Encuentra las juntas, distritos y funcionarios electos cuyas decisiones afectan tu vecindario.",
+    "featureTwoLabel": "Conoce lo que viene",
+    "featureTwoTitle": "Reuniones y decisiones importantes",
+    "featureTwoBody": "Consulta los próximos puntos de agenda y resúmenes sencillos con enlaces a fuentes oficiales.",
+    "featureThreeLabel": "Hazte escuchar",
+    "featureThreeTitle": "Participa con confianza",
+    "featureThreeBody": "Prepárate para comentar en público y aprende cómo participar en las decisiones locales.",
     "addressLabel": "Tu dirección",
-    "addressPlaceholder": "Calle, ciudad y código postal",
+    "addressPlaceholder": "p. ej., 901 Bagby St, Houston, TX 77002…",
     "submit": "Buscar mis gobiernos",
     "privacyNote": "Guardamos tu dirección solo en este navegador para que puedas volver a usarla. Nunca la guardamos en nuestros servidores.",
     "coverage": "Por ahora, solo direcciones del condado de Harris.",
@@ -42,6 +57,12 @@
     "suggestionsCount": "{count, plural, one {# sugerencia disponible} other {# sugerencias disponibles}}. Usa las flechas arriba y abajo y Enter para elegir.",
     "addNumber": "Agrega el número de tu casa al principio y luego elige Buscar mis gobiernos.",
     "suggestionsHint": "Empieza a escribir y elige tu dirección de la lista."
+  },
+  "AddressPage": {
+    "back": "Volver a ShowUp",
+    "eyebrow": "Empieza con tu dirección",
+    "title": "Encuentra los gobiernos que sirven a tu vecindario.",
+    "lede": "Escribe tu dirección para ver los gobiernos locales vinculados a ella y sus próximas decisiones."
   },
   "About": {
     "metaTitle": "Acerca de ShowUp HTX",
@@ -65,7 +86,7 @@
       "intro": "ShowUp HTX te ayuda a conocer tus gobiernos locales y a hacerte escuchar. Recopilamos lo mínimo posible. Esto es lo que guardamos y por qué.",
       "address": {
         "title": "Tu dirección",
-        "body": "Enviamos tu dirección una vez a la búsqueda de direcciones de la Oficina del Censo de EE. UU. para encontrar tus gobiernos locales. Para que no tengas que volver a escribirla, la guardamos solo en el almacenamiento local de este navegador. No la guardamos en nuestros servidores, en tu cuenta ni en enlaces. Mientras escribes, enviamos solo el nombre de la calle, nunca el número de tu casa, a Photon, un buscador gratuito de calles basado en OpenStreetMap, para sugerirte calles. Los enlaces a tus resultados solo contienen identificadores de gobiernos, no tu dirección. Borra los datos del sitio en este navegador para eliminar la dirección guardada."
+        "body": "Enviamos tu dirección una vez a la búsqueda de direcciones de la Oficina del Censo de EE. UU. para encontrar tus gobiernos locales. Para que no tengas que volver a escribirla, la guardamos solo en el almacenamiento local de este navegador. No la guardamos en nuestros servidores, en tu cuenta ni en enlaces. Mientras escribes, enviamos solo el nombre de la calle, nunca el número de tu casa, a Photon, un buscador gratuito de calles basado en OpenStreetMap, para sugerirte calles. Los enlaces a tus resultados solo contienen identificadores de gobiernos, no tu dirección. Para eliminar la dirección guardada, cierra sesión en el menú de tu cuenta o borra los datos del sitio en este navegador."
       },
       "cookies": {
         "title": "Inicio de sesión opcional, pocas cookies",
@@ -73,7 +94,7 @@
       },
       "account": {
         "title": "Iniciar sesión con Google",
-        "body": "Iniciar sesión es opcional. Si inicias sesión con Google, Google nos comparte tu correo electrónico, tu nombre y un enlace a tu foto de perfil, y Supabase, nuestra base de datos, los guarda para tu cuenta. También guardamos los identificadores de los gobiernos que sigues y los roles que elegiste, para que te acompañen en otros dispositivos. Tu dirección se queda solo en este navegador y nunca se agrega a tu cuenta. Al cerrar sesión se eliminan las cookies locales de gobiernos y roles, pero no la dirección guardada localmente. Borra los datos del sitio en este navegador para eliminarla. Para eliminar tu cuenta y todo lo que guardó, pídenoslo en la página de nuestro proyecto (ver Contacto). No publiques ahí tu correo electrónico. Te daremos una forma privada de confirmar que eres tú."
+        "body": "Iniciar sesión es opcional. Si inicias sesión con Google, Google nos comparte tu correo electrónico, tu nombre y un enlace a tu foto de perfil, y Supabase, nuestra base de datos, los guarda para tu cuenta. También guardamos los identificadores de los gobiernos que sigues y los roles que elegiste, para que te acompañen en otros dispositivos. Tu dirección se queda solo en este navegador y nunca se agrega a tu cuenta. Al cerrar sesión, este navegador olvida tus gobiernos, tus roles y tu dirección guardada, pero tu cuenta conserva tus gobiernos y roles. Para eliminar tu cuenta y todo lo que guardó, elige Eliminar mi cuenta en el menú de tu cuenta."
       },
       "rateLimits": {
         "title": "Límites de uso",
@@ -505,6 +526,67 @@
     "inBrief": "En tu resumen",
     "outcomePending": "Resultado aún no publicado"
   },
+  "AppShell": {
+    "nav": {
+      "home": "Inicio",
+      "timeline": "Cronología",
+      "brief": "Resumen semanal",
+      "districts": "Mis distritos",
+      "speak": "Hazte escuchar",
+      "vote": "Votar",
+      "alerts": "Alertas",
+      "changeAddress": "Cambiar dirección"
+    },
+    "sections": {
+      "menu": "Menú",
+      "general": "General",
+      "navigation": "Navegación"
+    },
+    "footer": {
+      "tagline": "Tu vecindario. Tu voz.",
+      "independent": "Independiente y apartidista.",
+      "builtBy": "Hecho por estudiantes de Houston."
+    },
+    "banner": {
+      "saved": "Datos de muestra · Tu dirección está guardada en este navegador; búscala para cargar tus gobiernos.",
+      "demo": "Datos de muestra · Explorando Third Ward como Maya.",
+      "useMyAddress": "Usar mi dirección",
+      "noDatabase": "Datos de muestra · La base de datos de reuniones no está conectada aquí, así que estos gobiernos y puntos son de muestra."
+    },
+    "toggle": {
+      "hide": "Ocultar el menú lateral",
+      "show": "Mostrar el menú lateral",
+      "label": "Menú lateral"
+    },
+    "search": {
+      "button": "Busca reuniones, gobiernos y temas",
+      "placeholder": "Busca reuniones, gobiernos y temas…",
+      "description": "Busca uno de tus gobiernos o una novedad y pulsa Intro para abrirlo.",
+      "empty": "Todavía no hay resultados.",
+      "governments": "Tus gobiernos",
+      "updates": "Novedades"
+    },
+    "account": {
+      "trigger": "Perfil e intereses",
+      "yourArea": "Tu zona",
+      "governments": "{count, plural, one {# gobierno} other {# gobiernos}}",
+      "signedIn": "Sesión iniciada con Google · guardado en tu cuenta",
+      "guest": "Invitado",
+      "guestNote": "Guardado solo en este navegador",
+      "signIn": "Inicia sesión para usarlo en otros dispositivos",
+      "explainFor": "Explicar las cosas para",
+      "signOut": "Cerrar sesión",
+      "signOutGuest": "Cerrar sesión y olvidar este navegador",
+      "delete": "Eliminar mi cuenta"
+    },
+    "persona": {
+      "student": "Estudiante",
+      "parent": "Madre o padre",
+      "renter": "Inquilino",
+      "homeowner": "Propietario",
+      "voter": "Votante por primera vez"
+    }
+  },
   "AppBrief": {
     "chip": "Resumen semanal",
     "minRead": "{count} min de lectura",
@@ -807,5 +889,18 @@
     "signInLink": "Inicia sesión con Google",
     "welcome": "Iniciaste sesión. Busca tu dirección una vez y ShowUp la recordará.",
     "or": "o"
+  },
+  "AccountDelete": {
+    "metaTitle": "Eliminar tu cuenta",
+    "title": "Eliminar tu cuenta",
+    "signedInAs": "Iniciaste sesión como {email}.",
+    "what": "Esto elimina tu cuenta de ShowUp y los gobiernos y roles guardados en ella. No se puede deshacer.",
+    "browser": "Este navegador también olvida tus gobiernos y tu dirección guardada. Puedes seguir usando ShowUp como invitado, o volver a iniciar sesión más tarde para empezar de nuevo.",
+    "confirm": "Eliminar mi cuenta",
+    "deleting": "Eliminando tu cuenta…",
+    "cancel": "Conservar mi cuenta",
+    "admin": "Las cuentas de administración del equipo no se pueden eliminar aquí. Pide al equipo que elimine la tuya.",
+    "failed": "No pudimos eliminar tu cuenta. Inténtalo de nuevo en un minuto.",
+    "done": "Tu cuenta se eliminó. Puedes seguir usando ShowUp como invitado."
   }
 }

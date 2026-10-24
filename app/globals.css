@@ -149,6 +149,11 @@
   body {
     @apply bg-background text-foreground;
     line-height: 1.5;
+    background-color: var(--canvas);
+    background-image:
+      radial-gradient(ellipse at 8% 4%, color-mix(in oklab, var(--denim-soft) 58%, transparent), transparent 34%),
+      radial-gradient(ellipse at 95% 18%, color-mix(in oklab, var(--sage-soft) 62%, transparent), transparent 32%);
+    background-attachment: fixed;
   }
   button:not(:disabled),
   [role="button"]:not(:disabled) {
@@ -172,6 +177,49 @@
   }
 }
 
+/*
+ * Shared glass surface treatment for light panels, cards, menus and controls.
+ * It lives in two layers so it never hides an element's own utilities:
+ *   - components: the edge, highlight, depth and blur. An element's own ring-*, shadow-*,
+ *     border-* and focus-visible:ring-* utilities win, so focus rings and card shadows still show.
+ *   - utilities, after Tailwind's own: the see-through fill. It replaces the opaque bg-white and
+ *     bg-surface, but hover:bg-* and other variants are more specific, so hover tints still show.
+ * tests/platform/cssLayers.test.ts fails if any of this moves outside a layer.
+ */
+@layer components {
+  :is(.bg-white, .bg-surface) {
+    /* Forced-colors mode drops box-shadow and paints this border, so the edge survives there. */
+    border: 1px solid transparent;
+    box-shadow:
+      0 0 0 1px color-mix(in oklab, var(--surface) 78%, var(--denim-soft)),
+      inset 0 1px 0 color-mix(in oklab, white 78%, transparent);
+    -webkit-backdrop-filter: blur(18px) saturate(145%);
+    backdrop-filter: blur(18px) saturate(145%);
+  }
+
+  :is(.bg-ink, .bg-denim, .bg-brick, .bg-primary) {
+    box-shadow:
+      inset 0 1px 0 color-mix(in oklab, white 28%, transparent),
+      0 16px 38px -28px color-mix(in oklab, var(--ink) 48%, transparent);
+    -webkit-backdrop-filter: blur(16px) saturate(140%);
+    backdrop-filter: blur(16px) saturate(140%);
+  }
+}
+
+@layer utilities {
+  .bg-canvas {
+    background-color: var(--canvas);
+    background-image:
+      radial-gradient(ellipse at 8% 4%, color-mix(in oklab, var(--denim-soft) 58%, transparent), transparent 34%),
+      radial-gradient(ellipse at 95% 18%, color-mix(in oklab, var(--sage-soft) 62%, transparent), transparent 32%);
+    background-attachment: fixed;
+  }
+
+  :is(.bg-white, .bg-surface) {
+    background-color: color-mix(in oklab, var(--surface) 82%, transparent);
+  }
+}
+
 @media (prefers-reduced-motion: no-preference) {
   [data-slot="button"] {
     transition: background-color 150ms ease-out, color 150ms ease-out, border-color 150ms ease-out, box-shadow 150ms ease-out, scale 150ms ease-out;
@@ -189,6 +237,29 @@
   }
 }
 
+::view-transition {
+  pointer-events: none;
+}
+::view-transition-old(.site-route) {
+  animation: 130ms ease-out both route-fade-out;
+}
+::view-transition-new(.site-route) {
+  animation: 190ms ease-out 90ms both route-fade-in;
+}
+@keyframes route-fade-out {
+  to { opacity: 0; }
+}
+@keyframes route-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(.site-route),
+  ::view-transition-new(.site-route) {
+    animation: none !important;
+  }
+}
+
 @layer utilities {
   .scrollbar-none {
     scrollbar-width: none;
@@ -198,6 +269,36 @@
   }
   .tabular {
     font-variant-numeric: tabular-nums;
+  }
+}
+
+/*
+ * One-time confirmations ("You're signed in", "Your account is deleted") rise in once, so the reader
+ * notices the action worked. They arrive with a full page load, so a CSS animation (off the main
+ * thread) rather than a transition. Reduced motion keeps a short fade and drops the movement; the
+ * !important beats the global reduced-motion rule below, which would otherwise make it instant.
+ */
+:root {
+  --ease-out-strong: cubic-bezier(0.23, 1, 0.32, 1);
+}
+@keyframes status-fade {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes status-rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+.status-in {
+  animation: status-rise 250ms var(--ease-out-strong) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .status-in {
+    animation-name: status-fade !important;
+    animation-duration: 200ms !important;
   }
 }
 
