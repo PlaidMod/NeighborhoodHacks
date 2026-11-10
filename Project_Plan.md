@@ -117,7 +117,7 @@ These are shown with a clear badge. They have no alerts and no agenda tracking.
 
 ### Regional: coming soon
 
-Names and one-line descriptions only, with no data:
+Names and one-line descriptions only, with no data. Since Nov 10, 2026 they're part of the reader's governments (in `bodies_token`) and have their own "Regional governments" tab under My districts, with a coming-soon page each:
 
 - H-GAC Transportation Policy Council
 - TxDOT Houston District

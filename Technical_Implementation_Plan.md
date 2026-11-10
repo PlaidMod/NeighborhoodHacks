@@ -143,7 +143,7 @@ WHERE ST_Contains(b.geom, ST_SetSRID(ST_MakePoint($lon, $lat), 4326));
 **Derived entries:**
 - **Ballot list:** `ballot_offices` joined to the resolved districts.
 - **Not a government:** CenterPoint (always), the water operator (from the MUD's `operator_name`), and the HOA candidate.
-- **Regional:** the static `regional_coming_soon` bodies.
+- **Regional:** the static `regional_coming_soon` bodies, ungated (all six cover all of Harris County). Since Nov 10, 2026 their IDs also go into `bodies_token`, so they count among the reader's governments; `/app/districts` shows them in a separate "Regional governments" tab, with no agendas read and no alerts.
 
 **Sort order:** a static `impact_rank` per body type, reordered client-side by the selected stake.
 

@@ -76,14 +76,15 @@ const VOTE: Record<string, string> = { passed: "Passed", failed: "Failed", no_ac
 const VOTE_ES: Record<string, string> = { passed: "Aprobado", failed: "Rechazado", no_action: "Sin acción" }
 
 export function toBody(b: WeeklyBody): Body {
-  const kind = KIND[b.body_type as BodyType] ?? "county"
+  const regional = b.category === "regional_coming_soon"
+  const kind = regional ? "regional" : (KIND[b.body_type as BodyType] ?? "county")
   const known = STATIC_BODIES[DESCRIBED[b.body_id] ?? ""]
   return {
     id: b.body_id,
     name: b.body_name,
     short: b.body_name,
     kind,
-    tagline: known?.tagline ?? "",
+    tagline: known?.tagline ?? b.description ?? "",
     controls: known?.controls ?? [],
     selection: known?.selection ?? "",
     seats: known?.seats ?? "",
@@ -92,6 +93,7 @@ export function toBody(b: WeeklyBody): Body {
     commentRules: known?.commentRules ?? "",
     website: known?.website ?? b.meeting_info_url ?? "",
     agendasRead: b.agendas_read,
+    ...(regional ? { regional: true } : {}),
   }
 }
 

@@ -10,6 +10,7 @@ export type BodyKind =
   | "college"
   | "mud"
   | "health"
+  | "regional"
 
 export type Topic =
   | "schools"
@@ -57,6 +58,8 @@ export interface Body {
   website: string
   /** False when we don't read this body's agendas yet (real data only; unset for the demo). */
   agendasRead?: boolean
+  /** A regional or state agency (category regional_coming_soon): shown in its own tab, no agendas read yet. */
+  regional?: boolean
 }
 
 export interface Update {

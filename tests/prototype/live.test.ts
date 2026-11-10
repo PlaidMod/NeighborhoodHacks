@@ -19,6 +19,14 @@ describe('toBody', () => {
   it('gives an unknown body empty descriptions instead of made-up ones', () => {
     const b = toBody({ body_id: 'katy_city_council', body_name: 'Katy City Council', body_type: 'city_council', sms_eligible: false })
     expect(b).toMatchObject({ kind: 'city', tagline: '', controls: [], website: '' })
+    expect(b.regional).toBeUndefined()
+  })
+  it('marks a regional coming-soon body for the Regional governments tab, with its one-line description', () => {
+    const b = toBody({
+      body_id: 'tceq', body_name: 'TCEQ', body_type: 'other', sms_eligible: false,
+      category: 'regional_coming_soon', description: 'Issues air and water permits.', meeting_info_url: 'https://www.tceq.texas.gov/',
+    })
+    expect(b).toMatchObject({ kind: 'regional', regional: true, tagline: 'Issues air and water permits.', website: 'https://www.tceq.texas.gov/' })
   })
 })
 

@@ -33,6 +33,55 @@ A shared log of changes made in this repo, so the next teammate or agent can cat
 
 ## Entries
 
+### 2026-11-10: Regional bodies join the reader's governments, with a Regional governments tab
+- **Who:** Iarush · P1
+- **Branch:** main
+- **What changed:**
+  - Plan change at the teammate's request: the six `regional_coming_soon` bodies now go into `bodies_token` (ungated) and appear under My districts in their own "Regional governments" tab. Each one opens to a coming-soon page with its description, an "agendas not read" empty state and its official meeting link.
+  - New prototype `BodyKind` `regional` and `Body.regional`. `WeeklyBody` gains optional `category` and `description`. Timeline mute switches skip regional bodies.
+  - Plan files updated: Project_Plan "Regional: coming soon" and tech plan §4 "Regional".
+- **Files:** `app/api/lookup/route.ts`, `lib/weekly/data.ts`, `lib/prototype/{live,types,bodies,updates}.ts`, `components/prototype/civic.tsx`, `app/(prototype)/app/districts/page.tsx`, `app/(prototype)/app/districts/[id]/page.tsx`, `app/(prototype)/app/timeline/page.tsx`, `tests/api/lookup-route.test.ts`, `tests/prototype/live.test.ts`, `Project_Plan.md`, `Technical_Implementation_Plan.md`, `.plans/regional-bodies-addition-spec.md`
+- **Contract changes:** `bodies_token` now also carries the regional body IDs (still body IDs only). Anything iterating over every token body (weekly glance, alerts, onboarding count) now sees six more bodies with `sms_eligible: false` and no items.
+- **Checked:** `npm test`: 109 files, 1054 tests passed (one run had a news-isolation ESLint test time out under load; it passed alone and on rerun). `npx tsc --noEmit` clean. ESLint on changed files clean. Not checked in a browser at 390px. Couldn't check whether Supabase has the six rows: no service-role key in `.env.local`.
+- **Open issues / next:** seed the six bodies into Supabase (`npm run ingest -- --seed`) or the token IDs resolve to nothing; readers need to look up again to get the new token; 390px check of the tabs; Spanish strings for the tab and page copy (written in English like the rest of `/app/districts`).
+
+### 2026-11-10: Regional coming-soon bodies, Phase 3 (results UI), rescoped
+- **Who:** Iarush · P1
+- **Branch:** main
+- **What changed:**
+  - Results page regional section: one-line description, "Coming soon" tag, teaching note and official meeting link per body. New `Results.regionalNote`, `comingSoon`, `meetingInfo` messages (en, es).
+  - Body pages and weekly rows from the spec's Phase 3 were not built: they need regional IDs in `bodies_token`, which Phase 2's resolution ruled out per the plan. Recorded in the spec's "Phase 3 resolution".
+- **Files:** `app/(public)/results/page.tsx`, `messages/en.json`, `messages/es.json`, `tests/api/lookup-route.test.ts`, `.plans/regional-bodies-addition-spec.md`
+- **Contract changes:** None
+- **Checked:** `npm test`: 109 files, 1053 tests passed, P4 runner 0 failures. `npm run typecheck` clean. ESLint on changed files clean. Not checked in a browser at 390px.
+- **Open issues / next:** 390px manual check; Spanish `description_es` for the six bodies still TODO.
+
+### 2026-11-10: Regional coming-soon bodies, Phase 2 (geography): resolved as no gating
+- **Who:** Iarush · P1
+- **Branch:** main
+- **What changed:**
+  - Phase 2 of `.plans/regional-bodies-addition-spec.md` (regional IDs in `bodies` and `bodies_token`, GIS gating) conflicts with tech plan §4 and Project_Plan ("static", "names only, no data"), so it was not built. Added a "Phase 2 resolution" section to the spec.
+  - Five of the six bodies cover all of Harris County. A trial SJRA gate using TWDB's 2014 river-authority polygon was built and then removed: the polygon's Harris part looks like a digitizing error. The teammate chose to list SJRA everywhere. `/api/lookup` is unchanged and still returns all six in `regional`.
+- **Files:** `.plans/regional-bodies-addition-spec.md`
+- **Contract changes:** None
+- **Checked:** sample points against the TWDB polygon (Katy inside; Spring, Kingwood, Humble and downtown outside), with an ASCII map of its shape. No app code changed, so tests weren't rerun.
+- **Open issues / next:** Phase 3's body-page and weekly items assume the regional IDs are in the token; they need rescoping before anyone builds them.
+
+### 2026-11-10: Regional coming-soon bodies, Phase 1 (catalog)
+- **Who:** Iarush · P1
+- **Branch:** main
+- **What changed:**
+  - Six `regional_coming_soon` bodies in `data/bodies.yaml` (hgac_tpc, txdot_houston, tceq, puct, hgsubsidence, sjra), per `.plans/regional-bodies-addition-spec.md` Phase 1. Fixed a YAML parse error: the `description_es` placeholders (`TODO: ...`) are now quoted.
+  - `tests/unit/ingest-bodies.test.ts`: two tests that the catalog loads exactly these six, with `sms_eligible: false`, `impact_rank` 200-250 and https meeting URLs.
+- **Files:** `data/bodies.yaml`, `tests/unit/ingest-bodies.test.ts`, `.plans/regional-bodies-addition-spec.md` (new)
+- **Contract changes:** None
+- **Checked:**
+  - `npx vitest run`: 109 files, 1052 tests passed (one earlier run showed 1 transient failure that did not reproduce).
+  - `npm run typecheck`: no errors outside `scraper P2/tmp`.
+- **Open issues / next:**
+  - The meeting/source URLs were not re-verified live this session.
+  - Phases 2 (GIS boundaries, lookup gating) and 3 (UI, tests) not started. Spanish descriptions still TODO.
+
 ### 2026-10-29: MUD bucket M24 (`credit:infinity services`): 14 sources, 1 no agendas online
 - **Who:** Iarush · P2 Scrapers
 - **Branch:** main

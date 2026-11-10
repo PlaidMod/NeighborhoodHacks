@@ -128,10 +128,23 @@ export default function ResultsPage() {
             {state.data.regional.length > 0 && (
               <section className="mt-8" aria-labelledby="regional-bodies">
                 <h2 id="regional-bodies" className="text-lg font-extrabold text-ink">{t('regional')}</h2>
+                <p className="mt-1 text-sm text-muted-foreground">{t('regionalNote')}</p>
                 <ul className="mt-3 grid gap-3">
                   {state.data.regional.map((b) => (
-                    <li key={b.id} className="flex items-center gap-4 rounded-[24px] bg-white p-4 ring-1 ring-border">
-                      <BodyIcon type={b.type ?? 'other'} id={b.id} /><span className="font-bold text-ink">{b.name}</span>
+                    <li key={b.id} className="flex items-start gap-4 rounded-[24px] bg-white p-4 ring-1 ring-border">
+                      <BodyIcon type={b.type ?? 'other'} id={b.id} />
+                      <div className="min-w-0">
+                        <p className="flex flex-wrap items-center gap-2">
+                          <span className="font-bold text-ink">{b.name}</span>
+                          <span className="rounded-full bg-surface px-2.5 py-0.5 text-xs font-semibold text-muted-foreground ring-1 ring-border">{t('comingSoon')}</span>
+                        </p>
+                        {b.description && <p className="mt-1 text-sm text-muted-foreground">{b.description}</p>}
+                        {b.meeting_info_url && (
+                          <a className="mt-2 inline-block text-sm font-semibold text-primary underline" href={b.meeting_info_url} target="_blank" rel="noreferrer">
+                            {t('meetingInfo')}
+                          </a>
+                        )}
+                      </div>
                     </li>
                   ))}
                 </ul>

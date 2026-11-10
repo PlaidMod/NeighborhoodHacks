@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, onTestFinished, vi } from 'vitest'
 
 const mocks = vi.hoisted(() => {
   class CensusUnavailableError extends Error {}
@@ -288,8 +288,9 @@ describe('POST /api/lookup', () => {
     const ids = body.bodies.map((b: { id: string }) => b.id).sort()
     expect(ids).toEqual(['commissioners_court', 'flood_control', 'hcad', 'hcc_board', 'hisd_board', 'houston_city_council', 'port_houston'])
     expect(body.bodies.every((b: { verified: boolean; source_kind: string }) => !b.verified && b.source_kind === 'census')).toBe(true)
-    // The dashboard still works: every listed body goes into the token.
-    expect([...(mocks.signBodiesToken.mock.calls[0] as unknown as [string[]])[0]].sort()).toEqual(ids)
+    // The dashboard still works: every listed body goes into the token, along with the regional ones.
+    const regionalIds = body.regional.map((b: { id: string }) => b.id)
+    expect([...(mocks.signBodiesToken.mock.calls[0] as unknown as [string[]])[0]].sort()).toEqual([...new Set([...ids, ...regionalIds])].sort())
     // The countywide Hospital District and Department of Education are listed, not tracked.
     expect(body.uncovered.map((u: { key: string; type: string }) => [u.key, u.type])).toEqual([['hcad:043', 'other'], ['hcad:044', 'other']])
   })
@@ -346,6 +347,35 @@ describe('POST /api/lookup', () => {
     mocks.geocodeCensus.mockResolvedValueOnce(mocks.censusResult as never)
     const body = await (await POST(request())).json()
     expect(body.not_government.filter((b: { id: string }) => b.id === 'centerpoint')).toHaveLength(1)
+  })
+
+  it('lists regional bodies with their descriptions and adds them to the token, ungated', async () => {
+    setupMatchedLookup()
+    const regional = [
+      { id: 'hgac_tpc', name: 'H-GAC Transportation Policy Council', type: 'other', category: 'regional_coming_soon', elected_or_appointed: null, description_en: 'Approves regional transportation plans.', meeting_info_url: 'https://www.h-gac.com/tpc', impact_rank: 200, operator_name: null },
+      { id: 'sjra', name: 'San Jacinto River Authority', type: 'other', category: 'regional_coming_soon', elected_or_appointed: null, description_en: 'Manages water supply.', meeting_info_url: null, impact_rank: 250, operator_name: null },
+    ]
+    // Answer each bodies query by its filter, like the database would.
+    const original = mocks.selectRows.getMockImplementation()!
+    onTestFinished(() => { mocks.selectRows.mockImplementation(original) })
+    mocks.selectRows.mockImplementation(async (table: string, _columns: string, filter: (query: never) => unknown) => {
+      let category: unknown = null
+      const query = { in: () => query, eq: (_c: string, v: unknown) => { category = v; return query }, order: () => query }
+      filter(query as never)
+      if (table !== 'bodies') return mocks.tableRows[table] ?? []
+      return category === 'regional_coming_soon' ? regional : category ? [] : catalog
+    })
+    mocks.geocodeCensus.mockResolvedValueOnce(mocks.censusResult as never)
+    const body = await (await POST(request())).json()
+    expect(body.regional.map((b: { id: string }) => b.id)).toEqual(['hgac_tpc', 'sjra'])
+    expect(body.regional[0]).toMatchObject({
+      category: 'regional_coming_soon',
+      description: 'Approves regional transportation plans.',
+      meeting_info_url: 'https://www.h-gac.com/tpc',
+      verified: false,
+    })
+    expect(body.bodies.map((b: { id: string }) => b.id)).not.toContain('hgac_tpc')
+    expect(mocks.signBodiesToken).toHaveBeenCalledWith(['hcad', 'hcmud_489', 'houston_city_council', 'hgac_tpc', 'sjra'])
   })
 
   it('returns a generic server error on PostGIS RPC or body-catalog failure without signing a token', async () => {

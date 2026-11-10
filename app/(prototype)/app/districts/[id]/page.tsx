@@ -31,6 +31,8 @@ export default function BodyPage() {
     )
   }
 
+  if (b.regional) return <RegionalBody name={b.name} tagline={b.tagline} website={b.website} />
+
   const Icon = KIND_STYLE[b.kind].icon
   const mine = updates.filter((u) => u.bodyId === b.id)
   const upcoming = mine.filter((u) => +new Date(u.date) >= now).sort((a, c) => +new Date(a.date) - +new Date(c.date))
@@ -221,6 +223,50 @@ function Fact({ label, value }: { label: string; value: string }) {
     <div className="rounded-2xl bg-white/10 p-4 backdrop-blur-sm">
       <p className="text-[11px] font-semibold text-white/60">{label}</p>
       <p className="mt-1 font-extrabold">{value}</p>
+    </div>
+  )
+}
+
+/** A regional or state agency: no agendas read yet, so only its description and official meeting page. */
+function RegionalBody({ name, tagline, website }: { name: string; tagline: string; website: string }) {
+  return (
+    <div className="pt-4">
+      <Link
+        href="/app/districts"
+        className="inline-flex items-center gap-1.5 text-sm font-semibold text-muted-foreground hover:text-ink"
+      >
+        <ArrowLeft className="size-4" /> My districts
+      </Link>
+      <section className="mt-4 rounded-[28px] bg-ink p-5 text-white md:p-10">
+        <Chip className="bg-white/15 text-white">Regional · Coming soon</Chip>
+        <h1 className="mt-5 max-w-3xl text-[2.2rem] leading-[1.05] font-extrabold tracking-[-0.03em] md:text-[3rem]">{name}</h1>
+        {tagline && <p className="mt-3 max-w-2xl text-[1.05rem] text-white/75">{tagline}</p>}
+      </section>
+      <div className="mt-4 grid gap-4 xl:grid-cols-2">
+        <Panel>
+          <SectionTitle>Coming up and recently decided</SectionTitle>
+          <div className="rounded-2xl bg-muted p-4 text-sm leading-relaxed">
+            <p className="font-bold">We don&apos;t read this agency&apos;s agendas yet</p>
+            <p className="mt-1 text-muted-foreground">
+              So nothing from its meetings shows up here, in your weekly brief or in your alerts. It posts its meetings
+              and agendas on its own official page.
+            </p>
+          </div>
+        </Panel>
+        <Panel>
+          <SectionTitle>How to speak up</SectionTitle>
+          <p className="text-sm leading-relaxed text-muted-foreground">
+            Each agency sets its own rules for public comment. Its official meeting page explains how to sign up.
+          </p>
+          {website && (
+            <Button asChild variant="outline" className="mt-4">
+              <a href={website} target="_blank" rel="noreferrer">
+                Official meeting page <ExternalLink data-icon="inline-end" />
+              </a>
+            </Button>
+          )}
+        </Panel>
+      </div>
     </div>
   )
 }

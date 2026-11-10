@@ -578,7 +578,8 @@ const ELECTION_UPDATES = (j: Jurisdiction): Update[] => {
   ]
 }
 
-const MAKERS: Record<Body["kind"], Make> = { school, city, county, flood, health, college, mud }
+// Regional bodies have no demo items: ShowUp doesn't read their agendas yet.
+const MAKERS: Record<Body["kind"], Make> = { school, city, county, flood, health, college, mud, regional: () => [] }
 
 export function updatesFor(j: Jurisdiction): Update[] {
   const bodies = bodiesFor(j)

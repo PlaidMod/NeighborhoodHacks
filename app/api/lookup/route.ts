@@ -338,7 +338,10 @@ export async function POST(req: Request) {
     )
     // Older cached payloads have no `match` field; treat them as HCAD matches.
     const match = payload.match ?? 'hcad'
-    const ids = match === 'hcad' ? payload.bodies.filter((body) => body.verified).map((body) => body.id) : payload.bodies.map((body) => body.id)
+    const localIds = match === 'hcad' ? payload.bodies.filter((body) => body.verified).map((body) => body.id) : payload.bodies.map((body) => body.id)
+    // Regional bodies (all six cover all of Harris County) are part of the reader's governments too;
+    // /app/districts shows them in their own "Regional governments" tab.
+    const ids = [...new Set([...localIds, ...(payload.regional ?? []).map((body) => body.id)])]
     const token = signBodiesToken(ids)
     const response: LookupResponse = { bodies_token: token, ...payload, match, uncovered: payload.uncovered ?? [] }
     return Response.json(response, {

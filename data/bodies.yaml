@@ -130,3 +130,71 @@
   description_es: Proveedor de servicios eléctricos y de gas; se incluye por información de servicio, no como gobierno.
   meeting_info_url: https://www.centerpointenergy.com/en-us/corporate/about-us
   source_url: https://www.centerpointenergy.com/en-us/corporate/about-us
+# Regional bodies (coming soon) — see .plans/regional-bodies-addition-spec.md
+# Spanish translations are TODO (deferred per spec).
+- id: hgac_tpc
+  name: H-GAC Transportation Policy Council
+  type: other
+  category: regional_coming_soon
+  elected_or_appointed: Varies by board
+  impact_rank: 200
+  sms_eligible: false
+  description_en: Regional transportation planning for the Houston-Galveston Area Council area.
+  description_es: 'TODO: traducción al español pendiente.'
+  meeting_info_url: https://www.h-gac.com/transportation
+  source_url: https://www.h-gac.com/transportation
+- id: txdot_houston
+  name: TxDOT Houston District
+  type: other
+  category: regional_coming_soon
+  elected_or_appointed: Varies by board
+  impact_rank: 210
+  sms_eligible: false
+  description_en: Texas Department of Transportation district covering the Houston area.
+  description_es: 'TODO: traducción al español pendiente.'
+  meeting_info_url: https://www.txdot.gov/inside-txdot/division/houston.html
+  source_url: https://www.txdot.gov/inside-txdot/division/houston.html
+- id: tceq
+  name: Texas Commission on Environmental Quality
+  type: other
+  category: regional_coming_soon
+  elected_or_appointed: Varies by board
+  impact_rank: 220
+  sms_eligible: false
+  description_en: State agency for environmental quality and water in Texas.
+  description_es: 'TODO: traducción al español pendiente.'
+  meeting_info_url: https://www.tceq.texas.gov/
+  source_url: https://www.tceq.texas.gov/
+- id: puct
+  name: Public Utility Commission of Texas
+  type: other
+  category: regional_coming_soon
+  elected_or_appointed: Varies by board
+  impact_rank: 230
+  sms_eligible: false
+  description_en: Regulates electric and water utilities in Texas.
+  description_es: 'TODO: traducción al español pendiente.'
+  meeting_info_url: https://www.puc.texas.gov/
+  source_url: https://www.puc.texas.gov/
+- id: hgsubsidence
+  name: Harris-Galveston Subsidence District
+  type: other
+  category: regional_coming_soon
+  elected_or_appointed: Varies by board
+  impact_rank: 240
+  sms_eligible: false
+  description_en: Manages groundwater and subsidence in Harris and Galveston counties.
+  description_es: 'TODO: traducción al español pendiente.'
+  meeting_info_url: https://www.hgsubsidence.org/
+  source_url: https://www.hgsubsidence.org/
+- id: sjra
+  name: San Jacinto River Authority
+  type: other
+  category: regional_coming_soon
+  elected_or_appointed: Varies by board
+  impact_rank: 250
+  sms_eligible: false
+  description_en: Regional water authority for the San Jacinto River watershed.
+  description_es: 'TODO: traducción al español pendiente.'
+  meeting_info_url: https://www.sjra.net/
+  source_url: https://www.sjra.net/

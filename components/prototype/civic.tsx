@@ -5,6 +5,7 @@ import {
   Droplets,
   FileText,
   Gavel,
+  Globe,
   GraduationCap,
   HeartPulse,
   Landmark,
@@ -33,6 +34,7 @@ export const KIND_STYLE: Record<BodyKind, { icon: LucideIcon; tile: string; dot:
   flood: { icon: Waves, tile: "bg-denim-soft text-denim", dot: "bg-mist" },
   health: { icon: HeartPulse, tile: "bg-sage-soft text-sage", dot: "bg-sage" },
   college: { icon: BookOpen, tile: "bg-plum-soft text-plum-deep", dot: "bg-plum" },
+  regional: { icon: Globe, tile: "bg-muted text-ink", dot: "bg-ink" },
 }
 
 /** The body's official logo when we have one (pass `id`), otherwise its kind's icon. Decorative: the name is shown beside it. */

@@ -31,6 +31,10 @@ export type WeeklyBody = {
   agendas_read?: boolean
   /** The body's official meeting-notice page, from `bodies.meeting_info_url`. */
   meeting_info_url?: string | null
+  /** `bodies.category`; regional_coming_soon bodies get their own tab in /app/districts. */
+  category?: string
+  /** `bodies.description_en`, the one-line description. */
+  description?: string | null
 }
 
 /** The database is used only when every key it needs is set. */
@@ -57,7 +61,7 @@ export async function resolveBodies(token: string | null | undefined): Promise<B
   const ids = verifyBodiesToken(token)
   if (!ids) return { mode: 'db', bodies: null, reason: 'bad_token' }
   const [{ data, error }, sources] = await Promise.all([
-    db().from('bodies').select('id, name, type, sms_eligible, meeting_info_url').in('id', ids),
+    db().from('bodies').select('id, name, type, sms_eligible, meeting_info_url, category, description_en').in('id', ids),
     db().from('sources').select('body_id, config'),
   ])
   if (error) throw error
@@ -72,6 +76,8 @@ export async function resolveBodies(token: string | null | undefined): Promise<B
       sms_eligible: b.sms_eligible,
       agendas_read: covered.has(b.id),
       meeting_info_url: b.meeting_info_url,
+      category: b.category,
+      description: b.description_en,
     })),
   }
 }

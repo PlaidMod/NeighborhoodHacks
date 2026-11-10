@@ -292,4 +292,5 @@ export const KIND_LABEL: Record<Body["kind"], string> = {
   flood: "Flood control",
   health: "Hospital district",
   college: "Community college",
+  regional: "Regional",
 }

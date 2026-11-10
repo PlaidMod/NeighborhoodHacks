@@ -525,7 +525,7 @@ function QuickActions({
         <div className={cn("grid transition-[grid-template-rows] duration-300", EASE, open ? "grid-rows-[1fr]" : "grid-rows-[0fr]")}>
           <div className="overflow-hidden" inert={!open}>
             <ul className="space-y-1 pb-3">
-              {bodies.map((b) => (
+              {bodies.filter((b) => !b.regional).map((b) => (
                 <li key={b.id} className="flex items-center gap-3 py-1.5">
                   <BodyIcon kind={b.kind} id={b.id} className="size-8 rounded-full" />
                   <span className="min-w-0 flex-1 truncate text-sm font-bold">{b.short}</span>

@@ -71,3 +71,21 @@ ${extra}`;
     expect(loadBodyCatalog(['data/bodies.yaml', 'data/does-not-exist.yaml']).length).toBe(loadBodyCatalog(['data/bodies.yaml']).length);
   });
 });
+
+describe('regional coming-soon bodies', () => {
+  const REGIONAL = ['hgac_tpc', 'txdot_houston', 'tceq', 'puct', 'hgsubsidence', 'sjra'];
+  const regional = loadBodyCatalog(['data/bodies.yaml']).filter((b) => b.category === 'regional_coming_soon');
+
+  it('loads all six regional bodies from the catalog', () => {
+    expect(regional.map((b) => b.id).sort()).toEqual([...REGIONAL].sort());
+  });
+
+  it('keeps them off SMS and ranked 200-250', () => {
+    for (const b of regional) {
+      expect(b.sms_eligible).toBe(false);
+      expect(b.impact_rank).toBeGreaterThanOrEqual(200);
+      expect(b.impact_rank).toBeLessThanOrEqual(250);
+      expect(b.meeting_info_url).toMatch(/^https:\/\//);
+    }
+  });
+});
